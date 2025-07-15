@@ -1,0 +1,121 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:45Z",
+        "generation": 1,
+        "name": "managementrouterstates.bootstrap.eda.nokia.com",
+        "resourceVersion": "5168",
+        "uid": "6fdf07c3-3cfa-462f-b6d2-2befc54bd855"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "bootstrap.eda.nokia.com",
+        "names": {
+            "kind": "ManagementRouterState",
+            "listKind": "ManagementRouterStateList",
+            "plural": "managementrouterstates",
+            "singular": "managementrouterstate"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "ManagementRouterState is the Schema for the managementrouterstates API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "ManagementRouterStateSpec defines the desired state of ManagementRouterState",
+                                "properties": {
+                                    "nodes": {
+                                        "description": "Reference to Nodes on which the ManagementRouter is deployed",
+                                        "items": {
+                                            "properties": {
+                                                "networkInstanceName": {
+                                                    "description": "The name of the management network instance in the Node OS format.  For example in SR Linux it would be 'mgmt'",
+                                                    "type": "string"
+                                                },
+                                                "node": {
+                                                    "description": "Reference to Node object",
+                                                    "type": "string"
+                                                },
+                                                "operatingSystem": {
+                                                    "description": "Operating System of the Node",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "networkInstanceName",
+                                                "node"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "required": [
+                                    "nodes"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "ManagementRouterStateStatus defines the observed state of ManagementRouterState",
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "ManagementRouterState",
+            "listKind": "ManagementRouterStateList",
+            "plural": "managementrouterstates",
+            "singular": "managementrouterstate"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:45Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:46Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}

@@ -1,0 +1,156 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:25Z",
+        "generation": 1,
+        "name": "topologygroupings.topologies.eda.nokia.com",
+        "resourceVersion": "4806",
+        "uid": "f4ebe656-d497-4ddc-9f14-7af04bfcd2dd"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "topologies.eda.nokia.com",
+        "names": {
+            "kind": "TopologyGrouping",
+            "listKind": "TopologyGroupingList",
+            "plural": "topologygroupings",
+            "singular": "topologygrouping"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "TopologyGrouping is the Schema for the topology grouping API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "TopologyGroupingSpec defines the desired state of TopologyGrouping",
+                                "properties": {
+                                    "groupSelectors": {
+                                        "description": "The set of selectors for assigning nodes to groups",
+                                        "items": {
+                                            "properties": {
+                                                "group": {
+                                                    "description": "The group to assign to nodes that match the selector.",
+                                                    "type": "string"
+                                                },
+                                                "nodeSelector": {
+                                                    "description": "Label selector to use to match nodes that should be assigned to this group.",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "required": [
+                                                "group"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "tierSelectors": {
+                                        "description": "The set of selectors for assigning nodes to tiers",
+                                        "items": {
+                                            "properties": {
+                                                "nodeSelector": {
+                                                    "description": "Label selector to use to match nodes that should be assigned to this tier.",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "tier": {
+                                                    "description": "The tier to assign to nodes that match the selector.",
+                                                    "format": "int32",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "tier"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "uiDescription": {
+                                        "description": "A description of the topology grouping to expose in the UI",
+                                        "type": "string"
+                                    },
+                                    "uiDescriptionKey": {
+                                        "description": "The translation key for the description of the topology grouping to expose in the UI",
+                                        "type": "string"
+                                    },
+                                    "uiName": {
+                                        "description": "The name of the topology grouping to expose in the UI",
+                                        "type": "string"
+                                    },
+                                    "uiNameKey": {
+                                        "description": "The translation key for the name of the topology grouping to expose in the UI",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "TopologyGroupingStatus defines the observed state of TopologyGrouping",
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "TopologyGrouping",
+            "listKind": "TopologyGroupingList",
+            "plural": "topologygroupings",
+            "singular": "topologygrouping"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:25Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:25Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}

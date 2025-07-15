@@ -1,0 +1,289 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "config.k8s.io/owning-inventory": "f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119",
+            "controller-gen.kubebuilder.io/version": "v0.16.4",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apiextensions.k8s.io/v1\",\"kind\":\"CustomResourceDefinition\",\"metadata\":{\"annotations\":{\"config.k8s.io/owning-inventory\":\"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119\",\"controller-gen.kubebuilder.io/version\":\"v0.16.4\"},\"name\":\"toponodes.core.eda.nokia.com\"},\"spec\":{\"group\":\"core.eda.nokia.com\",\"names\":{\"kind\":\"TopoNode\",\"listKind\":\"TopoNodeList\",\"plural\":\"toponodes\",\"singular\":\"toponode\"},\"scope\":\"Namespaced\",\"versions\":[{\"additionalPrinterColumns\":[{\"jsonPath\":\".spec.platform\",\"name\":\"Platform\",\"type\":\"string\"},{\"jsonPath\":\".spec.version\",\"name\":\"Version\",\"type\":\"string\"},{\"jsonPath\":\".spec.operatingSystem\",\"name\":\"OS\",\"type\":\"string\"},{\"jsonPath\":\".spec.onBoarded\",\"name\":\"OnBoarded\",\"type\":\"boolean\"},{\"jsonPath\":\".spec.npp.mode\",\"name\":\"Mode\",\"type\":\"string\"},{\"jsonPath\":\".status.npp-state\",\"name\":\"NPP\",\"type\":\"string\"},{\"jsonPath\":\".status.node-state\",\"name\":\"Node\",\"type\":\"string\"},{\"jsonPath\":\".metadata.creationTimestamp\",\"name\":\"Age\",\"type\":\"date\"}],\"name\":\"v1\",\"schema\":{\"openAPIV3Schema\":{\"description\":\"TopoNode is the Schema for the toponodes API\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"metadata\":{\"type\":\"object\"},\"spec\":{\"description\":\"A managed network element is represented via a TopoNode resource, describing characteristics of a specific element in the topology.\",\"properties\":{\"component\":{\"description\":\"List of components within the TopoNode.\\nUsed to define the type and location of linecards, fabrics (SFM), media adapter cards (MDA) and control cards (CPM).\",\"items\":{\"properties\":{\"kind\":{\"description\":\"The kind of Component, e.g. lineCard.\",\"enum\":[\"lineCard\",\"fabric\",\"mda\",\"connector\",\"xiom\",\"powerShelf\",\"powerModule\"],\"type\":\"string\"},\"slot\":{\"description\":\"The slot this Component resides in, unset for Components that do not have a slot or ID.\\ne.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.\",\"type\":\"string\"},\"type\":{\"description\":\"Denotes the type of hardware being provisioned, e.g. xcm-x20.\",\"type\":\"string\"}},\"required\":[\"kind\",\"type\"],\"type\":\"object\"},\"type\":\"array\"},\"license\":{\"description\":\"Reference to a ConfigMap containing a license for the TopoNode. Overrides the license set in the referenced NodeProfile, if present.\",\"type\":\"string\"},\"macAddress\":{\"description\":\"MAC address to associate with this TopoNode.\\nTypically the chassis MAC address, optionally sent by a node in DHCP requests.\\nNot required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.\",\"type\":\"string\"},\"nodeProfile\":{\"description\":\"Reference to a NodeProfile to use with this TopoNode.\",\"type\":\"string\"},\"npp\":{\"description\":\"Options relating to NPP interactions with the node.\",\"properties\":{\"mode\":{\"default\":\"normal\",\"description\":\"The mode in which this TopoNode is functioning.\\n\\\"normal\\\" (the default)\\n   indicates that NPP is expecting an endpoint to exist, and will accept and confirm changes only if the endpoint\\n   accepts them.\\n\\\"maintenance\\\"\\n   indicates that no changes will be accepted for the TopoNode, irrespective if the endpoint is up and reachable.\\n   The exception is if an upgrade is occuring, in which case changes will be accepted.\\n\\\"null\\\"\\n\\t  indicates that changes will be accepted from CRs and no NPP will be spun up. NPP validation will not occur.\\n   This may be useful in playground mode to avoid spinning up of 1000s of NPPs.\\n\\\"emulate\\\"\\n   indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation\\n   still occurs.  If no IP address is present, we also run in emulate mode.\",\"enum\":[\"normal\",\"maintenance\",\"null\",\"emulate\"],\"type\":\"string\"}},\"type\":\"object\"},\"onBoarded\":{\"default\":false,\"description\":\"Indicates if this TopoNode has been bootstrapped or is reachable via configured credentials. Set by BootstrapServer when it completes onboarding functions for a given TopoNode.\\nMost applications ignore TopoNodes that have not been onboarded yet.\",\"type\":\"boolean\"},\"operatingSystem\":{\"default\":\"srl\",\"description\":\"Operating system running on this TopoNode, e.g. srl.\",\"enum\":[\"srl\",\"sros\",\"nxos\"],\"type\":\"string\"},\"platform\":{\"description\":\"Platform type of this TopoNode, e.g. 7220 IXR-D3L.\",\"type\":\"string\"},\"productionAddress\":{\"description\":\"Production address of this TopoNode - this is the address the real, production instance of this TopoNode uses.\\nIf left blank, an address will be allocated from the management IP pool specified in the referenced NodeProfile.\\nIf this TopoNode is not bootstrapped by EDA this field must be provided.\",\"properties\":{\"ipv4\":{\"description\":\"The IPv4 production address\",\"type\":\"string\"},\"ipv6\":{\"description\":\"The IPv6 production address\",\"type\":\"string\"}},\"type\":\"object\"},\"serialNumber\":{\"description\":\"Serial number of this TopoNode, optionally sent by a node in DHCP requests.\\nNot required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.\",\"type\":\"string\"},\"systemInterface\":{\"description\":\"Name of the Interface resource representing the primary loopback on the TopoNode.\",\"type\":\"string\"},\"version\":{\"description\":\"Sets the software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).\",\"type\":\"string\"}},\"required\":[\"nodeProfile\",\"operatingSystem\",\"platform\",\"version\"],\"type\":\"object\"},\"status\":{\"description\":\"TopoNodeStatus defines the observed state of TopoNode\",\"properties\":{\"node-details\":{\"description\":\"Address and port used to connected to the node.\",\"type\":\"string\"},\"node-state\":{\"description\":\"The current state of the connection between NPP and the node.\\n\\\"TryingToConnect\\\"\\n   NPP is attempting to connect and establish connectivity to the node\\n\\\"WaitingForInitialCfg\\\"\\n   NPP is connected to the node but waiting for intial config to push\\n\\\"Committing\\\"\\n\\t  NPP is in progress of commiting\\n\\\"RetryingCommit\\\"\\n   NPP lost sync to node and is re-pushing current config\\n\\\"Synced\\\"\\n   NPP is in fully synced state\\n\\\"Standby\\\"\\n   NPP is running in standby mode. This state is only used on standby clusters with georedundancy.\\n\\\"NoIpAddress\\\"\\n   NPP is running but there is no IP address for node. This only happen in sim setups when\\n   CX has not created the simulated node, or the simulated pod failed to launch due to image error.\",\"type\":\"string\"},\"npp-details\":{\"description\":\"NPP address and port for this TopoNode.\",\"type\":\"string\"},\"npp-pod\":{\"description\":\"NPP pod name\",\"type\":\"string\"},\"npp-state\":{\"description\":\"The current state of the connection between ConfigEngine and NPP.\",\"type\":\"string\"},\"operatingSystem\":{\"description\":\"Operational operating system running on this TopoNode, e.g. srl, sros.\",\"type\":\"string\"},\"platform\":{\"description\":\"Operational platform type of this TopoNode, e.g. 7220 IXR-D3L.\",\"type\":\"string\"},\"simulate\":{\"description\":\"Simulate using CX - if true CX is reponsible for generating the TargetNode resource.\",\"type\":\"boolean\"},\"version\":{\"description\":\"Operational software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).\",\"type\":\"string\"}},\"type\":\"object\"}},\"type\":\"object\"}},\"served\":true,\"storage\":true,\"subresources\":{\"status\":{}}}]}}\n"
+        },
+        "creationTimestamp": "2025-07-03T09:17:30Z",
+        "generation": 1,
+        "name": "toponodes.core.eda.nokia.com",
+        "resourceVersion": "1811",
+        "uid": "e021069c-1ddc-40c9-96c4-0b71859b38ad"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "core.eda.nokia.com",
+        "names": {
+            "kind": "TopoNode",
+            "listKind": "TopoNodeList",
+            "plural": "toponodes",
+            "singular": "toponode"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "additionalPrinterColumns": [
+                    {
+                        "jsonPath": ".spec.platform",
+                        "name": "Platform",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".spec.version",
+                        "name": "Version",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".spec.operatingSystem",
+                        "name": "OS",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".spec.onBoarded",
+                        "name": "OnBoarded",
+                        "type": "boolean"
+                    },
+                    {
+                        "jsonPath": ".spec.npp.mode",
+                        "name": "Mode",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".status.npp-state",
+                        "name": "NPP",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".status.node-state",
+                        "name": "Node",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".metadata.creationTimestamp",
+                        "name": "Age",
+                        "type": "date"
+                    }
+                ],
+                "name": "v1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "TopoNode is the Schema for the toponodes API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "A managed network element is represented via a TopoNode resource, describing characteristics of a specific element in the topology.",
+                                "properties": {
+                                    "component": {
+                                        "description": "List of components within the TopoNode.\nUsed to define the type and location of linecards, fabrics (SFM), media adapter cards (MDA) and control cards (CPM).",
+                                        "items": {
+                                            "properties": {
+                                                "kind": {
+                                                    "description": "The kind of Component, e.g. lineCard.",
+                                                    "enum": [
+                                                        "lineCard",
+                                                        "fabric",
+                                                        "mda",
+                                                        "connector",
+                                                        "xiom",
+                                                        "powerShelf",
+                                                        "powerModule"
+                                                    ],
+                                                    "type": "string"
+                                                },
+                                                "slot": {
+                                                    "description": "The slot this Component resides in, unset for Components that do not have a slot or ID.\ne.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.",
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "description": "Denotes the type of hardware being provisioned, e.g. xcm-x20.",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "kind",
+                                                "type"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "license": {
+                                        "description": "Reference to a ConfigMap containing a license for the TopoNode. Overrides the license set in the referenced NodeProfile, if present.",
+                                        "type": "string"
+                                    },
+                                    "macAddress": {
+                                        "description": "MAC address to associate with this TopoNode.\nTypically the chassis MAC address, optionally sent by a node in DHCP requests.\nNot required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.",
+                                        "type": "string"
+                                    },
+                                    "nodeProfile": {
+                                        "description": "Reference to a NodeProfile to use with this TopoNode.",
+                                        "type": "string"
+                                    },
+                                    "npp": {
+                                        "description": "Options relating to NPP interactions with the node.",
+                                        "properties": {
+                                            "mode": {
+                                                "default": "normal",
+                                                "description": "The mode in which this TopoNode is functioning.\n\"normal\" (the default)\n   indicates that NPP is expecting an endpoint to exist, and will accept and confirm changes only if the endpoint\n   accepts them.\n\"maintenance\"\n   indicates that no changes will be accepted for the TopoNode, irrespective if the endpoint is up and reachable.\n   The exception is if an upgrade is occuring, in which case changes will be accepted.\n\"null\"\n\t  indicates that changes will be accepted from CRs and no NPP will be spun up. NPP validation will not occur.\n   This may be useful in playground mode to avoid spinning up of 1000s of NPPs.\n\"emulate\"\n   indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation\n   still occurs.  If no IP address is present, we also run in emulate mode.",
+                                                "enum": [
+                                                    "normal",
+                                                    "maintenance",
+                                                    "null",
+                                                    "emulate"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "onBoarded": {
+                                        "default": false,
+                                        "description": "Indicates if this TopoNode has been bootstrapped or is reachable via configured credentials. Set by BootstrapServer when it completes onboarding functions for a given TopoNode.\nMost applications ignore TopoNodes that have not been onboarded yet.",
+                                        "type": "boolean"
+                                    },
+                                    "operatingSystem": {
+                                        "default": "srl",
+                                        "description": "Operating system running on this TopoNode, e.g. srl.",
+                                        "enum": [
+                                            "srl",
+                                            "sros",
+                                            "nxos"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "platform": {
+                                        "description": "Platform type of this TopoNode, e.g. 7220 IXR-D3L.",
+                                        "type": "string"
+                                    },
+                                    "productionAddress": {
+                                        "description": "Production address of this TopoNode - this is the address the real, production instance of this TopoNode uses.\nIf left blank, an address will be allocated from the management IP pool specified in the referenced NodeProfile.\nIf this TopoNode is not bootstrapped by EDA this field must be provided.",
+                                        "properties": {
+                                            "ipv4": {
+                                                "description": "The IPv4 production address",
+                                                "type": "string"
+                                            },
+                                            "ipv6": {
+                                                "description": "The IPv6 production address",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "serialNumber": {
+                                        "description": "Serial number of this TopoNode, optionally sent by a node in DHCP requests.\nNot required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.",
+                                        "type": "string"
+                                    },
+                                    "systemInterface": {
+                                        "description": "Name of the Interface resource representing the primary loopback on the TopoNode.",
+                                        "type": "string"
+                                    },
+                                    "version": {
+                                        "description": "Sets the software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "nodeProfile",
+                                    "operatingSystem",
+                                    "platform",
+                                    "version"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "TopoNodeStatus defines the observed state of TopoNode",
+                                "properties": {
+                                    "node-details": {
+                                        "description": "Address and port used to connected to the node.",
+                                        "type": "string"
+                                    },
+                                    "node-state": {
+                                        "description": "The current state of the connection between NPP and the node.\n\"TryingToConnect\"\n   NPP is attempting to connect and establish connectivity to the node\n\"WaitingForInitialCfg\"\n   NPP is connected to the node but waiting for intial config to push\n\"Committing\"\n\t  NPP is in progress of commiting\n\"RetryingCommit\"\n   NPP lost sync to node and is re-pushing current config\n\"Synced\"\n   NPP is in fully synced state\n\"Standby\"\n   NPP is running in standby mode. This state is only used on standby clusters with georedundancy.\n\"NoIpAddress\"\n   NPP is running but there is no IP address for node. This only happen in sim setups when\n   CX has not created the simulated node, or the simulated pod failed to launch due to image error.",
+                                        "type": "string"
+                                    },
+                                    "npp-details": {
+                                        "description": "NPP address and port for this TopoNode.",
+                                        "type": "string"
+                                    },
+                                    "npp-pod": {
+                                        "description": "NPP pod name",
+                                        "type": "string"
+                                    },
+                                    "npp-state": {
+                                        "description": "The current state of the connection between ConfigEngine and NPP.",
+                                        "type": "string"
+                                    },
+                                    "operatingSystem": {
+                                        "description": "Operational operating system running on this TopoNode, e.g. srl, sros.",
+                                        "type": "string"
+                                    },
+                                    "platform": {
+                                        "description": "Operational platform type of this TopoNode, e.g. 7220 IXR-D3L.",
+                                        "type": "string"
+                                    },
+                                    "simulate": {
+                                        "description": "Simulate using CX - if true CX is reponsible for generating the TargetNode resource.",
+                                        "type": "boolean"
+                                    },
+                                    "version": {
+                                        "description": "Operational software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "TopoNode",
+            "listKind": "TopoNodeList",
+            "plural": "toponodes",
+            "singular": "toponode"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:17:31Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:17:31Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1"
+        ]
+    }
+}

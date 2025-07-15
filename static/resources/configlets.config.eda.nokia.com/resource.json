@@ -1,0 +1,171 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:37Z",
+        "generation": 1,
+        "name": "configlets.config.eda.nokia.com",
+        "resourceVersion": "5055",
+        "uid": "ea401775-df87-4701-b07e-a8bdd15be365"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "config.eda.nokia.com",
+        "names": {
+            "kind": "Configlet",
+            "listKind": "ConfigletList",
+            "plural": "configlets",
+            "singular": "configlet"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "Configlet is the Schema for the configlets API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "Configlet is a configuration snippet that can be applied to a set of targets.\nThe path on the target is provided in jspath notation, and the configuration is provided as a JSON string.\nConfiglets can be applied to a set of targets based on a label selector, a list of targets, or a combination of both.",
+                                "properties": {
+                                    "configs": {
+                                        "description": "Configurations to apply, being sets of paths, operations and JSON configurations.",
+                                        "items": {
+                                            "properties": {
+                                                "config": {
+                                                    "description": "JSON-formatted string representing the configuration to apply.",
+                                                    "type": "string"
+                                                },
+                                                "operation": {
+                                                    "default": "Create",
+                                                    "description": "Indicates the operation in which to apply the configuration.",
+                                                    "enum": [
+                                                        "Create",
+                                                        "Update",
+                                                        "Delete"
+                                                    ],
+                                                    "type": "string"
+                                                },
+                                                "path": {
+                                                    "description": "Path to apply the configuration in jspath notation, including any keys if relevant, e.g. .system.information.",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "config",
+                                                "operation",
+                                                "path"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "endpointSelector": {
+                                        "description": "Label selector to use to match targets to deploy Configlet to.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "endpoints": {
+                                        "description": "Reference to targets to deploy Configlet to.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "operatingSystem": {
+                                        "description": "Operating system to match against when selecting targets.",
+                                        "enum": [
+                                            "srl",
+                                            "sros"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "priority": {
+                                        "default": 0,
+                                        "description": "Priority of this Configlet, between -100 and 100. Higher priorities overwrite lower priorities in the event of conflicts.",
+                                        "format": "int32",
+                                        "maximum": 100,
+                                        "minimum": -100,
+                                        "type": "integer"
+                                    },
+                                    "version": {
+                                        "description": "Version to match against when selecting targets.",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "configs"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "Deployment status of this Configlet.",
+                                "properties": {
+                                    "endpoints": {
+                                        "description": "List of targets this configlet has been applied to.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "Configlet",
+            "listKind": "ConfigletList",
+            "plural": "configlets",
+            "singular": "configlet"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:37Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:37Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}

@@ -1,0 +1,105 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:24Z",
+        "generation": 1,
+        "name": "keychaindeployments.security.eda.nokia.com",
+        "resourceVersion": "4790",
+        "uid": "c2cc0f8b-a694-4527-bdd4-309e3c32cdb5"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "security.eda.nokia.com",
+        "names": {
+            "kind": "KeychainDeployment",
+            "listKind": "KeychainDeploymentList",
+            "plural": "keychaindeployments",
+            "singular": "keychaindeployment"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "KeychainDeployment is the Schema for the keychaindeployments API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "KeychainDeploymentSpec defines the desired state of KeychainDeployment",
+                                "properties": {
+                                    "keychain": {
+                                        "description": "Reference to a Keychain",
+                                        "type": "string"
+                                    },
+                                    "node": {
+                                        "description": "Reference to a Node on which to push the BgpGroup",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "keychain",
+                                    "node"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "KeychainDeploymentStatus defines the observed state of KeychainDeployment",
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "KeychainDeployment",
+            "listKind": "KeychainDeploymentList",
+            "plural": "keychaindeployments",
+            "singular": "keychaindeployment"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:24Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:24Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}

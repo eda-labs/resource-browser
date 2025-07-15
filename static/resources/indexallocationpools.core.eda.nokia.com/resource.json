@@ -1,0 +1,171 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "config.k8s.io/owning-inventory": "f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119",
+            "controller-gen.kubebuilder.io/version": "v0.16.4",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apiextensions.k8s.io/v1\",\"kind\":\"CustomResourceDefinition\",\"metadata\":{\"annotations\":{\"config.k8s.io/owning-inventory\":\"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119\",\"controller-gen.kubebuilder.io/version\":\"v0.16.4\"},\"name\":\"indexallocationpools.core.eda.nokia.com\"},\"spec\":{\"group\":\"core.eda.nokia.com\",\"names\":{\"kind\":\"IndexAllocationPool\",\"listKind\":\"IndexAllocationPoolList\",\"plural\":\"indexallocationpools\",\"singular\":\"indexallocationpool\"},\"scope\":\"Namespaced\",\"versions\":[{\"name\":\"v1\",\"schema\":{\"openAPIV3Schema\":{\"description\":\"IndexAllocationPool is the Schema for the indexallocationpools API\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"metadata\":{\"type\":\"object\"},\"spec\":{\"description\":\"IndexAllocationPool is a generic allocation pool supporting allocation of indexes from a set of segments.\\nIt supports allocating things like VLANs, subinterface indexes, autonomous system numbers, or any other integer-based index.\",\"properties\":{\"publishAllocations\":{\"description\":\"If true, allocations in segments will be published to EDB, available to query via EQL and trigger state applications off of.\",\"type\":\"boolean\"},\"segments\":{\"description\":\"List of segments containing indexes to allocate.\",\"items\":{\"properties\":{\"allocations\":{\"description\":\"List of reservations to exclude from allocations from this segment.\",\"items\":{\"properties\":{\"name\":{\"description\":\"Name of this allocation.\",\"type\":\"string\"},\"value\":{\"description\":\"Index to reserve.\",\"format\":\"int32\",\"type\":\"integer\"}},\"required\":[\"name\",\"value\"],\"type\":\"object\"},\"type\":\"array\"},\"reservations\":{\"description\":\"Range of reservations to exclude from allocations from this segment.\",\"items\":{\"properties\":{\"end\":{\"description\":\"Value to reserve to.\",\"format\":\"int32\",\"type\":\"integer\"},\"start\":{\"description\":\"Value to start reserving.\",\"format\":\"int32\",\"type\":\"integer\"}},\"required\":[\"end\",\"start\"],\"type\":\"object\"},\"type\":\"array\"},\"size\":{\"description\":\"Number of elements in the segment.\",\"format\":\"int32\",\"type\":\"integer\"},\"start\":{\"description\":\"Starting value of the segment.\",\"format\":\"int32\",\"type\":\"integer\"}},\"required\":[\"size\",\"start\"],\"type\":\"object\"},\"minItems\":1,\"type\":\"array\"}},\"required\":[\"segments\"],\"type\":\"object\"},\"status\":{\"description\":\"IndexAllocationPoolStatus defines the observed state of IndexAllocationPool\",\"type\":\"object\"}},\"type\":\"object\"}},\"served\":true,\"storage\":true,\"subresources\":{\"status\":{}}}]}}\n"
+        },
+        "creationTimestamp": "2025-07-03T09:17:24Z",
+        "generation": 1,
+        "name": "indexallocationpools.core.eda.nokia.com",
+        "resourceVersion": "1732",
+        "uid": "6e96e0bf-9d37-49ba-bf5c-698ad5e22b31"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "core.eda.nokia.com",
+        "names": {
+            "kind": "IndexAllocationPool",
+            "listKind": "IndexAllocationPoolList",
+            "plural": "indexallocationpools",
+            "singular": "indexallocationpool"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "IndexAllocationPool is the Schema for the indexallocationpools API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "IndexAllocationPool is a generic allocation pool supporting allocation of indexes from a set of segments.\nIt supports allocating things like VLANs, subinterface indexes, autonomous system numbers, or any other integer-based index.",
+                                "properties": {
+                                    "publishAllocations": {
+                                        "description": "If true, allocations in segments will be published to EDB, available to query via EQL and trigger state applications off of.",
+                                        "type": "boolean"
+                                    },
+                                    "segments": {
+                                        "description": "List of segments containing indexes to allocate.",
+                                        "items": {
+                                            "properties": {
+                                                "allocations": {
+                                                    "description": "List of reservations to exclude from allocations from this segment.",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "description": "Name of this allocation.",
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "description": "Index to reserve.",
+                                                                "format": "int32",
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "name",
+                                                            "value"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "reservations": {
+                                                    "description": "Range of reservations to exclude from allocations from this segment.",
+                                                    "items": {
+                                                        "properties": {
+                                                            "end": {
+                                                                "description": "Value to reserve to.",
+                                                                "format": "int32",
+                                                                "type": "integer"
+                                                            },
+                                                            "start": {
+                                                                "description": "Value to start reserving.",
+                                                                "format": "int32",
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "end",
+                                                            "start"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "size": {
+                                                    "description": "Number of elements in the segment.",
+                                                    "format": "int32",
+                                                    "type": "integer"
+                                                },
+                                                "start": {
+                                                    "description": "Starting value of the segment.",
+                                                    "format": "int32",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "size",
+                                                "start"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "minItems": 1,
+                                        "type": "array"
+                                    }
+                                },
+                                "required": [
+                                    "segments"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "IndexAllocationPoolStatus defines the observed state of IndexAllocationPool",
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "IndexAllocationPool",
+            "listKind": "IndexAllocationPoolList",
+            "plural": "indexallocationpools",
+            "singular": "indexallocationpool"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:17:25Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:17:25Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1"
+        ]
+    }
+}

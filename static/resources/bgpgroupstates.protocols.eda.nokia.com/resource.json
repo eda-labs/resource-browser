@@ -1,0 +1,104 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:35Z",
+        "generation": 1,
+        "name": "bgpgroupstates.protocols.eda.nokia.com",
+        "resourceVersion": "4998",
+        "uid": "45928cb1-ffe1-4f1e-9d2e-33b936a7f5d5"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "protocols.eda.nokia.com",
+        "names": {
+            "kind": "BGPGroupState",
+            "listKind": "BGPGroupStateList",
+            "plural": "bgpgroupstates",
+            "singular": "bgpgroupstate"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "BGPGroupState is the Schema for the bgpgroupstates API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "BGPGroupStateSpec defines the desired state of BGPGroupState",
+                                "properties": {
+                                    "defaultBGPGroup": {
+                                        "description": "Denotes if the group is a DefaultBGPGroup or BGPGroup",
+                                        "type": "boolean"
+                                    },
+                                    "group": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "defaultBGPGroup",
+                                    "group"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "BGPGroupStateStatus defines the observed state of BGPGroupState",
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "BGPGroupState",
+            "listKind": "BGPGroupStateList",
+            "plural": "bgpgroupstates",
+            "singular": "bgpgroupstate"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:35Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:35Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}

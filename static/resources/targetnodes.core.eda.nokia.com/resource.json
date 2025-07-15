@@ -1,0 +1,582 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "config.k8s.io/owning-inventory": "f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119",
+            "controller-gen.kubebuilder.io/version": "v0.16.4",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apiextensions.k8s.io/v1\",\"kind\":\"CustomResourceDefinition\",\"metadata\":{\"annotations\":{\"config.k8s.io/owning-inventory\":\"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119\",\"controller-gen.kubebuilder.io/version\":\"v0.16.4\"},\"name\":\"targetnodes.core.eda.nokia.com\"},\"spec\":{\"group\":\"core.eda.nokia.com\",\"names\":{\"kind\":\"TargetNode\",\"listKind\":\"TargetNodeList\",\"plural\":\"targetnodes\",\"singular\":\"targetnode\"},\"scope\":\"Namespaced\",\"versions\":[{\"additionalPrinterColumns\":[{\"jsonPath\":\".status.tlsStatus.nodeSecurityProfile\",\"name\":\"NodeSecurityProfile\",\"type\":\"string\"},{\"jsonPath\":\".status.bootstrapStatus\",\"name\":\"Status\",\"type\":\"string\"},{\"jsonPath\":\".status.dhcpStatus\",\"name\":\"DHCP\",\"type\":\"string\"},{\"jsonPath\":\".spec.address\",\"name\":\"Address\",\"type\":\"string\"},{\"jsonPath\":\".spec.port\",\"name\":\"Port\",\"type\":\"string\"}],\"name\":\"v1\",\"schema\":{\"openAPIV3Schema\":{\"description\":\"TargetNode is the Schema for the targetnodes API\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"metadata\":{\"type\":\"object\"},\"spec\":{\"description\":\"TargetNodeSpec defines the desired state of TargetNode\",\"properties\":{\"address\":{\"description\":\"Addressed used to connect to TopoNode\",\"type\":\"string\"},\"dhcp4\":{\"description\":\"DHCPv4 configuration\",\"properties\":{\"address\":{\"description\":\"Assigned address in DHCP4 reply\",\"type\":\"string\"},\"options\":{\"description\":\"DHCP4 Options\",\"items\":{\"properties\":{\"option\":{\"description\":\"DHCPv4 option to return to the TopoNode.\",\"enum\":[\"1-SubnetMask\",\"2-TimeOffset\",\"3-Router\",\"4-TimeServer\",\"5-NameServer\",\"6-DomainNameServer\",\"7-LogServer\",\"8-QuoteServer\",\"9-LPRServer\",\"10-ImpressServer\",\"11-ResourceLocationServer\",\"12-HostName\",\"13-BootFileSize\",\"14-MeritDumpFile\",\"15-DomainName\",\"16-SwapServer\",\"17-RootPath\",\"18-ExtensionsPath\",\"19-IPForwarding\",\"20-NonLocalSourceRouting\",\"21-PolicyFilter\",\"22-MaximumDatagramAssemblySize\",\"23-DefaultIPTTL\",\"24-PathMTUAgingTimeout\",\"25-PathMTUPlateauTable\",\"26-InterfaceMTU\",\"27-AllSubnetsAreLocal\",\"28-BroadcastAddress\",\"29-PerformMaskDiscovery\",\"30-MaskSupplier\",\"31-PerformRouterDiscovery\",\"32-RouterSolicitationAddress\",\"33-StaticRoutingTable\",\"34-TrailerEncapsulation\",\"35-ArpCacheTimeout\",\"36-EthernetEncapsulation\",\"37-DefaulTCPTTL\",\"38-TCPKeepaliveInterval\",\"39-TCPKeepaliveGarbage\",\"40-NetworkInformationServiceDomain\",\"41-NetworkInformationServers\",\"42-NTPServers\",\"43-VendorSpecificInformation\",\"44-NetBIOSOverTCPIPNameServer\",\"45-NetBIOSOverTCPIPDatagramDistributionServer\",\"46-NetBIOSOverTCPIPNodeType\",\"47-NetBIOSOverTCPIPScope\",\"48-XWindowSystemFontServer\",\"49-XWindowSystemDisplayManager\",\"50-RequestedIPAddress\",\"51-IPAddressLeaseTime\",\"52-OptionOverload\",\"53-DHCPMessageType\",\"54-ServerIdentifier\",\"55-ParameterRequestList\",\"56-Message\",\"57-MaximumDHCPMessageSize\",\"58-RenewTimeValue\",\"59-RebindingTimeValue\",\"60-ClassIdentifier\",\"61-ClientIdentifier\",\"62-NetWareIPDomainName\",\"63-NetWareIPInformation\",\"64-NetworkInformationServicePlusDomain\",\"65-NetworkInformationServicePlusServers\",\"66-TFTPServerName\",\"67-BootfileName\",\"68-MobileIPHomeAgent\",\"69-SimpleMailTransportProtocolServer\",\"70-PostOfficeProtocolServer\",\"71-NetworkNewsTransportProtocolServer\",\"72-DefaultWorldWideWebServer\",\"73-DefaultFingerServer\",\"74-DefaultInternetRelayChatServer\",\"75-StreetTalkServer\",\"76-StreetTalkDirectoryAssistanceServer\",\"77-UserClassInformation\",\"78-SLPDirectoryAgent\",\"79-SLPServiceScope\",\"80-RapidCommit\",\"81-FQDN\",\"82-RelayAgentInformation\",\"83-InternetStorageNameService\",\"85-NDSServers\",\"86-NDSTreeName\",\"87-NDSContext\",\"88-BCMCSControllerDomainNameList\",\"89-BCMCSControllerIPv4AddressList\",\"90-Authentication\",\"91-ClientLastTransactionTime\",\"92-AssociatedIP\",\"93-ClientSystemArchitectureType\",\"94-ClientNetworkInterfaceIdentifier\",\"95-LDAP\",\"97-ClientMachineIdentifier\",\"98-OpenGroupUserAuthentication\",\"99-GeoConfCivic\",\"100-IEEE10031TZString\",\"101-ReferenceToTZDatabase\",\"112-NetInfoParentServerAddress\",\"113-NetInfoParentServerTag\",\"114-URL\",\"116-AutoConfigure\",\"117-NameServiceSearch\",\"118-SubnetSelection\",\"119-DNSDomainSearchList\",\"120-SIPServers\",\"121-ClasslessStaticRoute\",\"122-CCC\",\"123-GeoConf\",\"124-VendorIdentifyingVendorClass\",\"125-VendorIdentifyingVendorSpecific\",\"128-TFTPServerIPAddress\",\"129-CallServerIPAddress\",\"130-DiscriminationString\",\"131-RemoteStatisticsServerIPAddress\",\"132-8021PVLANID\",\"133-8021QL2Priority\",\"134-DiffservCodePoint\",\"135-HTTPProxyForPhoneSpecificApplications\",\"136-PANAAuthenticationAgent\",\"137-LoSTServer\",\"138-CAPWAPAccessControllerAddresses\",\"139-OPTIONIPv4AddressMoS\",\"140-OPTIONIPv4FQDNMoS\",\"141-SIPUAConfigurationServiceDomains\",\"142-OPTIONIPv4AddressANDSF\",\"143-OPTIONIPv6AddressANDSF\",\"150-TFTPServerAddress\",\"151-StatusCode\",\"152-BaseTime\",\"153-StartTimeOfState\",\"154-QueryStartTime\",\"155-QueryEndTime\",\"156-DHCPState\",\"157-DataSource\",\"175-Etherboot\",\"176-IPTelephone\",\"177-EtherbootPacketCableAndCableHome\",\"208-PXELinuxMagicString\",\"209-PXELinuxConfigFile\",\"210-PXELinuxPathPrefix\",\"211-PXELinuxRebootTime\",\"212-OPTION6RD\",\"213-OPTIONv4AccessDomain\",\"220-SubnetAllocation\",\"221-VirtualSubnetAllocation\",\"224-Reserved\",\"225-Reserved\",\"226-Reserved\",\"227-Reserved\",\"228-Reserved\",\"229-Reserved\",\"230-Reserved\",\"231-Reserved\",\"232-Reserved\",\"233-Reserved\",\"234-Reserved\",\"235-Reserved\",\"236-Reserved\",\"237-Reserved\",\"238-Reserved\",\"239-Reserved\",\"240-Reserved\",\"241-Reserved\",\"242-Reserved\",\"243-Reserved\",\"244-Reserved\",\"245-Reserved\",\"246-Reserved\",\"247-Reserved\",\"248-Reserved\",\"249-Reserved\",\"250-Reserved\",\"251-Reserved\",\"252-Reserved\",\"253-Reserved\",\"254-Reserved\",\"255-End\"],\"type\":\"string\"},\"value\":{\"description\":\"Value to return to the TopoNode for the specified option.\",\"items\":{\"type\":\"string\"},\"minItems\":1,\"type\":\"array\"}},\"required\":[\"option\",\"value\"],\"type\":\"object\"},\"type\":\"array\"}},\"required\":[\"address\",\"options\"],\"type\":\"object\"},\"dhcp6\":{\"description\":\"DHCPv6 configuration\",\"properties\":{\"address\":{\"description\":\"Assigned address in DHCP6 reply\",\"type\":\"string\"},\"options\":{\"description\":\"DHCP6 Options\",\"items\":{\"properties\":{\"option\":{\"description\":\"DHCPv6 option to return to the TopoNode.\",\"enum\":[\"59-BootfileUrl\"],\"type\":\"string\"},\"value\":{\"description\":\"Value to return to the TopoNode for the specified option.\",\"items\":{\"type\":\"string\"},\"minItems\":1,\"type\":\"array\"}},\"required\":[\"option\",\"value\"],\"type\":\"object\"},\"type\":\"array\"}},\"required\":[\"address\",\"options\"],\"type\":\"object\"},\"macAddress\":{\"description\":\" MAC address of the TopoNode\",\"type\":\"string\"},\"operatingSystem\":{\"description\":\"The OS matching this NodeProfile\",\"enum\":[\"srl\",\"sros\",\"eos\",\"sonic\",\"ios-xr\",\"nxos\"],\"type\":\"string\"},\"platform\":{\"description\":\"Platform type of this Node, e.g. 7220 IXR-D3L\",\"type\":\"string\"},\"platformPath\":{\"description\":\"JSPath to use for retrieving the chassis string from the node\",\"type\":\"string\"},\"port\":{\"description\":\"Port used to connect to the TopoNode\",\"type\":\"integer\"},\"serialNumber\":{\"description\":\"Serial number of the TopoNode\",\"type\":\"string\"},\"serialNumberPath\":{\"description\":\"JSPath to use for retrieving the serial number string from the node\",\"type\":\"string\"},\"versionMatch\":{\"description\":\"Match the node-retrieved version string to TargetNode version\\nThe value should be a regular expression matching the version string that would appear on the node\",\"type\":\"string\"},\"versionPath\":{\"description\":\"JSPath to use for retrieving the version string from the node\",\"type\":\"string\"}},\"required\":[\"address\",\"operatingSystem\"],\"type\":\"object\"},\"status\":{\"description\":\"TargetNodeStatus defines the observed state of TargetNode\",\"properties\":{\"bootstrapStatus\":{\"description\":\"Bootstrap status of the Target\",\"enum\":[\"Init\",\"Ready\",\"Failed\"],\"type\":\"string\"},\"bootstrapStatusReason\":{\"description\":\"Human-readable message indicating details about the bootstrapStatus's Failed state\",\"type\":\"string\"},\"dhcpStatus\":{\"description\":\"DHCP status of the Target\",\"enum\":[\"Offered\",\"Acknowledged\"],\"type\":\"string\"},\"tlsStatus\":{\"description\":\"TLS status of the Target\",\"properties\":{\"nodeSecurityProfile\":{\"description\":\"NodeSecurity Profile Used\",\"type\":\"string\"},\"tls\":{\"description\":\"NodeSecurity Profile Used\",\"properties\":{\"csrParams\":{\"description\":\"A set of certificate signing request parameters used when asking for a CSR from the toponode.\",\"properties\":{\"certificateValidity\":{\"default\":\"2160h\",\"description\":\"CertificateValidity defines the duration for which the certificate is considered valid after issuance.\",\"type\":\"string\"},\"city\":{\"description\":\"City denotes the city where the organization is based.\",\"type\":\"string\"},\"commonName\":{\"description\":\"CommonName specifies the common name field of the CSR, typically representing the domain name.\",\"type\":\"string\"},\"country\":{\"description\":\"Country indicates the country in which the organization is legally registered.\",\"type\":\"string\"},\"csrSuite\":{\"default\":\"CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_256\",\"description\":\"The CSRSuite value used when asking for a CSR from the toponode\",\"enum\":[\"CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_256\",\"CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_384\",\"CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_512\",\"CSRSUITE_X509_KEY_TYPE_RSA_3072_SIGNATURE_ALGORITHM_SHA_2_256\",\"CSRSUITE_X509_KEY_TYPE_RSA_3072_SIGNATURE_ALGORITHM_SHA_2_384\",\"CSRSUITE_X509_KEY_TYPE_RSA_3072_SIGNATURE_ALGORITHM_SHA_2_512\",\"CSRSUITE_X509_KEY_TYPE_RSA_4096_SIGNATURE_ALGORITHM_SHA_2_256\",\"CSRSUITE_X509_KEY_TYPE_RSA_4096_SIGNATURE_ALGORITHM_SHA_2_384\",\"CSRSUITE_X509_KEY_TYPE_RSA_4096_SIGNATURE_ALGORITHM_SHA_2_512\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_PRIME256V1_SIGNATURE_ALGORITHM_SHA_2_256\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_PRIME256V1_SIGNATURE_ALGORITHM_SHA_2_384\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_PRIME256V1_SIGNATURE_ALGORITHM_SHA_2_512\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_SECP384R1_SIGNATURE_ALGORITHM_SHA_2_256\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_SECP384R1_SIGNATURE_ALGORITHM_SHA_2_384\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_SECP384R1_SIGNATURE_ALGORITHM_SHA_2_512\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_SECP521R1_SIGNATURE_ALGORITHM_SHA_2_256\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_SECP521R1_SIGNATURE_ALGORITHM_SHA_2_384\",\"CSRSUITE_X509_KEY_TYPE_ECDSA_SECP521R1_SIGNATURE_ALGORITHM_SHA_2_512\",\"CSRSUITE_X509_KEY_TYPE_EDDSA_ED25519\"],\"type\":\"string\"},\"org\":{\"description\":\"Org is the name of the organization requesting the CSR.\",\"type\":\"string\"},\"orgUnit\":{\"description\":\"OrgUnit specifies the organizational unit (like department or division) within the organization.\",\"type\":\"string\"},\"san\":{\"description\":\"Subject Alternative Names contains additional hostnames or IP addresses covered by the CSR.\",\"properties\":{\"dns\":{\"description\":\"Dns contains a list of DNS names that can be used to access the server.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"emails\":{\"description\":\"Emails consists of email addresses that should be associated with the certificate.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"ips\":{\"description\":\"Ips includes IP addresses that the certificate should validate.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"uris\":{\"description\":\"Uris lists specific URIs that the certificate will authenticate.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"},\"state\":{\"description\":\"State represents the state or province where the organization is located.\",\"type\":\"string\"}},\"type\":\"object\"},\"issuerRef\":{\"description\":\"Reference to a CertManager issuer that must be used to sign nodes certificates.\",\"type\":\"string\"},\"skipVerify\":{\"description\":\"Skip certificate verification.\",\"type\":\"boolean\"},\"trustBundle\":{\"description\":\"Reference to configMap that contains a CA certificate that is used to verify the node certificate\\nwhen certificates are not managed by EDA.\",\"type\":\"string\"}},\"type\":\"object\"}},\"type\":\"object\"}},\"type\":\"object\"}},\"type\":\"object\"}},\"served\":true,\"storage\":true,\"subresources\":{\"status\":{}}}]}}\n"
+        },
+        "creationTimestamp": "2025-07-03T09:17:29Z",
+        "generation": 1,
+        "name": "targetnodes.core.eda.nokia.com",
+        "resourceVersion": "1793",
+        "uid": "141491df-674b-498f-9a50-ede3df527986"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "core.eda.nokia.com",
+        "names": {
+            "kind": "TargetNode",
+            "listKind": "TargetNodeList",
+            "plural": "targetnodes",
+            "singular": "targetnode"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "additionalPrinterColumns": [
+                    {
+                        "jsonPath": ".status.tlsStatus.nodeSecurityProfile",
+                        "name": "NodeSecurityProfile",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".status.bootstrapStatus",
+                        "name": "Status",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".status.dhcpStatus",
+                        "name": "DHCP",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".spec.address",
+                        "name": "Address",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".spec.port",
+                        "name": "Port",
+                        "type": "string"
+                    }
+                ],
+                "name": "v1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "TargetNode is the Schema for the targetnodes API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "TargetNodeSpec defines the desired state of TargetNode",
+                                "properties": {
+                                    "address": {
+                                        "description": "Addressed used to connect to TopoNode",
+                                        "type": "string"
+                                    },
+                                    "dhcp4": {
+                                        "description": "DHCPv4 configuration",
+                                        "properties": {
+                                            "address": {
+                                                "description": "Assigned address in DHCP4 reply",
+                                                "type": "string"
+                                            },
+                                            "options": {
+                                                "description": "DHCP4 Options",
+                                                "items": {
+                                                    "properties": {
+                                                        "option": {
+                                                            "description": "DHCPv4 option to return to the TopoNode.",
+                                                            "enum": [
+                                                                "1-SubnetMask",
+                                                                "2-TimeOffset",
+                                                                "3-Router",
+                                                                "4-TimeServer",
+                                                                "5-NameServer",
+                                                                "6-DomainNameServer",
+                                                                "7-LogServer",
+                                                                "8-QuoteServer",
+                                                                "9-LPRServer",
+                                                                "10-ImpressServer",
+                                                                "11-ResourceLocationServer",
+                                                                "12-HostName",
+                                                                "13-BootFileSize",
+                                                                "14-MeritDumpFile",
+                                                                "15-DomainName",
+                                                                "16-SwapServer",
+                                                                "17-RootPath",
+                                                                "18-ExtensionsPath",
+                                                                "19-IPForwarding",
+                                                                "20-NonLocalSourceRouting",
+                                                                "21-PolicyFilter",
+                                                                "22-MaximumDatagramAssemblySize",
+                                                                "23-DefaultIPTTL",
+                                                                "24-PathMTUAgingTimeout",
+                                                                "25-PathMTUPlateauTable",
+                                                                "26-InterfaceMTU",
+                                                                "27-AllSubnetsAreLocal",
+                                                                "28-BroadcastAddress",
+                                                                "29-PerformMaskDiscovery",
+                                                                "30-MaskSupplier",
+                                                                "31-PerformRouterDiscovery",
+                                                                "32-RouterSolicitationAddress",
+                                                                "33-StaticRoutingTable",
+                                                                "34-TrailerEncapsulation",
+                                                                "35-ArpCacheTimeout",
+                                                                "36-EthernetEncapsulation",
+                                                                "37-DefaulTCPTTL",
+                                                                "38-TCPKeepaliveInterval",
+                                                                "39-TCPKeepaliveGarbage",
+                                                                "40-NetworkInformationServiceDomain",
+                                                                "41-NetworkInformationServers",
+                                                                "42-NTPServers",
+                                                                "43-VendorSpecificInformation",
+                                                                "44-NetBIOSOverTCPIPNameServer",
+                                                                "45-NetBIOSOverTCPIPDatagramDistributionServer",
+                                                                "46-NetBIOSOverTCPIPNodeType",
+                                                                "47-NetBIOSOverTCPIPScope",
+                                                                "48-XWindowSystemFontServer",
+                                                                "49-XWindowSystemDisplayManager",
+                                                                "50-RequestedIPAddress",
+                                                                "51-IPAddressLeaseTime",
+                                                                "52-OptionOverload",
+                                                                "53-DHCPMessageType",
+                                                                "54-ServerIdentifier",
+                                                                "55-ParameterRequestList",
+                                                                "56-Message",
+                                                                "57-MaximumDHCPMessageSize",
+                                                                "58-RenewTimeValue",
+                                                                "59-RebindingTimeValue",
+                                                                "60-ClassIdentifier",
+                                                                "61-ClientIdentifier",
+                                                                "62-NetWareIPDomainName",
+                                                                "63-NetWareIPInformation",
+                                                                "64-NetworkInformationServicePlusDomain",
+                                                                "65-NetworkInformationServicePlusServers",
+                                                                "66-TFTPServerName",
+                                                                "67-BootfileName",
+                                                                "68-MobileIPHomeAgent",
+                                                                "69-SimpleMailTransportProtocolServer",
+                                                                "70-PostOfficeProtocolServer",
+                                                                "71-NetworkNewsTransportProtocolServer",
+                                                                "72-DefaultWorldWideWebServer",
+                                                                "73-DefaultFingerServer",
+                                                                "74-DefaultInternetRelayChatServer",
+                                                                "75-StreetTalkServer",
+                                                                "76-StreetTalkDirectoryAssistanceServer",
+                                                                "77-UserClassInformation",
+                                                                "78-SLPDirectoryAgent",
+                                                                "79-SLPServiceScope",
+                                                                "80-RapidCommit",
+                                                                "81-FQDN",
+                                                                "82-RelayAgentInformation",
+                                                                "83-InternetStorageNameService",
+                                                                "85-NDSServers",
+                                                                "86-NDSTreeName",
+                                                                "87-NDSContext",
+                                                                "88-BCMCSControllerDomainNameList",
+                                                                "89-BCMCSControllerIPv4AddressList",
+                                                                "90-Authentication",
+                                                                "91-ClientLastTransactionTime",
+                                                                "92-AssociatedIP",
+                                                                "93-ClientSystemArchitectureType",
+                                                                "94-ClientNetworkInterfaceIdentifier",
+                                                                "95-LDAP",
+                                                                "97-ClientMachineIdentifier",
+                                                                "98-OpenGroupUserAuthentication",
+                                                                "99-GeoConfCivic",
+                                                                "100-IEEE10031TZString",
+                                                                "101-ReferenceToTZDatabase",
+                                                                "112-NetInfoParentServerAddress",
+                                                                "113-NetInfoParentServerTag",
+                                                                "114-URL",
+                                                                "116-AutoConfigure",
+                                                                "117-NameServiceSearch",
+                                                                "118-SubnetSelection",
+                                                                "119-DNSDomainSearchList",
+                                                                "120-SIPServers",
+                                                                "121-ClasslessStaticRoute",
+                                                                "122-CCC",
+                                                                "123-GeoConf",
+                                                                "124-VendorIdentifyingVendorClass",
+                                                                "125-VendorIdentifyingVendorSpecific",
+                                                                "128-TFTPServerIPAddress",
+                                                                "129-CallServerIPAddress",
+                                                                "130-DiscriminationString",
+                                                                "131-RemoteStatisticsServerIPAddress",
+                                                                "132-8021PVLANID",
+                                                                "133-8021QL2Priority",
+                                                                "134-DiffservCodePoint",
+                                                                "135-HTTPProxyForPhoneSpecificApplications",
+                                                                "136-PANAAuthenticationAgent",
+                                                                "137-LoSTServer",
+                                                                "138-CAPWAPAccessControllerAddresses",
+                                                                "139-OPTIONIPv4AddressMoS",
+                                                                "140-OPTIONIPv4FQDNMoS",
+                                                                "141-SIPUAConfigurationServiceDomains",
+                                                                "142-OPTIONIPv4AddressANDSF",
+                                                                "143-OPTIONIPv6AddressANDSF",
+                                                                "150-TFTPServerAddress",
+                                                                "151-StatusCode",
+                                                                "152-BaseTime",
+                                                                "153-StartTimeOfState",
+                                                                "154-QueryStartTime",
+                                                                "155-QueryEndTime",
+                                                                "156-DHCPState",
+                                                                "157-DataSource",
+                                                                "175-Etherboot",
+                                                                "176-IPTelephone",
+                                                                "177-EtherbootPacketCableAndCableHome",
+                                                                "208-PXELinuxMagicString",
+                                                                "209-PXELinuxConfigFile",
+                                                                "210-PXELinuxPathPrefix",
+                                                                "211-PXELinuxRebootTime",
+                                                                "212-OPTION6RD",
+                                                                "213-OPTIONv4AccessDomain",
+                                                                "220-SubnetAllocation",
+                                                                "221-VirtualSubnetAllocation",
+                                                                "224-Reserved",
+                                                                "225-Reserved",
+                                                                "226-Reserved",
+                                                                "227-Reserved",
+                                                                "228-Reserved",
+                                                                "229-Reserved",
+                                                                "230-Reserved",
+                                                                "231-Reserved",
+                                                                "232-Reserved",
+                                                                "233-Reserved",
+                                                                "234-Reserved",
+                                                                "235-Reserved",
+                                                                "236-Reserved",
+                                                                "237-Reserved",
+                                                                "238-Reserved",
+                                                                "239-Reserved",
+                                                                "240-Reserved",
+                                                                "241-Reserved",
+                                                                "242-Reserved",
+                                                                "243-Reserved",
+                                                                "244-Reserved",
+                                                                "245-Reserved",
+                                                                "246-Reserved",
+                                                                "247-Reserved",
+                                                                "248-Reserved",
+                                                                "249-Reserved",
+                                                                "250-Reserved",
+                                                                "251-Reserved",
+                                                                "252-Reserved",
+                                                                "253-Reserved",
+                                                                "254-Reserved",
+                                                                "255-End"
+                                                            ],
+                                                            "type": "string"
+                                                        },
+                                                        "value": {
+                                                            "description": "Value to return to the TopoNode for the specified option.",
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "minItems": 1,
+                                                            "type": "array"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "option",
+                                                        "value"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            }
+                                        },
+                                        "required": [
+                                            "address",
+                                            "options"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "dhcp6": {
+                                        "description": "DHCPv6 configuration",
+                                        "properties": {
+                                            "address": {
+                                                "description": "Assigned address in DHCP6 reply",
+                                                "type": "string"
+                                            },
+                                            "options": {
+                                                "description": "DHCP6 Options",
+                                                "items": {
+                                                    "properties": {
+                                                        "option": {
+                                                            "description": "DHCPv6 option to return to the TopoNode.",
+                                                            "enum": [
+                                                                "59-BootfileUrl"
+                                                            ],
+                                                            "type": "string"
+                                                        },
+                                                        "value": {
+                                                            "description": "Value to return to the TopoNode for the specified option.",
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "minItems": 1,
+                                                            "type": "array"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "option",
+                                                        "value"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            }
+                                        },
+                                        "required": [
+                                            "address",
+                                            "options"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "macAddress": {
+                                        "description": " MAC address of the TopoNode",
+                                        "type": "string"
+                                    },
+                                    "operatingSystem": {
+                                        "description": "The OS matching this NodeProfile",
+                                        "enum": [
+                                            "srl",
+                                            "sros",
+                                            "eos",
+                                            "sonic",
+                                            "ios-xr",
+                                            "nxos"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "platform": {
+                                        "description": "Platform type of this Node, e.g. 7220 IXR-D3L",
+                                        "type": "string"
+                                    },
+                                    "platformPath": {
+                                        "description": "JSPath to use for retrieving the chassis string from the node",
+                                        "type": "string"
+                                    },
+                                    "port": {
+                                        "description": "Port used to connect to the TopoNode",
+                                        "type": "integer"
+                                    },
+                                    "serialNumber": {
+                                        "description": "Serial number of the TopoNode",
+                                        "type": "string"
+                                    },
+                                    "serialNumberPath": {
+                                        "description": "JSPath to use for retrieving the serial number string from the node",
+                                        "type": "string"
+                                    },
+                                    "versionMatch": {
+                                        "description": "Match the node-retrieved version string to TargetNode version\nThe value should be a regular expression matching the version string that would appear on the node",
+                                        "type": "string"
+                                    },
+                                    "versionPath": {
+                                        "description": "JSPath to use for retrieving the version string from the node",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "address",
+                                    "operatingSystem"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "TargetNodeStatus defines the observed state of TargetNode",
+                                "properties": {
+                                    "bootstrapStatus": {
+                                        "description": "Bootstrap status of the Target",
+                                        "enum": [
+                                            "Init",
+                                            "Ready",
+                                            "Failed"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "bootstrapStatusReason": {
+                                        "description": "Human-readable message indicating details about the bootstrapStatus's Failed state",
+                                        "type": "string"
+                                    },
+                                    "dhcpStatus": {
+                                        "description": "DHCP status of the Target",
+                                        "enum": [
+                                            "Offered",
+                                            "Acknowledged"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "tlsStatus": {
+                                        "description": "TLS status of the Target",
+                                        "properties": {
+                                            "nodeSecurityProfile": {
+                                                "description": "NodeSecurity Profile Used",
+                                                "type": "string"
+                                            },
+                                            "tls": {
+                                                "description": "NodeSecurity Profile Used",
+                                                "properties": {
+                                                    "csrParams": {
+                                                        "description": "A set of certificate signing request parameters used when asking for a CSR from the toponode.",
+                                                        "properties": {
+                                                            "certificateValidity": {
+                                                                "default": "2160h",
+                                                                "description": "CertificateValidity defines the duration for which the certificate is considered valid after issuance.",
+                                                                "type": "string"
+                                                            },
+                                                            "city": {
+                                                                "description": "City denotes the city where the organization is based.",
+                                                                "type": "string"
+                                                            },
+                                                            "commonName": {
+                                                                "description": "CommonName specifies the common name field of the CSR, typically representing the domain name.",
+                                                                "type": "string"
+                                                            },
+                                                            "country": {
+                                                                "description": "Country indicates the country in which the organization is legally registered.",
+                                                                "type": "string"
+                                                            },
+                                                            "csrSuite": {
+                                                                "default": "CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                "description": "The CSRSuite value used when asking for a CSR from the toponode",
+                                                                "enum": [
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_384",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_2048_SIGNATURE_ALGORITHM_SHA_2_512",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_3072_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_3072_SIGNATURE_ALGORITHM_SHA_2_384",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_3072_SIGNATURE_ALGORITHM_SHA_2_512",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_4096_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_4096_SIGNATURE_ALGORITHM_SHA_2_384",
+                                                                    "CSRSUITE_X509_KEY_TYPE_RSA_4096_SIGNATURE_ALGORITHM_SHA_2_512",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_PRIME256V1_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_PRIME256V1_SIGNATURE_ALGORITHM_SHA_2_384",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_PRIME256V1_SIGNATURE_ALGORITHM_SHA_2_512",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_SECP384R1_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_SECP384R1_SIGNATURE_ALGORITHM_SHA_2_384",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_SECP384R1_SIGNATURE_ALGORITHM_SHA_2_512",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_SECP521R1_SIGNATURE_ALGORITHM_SHA_2_256",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_SECP521R1_SIGNATURE_ALGORITHM_SHA_2_384",
+                                                                    "CSRSUITE_X509_KEY_TYPE_ECDSA_SECP521R1_SIGNATURE_ALGORITHM_SHA_2_512",
+                                                                    "CSRSUITE_X509_KEY_TYPE_EDDSA_ED25519"
+                                                                ],
+                                                                "type": "string"
+                                                            },
+                                                            "org": {
+                                                                "description": "Org is the name of the organization requesting the CSR.",
+                                                                "type": "string"
+                                                            },
+                                                            "orgUnit": {
+                                                                "description": "OrgUnit specifies the organizational unit (like department or division) within the organization.",
+                                                                "type": "string"
+                                                            },
+                                                            "san": {
+                                                                "description": "Subject Alternative Names contains additional hostnames or IP addresses covered by the CSR.",
+                                                                "properties": {
+                                                                    "dns": {
+                                                                        "description": "Dns contains a list of DNS names that can be used to access the server.",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "type": "array"
+                                                                    },
+                                                                    "emails": {
+                                                                        "description": "Emails consists of email addresses that should be associated with the certificate.",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "type": "array"
+                                                                    },
+                                                                    "ips": {
+                                                                        "description": "Ips includes IP addresses that the certificate should validate.",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "type": "array"
+                                                                    },
+                                                                    "uris": {
+                                                                        "description": "Uris lists specific URIs that the certificate will authenticate.",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "type": "array"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "state": {
+                                                                "description": "State represents the state or province where the organization is located.",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "issuerRef": {
+                                                        "description": "Reference to a CertManager issuer that must be used to sign nodes certificates.",
+                                                        "type": "string"
+                                                    },
+                                                    "skipVerify": {
+                                                        "description": "Skip certificate verification.",
+                                                        "type": "boolean"
+                                                    },
+                                                    "trustBundle": {
+                                                        "description": "Reference to configMap that contains a CA certificate that is used to verify the node certificate\nwhen certificates are not managed by EDA.",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "TargetNode",
+            "listKind": "TargetNodeList",
+            "plural": "targetnodes",
+            "singular": "targetnode"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:17:29Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:17:29Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1"
+        ]
+    }
+}

@@ -1,0 +1,56 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --default-font-family: 'Nunito', sans-serif;
+  --font-nunito: 'Nunito', sans-serif;
+  --font-fira: 'Fira Code', monospace;
+}
+
+@layer components {
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+
+  /* Scroll Light */
+  .scroll-light::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+
+  .scroll-light::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .scroll-light::-webkit-scrollbar-thumb {
+    background: #bec4c4;
+  }
+
+  .scroll-light::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  /* Scroll Dark */
+  .scroll-dark::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+
+  .scroll-dark::-webkit-scrollbar-track {
+    background: rgb(55 65 81);
+  }
+
+  .scroll-dark::-webkit-scrollbar-thumb {
+    background: rgb(109, 109, 109);
+  }
+
+  .scroll-dark::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+.font-fira {
+  font-size: 12.5px;
+}
+

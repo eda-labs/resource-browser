@@ -1,0 +1,231 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:37Z",
+        "generation": 1,
+        "name": "deployimages.os.eda.nokia.com",
+        "resourceVersion": "5053",
+        "uid": "7250f9c0-0365-4305-8bd0-6600630f1a69"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "os.eda.nokia.com",
+        "names": {
+            "kind": "DeployImage",
+            "listKind": "DeployImageList",
+            "plural": "deployimages",
+            "singular": "deployimage"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "additionalPrinterColumns": [
+                    {
+                        "jsonPath": ".status.id",
+                        "name": "ID",
+                        "type": "integer"
+                    },
+                    {
+                        "jsonPath": ".status.result",
+                        "name": "Result",
+                        "type": "string"
+                    },
+                    {
+                        "jsonPath": ".metadata.creationTimestamp",
+                        "name": "Age",
+                        "type": "date"
+                    }
+                ],
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "DeployImage is the Schema for the deployimages API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "DeployImageSpec defines the desired state of DeployImage",
+                                "properties": {
+                                    "canaries": {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "checks": {
+                                        "properties": {
+                                            "checks": {
+                                                "description": "Checks to run before (pre) and after (post) any image changes",
+                                                "items": {
+                                                    "enum": [
+                                                        "Interface",
+                                                        "DefaultBGP",
+                                                        "PingISL",
+                                                        "PingSystem"
+                                                    ],
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "force": {
+                                                "description": "Do not prompt for user input, even if checks fail",
+                                                "type": "boolean"
+                                            },
+                                            "skip": {
+                                                "description": "Do not run any checks",
+                                                "type": "boolean"
+                                            }
+                                        },
+                                        "required": [
+                                            "checks",
+                                            "force",
+                                            "skip"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "drains": {
+                                        "properties": {
+                                            "interfaceDisableSelectors": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "minimumWaitTime": {
+                                                "type": "integer"
+                                            },
+                                            "skip": {
+                                                "description": "Do not run any drains",
+                                                "type": "boolean"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "nodeProfile": {
+                                        "type": "string"
+                                    },
+                                    "nodeSelector": {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "nodes": {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "prompt": {
+                                        "items": {
+                                            "enum": [
+                                                "AfterPreChecks",
+                                                "AfterPostChecks"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "tranches": {
+                                        "items": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "nodeSelector": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "type": {
+                                        "enum": [
+                                            "node",
+                                            "nodeselector",
+                                            "tranche"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "version": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "type"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "DeployImageStatus defines the observed state of DeployImage",
+                                "properties": {
+                                    "id": {
+                                        "description": "Id",
+                                        "type": "integer"
+                                    },
+                                    "result": {
+                                        "description": "Aggregate result of the Flow",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "DeployImage",
+            "listKind": "DeployImageList",
+            "plural": "deployimages",
+            "singular": "deployimage"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:37Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:37Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}

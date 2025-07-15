@@ -1,0 +1,137 @@
+{
+    "apiVersion": "apiextensions.k8s.io/v1",
+    "kind": "CustomResourceDefinition",
+    "metadata": {
+        "annotations": {
+            "controller-gen.kubebuilder.io/version": "v0.16.4"
+        },
+        "creationTimestamp": "2025-07-03T09:36:45Z",
+        "generation": 1,
+        "name": "systeminterfacestates.routing.eda.nokia.com",
+        "resourceVersion": "5148",
+        "uid": "92deb3a4-e53e-479a-95bd-03c10fa3e397"
+    },
+    "spec": {
+        "conversion": {
+            "strategy": "None"
+        },
+        "group": "routing.eda.nokia.com",
+        "names": {
+            "kind": "SystemInterfaceState",
+            "listKind": "SystemInterfaceStateList",
+            "plural": "systeminterfacestates",
+            "singular": "systeminterfacestate"
+        },
+        "scope": "Namespaced",
+        "versions": [
+            {
+                "name": "v1alpha1",
+                "schema": {
+                    "openAPIV3Schema": {
+                        "description": "SystemInterfaceState is the Schema for the systeminterfacestates API",
+                        "properties": {
+                            "apiVersion": {
+                                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                                "type": "string"
+                            },
+                            "kind": {
+                                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "type": "object"
+                            },
+                            "spec": {
+                                "description": "SystemInterfaceStateSpec defines the desired state of SystemInterfaceState",
+                                "properties": {
+                                    "defaultRouter": {
+                                        "description": "Reference to a DefaultRouter",
+                                        "type": "string"
+                                    },
+                                    "interface": {
+                                        "description": "Reference to an interface",
+                                        "type": "string"
+                                    },
+                                    "ipv4Address": {
+                                        "description": "IPv4 address of the system interface",
+                                        "type": "string"
+                                    },
+                                    "ipv6Address": {
+                                        "description": "IPv6 addresses of the system interface",
+                                        "type": "string"
+                                    },
+                                    "networkInstanceName": {
+                                        "description": "The name of the network-instance or base routing instance in which the SystemInterface is configured",
+                                        "type": "string"
+                                    },
+                                    "node": {
+                                        "description": "Reference to Node object",
+                                        "type": "string"
+                                    },
+                                    "nodeInterface": {
+                                        "description": "Node specific interface name, for example \"ethernet-1/1\", \"1/1/c1/1\"",
+                                        "type": "string"
+                                    },
+                                    "operatingSystem": {
+                                        "description": "Operating System of the Node",
+                                        "type": "string"
+                                    },
+                                    "subInterfaceIndex": {
+                                        "description": "Index of the subinterface",
+                                        "type": "integer"
+                                    }
+                                },
+                                "required": [
+                                    "defaultRouter",
+                                    "interface",
+                                    "ipv4Address",
+                                    "networkInstanceName",
+                                    "node",
+                                    "nodeInterface"
+                                ],
+                                "type": "object"
+                            },
+                            "status": {
+                                "description": "SystemInterfaceStateStatus defines the observed state of SystemInterfaceState",
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "served": true,
+                "storage": true,
+                "subresources": {
+                    "status": {}
+                }
+            }
+        ]
+    },
+    "status": {
+        "acceptedNames": {
+            "kind": "SystemInterfaceState",
+            "listKind": "SystemInterfaceStateList",
+            "plural": "systeminterfacestates",
+            "singular": "systeminterfacestate"
+        },
+        "conditions": [
+            {
+                "lastTransitionTime": "2025-07-03T09:36:45Z",
+                "message": "no conflicts found",
+                "reason": "NoConflicts",
+                "status": "True",
+                "type": "NamesAccepted"
+            },
+            {
+                "lastTransitionTime": "2025-07-03T09:36:45Z",
+                "message": "the initial names have been accepted",
+                "reason": "InitialNamesAccepted",
+                "status": "True",
+                "type": "Established"
+            }
+        ],
+        "storedVersions": [
+            "v1alpha1"
+        ]
+    }
+}
