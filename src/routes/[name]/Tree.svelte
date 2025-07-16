@@ -41,13 +41,13 @@
   }
 </script>
 
-<li class="pt-1 overflow-x-auto">
+<li class="pt-1 overflow-x-auto scroll-light dark:scroll-dark">
   <div class="px-1 pt-2 flex items-center space-x-2 group">
     <svg class="w-3 h-3 group-hover:text-gray-400 text-gray-800 dark:text-gray-200 transition-transform duration-200 svg-arrow {expanded ? 'rotate-90' : ''}"
         fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
     </svg>
-    <button class="text-gray-800 dark:text-gray-200 flex items-center space-x-2 cursor-pointer overflow-x-auto" 
+    <button class="text-gray-800 dark:text-gray-200 flex items-center space-x-2 cursor-pointer overflow-x-auto scroll-light dark:scroll-dark" 
       on:click={handleLocalExpand}>
       <span class="group-hover:text-blue-500">{key}</span>
       {#if "type" in folder}

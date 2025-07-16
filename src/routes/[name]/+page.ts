@@ -24,6 +24,6 @@ export async function load({ fetch, params }) {
 
     return { group, kind, versions }
   } catch(e) {
-    throw error(404, "Error fetching resource");
+    throw error(404, "Error fetching resource" + e)
   }
 }
