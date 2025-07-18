@@ -23,7 +23,7 @@
         <div class="text-gray-300 mt-2 max-w-[500px] text-sm">
           <p>View Custom Resource Definitions (CRD)</p>
         </div>
-        <!--<a class="px-2 py-2 rounded-lg text-nowrap text-center text-white bg-gray-600 hover:bg-gray-700" href="/offline">Custom CRD</a>-->
+        <!--<a class="px-2 py-2 rounded-lg text-nowrap text-center text-white bg-gray-600 hover:bg-gray-700" href="/uploads">Uploads</a>-->
       </div>
       <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-xl pb-1.5">
         <div class="p-3 border-b border-gray-300 dark:border-gray-600">

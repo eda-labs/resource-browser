@@ -4,7 +4,8 @@
   
 	import Tree from "./Tree.svelte"
 
-  export let hash: string
+  export let hash: string = ""
+  export let source: string
   export let type: string
   export let data: Schema
 
@@ -19,7 +20,7 @@
     <div class="font-fira">
       {#each Object.entries(scope.properties) as [key, folder]}
         {@const requiredList = ('required' in scope ? scope.required : [])}
-        <Tree {hash} {type} {key} {folder} {requiredList} parent={type} expanded={hashExistDeep(hash, `${type}.${key}`)} />
+        <Tree {hash} {source} {key} {folder} {requiredList} parent={type} expanded={hashExistDeep(hash, `${type}.${key}`)} />
       {/each}
     </div>
   {/if}

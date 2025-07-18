@@ -41,9 +41,9 @@
       {$ulExpanded.length > 0 ? 'Collapse' : 'Expand'} All
     </button>
   </div>
-  <Render {hash} type={"spec"} data={spec} />
+  <Render {hash} source={"eda"} type={"spec"} data={spec} />
   <hr class="my-2 text-gray-300 dark:text-gray-600"/>
-  <Render {hash} type={"status"} data={status} />
+  <Render {hash} source={"eda"} type={"status"} data={status} />
 </div>
 
 <Footer home={false}/>

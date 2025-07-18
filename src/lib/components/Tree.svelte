@@ -4,7 +4,7 @@
 	import type { Schema } from '$lib/structure'
 
   export let hash: string
-  export let type: string
+  export let source: string
   export let key: string
   export let folder: Schema
   export let requiredList: string[] = []
@@ -60,7 +60,9 @@
         <span class="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">{folder.type}</span>
       {/if}
     </button>
-    <a href={`#${currentId}`} class="text-gray-400 dark:text-gray-500 cursor-pointer hidden group-hover:block hover:text-gray-700 dark:hover:text-gray-300">#</a>
+    {#if source !== "uploaded"}
+      <a href={`#${currentId}`} class="text-gray-400 dark:text-gray-500 cursor-pointer hidden group-hover:block group-active:block hover:text-gray-700 dark:hover:text-gray-300">#</a>
+    {/if}
   </div>
   {#if expanded}
     <ul class="ml-[9px] px-3 pt-2 dark:bg-gray-800 border-l border-gray-300 dark:border-gray-600">
@@ -69,7 +71,7 @@
         {#each Object.entries(propExist()) as [subkey, subfolder]}
           {@const scope = getScope(folder)}
           {@const requiredList = ('required' in scope ? scope.required : [])}
-          <svelte:self {hash} {type} key={subkey} folder={subfolder} {requiredList} parent={currentId} expanded={hashExistDeep(hash, `${currentId}.${subkey}`)} />
+          <svelte:self {hash} {source} key={subkey} folder={subfolder} {requiredList} parent={currentId} expanded={hashExistDeep(hash, `${currentId}.${subkey}`)} />
         {/each}
       {/if}
     </ul>

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-
   import Footer from '$lib/components/Footer.svelte'
   import Theme from '$lib/components/Theme.svelte'
   import Render from '$lib/components/Render.svelte'
@@ -14,13 +12,11 @@
   expandAllScope.set("local")
   ulExpanded.set([])
 
-  const hash = $page.url.hash?.substring(1)
-  
-  let group = ""
   let kind = ""
+  let group = ""
   let versions: VersionSchema = {}
-  let spec: Schema = {}
-  let status: Schema = {}
+  let spec: Schema
+  let status: Schema
 
   let validVersions: string[] = []
   let versionOnFocus: string = ""
@@ -33,10 +29,8 @@
           const text = e.target?.result as string;
           const crd = JSON.parse(text);
 
-          const group = crd.spec.group
-          const kind = crd.spec.names.kind
-          const name = `${kind.toLowerCase()}.${group}`
-          const versions: VersionSchema = {}
+          group = crd.spec.group
+          kind = crd.spec.names.kind
 
           crd.spec.versions.forEach((x: OpenAPISchema) => {
             versions[x.name] = {
@@ -50,12 +44,10 @@
           spec = versions[versionOnFocus].spec
           status = versions[versionOnFocus].status
 
-          //localStorage.setItem('crdUploaded', JSON.stringify({name, group, kind, versions}))
           window.alert(`[Success] File uploaded.`)
         } catch (err) {
           window.alert(`[Error] Failed to upload file: ${err}`)
         }
-        //window.location.reload()
       }
       reader.readAsText(files[0])
     }
@@ -102,9 +94,41 @@
       </div>
       <div class="pl-2 border-l border-gray-400 dark:border-gray-700">
         <p class="text-xs">Supported file format .json (max 10 MB)</p>
+        <p class="text-xs text-yellow-600 dark:text-yellow-500">Note: Page reload resets the uploaded data</p>
       </div>
     </label>
   </div>
+  {#if kind !== ""}
+    <div class="flex flex-col">
+      <p class="text-gray-800 dark:text-gray-200">{kind}</p>
+      <div class="text-sm text-gray-500 dark:text-gray-400 font-fira flex items-center">
+        <span>{group}</span>
+        <span>/</span>
+        {#if validVersions.length > 1}
+          <select class="p-[1px] rounded-lg text-xs focus:outline-none focus:ring-0 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700" 
+              bind:value={versionOnFocus} on:change={handleVersionChange}>
+            {#each validVersions as version}
+              <option value="{version}">{version}</option>
+            {/each}
+          </select>
+        {:else}
+          <span>{validVersions[0]}</span>
+        {/if}
+      </div>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button class="px-2 py-1 text-xs rounded-lg cursor-pointer border 
+          {$ulExpanded.length > 0 
+            ? 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white border-gray-300 dark:border-gray-600' 
+            : 'text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 border-blue-600 dark:border-blue-700'}"
+        on:click={handleGlobalExpand}>
+        {$ulExpanded.length > 0 ? 'Collapse' : 'Expand'} All
+      </button>
+    </div>
+    <Render source={"uploaded"} type={"spec"} data={spec} />
+    <hr class="my-2 text-gray-300 dark:text-gray-600"/>
+    <Render source={"uploaded"}} type={"status"} data={status} />
+  {/if}
 </div>
 
 <Footer home={false}/>
