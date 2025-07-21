@@ -1,11 +1,12 @@
 import { error } from '@sveltejs/kit'
+import type { PageLoad } from './$types'
 
 import type { CrdVersionsMap, OpenAPISchema, VersionSchema } from '$lib/structure'
 import crdResources from '$lib/resources.json'
 
 const resources = crdResources as CrdVersionsMap
 
-export async function load({ fetch, params }) {
+export const load: PageLoad = async ({ fetch, params }) => {
   const [name, versionOnFocus] = params.name.split("_")
 
   if(name.startsWith("uploaded-")) {
@@ -40,3 +41,7 @@ export async function load({ fetch, params }) {
     }
   }
 }
+
+// Ensure this runs on both server and client
+export const ssr = true;
+export const prerender = false;
