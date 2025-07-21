@@ -5,7 +5,7 @@ import crdResources from '$lib/resources.json'
 
 const resources = crdResources as CrdVersionsMap
 
-export async function load({ params, platform, url }: any) {
+export async function load({ params }: any) {
   const [name, versionOnFocus] = params.name.split("_")
 
   if(name.startsWith("uploaded-")) {
@@ -20,26 +20,9 @@ export async function load({ params, platform, url }: any) {
     }
 
     try {
-      let crd;
-      
-      // For Cloudflare Workers, use the ASSETS binding
-      if (platform?.env?.ASSETS) {
-        const assetUrl = `${url.origin}/resources/${name}/resource.json`;
-        const response = await platform.env.ASSETS.fetch(assetUrl);
-        if (response.ok) {
-          crd = await response.json();
-        } else {
-          throw error(404, `Asset not found: ${assetUrl} (status: ${response.status})`);
-        }
-      } else {
-        // For development/preview, try direct import
-        try {
-          const resourceModule = await import(`../../../static/resources/${name}/resource.json`);
-          crd = resourceModule.default;
-        } catch (importError) {
-          throw error(404, `Resource file not found for ${name}`);
-        }
-      }
+      // Always use direct import - this works in both dev and production
+      const resourceModule = await import(`../../../static/resources/${name}/resource.json`);
+      const crd = resourceModule.default;
 
       const group = crd.spec.group
       const kind = crd.spec.names.kind
