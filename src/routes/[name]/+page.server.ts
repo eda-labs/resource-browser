@@ -1,12 +1,11 @@
 import { error } from '@sveltejs/kit'
-import type { PageLoad } from './$types'
 
 import type { CrdVersionsMap, OpenAPISchema, VersionSchema } from '$lib/structure'
 import crdResources from '$lib/resources.json'
 
 const resources = crdResources as CrdVersionsMap
 
-export const load: PageLoad = async ({ fetch, params }) => {
+export async function load({ params, url, fetch }: any) {
   const [name, versionOnFocus] = params.name.split("_")
 
   if(name.startsWith("uploaded-")) {
@@ -21,7 +20,14 @@ export const load: PageLoad = async ({ fetch, params }) => {
     }
 
     try {
-      const resp = await fetch(`/resources/${name}/resource.json`)
+      // Use absolute URL for server-side fetch
+      const resourceUrl = `/resources/${name}/resource.json`
+      const resp = await fetch(resourceUrl)
+      
+      if (!resp.ok) {
+        throw error(404, `Resource file not found: ${resourceUrl}`)
+      }
+      
       const crd = await resp.json()
 
       const group = crd.spec.group
@@ -37,11 +43,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
       return { name, group, kind, versions, versionOnFocus, uploaded: false }
     } catch(e) {
-      throw error(404, "Error fetching resource" + e)
+      throw error(404, "Error fetching resource: " + String(e))
     }
   }
 }
-
-// Ensure this runs on both server and client
-export const ssr = true;
-export const prerender = false;
