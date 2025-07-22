@@ -1,0 +1,122 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    config.k8s.io/owning-inventory: f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119
+    controller-gen.kubebuilder.io/version: v0.16.4
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119","controller-gen.kubebuilder.io/version":"v0.16.4"},"name":"workflowdefinitions.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"WorkflowDefinition","listKind":"WorkflowDefinitionList","plural":"workflowdefinitions","singular":"workflowdefinition"},"scope":"Namespaced","versions":[{"additionalPrinterColumns":[{"jsonPath":".spec.image","name":"Image","type":"string"},{"jsonPath":".metadata.creationTimestamp","name":"Age","type":"date"}],"name":"v1","schema":{"openAPIV3Schema":{"description":"WorkflowDefinition is the Schema for the workflowdefinitions API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"description":"WorkflowDefinitionSpec defines the desired state of FlowDefinition","properties":{"flowDefinitionResource":{"description":"the resource type to be used for this flow, can only be set if Schema is not set","properties":{"group":{"type":"string"},"kind":{"type":"string"},"version":{"type":"string"}},"required":["kind","version"],"type":"object"},"flowDefinitionSchema":{"description":"the schema for the flow, can only be set if Resource is not set","properties":{"jsonSchemaSpec":{"description":"A string containing the JSON schema the workflow accepts as input.","type":"string"},"jsonSchemaStatus":{"description":"A string containing the JSON schema the workflow will populate as output.","type":"string"}},"type":"object"},"image":{"description":"Container image containing the flow. For example \"ghcr.io/nokia-eda/apps/operatingsystem:v1.0.0\".","type":"string"},"imagePullSecrets":{"description":"Secrets to use to pull the image for this workflow.","items":{"type":"string"},"type":"array"}},"required":["image"],"type":"object"},"status":{"description":"WorkflowDefinitionStatus defines the observed state of FlowDefinition","type":"object"}},"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
+  creationTimestamp: "2025-07-03T09:17:32Z"
+  generation: 1
+  name: workflowdefinitions.core.eda.nokia.com
+  resourceVersion: "1829"
+  uid: b097d83d-c5be-4f98-b242-85badd09b0bd
+spec:
+  conversion:
+    strategy: None
+  group: core.eda.nokia.com
+  names:
+    kind: WorkflowDefinition
+    listKind: WorkflowDefinitionList
+    plural: workflowdefinitions
+    singular: workflowdefinition
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.image
+      name: Image
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: WorkflowDefinition is the Schema for the workflowdefinitions
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: WorkflowDefinitionSpec defines the desired state of FlowDefinition
+            properties:
+              flowDefinitionResource:
+                description: the resource type to be used for this flow, can only
+                  be set if Schema is not set
+                properties:
+                  group:
+                    type: string
+                  kind:
+                    type: string
+                  version:
+                    type: string
+                required:
+                - kind
+                - version
+                type: object
+              flowDefinitionSchema:
+                description: the schema for the flow, can only be set if Resource
+                  is not set
+                properties:
+                  jsonSchemaSpec:
+                    description: A string containing the JSON schema the workflow
+                      accepts as input.
+                    type: string
+                  jsonSchemaStatus:
+                    description: A string containing the JSON schema the workflow
+                      will populate as output.
+                    type: string
+                type: object
+              image:
+                description: Container image containing the flow. For example "ghcr.io/nokia-eda/apps/operatingsystem:v1.0.0".
+                type: string
+              imagePullSecrets:
+                description: Secrets to use to pull the image for this workflow.
+                items:
+                  type: string
+                type: array
+            required:
+            - image
+            type: object
+          status:
+            description: WorkflowDefinitionStatus defines the observed state of FlowDefinition
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: WorkflowDefinition
+    listKind: WorkflowDefinitionList
+    plural: workflowdefinitions
+    singular: workflowdefinition
+  conditions:
+  - lastTransitionTime: "2025-07-03T09:17:32Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2025-07-03T09:17:32Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1

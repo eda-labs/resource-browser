@@ -4,9 +4,12 @@
 	import Footer from '$lib/components/Footer.svelte'
 
 	import type { CrdVersionsMap } from '$lib/structure'
-  import crdResources from '$lib/resources.json'
+
+  import yaml from 'js-yaml'
+  import res from '$lib/resources.yaml?raw'
+  const crdResources = yaml.load(res) as CrdVersionsMap
 	
-  const resourceStore = writable<CrdVersionsMap>(crdResources)
+  const resourceStore = writable(crdResources)
   const resourceSearch = writable("")
 
   const resourceNameStore = derived(resourceStore, $resourceStore => Object.keys($resourceStore))
@@ -31,12 +34,15 @@
             class="px-3 py-2 rounded-lg w-full text-[12.5px] text-gray-800 dark:text-gray-200 
               dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
         </div>
-				<div class="h-[280px] max-w-[450px] lg:w-[450px] overflow-y-auto scroll-light dark:scroll-dark">
+				<div class="h-[280px] max-w-[380px] lg:w-[380px] overflow-y-auto scroll-light dark:scroll-dark">
           <ul>
             {#each $resourceSearchFilter as resource, i}
-              <li class="items-center text-gray-900 hover:bg-gray-200 {i > 0 ? 'border-t border-gray-300 dark:border-gray-600' : ''} dark:hover:bg-gray-700">
-                <a href={`${resource}_${$resourceStore[resource][0]}`}>
-                  <p class="px-4 py-3 text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resource}</p>
+              {@const resDef = $resourceStore[resource]}
+              {@const targetVersion = resDef.versions[0]}
+              <li class="text-gray-900 hover:bg-gray-200 {i > 0 ? 'border-t border-gray-300 dark:border-gray-600' : ''} dark:hover:bg-gray-700">
+                <a class="flex flex-col px-4 py-3" href={`${resource}_${targetVersion}`}>
+                  <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.kind}</span>
+                  <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.group}</span>
                 </a>
               </li>
             {/each}

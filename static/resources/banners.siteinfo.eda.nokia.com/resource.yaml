@@ -1,0 +1,101 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.4
+  creationTimestamp: "2025-07-03T09:36:45Z"
+  generation: 1
+  name: banners.siteinfo.eda.nokia.com
+  resourceVersion: "5156"
+  uid: ef2bf26f-ba4f-4069-a27c-b358efc5a05e
+spec:
+  conversion:
+    strategy: None
+  group: siteinfo.eda.nokia.com
+  names:
+    kind: Banner
+    listKind: BannerList
+    plural: banners
+    singular: banner
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Banner is the Schema for the banners API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: BannerSpec allows the configuration of login and MOTD (Message
+              of the Day) banners on selected nodes. The banners can be applied to
+              specific nodes or selected using label selectors.
+            properties:
+              loginBanner:
+                description: This is the login banner displayed before a user has
+                  logged into the Node.
+                type: string
+              motd:
+                description: This is the MOTD banner displayed after a user has logged
+                  into the Node.
+                type: string
+              nodeSelector:
+                description: Labe selector to select nodes on which to configure the
+                  banners.
+                items:
+                  type: string
+                type: array
+              nodes:
+                description: List of nodes on which to configure the banners.
+                items:
+                  type: string
+                type: array
+            type: object
+          status:
+            description: BannerStatus defines the observed state of Banner
+            properties:
+              nodes:
+                description: List of nodes this banner has been applied to
+                items:
+                  type: string
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: Banner
+    listKind: BannerList
+    plural: banners
+    singular: banner
+  conditions:
+  - lastTransitionTime: "2025-07-03T09:36:45Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2025-07-03T09:36:45Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1alpha1

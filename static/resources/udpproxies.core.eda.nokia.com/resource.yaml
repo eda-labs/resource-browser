@@ -1,0 +1,121 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    config.k8s.io/owning-inventory: f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119
+    controller-gen.kubebuilder.io/version: v0.16.4
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119","controller-gen.kubebuilder.io/version":"v0.16.4"},"name":"udpproxies.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"UdpProxy","listKind":"UdpProxyList","plural":"udpproxies","singular":"udpproxy"},"scope":"Namespaced","versions":[{"additionalPrinterColumns":[{"jsonPath":".spec.proxyPort","name":"Proxy Port","type":"integer"},{"jsonPath":".spec.destHost","name":"Dest Host","type":"string"},{"jsonPath":".spec.destPort","name":"Dest Port","type":"integer"}],"name":"v1","schema":{"openAPIV3Schema":{"description":"UdpProxy is the Schema for the UDP proxy API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"description":"UdpProxySpec defines the desired state of UdpProxy","properties":{"bufferSize":{"description":"The proxy will use a buffer of this size for all datagrams it receives and this must be sized\nto accommodate the largest datagrams expected","maximum":65535,"minimum":64,"type":"integer"},"destHost":{"description":"The destination hostname or IP address to forward the datagrams to","type":"string"},"destPort":{"description":"The destination UDP port to forward the datagrams to","maximum":65535,"minimum":1,"type":"integer"},"idleTimeout":{"description":"The proxy will listen for responses from the destination and forward it back to the source\nof the datagram until there is no traffic at all for at least the idle timeout in seconds","minimum":1,"type":"integer"},"proxyPort":{"description":"The UDP port on which to listen for datagrams and then proxy to the destination","maximum":65535,"minimum":1,"type":"integer"}},"required":["bufferSize","destHost","destPort","idleTimeout","proxyPort"],"type":"object"},"status":{"description":"UdpProxyStatus defines the observed state of UdpProxy","type":"object"}},"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
+  creationTimestamp: "2025-07-03T09:17:31Z"
+  generation: 1
+  name: udpproxies.core.eda.nokia.com
+  resourceVersion: "1822"
+  uid: 7c9bbe12-306c-444e-bb11-41099ae414cd
+spec:
+  conversion:
+    strategy: None
+  group: core.eda.nokia.com
+  names:
+    kind: UdpProxy
+    listKind: UdpProxyList
+    plural: udpproxies
+    singular: udpproxy
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.proxyPort
+      name: Proxy Port
+      type: integer
+    - jsonPath: .spec.destHost
+      name: Dest Host
+      type: string
+    - jsonPath: .spec.destPort
+      name: Dest Port
+      type: integer
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: UdpProxy is the Schema for the UDP proxy API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: UdpProxySpec defines the desired state of UdpProxy
+            properties:
+              bufferSize:
+                description: |-
+                  The proxy will use a buffer of this size for all datagrams it receives and this must be sized
+                  to accommodate the largest datagrams expected
+                maximum: 65535
+                minimum: 64
+                type: integer
+              destHost:
+                description: The destination hostname or IP address to forward the
+                  datagrams to
+                type: string
+              destPort:
+                description: The destination UDP port to forward the datagrams to
+                maximum: 65535
+                minimum: 1
+                type: integer
+              idleTimeout:
+                description: |-
+                  The proxy will listen for responses from the destination and forward it back to the source
+                  of the datagram until there is no traffic at all for at least the idle timeout in seconds
+                minimum: 1
+                type: integer
+              proxyPort:
+                description: The UDP port on which to listen for datagrams and then
+                  proxy to the destination
+                maximum: 65535
+                minimum: 1
+                type: integer
+            required:
+            - bufferSize
+            - destHost
+            - destPort
+            - idleTimeout
+            - proxyPort
+            type: object
+          status:
+            description: UdpProxyStatus defines the observed state of UdpProxy
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: UdpProxy
+    listKind: UdpProxyList
+    plural: udpproxies
+    singular: udpproxy
+  conditions:
+  - lastTransitionTime: "2025-07-03T09:17:31Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2025-07-03T09:17:31Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1

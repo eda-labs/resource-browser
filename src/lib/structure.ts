@@ -1,5 +1,9 @@
-export type CrdVersionsMap = {
-  [key: string]: string[]
+export interface CrdVersionsMap {
+  [key: string]: {
+    group: string
+    kind: string
+    versions: string[]
+  }
 }
 
 type JSONType = "string" | "integer" | "number" | "boolean" | "object" | "array";

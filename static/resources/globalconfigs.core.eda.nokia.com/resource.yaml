@@ -1,0 +1,98 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    config.k8s.io/owning-inventory: f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119
+    controller-gen.kubebuilder.io/version: v0.16.4
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119","controller-gen.kubebuilder.io/version":"v0.16.4"},"name":"globalconfigs.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"GlobalConfig","listKind":"GlobalConfigList","plural":"globalconfigs","singular":"globalconfig"},"scope":"Namespaced","versions":[{"name":"v1","schema":{"openAPIV3Schema":{"description":"GlobalConfig is the Schema for the GlobalConfigs API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"properties":{"dhcp":{"description":"External reachability configuration for this cluster","properties":{"domainName":{"description":"The external domain name of the cluster","type":"string"},"httpPort":{"description":"HTTP port used to reach this cluster externally","format":"int32","type":"integer"},"httpsPort":{"description":"HTTPS port used to reach this cluster externally","format":"int32","type":"integer"},"ipv4Address":{"description":"The external IPv4 address of the cluster","type":"string"},"ipv6Address":{"description":"The external IPv6 address of the cluster","type":"string"}},"type":"object"}},"required":["dhcp"],"type":"object"}},"required":["spec"],"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
+  creationTimestamp: "2025-07-03T09:17:24Z"
+  generation: 1
+  name: globalconfigs.core.eda.nokia.com
+  resourceVersion: "1725"
+  uid: ccc84937-fbed-498e-9ef1-ced484f8d505
+spec:
+  conversion:
+    strategy: None
+  group: core.eda.nokia.com
+  names:
+    kind: GlobalConfig
+    listKind: GlobalConfigList
+    plural: globalconfigs
+    singular: globalconfig
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: GlobalConfig is the Schema for the GlobalConfigs API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              dhcp:
+                description: External reachability configuration for this cluster
+                properties:
+                  domainName:
+                    description: The external domain name of the cluster
+                    type: string
+                  httpPort:
+                    description: HTTP port used to reach this cluster externally
+                    format: int32
+                    type: integer
+                  httpsPort:
+                    description: HTTPS port used to reach this cluster externally
+                    format: int32
+                    type: integer
+                  ipv4Address:
+                    description: The external IPv4 address of the cluster
+                    type: string
+                  ipv6Address:
+                    description: The external IPv6 address of the cluster
+                    type: string
+                type: object
+            required:
+            - dhcp
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: GlobalConfig
+    listKind: GlobalConfigList
+    plural: globalconfigs
+    singular: globalconfig
+  conditions:
+  - lastTransitionTime: "2025-07-03T09:17:24Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2025-07-03T09:17:24Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1

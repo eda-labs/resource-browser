@@ -1,4 +1,6 @@
 <script lang="ts">
+  import yaml from 'js-yaml'
+
   import Footer from '$lib/components/Footer.svelte'
   import Theme from '$lib/components/Theme.svelte'
   import Render from '$lib/components/Render.svelte'
@@ -27,7 +29,7 @@
       reader.onload = (e) => {
         try {
           const text = e.target?.result as string;
-          const crd = JSON.parse(text);
+          const crd = yaml.load(text)
 
           group = crd.spec.group
           kind = crd.spec.names.kind
@@ -84,7 +86,7 @@
 </nav>
 <div class="pt-[100px] px-6 pb-6 space-y-4">
   <div>
-    <input id="dropzone" type="file" class="peer hidden" accept="application/json" bind:files on:change={handleUpload} />
+    <input id="dropzone" type="file" class="peer hidden" accept="application/yaml" bind:files on:change={handleUpload} />
     <label for="dropzone" class="flex items-center justify-center px-4 py-3 cursor-pointer rounded-lg text-gray-500 dark:text-gray-400 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border-2 border-dashed border-gray-200 dark:border-gray-700">
       <div class="flex items-center space-x-2 pr-2">
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -93,7 +95,7 @@
         <p class="text-sm">Click to upload a CRD</p>
       </div>
       <div class="pl-2 border-l border-gray-400 dark:border-gray-700">
-        <p class="text-xs">Supported file format .json (max 10 MB)</p>
+        <p class="text-xs">Supported file format .yaml (max 10 MB)</p>
         <p class="text-xs text-yellow-600 dark:text-yellow-500">Note: Page reload resets the uploaded data</p>
       </div>
     </label>

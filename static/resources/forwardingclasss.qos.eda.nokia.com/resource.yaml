@@ -1,0 +1,74 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.4
+  creationTimestamp: "2025-07-03T09:36:46Z"
+  generation: 1
+  name: forwardingclasss.qos.eda.nokia.com
+  resourceVersion: "5183"
+  uid: 128e6c64-76d3-48ad-bb42-41e4b8d255da
+spec:
+  conversion:
+    strategy: None
+  group: qos.eda.nokia.com
+  names:
+    kind: ForwardingClass
+    listKind: ForwardingClassList
+    plural: forwardingclasss
+    singular: forwardingclass
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: ForwardingClass is the Schema for the forwardingclasss API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: The ForwaringClass is used as a placeholder for to allow
+              multiple other resources to reference the same forwarding class.
+            type: object
+          status:
+            description: ForwardingClassStatus defines the observed state of ForwardingClass
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ForwardingClass
+    listKind: ForwardingClassList
+    plural: forwardingclasss
+    singular: forwardingclass
+  conditions:
+  - lastTransitionTime: "2025-07-03T09:36:46Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2025-07-03T09:36:47Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1alpha1
