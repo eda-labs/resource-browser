@@ -8,17 +8,11 @@
   --font-fira: 'Fira Code', monospace;
 }
 
-@layer components {
-  .has-header-img {
-    background: url(/images/background.jpg)center center;
-    background-size: cover;
-  }
-  
+@layer base {
   :global(html) {
     scroll-behavior: smooth;
   }
 
-  /* Scroll Light */
   .scroll-light::-webkit-scrollbar {
     width: 2px;
     height: 2px;
@@ -36,7 +30,6 @@
     background: #555;
   }
 
-  /* Scroll Dark */
   .scroll-dark::-webkit-scrollbar {
     width: 2px;
     height: 2px;
@@ -55,7 +48,14 @@
   }
 }
 
-.font-fira {
-  font-size: 12.5px;
+@layer utilities {
+  .has-header-img {
+    background: url(/images/background.jpg)center center;
+    background-size: cover;
+  }
+
+  .font-fira {
+    font-size: 12.5px;
+  }
 }
 

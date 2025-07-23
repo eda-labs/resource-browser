@@ -42,7 +42,7 @@
               <li class="text-gray-900 hover:bg-gray-200 {i > 0 ? 'border-t border-gray-300 dark:border-gray-600' : ''} dark:hover:bg-gray-700">
                 <a class="flex flex-col px-4 py-3" href={`${resource}_${targetVersion}`}>
                   <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.kind}</span>
-                  <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.group}</span>
+                  <span class="font-fira text-xs dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.group}</span>
                 </a>
               </li>
             {/each}
