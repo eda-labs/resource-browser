@@ -5,6 +5,10 @@ SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 # Output directory
 output_dir="${SCRIPT_DIR}/resources"
 
+# Source directory where the resources.yaml metadata file is located
+# it drives the menu on the home page.
+src_lib_dir="${SCRIPT_DIR}/../src/lib"
+
 # Cleanup existing directory
 if [ -d "$output_dir" ]; then
   echo "Cleaning up existing '$output_dir/' directory..."
@@ -14,8 +18,8 @@ fi
 mkdir -p "$output_dir"
 
 # YAML dictionary for CRD versions + group + kind
-yaml_dict_file="$output_dir/resources.yaml"
-> "$yaml_dict_file"
+crd_meta_file="$src_lib_dir/resources.yaml"
+> "$crd_meta_file"
 
 # Process each CRD
 kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers | while read -r crd_name; do
@@ -39,14 +43,14 @@ kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers | while read
   versions=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.versions[*].name}')
 
   # Write formatted YAML block
-  echo "$crd_name:" >> "$yaml_dict_file"
-  echo "  group: $group" >> "$yaml_dict_file"
-  echo "  kind: $kind" >> "$yaml_dict_file"
-  echo "  versions:" >> "$yaml_dict_file"
+  echo "$crd_name:" >> "$crd_meta_file"
+  echo "  group: $group" >> "$crd_meta_file"
+  echo "  kind: $kind" >> "$crd_meta_file"
+  echo "  versions:" >> "$crd_meta_file"
   for version in $versions; do
-    echo "    - $version" >> "$yaml_dict_file"
+    echo "    - $version" >> "$crd_meta_file"
   done
 done
 
-echo "CRDs saved in ./$output_dir/{crd}/resource.yaml"
-echo "CRD metadata written to ./$yaml_dict_file"
+echo "CRDs saved in $output_dir/{crd}/resource.yaml"
+echo "CRD metadata written to $crd_meta_file"
