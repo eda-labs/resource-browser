@@ -21,36 +21,74 @@ mkdir -p "$output_dir"
 crd_meta_file="$src_lib_dir/resources.yaml"
 > "$crd_meta_file"
 
-# Process each CRD
-kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers | while read -r crd_name; do
-  # skip non .eda.nokia.com CRDs
-  if [[ "$crd_name" != *".eda.nokia.com"* ]]; then
-    echo "Skipping $crd_name"
-    continue
-  fi
-
+# Function to process a single CRD
+process_crd() {
+  local crd_name="$1"
+  local output_dir="$2"
+  local temp_meta_file="$3"
+  
   echo "Processing $crd_name"
-
+  
   crd_dir="$output_dir/$crd_name"
   mkdir -p "$crd_dir"
-
+  
   # Save full CRD YAML
   kubectl get crd "$crd_name" -o yaml > "$crd_dir/resource.yaml"
-
+  
   # Extract group, kind, and versions
   group=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.group}')
   kind=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.names.kind}')
   versions=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.versions[*].name}')
+  
+  # Write formatted YAML block to temp file
+  {
+    echo "$crd_name:"
+    echo "  group: $group"
+    echo "  kind: $kind"
+    echo "  versions:"
+    for version in $versions; do
+      echo "    - $version"
+    done
+  } > "$temp_meta_file"
+}
 
-  # Write formatted YAML block
-  echo "$crd_name:" >> "$crd_meta_file"
-  echo "  group: $group" >> "$crd_meta_file"
-  echo "  kind: $kind" >> "$crd_meta_file"
-  echo "  versions:" >> "$crd_meta_file"
-  for version in $versions; do
-    echo "    - $version" >> "$crd_meta_file"
-  done
+# Create temp directory for metadata files
+temp_dir=$(mktemp -d)
+trap "rm -rf $temp_dir" EXIT
+
+# Get all CRD names and process them concurrently
+crd_names=()
+while IFS= read -r crd_name; do
+  # populate list with EDA CRDs
+  if [[ "$crd_name" == *".eda.nokia.com"* ]]; then
+    crd_names+=("$crd_name")
+  else
+    echo "Skipping $crd_name"
+  fi
+done < <(kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers)
+
+# Process CRDs in parallel
+pids=()
+for crd_name in "${crd_names[@]}"; do
+  temp_meta_file="$temp_dir/$crd_name.yaml"
+  process_crd "$crd_name" "$output_dir" "$temp_meta_file" &
+  pids+=($!)
 done
 
-echo "CRDs saved in $output_dir/{crd}/resource.yaml"
-echo "CRD metadata written to $crd_meta_file"
+# Wait for all background jobs to complete
+echo "Waiting for all CRDs to be processed..."
+for pid in "${pids[@]}"; do
+  wait "$pid"
+done
+
+# Combine all metadata files in sorted order
+for crd_name in $(printf '%s\n' "${crd_names[@]}" | sort); do
+  temp_meta_file="$temp_dir/$crd_name.yaml"
+  if [[ -f "$temp_meta_file" ]]; then
+    cat "$temp_meta_file" >> "$crd_meta_file"
+  fi
+done
+
+echo
+echo "CRDs saved in $output_dir"
+echo "CRD metadata written to $(realpath $crd_meta_file)"
