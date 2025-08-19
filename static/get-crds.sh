@@ -20,7 +20,7 @@ yaml_dict_file="$output_dir/resources.yaml"
 # Process each CRD
 kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers | while read -r crd_name; do
   # skip non .eda.nokia.com CRDs
-  if [[ ! "$crd_name" == *".eda.nokia.com"* ]]; then
+  if [[ "$crd_name" != *".eda.nokia.com"* ]]; then
     echo "Skipping $crd_name"
     continue
   fi
