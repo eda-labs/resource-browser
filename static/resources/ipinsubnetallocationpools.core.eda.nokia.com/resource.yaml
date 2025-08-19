@@ -2,15 +2,15 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    config.k8s.io/owning-inventory: f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119
-    controller-gen.kubebuilder.io/version: v0.16.4
+    config.k8s.io/owning-inventory: dd24290682a6740bebd6585febc188fc0a438f0e-1755345859179138958
+    controller-gen.kubebuilder.io/version: v0.18.0
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119","controller-gen.kubebuilder.io/version":"v0.16.4"},"name":"ipinsubnetallocationpools.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"IPInSubnetAllocationPool","listKind":"IPInSubnetAllocationPoolList","plural":"ipinsubnetallocationpools","singular":"ipinsubnetallocationpool"},"scope":"Namespaced","versions":[{"name":"v1","schema":{"openAPIV3Schema":{"description":"IPInSubnetAllocationPool is the Schema for the ipinsubnetallocationpools API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"description":"IPInSubnetAllocationPool is a generic IP allocation pool supporting allocation of IPv4 and/or IPv6 addresses from a set of segments.\nIt is different from IPAllocationPool in that it returns a single zoned IP address, i.e. an IP address with a subnet. For example a 10.1.1.0/24 segment could return 10.1.1.1/24.\nConsult application documentation to know which pool type to use for a given use case.","properties":{"publishAllocations":{"description":"If true, allocations in segments will be published to EDB, available to query via EQL and trigger state applications off of.","type":"boolean"},"segments":{"description":"List of segments containing IPv4 or IPv6 addresses to allocate.","items":{"properties":{"allocations":{"description":"List of reservations to exclude from allocations from this segment.","items":{"properties":{"name":{"description":"Name of this allocation.","type":"string"},"value":{"description":"Allocation to reserve.","type":"string"}},"required":["name","value"],"type":"object"},"type":"array"},"reservations":{"description":"List of ranges to exclude from allocations from this segment.","items":{"properties":{"end":{"description":"Value to reserve to.","type":"string"},"start":{"description":"Value to start reserving.","type":"string"}},"required":["end","start"],"type":"object"},"type":"array"},"subnet":{"description":"IPv4 or IPv6 subnet, e.g. 10.1.1.0/24.","type":"string"}},"required":["subnet"],"type":"object"},"minItems":1,"type":"array"}},"required":["segments"],"type":"object"},"status":{"description":"IPInSubnetAllocationPoolStatus defines the observed state of IPInSubnetAllocationPool","type":"object"}},"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
-  creationTimestamp: "2025-07-03T09:17:25Z"
+      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"dd24290682a6740bebd6585febc188fc0a438f0e-1755345859179138958","controller-gen.kubebuilder.io/version":"v0.18.0"},"name":"ipinsubnetallocationpools.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"IPInSubnetAllocationPool","listKind":"IPInSubnetAllocationPoolList","plural":"ipinsubnetallocationpools","singular":"ipinsubnetallocationpool"},"scope":"Namespaced","versions":[{"name":"v1","schema":{"openAPIV3Schema":{"description":"IPInSubnetAllocationPool is the Schema for the ipinsubnetallocationpools API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"description":"IPInSubnetAllocationPool is a generic IP allocation pool supporting allocation of IPv4 and/or IPv6 addresses from a set of segments.\nIt is different from IPAllocationPool in that it returns a single zoned IP address, i.e. an IP address with a subnet. For example a 10.1.1.0/24 segment could return 10.1.1.1/24.\nConsult application documentation to know which pool type to use for a given use case.","properties":{"publishAllocations":{"description":"If true, allocations in segments will be published to EDB, available to query via EQL and trigger state applications off of.","type":"boolean"},"segments":{"description":"List of segments containing IPv4 or IPv6 addresses to allocate.","items":{"properties":{"allocateBroadcastAddress":{"description":"Permit the allocation of the broadcast address.","type":"boolean"},"allocateNetworkAddress":{"description":"Permit the allocation of the network address.","type":"boolean"},"allocations":{"description":"List of reservations to exclude from allocations from this segment.","items":{"properties":{"name":{"description":"Name of this allocation.","type":"string"},"value":{"description":"Allocation to reserve.","type":"string"}},"required":["name","value"],"type":"object"},"type":"array"},"reservations":{"description":"List of ranges to exclude from allocations from this segment.","items":{"properties":{"end":{"description":"Value to reserve to.","type":"string"},"start":{"description":"Value to start reserving.","type":"string"}},"required":["end","start"],"type":"object"},"type":"array"},"subnet":{"description":"IPv4 or IPv6 subnet, e.g. 10.1.1.0/24.","type":"string"}},"required":["subnet"],"type":"object"},"minItems":1,"type":"array"}},"required":["segments"],"type":"object"},"status":{"description":"IPInSubnetAllocationPoolStatus defines the observed state of IPInSubnetAllocationPool","type":"object"}},"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
+  creationTimestamp: "2025-08-16T12:04:20Z"
   generation: 1
   name: ipinsubnetallocationpools.core.eda.nokia.com
-  resourceVersion: "1738"
-  uid: 7f31dcce-9167-4df6-8513-7bb32d1ccd64
+  resourceVersion: "1983"
+  uid: bd0e0aa0-de7e-48fa-8d03-7d8082444811
 spec:
   conversion:
     strategy: None
@@ -61,6 +61,12 @@ spec:
                   allocate.
                 items:
                   properties:
+                    allocateBroadcastAddress:
+                      description: Permit the allocation of the broadcast address.
+                      type: boolean
+                    allocateNetworkAddress:
+                      description: Permit the allocation of the network address.
+                      type: boolean
                     allocations:
                       description: List of reservations to exclude from allocations
                         from this segment.
@@ -120,12 +126,12 @@ status:
     plural: ipinsubnetallocationpools
     singular: ipinsubnetallocationpool
   conditions:
-  - lastTransitionTime: "2025-07-03T09:17:25Z"
+  - lastTransitionTime: "2025-08-16T12:04:20Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:17:25Z"
+  - lastTransitionTime: "2025-08-16T12:04:20Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

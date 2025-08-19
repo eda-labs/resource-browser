@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:39Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:46Z"
   generation: 1
   name: fabrics.fabrics.eda.nokia.com
-  resourceVersion: "5068"
-  uid: f092f6b6-d30f-4def-a5c2-c4b8378fcefc
+  resourceVersion: "3749"
+  uid: 77ad4c27-2fb5-49f3-9cf4-638ec3346ad8
 spec:
   conversion:
     strategy: None
@@ -117,6 +117,11 @@ spec:
                 type: array
               interSwitchLinks:
                 properties:
+                  ipMTU:
+                    description: Sets the IP MTU for the DefaultInterface.
+                    maximum: 9486
+                    minimum: 1280
+                    type: integer
                   linkSelector:
                     description: Selects TopoLinks to include in this Fabric, creating
                       an ISL resource if both Nodes in the TopoLink are part of this
@@ -242,6 +247,13 @@ spec:
                           received BFD control packets that this system should support.
                         maximum: 100000000
                         minimum: 10000
+                        type: integer
+                      ttl:
+                        description: Sets custom IP TTL or Hop Limit for multi-hop
+                          BFD sessions packets. Not appllicable to single-hop BFD
+                          sessions.
+                        maximum: 255
+                        minimum: 2
                         type: integer
                     type: object
                   bgp:
@@ -504,6 +516,13 @@ spec:
                         maximum: 100000000
                         minimum: 10000
                         type: integer
+                      ttl:
+                        description: Sets custom IP TTL or Hop Limit for multi-hop
+                          BFD sessions packets. Not appllicable to single-hop BFD
+                          sessions.
+                        maximum: 255
+                        minimum: 2
+                        type: integer
                     type: object
                   bgp:
                     description: Underlay specific BGP properties.
@@ -687,12 +706,12 @@ status:
     plural: fabrics
     singular: fabric
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:39Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:39Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:24Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:45Z"
   generation: 1
   name: keychaindeployments.security.eda.nokia.com
-  resourceVersion: "4790"
-  uid: c2cc0f8b-a694-4527-bdd4-309e3c32cdb5
+  resourceVersion: "3693"
+  uid: 495aaaa2-745a-4443-9293-ce56027cea0b
 spec:
   conversion:
     strategy: None
@@ -70,12 +70,12 @@ status:
     plural: keychaindeployments
     singular: keychaindeployment
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:24Z"
+  - lastTransitionTime: "2025-08-16T12:08:45Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:24Z"
+  - lastTransitionTime: "2025-08-16T12:08:45Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

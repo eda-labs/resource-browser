@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:39Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:46Z"
   generation: 1
   name: islstates.fabrics.eda.nokia.com
-  resourceVersion: "5072"
-  uid: 12c4b31b-04de-4c16-81a2-12014eab33e0
+  resourceVersion: "3740"
+  uid: 8904025c-7c1e-47d3-84f2-2aef7a5286db
 spec:
   conversion:
     strategy: None
@@ -143,12 +143,12 @@ status:
     plural: islstates
     singular: islstate
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:39Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:39Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

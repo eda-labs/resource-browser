@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:43Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:42Z"
   generation: 1
   name: filterdeployments.filters.eda.nokia.com
-  resourceVersion: "5119"
-  uid: d9155d0e-d4cc-4767-a6fa-44d0a07c3e67
+  resourceVersion: "3604"
+  uid: da860300-320c-46ce-ac01-f519a5972791
 spec:
   conversion:
     strategy: None
@@ -76,12 +76,12 @@ status:
     plural: filterdeployments
     singular: filterdeployment
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:43Z"
+  - lastTransitionTime: "2025-08-16T12:08:42Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:43Z"
+  - lastTransitionTime: "2025-08-16T12:08:42Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

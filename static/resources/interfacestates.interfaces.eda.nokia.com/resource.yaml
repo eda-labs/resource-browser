@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:23Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:46Z"
   generation: 1
   name: interfacestates.interfaces.eda.nokia.com
-  resourceVersion: "4782"
-  uid: cd64d294-04eb-4f3c-a6dd-92e283fd2978
+  resourceVersion: "3768"
+  uid: a5e400da-e2a6-4141-832b-f4816de9c049
 spec:
   conversion:
     strategy: None
@@ -117,12 +117,12 @@ status:
     plural: interfacestates
     singular: interfacestate
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:23Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:23Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

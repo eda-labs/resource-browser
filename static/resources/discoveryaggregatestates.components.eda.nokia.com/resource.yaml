@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:30Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:43Z"
   generation: 1
   name: discoveryaggregatestates.components.eda.nokia.com
-  resourceVersion: "4917"
-  uid: 1752adf3-166a-449d-9760-e42d0cb185ec
+  resourceVersion: "3663"
+  uid: 5afedd21-c1d2-4e79-80a0-ead8d3a8aaf8
 spec:
   conversion:
     strategy: None
@@ -110,12 +110,12 @@ status:
     plural: discoveryaggregatestates
     singular: discoveryaggregatestate
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:30Z"
+  - lastTransitionTime: "2025-08-16T12:08:43Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:30Z"
+  - lastTransitionTime: "2025-08-16T12:08:44Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

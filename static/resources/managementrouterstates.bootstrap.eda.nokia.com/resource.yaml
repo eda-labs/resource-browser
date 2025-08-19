@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:45Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:51Z"
   generation: 1
   name: managementrouterstates.bootstrap.eda.nokia.com
-  resourceVersion: "5168"
-  uid: 6fdf07c3-3cfa-462f-b6d2-2befc54bd855
+  resourceVersion: "3915"
+  uid: 0b3a2ee3-e195-4c05-bc27-e2eb9ceb40ee
 spec:
   conversion:
     strategy: None
@@ -83,12 +83,12 @@ status:
     plural: managementrouterstates
     singular: managementrouterstate
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:51Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:46Z"
+  - lastTransitionTime: "2025-08-16T12:08:51Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

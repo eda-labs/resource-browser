@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:37Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:45Z"
   generation: 1
   name: configletstates.config.eda.nokia.com
-  resourceVersion: "5056"
-  uid: 5c43b915-1fc8-4108-88eb-7ac0efc3b196
+  resourceVersion: "3688"
+  uid: 9d503485-7c58-41ed-a0c6-f541b83438b9
 spec:
   conversion:
     strategy: None
@@ -65,12 +65,12 @@ status:
     plural: configletstates
     singular: configletstate
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:37Z"
+  - lastTransitionTime: "2025-08-16T12:08:45Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:37Z"
+  - lastTransitionTime: "2025-08-16T12:08:45Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

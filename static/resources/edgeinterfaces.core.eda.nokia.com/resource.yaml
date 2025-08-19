@@ -2,15 +2,15 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    config.k8s.io/owning-inventory: f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119
-    controller-gen.kubebuilder.io/version: v0.16.4
+    config.k8s.io/owning-inventory: dd24290682a6740bebd6585febc188fc0a438f0e-1755345859179138958
+    controller-gen.kubebuilder.io/version: v0.18.0
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"f7c9e8389280428ceb3510412237a3f8c1cfd123-1751528730476697119","controller-gen.kubebuilder.io/version":"v0.16.4"},"name":"edgeinterfaces.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"EdgeInterface","listKind":"EdgeInterfaceList","plural":"edgeinterfaces","singular":"edgeinterface"},"scope":"Namespaced","versions":[{"name":"v1","schema":{"openAPIV3Schema":{"description":"EdgeInterface is the Schema for the edgeinterfaces API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"description":"EdgeInterfaceSpec defines the desired state of EdgeInterface","properties":{"bridgeDomain":{"description":"Reference to a Bridge Domain","type":"string"},"encapType":{"default":"null","description":"Indicates if the EdgeInterface uses VLAN tagging","enum":["null","dot1q"],"type":"string"},"gatewayIPV4Addresses":{"description":"List of gateway IPv4 addresses in ip/mask form - e.g. 192.168.0.1/24","items":{"properties":{"ipPrefix":{"description":"Address and mask to use","type":"string"},"primary":{"description":"Indicates which address to use as primary for broadcast","type":"boolean"}},"required":["ipPrefix"],"type":"object"},"type":"array"},"gatewayIPV6Addresses":{"description":"List of gateway IPv6 addresses in ip/mask form - e.g. fc00::1/120","items":{"properties":{"ipPrefix":{"description":"Address and mask to use","type":"string"},"primary":{"description":"Indicates which address to use as primary for broadcast","type":"boolean"}},"required":["ipPrefix"],"type":"object"},"type":"array"},"interfaceResource":{"description":"Reference to an interface","type":"string"},"router":{"description":"Reference to a Router","type":"string"},"vlanID":{"description":"Single value between 0-4094 supported","maximum":4094,"minimum":0,"type":"integer"}},"required":["encapType","interfaceResource"],"type":"object"},"status":{"description":"EdgeInterfaceStatus defines the observed state of EdgeInterface","type":"object"}},"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
-  creationTimestamp: "2025-07-03T09:17:23Z"
+      {"apiVersion":"apiextensions.k8s.io/v1","kind":"CustomResourceDefinition","metadata":{"annotations":{"config.k8s.io/owning-inventory":"dd24290682a6740bebd6585febc188fc0a438f0e-1755345859179138958","controller-gen.kubebuilder.io/version":"v0.18.0"},"name":"edgeinterfaces.core.eda.nokia.com"},"spec":{"group":"core.eda.nokia.com","names":{"kind":"EdgeInterface","listKind":"EdgeInterfaceList","plural":"edgeinterfaces","singular":"edgeinterface"},"scope":"Namespaced","versions":[{"name":"v1","schema":{"openAPIV3Schema":{"description":"EdgeInterface is the Schema for the edgeinterfaces API","properties":{"apiVersion":{"description":"APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources","type":"string"},"kind":{"description":"Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds","type":"string"},"metadata":{"type":"object"},"spec":{"description":"EdgeInterfaceSpec defines the desired state of EdgeInterface","properties":{"bridgeDomain":{"description":"Reference to a Bridge Domain","type":"string"},"encapType":{"default":"null","description":"Indicates if the EdgeInterface uses VLAN tagging","enum":["null","dot1q"],"type":"string"},"gatewayIPV4Addresses":{"description":"List of gateway IPv4 addresses in ip/mask form - e.g. 192.168.0.1/24","items":{"properties":{"ipPrefix":{"description":"Address and mask to use","type":"string"},"primary":{"description":"Indicates which address to use as primary for broadcast","type":"boolean"}},"required":["ipPrefix"],"type":"object"},"type":"array"},"gatewayIPV6Addresses":{"description":"List of gateway IPv6 addresses in ip/mask form - e.g. fc00::1/120","items":{"properties":{"ipPrefix":{"description":"Address and mask to use","type":"string"},"primary":{"description":"Indicates which address to use as primary for broadcast","type":"boolean"}},"required":["ipPrefix"],"type":"object"},"type":"array"},"interfaceResource":{"description":"Reference to an interface","type":"string"},"router":{"description":"Reference to a Router","type":"string"},"vlanID":{"description":"Single value between 0-4094 supported","maximum":4094,"minimum":0,"type":"integer"}},"required":["encapType","interfaceResource"],"type":"object"},"status":{"description":"EdgeInterfaceStatus defines the observed state of EdgeInterface","type":"object"}},"type":"object"}},"served":true,"storage":true,"subresources":{"status":{}}}]}}
+  creationTimestamp: "2025-08-16T12:04:20Z"
   generation: 1
   name: edgeinterfaces.core.eda.nokia.com
-  resourceVersion: "1718"
-  uid: b5636720-7c92-47cf-9eb2-1fade8411f62
+  resourceVersion: "1970"
+  uid: a6478b77-5e6e-43d1-8e6e-593e84146225
 spec:
   conversion:
     strategy: None
@@ -117,12 +117,12 @@ status:
     plural: edgeinterfaces
     singular: edgeinterface
   conditions:
-  - lastTransitionTime: "2025-07-03T09:17:23Z"
+  - lastTransitionTime: "2025-08-16T12:04:20Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:17:24Z"
+  - lastTransitionTime: "2025-08-16T12:04:20Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

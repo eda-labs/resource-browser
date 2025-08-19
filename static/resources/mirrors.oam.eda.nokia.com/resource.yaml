@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:41Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:51Z"
   generation: 1
   name: mirrors.oam.eda.nokia.com
-  resourceVersion: "5098"
-  uid: 5c751049-9a06-460a-b086-b2388bad9678
+  resourceVersion: "3932"
+  uid: 182098db-2bcc-4420-94d4-6362fce6367a
 spec:
   conversion:
     strategy: None
@@ -118,6 +118,9 @@ spec:
                                 order.
                               items:
                                 properties:
+                                  description:
+                                    description: Description of the FilterEntry.
+                                    type: string
                                   ipEntry:
                                     properties:
                                       action:
@@ -374,6 +377,9 @@ spec:
                                         maximum: 255
                                         minimum: 0
                                         type: integer
+                                      log:
+                                        description: Log the matches for this entry.
+                                        type: boolean
                                       protocolName:
                                         description: Match a specific IP protocol
                                           name (specified in the type field of the
@@ -647,6 +653,8 @@ spec:
                                     type: object
                                   type:
                                     default: Auto
+                                    description: Type of the entry which can be IPV4,
+                                      IPV6 or Auto.
                                     enum:
                                     - IPV4
                                     - IPV6
@@ -656,6 +664,9 @@ spec:
                                 - type
                                 type: object
                               type: array
+                            statisticsPerEntry:
+                              description: Enable or disable per-entry counters.
+                              type: boolean
                           required:
                           - entries
                           type: object
@@ -873,12 +884,12 @@ status:
     plural: mirrors
     singular: mirror
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:41Z"
+  - lastTransitionTime: "2025-08-16T12:08:51Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:42Z"
+  - lastTransitionTime: "2025-08-16T12:08:51Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

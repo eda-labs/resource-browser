@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:41Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:51Z"
   generation: 1
   name: mirrorstates.oam.eda.nokia.com
-  resourceVersion: "5101"
-  uid: 3994891d-6b04-4e7e-a1ec-71d4fbbb499e
+  resourceVersion: "3933"
+  uid: 7b5c15df-034f-4fb4-aa81-e82d75edac47
 spec:
   conversion:
     strategy: None
@@ -102,12 +102,12 @@ status:
     plural: mirrorstates
     singular: mirrorstate
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:42Z"
+  - lastTransitionTime: "2025-08-16T12:08:51Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:42Z"
+  - lastTransitionTime: "2025-08-16T12:08:51Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

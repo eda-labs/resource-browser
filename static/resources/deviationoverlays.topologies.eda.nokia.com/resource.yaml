@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:25Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:45Z"
   generation: 1
   name: deviationoverlays.topologies.eda.nokia.com
-  resourceVersion: "4818"
-  uid: 248d44a9-3a22-4df3-96f4-4bd79d35f4dc
+  resourceVersion: "3720"
+  uid: ac2d7eba-3383-420d-9e06-5abd9e4bef30
 spec:
   conversion:
     strategy: None
@@ -101,12 +101,12 @@ status:
     plural: deviationoverlays
     singular: deviationoverlay
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:25Z"
+  - lastTransitionTime: "2025-08-16T12:08:45Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:25Z"
+  - lastTransitionTime: "2025-08-16T12:08:45Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

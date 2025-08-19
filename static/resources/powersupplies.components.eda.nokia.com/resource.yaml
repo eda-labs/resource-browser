@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:29Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:43Z"
   generation: 1
   name: powersupplies.components.eda.nokia.com
-  resourceVersion: "4904"
-  uid: 0522ec47-a176-4b7f-b422-5cc311819e1e
+  resourceVersion: "3670"
+  uid: 38eef1cc-c17c-4eab-96e1-add6a7bc28e4
 spec:
   conversion:
     strategy: None
@@ -152,12 +152,12 @@ status:
     plural: powersupplies
     singular: powersupply
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:29Z"
+  - lastTransitionTime: "2025-08-16T12:08:43Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:30Z"
+  - lastTransitionTime: "2025-08-16T12:08:44Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

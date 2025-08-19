@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:45Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:41Z"
   generation: 1
   name: systeminterfaces.routing.eda.nokia.com
-  resourceVersion: "5147"
-  uid: 9dd4c2ef-4107-49f6-8b0e-203b8abc76bd
+  resourceVersion: "3586"
+  uid: 120e4f5d-7fdc-4a15-af04-05854a09ab80
 spec:
   conversion:
     strategy: None
@@ -25,6 +25,12 @@ spec:
       type: date
     - jsonPath: .status.operationalState
       name: Operational State
+      type: string
+    - jsonPath: .spec.ipv4Address
+      name: IPv4 Address
+      type: string
+    - jsonPath: .spec.ipv6Address
+      name: IPv6 Address
       type: string
     name: v1alpha1
     schema:
@@ -86,6 +92,12 @@ spec:
                     maximum: 100000000
                     minimum: 10000
                     type: integer
+                  ttl:
+                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD
+                      sessions packets. Not appllicable to single-hop BFD sessions.
+                    maximum: 255
+                    minimum: 2
+                    type: integer
                 required:
                 - desiredMinTransmitInt
                 - detectionMultiplier
@@ -95,6 +107,9 @@ spec:
                 type: object
               defaultRouter:
                 description: Reference to a DefaultRouter.
+                type: string
+              description:
+                description: The description of the SystemInterface.
                 type: string
               ipv4Address:
                 description: IPv4 address in ip/mask form, e.g., 192.168.0.1/32.
@@ -133,12 +148,12 @@ status:
     plural: systeminterfaces
     singular: systeminterface
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:41Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:41Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

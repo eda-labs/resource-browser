@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:45Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:38Z"
   generation: 1
   name: banners.siteinfo.eda.nokia.com
-  resourceVersion: "5156"
-  uid: ef2bf26f-ba4f-4069-a27c-b358efc5a05e
+  resourceVersion: "3544"
+  uid: 66152a3e-790f-4584-8c23-8b2b521265ee
 spec:
   conversion:
     strategy: None
@@ -87,12 +87,12 @@ status:
     plural: banners
     singular: banner
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:38Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:38Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

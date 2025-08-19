@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:43Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:42Z"
   generation: 1
   name: mirrorfilters.filters.eda.nokia.com
-  resourceVersion: "5122"
-  uid: b440c6e0-6579-4e75-8468-d1dfe44a29e0
+  resourceVersion: "3611"
+  uid: b789c9eb-8331-471f-847c-7fcbd9bfe114
 spec:
   conversion:
     strategy: None
@@ -51,6 +51,9 @@ spec:
                 description: Specifies the list of filter entries, in order.
                 items:
                   properties:
+                    description:
+                      description: Description of the FilterEntry.
+                      type: string
                     ipEntry:
                       properties:
                         action:
@@ -301,6 +304,9 @@ spec:
                           maximum: 255
                           minimum: 0
                           type: integer
+                        log:
+                          description: Log the matches for this entry.
+                          type: boolean
                         protocolName:
                           description: Match a specific IP protocol name (specified
                             in the type field of the IP header).
@@ -565,6 +571,7 @@ spec:
                       type: object
                     type:
                       default: Auto
+                      description: Type of the entry which can be IPV4, IPV6 or Auto.
                       enum:
                       - IPV4
                       - IPV6
@@ -574,6 +581,9 @@ spec:
                   - type
                   type: object
                 type: array
+              statisticsPerEntry:
+                description: Enable or disable per-entry counters.
+                type: boolean
             required:
             - entries
             type: object
@@ -592,12 +602,12 @@ status:
     plural: mirrorfilters
     singular: mirrorfilter
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:43Z"
+  - lastTransitionTime: "2025-08-16T12:08:42Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:43Z"
+  - lastTransitionTime: "2025-08-16T12:08:42Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

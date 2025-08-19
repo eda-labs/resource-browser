@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:45Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:41Z"
   generation: 1
   name: defaultinterfaces.routing.eda.nokia.com
-  resourceVersion: "5150"
-  uid: 9af234c4-ded9-48a8-bfd6-9a8cb3230954
+  resourceVersion: "3593"
+  uid: 5b44e774-a7b4-4d06-ab58-1ab9662b537f
 spec:
   conversion:
     strategy: None
@@ -89,6 +89,12 @@ spec:
                     maximum: 100000000
                     minimum: 10000
                     type: integer
+                  ttl:
+                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD
+                      sessions packets. Not appllicable to single-hop BFD sessions.
+                    maximum: 255
+                    minimum: 2
+                    type: integer
                 required:
                 - desiredMinTransmitInt
                 - detectionMultiplier
@@ -98,6 +104,9 @@ spec:
                 type: object
               defaultRouter:
                 description: Reference to a DefaultRouter.
+                type: string
+              description:
+                description: The description of the DefaultInterface.
                 type: string
               interface:
                 description: Reference to an Interface to use for attachment.
@@ -183,12 +192,12 @@ status:
     plural: defaultinterfaces
     singular: defaultinterface
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:41Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:45Z"
+  - lastTransitionTime: "2025-08-16T12:08:41Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

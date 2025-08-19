@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:43Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:42Z"
   generation: 1
   name: controlplanefilters.filters.eda.nokia.com
-  resourceVersion: "5116"
-  uid: a4948e18-8eaf-40ed-9cbd-20b47eb6e3c5
+  resourceVersion: "3615"
+  uid: f1102f33-b877-46d0-91bc-b451ffa977a7
 spec:
   conversion:
     strategy: None
@@ -51,6 +51,9 @@ spec:
                 description: Specifies the list of filter entries, in order.
                 items:
                   properties:
+                    description:
+                      description: Description of the FilterEntry.
+                      type: string
                     ipEntry:
                       properties:
                         action:
@@ -301,6 +304,9 @@ spec:
                           maximum: 255
                           minimum: 0
                           type: integer
+                        log:
+                          description: Log the matches for this entry.
+                          type: boolean
                         protocolName:
                           description: Match a specific IP protocol name (specified
                             in the type field of the IP header).
@@ -607,6 +613,9 @@ spec:
                           - PTP
                           - ROCE
                           type: string
+                        log:
+                          description: Log the matches for this entry.
+                          type: boolean
                         outerVLANIDOperator:
                           description: Operator to use when matching OuterVlanIdValue,
                             either Equals, GreaterOrEquals, or LessOrEquals.
@@ -664,6 +673,8 @@ spec:
                       type: object
                     type:
                       default: Auto
+                      description: Type of the entry which can be IPV4, IPV6, MAC
+                        or Auto.
                       enum:
                       - IPV4
                       - IPV6
@@ -686,6 +697,9 @@ spec:
                 items:
                   type: string
                 type: array
+              statisticsPerEntry:
+                description: Enable or disable per-entry counters.
+                type: boolean
             required:
             - entries
             type: object
@@ -704,12 +718,12 @@ status:
     plural: controlplanefilters
     singular: controlplanefilter
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:43Z"
+  - lastTransitionTime: "2025-08-16T12:08:42Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:43Z"
+  - lastTransitionTime: "2025-08-16T12:08:42Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

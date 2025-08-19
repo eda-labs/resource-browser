@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:29Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:43Z"
   generation: 1
   name: cpuoverlays.components.eda.nokia.com
-  resourceVersion: "4898"
-  uid: a4be112b-16b9-4250-a556-fbb6ac884036
+  resourceVersion: "3675"
+  uid: c1e41c37-f48f-4471-bf5b-33e7038bd8cb
 spec:
   conversion:
     strategy: None
@@ -101,12 +101,12 @@ status:
     plural: cpuoverlays
     singular: cpuoverlay
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:29Z"
+  - lastTransitionTime: "2025-08-16T12:08:43Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:29Z"
+  - lastTransitionTime: "2025-08-16T12:08:44Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

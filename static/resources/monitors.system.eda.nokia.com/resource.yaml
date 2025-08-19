@@ -2,12 +2,12 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
-  creationTimestamp: "2025-07-03T09:36:40Z"
+    controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-08-16T12:08:46Z"
   generation: 1
   name: monitors.system.eda.nokia.com
-  resourceVersion: "5084"
-  uid: a2e29bb7-f4d7-4a49-a10c-c387d8d2c19e
+  resourceVersion: "3790"
+  uid: cca68008-8a26-4878-990d-85db72b2db7d
 spec:
   conversion:
     strategy: None
@@ -211,12 +211,12 @@ status:
     plural: monitors
     singular: monitor
   conditions:
-  - lastTransitionTime: "2025-07-03T09:36:40Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-07-03T09:36:40Z"
+  - lastTransitionTime: "2025-08-16T12:08:46Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"
