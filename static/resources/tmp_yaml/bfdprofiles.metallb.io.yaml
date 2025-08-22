@@ -1,0 +1,6 @@
+- name: bfdprofiles.metallb.io
+  group: metallb.io
+  kind: BFDProfile
+  versions:
+    - name: v1beta1
+      deprecated: false

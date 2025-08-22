@@ -1,0 +1,6 @@
+- name: systeminterfaces.routing.eda.nokia.com
+  group: routing.eda.nokia.com
+  kind: SystemInterface
+  versions:
+    - name: v1alpha1
+      deprecated: false

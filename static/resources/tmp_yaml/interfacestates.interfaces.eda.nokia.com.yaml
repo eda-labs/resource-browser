@@ -1,0 +1,6 @@
+- name: interfacestates.interfaces.eda.nokia.com
+  group: interfaces.eda.nokia.com
+  kind: InterfaceState
+  versions:
+    - name: v1alpha1
+      deprecated: false

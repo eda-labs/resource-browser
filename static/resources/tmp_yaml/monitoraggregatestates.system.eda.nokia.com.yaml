@@ -1,0 +1,6 @@
+- name: monitoraggregatestates.system.eda.nokia.com
+  group: system.eda.nokia.com
+  kind: MonitorAggregateState
+  versions:
+    - name: v1alpha1
+      deprecated: false

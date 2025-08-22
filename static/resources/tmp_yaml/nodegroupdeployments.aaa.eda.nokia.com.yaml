@@ -1,0 +1,6 @@
+- name: nodegroupdeployments.aaa.eda.nokia.com
+  group: aaa.eda.nokia.com
+  kind: NodeGroupDeployment
+  versions:
+    - name: v1alpha1
+      deprecated: false

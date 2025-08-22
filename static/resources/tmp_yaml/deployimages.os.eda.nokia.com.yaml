@@ -1,0 +1,6 @@
+- name: deployimages.os.eda.nokia.com
+  group: os.eda.nokia.com
+  kind: DeployImage
+  versions:
+    - name: v1alpha1
+      deprecated: false

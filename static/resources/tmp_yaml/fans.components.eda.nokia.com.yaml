@@ -1,0 +1,6 @@
+- name: fans.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: Fan
+  versions:
+    - name: v1
+      deprecated: false

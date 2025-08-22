@@ -1,0 +1,6 @@
+- name: controlplanefilters.filters.eda.nokia.com
+  group: filters.eda.nokia.com
+  kind: ControlPlaneFilter
+  versions:
+    - name: v1alpha1
+      deprecated: false

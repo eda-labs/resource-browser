@@ -1,0 +1,6 @@
+- name: prefixsets.routingpolicies.eda.nokia.com
+  group: routingpolicies.eda.nokia.com
+  kind: PrefixSet
+  versions:
+    - name: v1alpha1
+      deprecated: false

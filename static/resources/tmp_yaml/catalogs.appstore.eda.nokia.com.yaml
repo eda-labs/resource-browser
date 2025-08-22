@@ -1,0 +1,6 @@
+- name: catalogs.appstore.eda.nokia.com
+  group: appstore.eda.nokia.com
+  kind: Catalog
+  versions:
+    - name: v1
+      deprecated: false

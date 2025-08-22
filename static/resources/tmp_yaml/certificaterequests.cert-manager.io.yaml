@@ -1,0 +1,6 @@
+- name: certificaterequests.cert-manager.io
+  group: cert-manager.io
+  kind: CertificateRequest
+  versions:
+    - name: v1
+      deprecated: false

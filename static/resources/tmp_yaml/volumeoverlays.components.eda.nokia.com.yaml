@@ -1,0 +1,6 @@
+- name: volumeoverlays.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: VolumeOverlay
+  versions:
+    - name: v1
+      deprecated: false

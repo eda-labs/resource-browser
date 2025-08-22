@@ -1,0 +1,6 @@
+- name: monitorstates.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: MonitorState
+  versions:
+    - name: v1
+      deprecated: false

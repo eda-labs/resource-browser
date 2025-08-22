@@ -1,0 +1,6 @@
+- name: trafficrateoverlays.topologies.eda.nokia.com
+  group: topologies.eda.nokia.com
+  kind: TrafficRateOverlay
+  versions:
+    - name: v1alpha1
+      deprecated: false

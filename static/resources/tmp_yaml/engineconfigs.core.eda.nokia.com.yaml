@@ -1,0 +1,6 @@
+- name: engineconfigs.core.eda.nokia.com
+  group: core.eda.nokia.com
+  kind: EngineConfig
+  versions:
+    - name: v1
+      deprecated: false

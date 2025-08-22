@@ -1,0 +1,6 @@
+- name: fabricmodules.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: FabricModule
+  versions:
+    - name: v1
+      deprecated: false

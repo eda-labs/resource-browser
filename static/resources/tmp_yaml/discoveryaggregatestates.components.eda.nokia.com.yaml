@@ -1,0 +1,8 @@
+- name: discoveryaggregatestates.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: DiscoveryAggregateState
+  versions:
+    - name: v1
+      deprecated: false
+    - name: v1alpha1
+      deprecated: false

@@ -1,0 +1,6 @@
+- name: filters.filters.eda.nokia.com
+  group: filters.eda.nokia.com
+  kind: Filter
+  versions:
+    - name: v1alpha1
+      deprecated: false

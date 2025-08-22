@@ -1,0 +1,6 @@
+- name: defaultrouterstates.routing.eda.nokia.com
+  group: routing.eda.nokia.com
+  kind: DefaultRouterState
+  versions:
+    - name: v1alpha1
+      deprecated: false

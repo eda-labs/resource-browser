@@ -1,0 +1,6 @@
+- name: routereflectorclientstates.protocols.eda.nokia.com
+  group: protocols.eda.nokia.com
+  kind: RouteReflectorClientState
+  versions:
+    - name: v1alpha1
+      deprecated: false

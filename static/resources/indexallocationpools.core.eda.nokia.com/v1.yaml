@@ -1,0 +1,92 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: IndexAllocationPool is the Schema for the indexallocationpools API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          IndexAllocationPool is a generic allocation pool supporting allocation of indexes from a set of segments.
+          It supports allocating things like VLANs, subinterface indexes, autonomous system numbers, or any other integer-based index.
+        properties:
+          publishAllocations:
+            description: If true, allocations in segments will be published to EDB, available to query via EQL and trigger state applications off of.
+            type: boolean
+          segments:
+            description: List of segments containing indexes to allocate.
+            items:
+              properties:
+                allocations:
+                  description: List of reservations to exclude from allocations from this segment.
+                  items:
+                    properties:
+                      name:
+                        description: Name of this allocation.
+                        type: string
+                      value:
+                        description: Index to reserve.
+                        format: int32
+                        type: integer
+                    required:
+                      - name
+                      - value
+                    type: object
+                  type: array
+                reservations:
+                  description: Range of reservations to exclude from allocations from this segment.
+                  items:
+                    properties:
+                      end:
+                        description: Value to reserve to.
+                        format: int32
+                        type: integer
+                      start:
+                        description: Value to start reserving.
+                        format: int32
+                        type: integer
+                    required:
+                      - end
+                      - start
+                    type: object
+                  type: array
+                size:
+                  description: Number of elements in the segment.
+                  format: int32
+                  type: integer
+                start:
+                  description: Starting value of the segment.
+                  format: int32
+                  type: integer
+              required:
+                - size
+                - start
+              type: object
+            minItems: 1
+            type: array
+        required:
+          - segments
+        type: object
+      status:
+        description: IndexAllocationPoolStatus defines the observed state of IndexAllocationPool
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

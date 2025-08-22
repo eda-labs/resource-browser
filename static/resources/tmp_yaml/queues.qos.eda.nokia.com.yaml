@@ -1,0 +1,6 @@
+- name: queues.qos.eda.nokia.com
+  group: qos.eda.nokia.com
+  kind: Queue
+  versions:
+    - name: v1alpha1
+      deprecated: false

@@ -1,0 +1,6 @@
+- name: mirrorfilterdeployments.filters.eda.nokia.com
+  group: filters.eda.nokia.com
+  kind: MirrorFilterDeployment
+  versions:
+    - name: v1alpha1
+      deprecated: false

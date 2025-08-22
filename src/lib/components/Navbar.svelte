@@ -6,11 +6,12 @@
   export let group: string
   export let versionOnFocus: string
   export let validVersions: string[]
+  export let deprecated: boolean
 
   function handleVersionChange(event: Event) {
     const select = event.target as HTMLSelectElement
     const changedVersion = select.value
-    window.location.href = `/${name}_${changedVersion}`
+    window.location.href = `/${name}/${changedVersion}`
   }
 </script>
 
@@ -32,6 +33,9 @@
             </select>
           {:else}
             <span>{validVersions[0]}</span>
+          {/if}
+          {#if deprecated}
+            <span class="ml-2 px-2 py-1 text-[10px] rounded-lg bg-orange-200 dark:bg-orange-500 text-gray-800">deprecated</span>
           {/if}
         </div>
       </div>

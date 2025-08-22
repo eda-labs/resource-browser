@@ -1,0 +1,6 @@
+- name: policyattachments.qos.eda.nokia.com
+  group: qos.eda.nokia.com
+  kind: PolicyAttachment
+  versions:
+    - name: v1alpha1
+      deprecated: false

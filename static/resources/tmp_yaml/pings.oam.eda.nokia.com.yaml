@@ -1,0 +1,6 @@
+- name: pings.oam.eda.nokia.com
+  group: oam.eda.nokia.com
+  kind: Ping
+  versions:
+    - name: v1alpha1
+      deprecated: false

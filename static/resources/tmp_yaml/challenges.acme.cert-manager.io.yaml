@@ -1,0 +1,6 @@
+- name: challenges.acme.cert-manager.io
+  group: acme.cert-manager.io
+  kind: Challenge
+  versions:
+    - name: v1
+      deprecated: false

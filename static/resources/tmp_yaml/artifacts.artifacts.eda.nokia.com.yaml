@@ -1,0 +1,6 @@
+- name: artifacts.artifacts.eda.nokia.com
+  group: artifacts.eda.nokia.com
+  kind: Artifact
+  versions:
+    - name: v1
+      deprecated: false

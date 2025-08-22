@@ -1,0 +1,6 @@
+- name: mirrors.oam.eda.nokia.com
+  group: oam.eda.nokia.com
+  kind: Mirror
+  versions:
+    - name: v1alpha1
+      deprecated: false

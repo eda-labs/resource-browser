@@ -1,0 +1,79 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.remoteURL
+    name: RemoteURL
+    type: string
+  - jsonPath: .spec.mirror
+    name: Mirror
+    type: string
+  - jsonPath: .status.reachable
+    name: Reachable
+    type: string
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Registry is the Schema for the Registry API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: RegistrySpec defines the desired state of a Registry
+        properties:
+          authSecretRef:
+            description: |-
+              AuthSecretRef is the authentication secret reference, used for authentication.
+              Must be in the same namespace as the catalog.
+            type: string
+          mirror:
+            description: |-
+              Mirror registry of the original remote registry.
+              App store will use the mirror instead of the original registry that is referenced by a catalog.
+            type: string
+          remoteURL:
+            description: |-
+              RemoteURL is the remote URL of the registry. Supported URI schemes: 'https://' and 'http://'.
+              	Default is HTTPS if no scheme is given.
+            type: string
+          skipTLSVerify:
+            default: false
+            description: Skip TLS Verification on connection
+            type: boolean
+          title:
+            description: Title is an UI-friendly name for the catalog.
+            maxLength: 50
+            type: string
+        required:
+          - remoteURL
+        type: object
+      status:
+        description: RegistryStatus defines the observed state of Registry
+        properties:
+          error:
+            description: Error denotes the last error that was encountered by the controller.
+            type: string
+          reachable:
+            default: false
+            description: Reachable indicates if the registry is reachable.
+            type: boolean
+        required:
+          - error
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

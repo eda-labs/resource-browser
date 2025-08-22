@@ -1,0 +1,6 @@
+- name: resourcegroups.kpt.dev
+  group: kpt.dev
+  kind: ResourceGroup
+  versions:
+    - name: v1alpha1
+      deprecated: false

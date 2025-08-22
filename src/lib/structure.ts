@@ -1,9 +1,17 @@
+export interface CrdVersions {
+  name: string;
+  deprecated: boolean;
+}
+
+export interface CrdResource {
+  name: string;
+  group: string;
+  kind: string;
+  versions: CrdVersions[];
+}
+
 export interface CrdVersionsMap {
-  [key: string]: {
-    group: string
-    kind: string
-    versions: string[]
-  }
+  [group: string]: CrdResource[];
 }
 
 type JSONType = "string" | "integer" | "number" | "boolean" | "object" | "array";
@@ -36,13 +44,6 @@ export interface PrimitiveSchema extends BaseSchema {
 }
 
 export type Schema = ObjectSchema | ArraySchema | PrimitiveSchema;
-
-export interface VersionSchema {
-  [key: string]: {
-    spec: Schema
-    status: Schema
-  }
-}
 
 export interface OpenAPISchema { 
   name: string;

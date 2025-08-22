@@ -1,0 +1,6 @@
+- name: egresspolicys.qos.eda.nokia.com
+  group: qos.eda.nokia.com
+  kind: EgressPolicy
+  versions:
+    - name: v1alpha1
+      deprecated: false

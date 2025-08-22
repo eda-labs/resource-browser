@@ -1,0 +1,6 @@
+- name: bridgedomaindeployments.services.eda.nokia.com
+  group: services.eda.nokia.com
+  kind: BridgeDomainDeployment
+  versions:
+    - name: v1alpha1
+      deprecated: false

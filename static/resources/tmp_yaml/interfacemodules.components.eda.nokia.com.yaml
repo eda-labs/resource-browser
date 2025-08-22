@@ -1,0 +1,6 @@
+- name: interfacemodules.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: InterfaceModule
+  versions:
+    - name: v1
+      deprecated: false

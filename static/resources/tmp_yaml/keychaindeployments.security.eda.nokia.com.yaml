@@ -1,0 +1,6 @@
+- name: keychaindeployments.security.eda.nokia.com
+  group: security.eda.nokia.com
+  kind: KeychainDeployment
+  versions:
+    - name: v1alpha1
+      deprecated: false

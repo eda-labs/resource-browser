@@ -1,0 +1,6 @@
+- name: clusterissuers.cert-manager.io
+  group: cert-manager.io
+  kind: ClusterIssuer
+  versions:
+    - name: v1
+      deprecated: false

@@ -1,0 +1,6 @@
+- name: simlinks.test.eda.nokia.com
+  group: test.eda.nokia.com
+  kind: SimLink
+  versions:
+    - name: v1
+      deprecated: false

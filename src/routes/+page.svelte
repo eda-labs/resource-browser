@@ -7,12 +7,13 @@
 
   import yaml from 'js-yaml'
   import res from '$lib/resources.yaml?raw'
-  const crdResources = yaml.load(res) as CrdVersionsMap
+  const resources = yaml.load(res) as CrdVersionsMap
+  const crdMeta = Object.values(resources).flat()
 	
-  const resourceStore = writable(crdResources)
+  const crdMetaStore = writable(crdMeta)
   const resourceSearch = writable("")
 
-  const resourceNameStore = derived(resourceStore, $resourceStore => Object.keys($resourceStore))
+  const resourceNameStore = derived(crdMetaStore, $crdMetaStore => $crdMetaStore.map(x => x.name))
   const resourceSearchFilter = derived([resourceSearch, resourceNameStore], ([$resourceSearch, $resourceNameStore]) => 
     $resourceNameStore.filter(x => $resourceSearch.split(/\s+/).every(y => x.includes(y))))
 </script>
@@ -37,10 +38,10 @@
 				<div class="h-[280px] max-w-[380px] lg:w-[380px] overflow-y-auto scroll-light dark:scroll-dark">
           <ul>
             {#each $resourceSearchFilter as resource, i}
-              {@const resDef = $resourceStore[resource]}
-              {@const targetVersion = resDef.versions[0]}
+              {@const resDef = $crdMetaStore.filter(x => x.name == resource)[0]}
+              {@const targetVersion = resDef.versions.map(x => x.name)[0]}
               <li class="text-gray-900 hover:bg-gray-200 {i > 0 ? 'border-t border-gray-300 dark:border-gray-600' : ''} dark:hover:bg-gray-700">
-                <a class="flex flex-col px-4 py-3" href={`${resource}_${targetVersion}`}>
+                <a class="flex flex-col px-4 py-3" href={`${resource}/${targetVersion}`}>
                   <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.kind}</span>
                   <span class="font-fira text-xs dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.group}</span>
                 </a>

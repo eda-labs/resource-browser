@@ -1,0 +1,6 @@
+- name: nodeuserstates.aaa.eda.nokia.com
+  group: aaa.eda.nokia.com
+  kind: NodeUserState
+  versions:
+    - name: v1alpha1
+      deprecated: false

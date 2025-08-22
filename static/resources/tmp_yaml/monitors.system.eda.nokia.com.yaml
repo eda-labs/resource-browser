@@ -1,0 +1,6 @@
+- name: monitors.system.eda.nokia.com
+  group: system.eda.nokia.com
+  kind: Monitor
+  versions:
+    - name: v1alpha1
+      deprecated: false

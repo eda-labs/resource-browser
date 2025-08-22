@@ -1,0 +1,8 @@
+- name: components.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: Component
+  versions:
+    - name: v1
+      deprecated: false
+    - name: v1alpha1
+      deprecated: false

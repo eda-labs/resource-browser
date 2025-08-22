@@ -1,0 +1,6 @@
+- name: bgpgroupstates.protocols.eda.nokia.com
+  group: protocols.eda.nokia.com
+  kind: BGPGroupState
+  versions:
+    - name: v1alpha1
+      deprecated: false

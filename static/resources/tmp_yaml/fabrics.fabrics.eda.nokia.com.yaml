@@ -1,0 +1,6 @@
+- name: fabrics.fabrics.eda.nokia.com
+  group: fabrics.eda.nokia.com
+  kind: Fabric
+  versions:
+    - name: v1alpha1
+      deprecated: false

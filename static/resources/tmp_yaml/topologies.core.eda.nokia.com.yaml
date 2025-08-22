@@ -1,0 +1,6 @@
+- name: topologies.core.eda.nokia.com
+  group: core.eda.nokia.com
+  kind: Topology
+  versions:
+    - name: v1
+      deprecated: false

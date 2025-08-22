@@ -1,0 +1,6 @@
+- name: configletstates.config.eda.nokia.com
+  group: config.eda.nokia.com
+  kind: ConfigletState
+  versions:
+    - name: v1alpha1
+      deprecated: false

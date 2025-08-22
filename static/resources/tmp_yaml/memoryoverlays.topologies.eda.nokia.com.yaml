@@ -1,0 +1,6 @@
+- name: memoryoverlays.topologies.eda.nokia.com
+  group: topologies.eda.nokia.com
+  kind: MemoryOverlay
+  versions:
+    - name: v1alpha1
+      deprecated: false

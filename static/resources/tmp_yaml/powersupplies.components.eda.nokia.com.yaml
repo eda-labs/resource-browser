@@ -1,0 +1,6 @@
+- name: powersupplies.components.eda.nokia.com
+  group: components.eda.nokia.com
+  kind: PowerSupply
+  versions:
+    - name: v1
+      deprecated: false

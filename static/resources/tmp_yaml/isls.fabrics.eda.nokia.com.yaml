@@ -1,0 +1,6 @@
+- name: isls.fabrics.eda.nokia.com
+  group: fabrics.eda.nokia.com
+  kind: ISL
+  versions:
+    - name: v1alpha1
+      deprecated: false

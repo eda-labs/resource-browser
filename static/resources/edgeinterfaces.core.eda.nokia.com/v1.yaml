@@ -1,0 +1,86 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: EdgeInterface is the Schema for the edgeinterfaces API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: EdgeInterfaceSpec defines the desired state of EdgeInterface
+        properties:
+          bridgeDomain:
+            description: Reference to a Bridge Domain
+            type: string
+          encapType:
+            default: "null"
+            description: Indicates if the EdgeInterface uses VLAN tagging
+            enum:
+              - "null"
+              - dot1q
+            type: string
+          gatewayIPV4Addresses:
+            description: List of gateway IPv4 addresses in ip/mask form - e.g. 192.168.0.1/24
+            items:
+              properties:
+                ipPrefix:
+                  description: Address and mask to use
+                  type: string
+                primary:
+                  description: Indicates which address to use as primary for broadcast
+                  type: boolean
+              required:
+                - ipPrefix
+              type: object
+            type: array
+          gatewayIPV6Addresses:
+            description: List of gateway IPv6 addresses in ip/mask form - e.g. fc00::1/120
+            items:
+              properties:
+                ipPrefix:
+                  description: Address and mask to use
+                  type: string
+                primary:
+                  description: Indicates which address to use as primary for broadcast
+                  type: boolean
+              required:
+                - ipPrefix
+              type: object
+            type: array
+          interfaceResource:
+            description: Reference to an interface
+            type: string
+          router:
+            description: Reference to a Router
+            type: string
+          vlanID:
+            description: Single value between 0-4094 supported
+            maximum: 4094
+            minimum: 0
+            type: integer
+        required:
+          - encapType
+          - interfaceResource
+        type: object
+      status:
+        description: EdgeInterfaceStatus defines the observed state of EdgeInterface
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

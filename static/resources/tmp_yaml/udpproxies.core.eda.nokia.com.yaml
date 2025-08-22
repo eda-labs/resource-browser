@@ -1,0 +1,6 @@
+- name: udpproxies.core.eda.nokia.com
+  group: core.eda.nokia.com
+  kind: UdpProxy
+  versions:
+    - name: v1
+      deprecated: false

@@ -1,0 +1,6 @@
+- name: bridgeinterfaces.services.eda.nokia.com
+  group: services.eda.nokia.com
+  kind: BridgeInterface
+  versions:
+    - name: v1alpha1
+      deprecated: false

@@ -1,0 +1,6 @@
+- name: backends.aifabrics.eda.nokia.com
+  group: aifabrics.eda.nokia.com
+  kind: Backend
+  versions:
+    - name: v1alpha1
+      deprecated: false

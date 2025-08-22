@@ -1,0 +1,6 @@
+- name: mirrorstates.oam.eda.nokia.com
+  group: oam.eda.nokia.com
+  kind: MirrorState
+  versions:
+    - name: v1alpha1
+      deprecated: false

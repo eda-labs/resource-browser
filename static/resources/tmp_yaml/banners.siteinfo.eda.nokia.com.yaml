@@ -1,0 +1,6 @@
+- name: banners.siteinfo.eda.nokia.com
+  group: siteinfo.eda.nokia.com
+  kind: Banner
+  versions:
+    - name: v1alpha1
+      deprecated: false

@@ -1,0 +1,6 @@
+- name: drains.routing.eda.nokia.com
+  group: routing.eda.nokia.com
+  kind: Drain
+  versions:
+    - name: v1alpha1
+      deprecated: false

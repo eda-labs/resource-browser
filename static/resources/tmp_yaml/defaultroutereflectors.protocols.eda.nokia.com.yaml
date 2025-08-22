@@ -1,0 +1,6 @@
+- name: defaultroutereflectors.protocols.eda.nokia.com
+  group: protocols.eda.nokia.com
+  kind: DefaultRouteReflector
+  versions:
+    - name: v1alpha1
+      deprecated: false

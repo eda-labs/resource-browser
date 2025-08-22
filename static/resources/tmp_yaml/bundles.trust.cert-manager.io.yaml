@@ -1,0 +1,6 @@
+- name: bundles.trust.cert-manager.io
+  group: trust.cert-manager.io
+  kind: Bundle
+  versions:
+    - name: v1alpha1
+      deprecated: false

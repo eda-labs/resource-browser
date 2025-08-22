@@ -1,0 +1,6 @@
+- name: orders.acme.cert-manager.io
+  group: acme.cert-manager.io
+  kind: Order
+  versions:
+    - name: v1
+      deprecated: false

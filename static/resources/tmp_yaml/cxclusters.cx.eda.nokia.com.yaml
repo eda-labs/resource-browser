@@ -1,0 +1,6 @@
+- name: cxclusters.cx.eda.nokia.com
+  group: cx.eda.nokia.com
+  kind: CxCluster
+  versions:
+    - name: v1alpha1
+      deprecated: false

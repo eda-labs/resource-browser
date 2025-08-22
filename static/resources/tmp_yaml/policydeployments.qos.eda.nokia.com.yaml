@@ -1,0 +1,6 @@
+- name: policydeployments.qos.eda.nokia.com
+  group: qos.eda.nokia.com
+  kind: PolicyDeployment
+  versions:
+    - name: v1alpha1
+      deprecated: false

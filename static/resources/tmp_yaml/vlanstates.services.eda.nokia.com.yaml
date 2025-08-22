@@ -1,0 +1,6 @@
+- name: vlanstates.services.eda.nokia.com
+  group: services.eda.nokia.com
+  kind: VLANState
+  versions:
+    - name: v1alpha1
+      deprecated: false
