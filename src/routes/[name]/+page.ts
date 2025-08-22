@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
 
 import type { CrdVersionsMap } from '$lib/structure'
 
@@ -17,5 +17,6 @@ export async function load({ params }) {
     throw error(404, "Invalid resource name")
   }
 
-  throw error(404, `${params.name} - version parameter missing`)
+  const version = crdMeta[0].versions[0].name
+  throw redirect(307, `/${name}/${version}`);
 }
