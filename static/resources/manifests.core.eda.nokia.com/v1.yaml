@@ -31,6 +31,9 @@ schema:
                 items:
                   type: string
                 type: array
+              changelog:
+                description: Relative path to the changelog for the application
+                type: string
               documentation:
                 description: Relative path to any documentation
                 type: string
@@ -58,6 +61,9 @@ schema:
                 type: string
               srcURI:
                 description: Source URI that points to the source code of the application
+                type: string
+              support:
+                description: Relative path to the support file for the application
                 type: string
             type: object
           author:
@@ -124,6 +130,31 @@ schema:
                             - spec
                           type: string
                       type: object
+                    names:
+                      description: |-
+                        Names is the CRD Kind names, as specified by its CRD.spec.names field.
+                        Automatically filled in by the edabuilder.
+                      properties:
+                        kind:
+                          description: Kind is the serialized kind of the resource. It is normally CamelCase and singular.
+                          type: string
+                        listKind:
+                          description: ListKind is the serialized kind of the list for this resource. Defaults to <kind>List.
+                          type: string
+                        plural:
+                          description: |-
+                            Plural is the plural name of the resource to serve. It must match the name of the CustomResourceDefinition-registration
+                            too: plural.group and it must be all lowercase.
+                          type: string
+                        singular:
+                          description: Singular is the singular name of the resource. It must be all lowercase  Defaults to lowercased <kind>
+                          type: string
+                      required:
+                        - kind
+                        - listKind
+                        - plural
+                        - singular
+                      type: object
                     namespaced:
                       default: true
                       description: If set, resources of this CRD are namespace scoped
@@ -132,7 +163,6 @@ schema:
                       description: Relative path in the local application repository
                       type: string
                     resourceType:
-                      default: Transactional
                       description: |-
                         The type of the resource that this CRD defines. Transactional resources are processed via ConfigEngine,
                         Kubernetes resources are not exposed in the EDA API, and are not processed via ConfigEngine.
@@ -319,6 +349,11 @@ schema:
             description: Other applications this application depends on/interacts with
             items:
               properties:
+                appId:
+                  description: |-
+                    The app ID of an application that this Manifest depends on.
+                    Note: not in use currently: use AppName and Vendor.
+                  type: string
                 appName:
                   description: The name of an application that this Manifest depends on.
                   type: string

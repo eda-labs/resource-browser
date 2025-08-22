@@ -26,6 +26,13 @@ schema:
           expressionMatch:
             description: Options that determine the matching criteria that applies to the list of community members.
             type: string
+          matchSetOptions:
+            description: The matching criteria that applies to the Members list.
+            enum:
+              - All
+              - Any
+              - Invert
+            type: string
           members:
             description: A standard BGP community value, regular expression or well-known name or else a large BGP community value or regular expression.
             items:

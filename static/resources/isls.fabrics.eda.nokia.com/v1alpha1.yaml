@@ -61,6 +61,11 @@ schema:
                 maximum: 100000000
                 minimum: 10000
                 type: integer
+              ttl:
+                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                maximum: 255
+                minimum: 2
+                type: integer
             type: object
           bgp:
             properties:
@@ -106,6 +111,11 @@ schema:
               - localInterfaceAS
               - remoteInterfaceAS
             type: object
+          ipMTU:
+            description: Sets the IP MTU for the local and remote Interfaces
+            maximum: 9486
+            minimum: 1280
+            type: integer
           localDefaultRouter:
             description: Reference to the DefautlRouter associated with the local Interface in which the ISL will be provisioned.
             type: string

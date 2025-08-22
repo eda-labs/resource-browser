@@ -44,12 +44,56 @@ schema:
                       format: int32
                       type: integer
                     type: array
+                  communitySet:
+                    description: Modify BGP communities associated with the route using hybrid Community Sets.
+                    properties:
+                      add:
+                        description: List of community sets to add to the route.
+                        items:
+                          type: string
+                        maxItems: 1
+                        type: array
+                      remove:
+                        description: List of community sets to remove from the route.
+                        items:
+                          type: string
+                        maxItems: 1
+                        type: array
+                      replace:
+                        description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
+                        items:
+                          type: string
+                        maxItems: 1
+                        type: array
+                    type: object
                   localPreference:
                     description: Set a new LOCAL_PREF value for matching BGP routes.
                     format: int32
                     maximum: 4294967295
                     minimum: 0
                     type: integer
+                  med:
+                    description: Set a new MED value.
+                    properties:
+                      numericalValue:
+                        description: Fixed numerical value to set or add/subtract.
+                        maximum: 4294967295
+                        minimum: 0
+                        type: integer
+                      operation:
+                        description: The operation to perform on the MED value.
+                        enum:
+                          - Set
+                          - Add
+                          - Subtract
+                        type: string
+                      valueType:
+                        description: Use a fixed value or an IGP metric to adjust the MED.
+                        enum:
+                          - Fixed
+                          - IGP
+                        type: string
+                    type: object
                   setOrigin:
                     description: Set a new ORIGIN attribute for matching BGP routes.
                     enum:
@@ -63,6 +107,8 @@ schema:
                 enum:
                   - accept
                   - reject
+                  - NextPolicy
+                  - NextStatement
                 type: string
             type: object
           statement:
@@ -90,12 +136,56 @@ schema:
                             format: int32
                             type: integer
                           type: array
+                        communitySet:
+                          description: Modify BGP communities associated with the route using hybrid Community Sets.
+                          properties:
+                            add:
+                              description: List of community sets to add to the route.
+                              items:
+                                type: string
+                              maxItems: 1
+                              type: array
+                            remove:
+                              description: List of community sets to remove from the route.
+                              items:
+                                type: string
+                              maxItems: 1
+                              type: array
+                            replace:
+                              description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
+                              items:
+                                type: string
+                              maxItems: 1
+                              type: array
+                          type: object
                         localPreference:
                           description: Set a new LOCAL_PREF value for matching BGP routes.
                           format: int32
                           maximum: 4294967295
                           minimum: 0
                           type: integer
+                        med:
+                          description: Set a new MED value.
+                          properties:
+                            numericalValue:
+                              description: Fixed numerical value to set or add/subtract.
+                              maximum: 4294967295
+                              minimum: 0
+                              type: integer
+                            operation:
+                              description: The operation to perform on the MED value.
+                              enum:
+                                - Set
+                                - Add
+                                - Subtract
+                              type: string
+                            valueType:
+                              description: Use a fixed value or an IGP metric to adjust the MED.
+                              enum:
+                                - Fixed
+                                - IGP
+                              type: string
+                          type: object
                         setOrigin:
                           description: Set a new ORIGIN attribute for matching BGP routes.
                           enum:
@@ -109,6 +199,8 @@ schema:
                       enum:
                         - accept
                         - reject
+                        - NextPolicy
+                        - NextStatement
                       type: string
                   type: object
                 match:
@@ -117,6 +209,23 @@ schema:
                     bgp:
                       description: Configuration for BGP-specific policy match criteria.
                       properties:
+                        asPathMatch:
+                          description: AS Path match criteria.
+                          properties:
+                            asPathExpression:
+                              description: A singular regular expression string to match against AS_PATH objects. Mutually exclusive with the ASPathSet reference.
+                              type: string
+                            asPathSet:
+                              description: Reference to an ASPathSet resource. Mutually exclusive with the ASPathExpression.
+                              type: string
+                            matchSetOptions:
+                              description: The matching criteria that applies to the members in the referenced set.
+                              enum:
+                                - Any
+                                - All
+                                - Invert
+                              type: string
+                          type: object
                         communitySet:
                           description: Match conditions for BGP communities.
                           type: string

@@ -67,6 +67,11 @@ schema:
             type: array
           interSwitchLinks:
             properties:
+              ipMTU:
+                description: Sets the IP MTU for the DefaultInterface.
+                maximum: 9486
+                minimum: 1280
+                type: integer
               linkSelector:
                 description: Selects TopoLinks to include in this Fabric, creating an ISL resource if both Nodes in the TopoLink are part of this Fabric or a selected Fabric.
                 items:
@@ -159,6 +164,11 @@ schema:
                     description: The minimum interval in microseconds between received BFD control packets that this system should support.
                     maximum: 100000000
                     minimum: 10000
+                    type: integer
+                  ttl:
+                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                    maximum: 255
+                    minimum: 2
                     type: integer
                 type: object
               bgp:
@@ -345,6 +355,11 @@ schema:
                     description: The minimum interval in microseconds between received BFD control packets that this system should support.
                     maximum: 100000000
                     minimum: 10000
+                    type: integer
+                  ttl:
+                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                    maximum: 255
+                    minimum: 2
                     type: integer
                 type: object
               bgp:

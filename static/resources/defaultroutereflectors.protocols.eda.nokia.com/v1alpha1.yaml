@@ -11,6 +11,8 @@ additionalPrinterColumns:
   - jsonPath: .status.numRouteReflectorBGPPeersOperDown
     name: NumRouteReflectorBGPPeersOperDown
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
@@ -273,6 +275,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

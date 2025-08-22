@@ -57,6 +57,7 @@ schema:
                 kind:
                   description: The kind of Component, e.g. lineCard.
                   enum:
+                    - controlCard
                     - lineCard
                     - fabric
                     - mda
@@ -128,7 +129,11 @@ schema:
             enum:
               - srl
               - sros
+              - eos
+              - sonic
+              - ios-xr
               - nxos
+              - linux
             type: string
           platform:
             description: Platform type of this TopoNode, e.g. 7220 IXR-D3L.
@@ -152,7 +157,7 @@ schema:
               Not required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.
             type: string
           systemInterface:
-            description: Name of the Interface resource representing the primary loopback on the TopoNode.
+            description: 'Deprecated: Name of the Interface resource representing the primary loopback on the TopoNode, this field will be removed in the future version.'
             type: string
           version:
             description: Sets the software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).

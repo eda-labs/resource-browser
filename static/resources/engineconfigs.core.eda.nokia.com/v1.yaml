@@ -275,6 +275,10 @@ schema:
                   ipv6Address:
                     description: The external IPv6 address of the cluster
                     type: string
+                  relaxDomainNameEnforcement:
+                    default: false
+                    description: Relax enforcement of client origins from configured cluster.external.domainName
+                    type: boolean
                 type: object
               internal:
                 description: Configure how this cluster is presented at the k8s edge. This is used to configure the eda-api service.
@@ -669,7 +673,9 @@ schema:
                 description: The maximum heap size for each Python interpreter
                 type: integer
               local-script-dir:
-                description: Override path to use for the Python interpreter to read scripts from
+                description: |-
+                  Override path to use for the Python interpreter to read scripts from.
+                  LocalScriptDir is deprecated.
                 type: string
               num-interpreters:
                 description: The number of interpreters to run in parallel

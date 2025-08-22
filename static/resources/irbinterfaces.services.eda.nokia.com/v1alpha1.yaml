@@ -8,6 +8,8 @@ additionalPrinterColumns:
   - jsonPath: .status.lastChange
     name: LastChange
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
@@ -61,16 +63,21 @@ schema:
                 description: Enables Biforward Detection.
                 type: boolean
               minEchoReceiveInterval:
-                default: 1000000
+                default: 0
                 description: The minimum interval between echo packets the local node can receive.
                 maximum: 100000000
-                minimum: 250000
+                minimum: 0
                 type: integer
               requiredMinReceive:
                 default: 1000000
                 description: The minimum interval in microseconds between received BFD control packets that this system should support.
                 maximum: 100000000
                 minimum: 10000
+                type: integer
+              ttl:
+                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                maximum: 255
+                minimum: 2
                 type: integer
             required:
               - enabled
@@ -183,6 +190,12 @@ schema:
             maximum: 9486
             minimum: 1280
             type: integer
+          ipv4Parameters:
+            properties:
+              directedBroadcast:
+                description: Allow receiving and forwarding of directed broadcast packets. Enabled when set to true.
+                type: boolean
+            type: object
           ipv6RouterAdvertisement:
             properties:
               currentHopLimit:
@@ -427,6 +440,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

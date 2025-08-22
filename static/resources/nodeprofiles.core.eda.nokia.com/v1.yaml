@@ -307,9 +307,11 @@ schema:
             description: Reference to a NodeUser to use for authentication to TopoNodes referencing this NodeProfile.
             type: string
           onboardingPassword:
+            default: NokiaSrl1!
             description: The password to use when onboarding TopoNodes referencing this NodeProfile, e.g. admin.
             type: string
           onboardingUsername:
+            default: admin
             description: The username to use when onboarding TopoNodes referencing this NodeProfile, e.g. admin.
             type: string
           operatingSystem:
@@ -317,7 +319,11 @@ schema:
             enum:
               - srl
               - sros
+              - eos
+              - sonic
+              - ios-xr
               - nxos
+              - linux
             type: string
           platformPath:
             description: JSPath to use for retrieving the version string from TopoNodes referencing this NodeProfile, e.g. .platform.chassis.type.
@@ -345,6 +351,8 @@ schema:
             type: string
         required:
           - nodeUser
+          - onboardingPassword
+          - onboardingUsername
           - operatingSystem
           - version
           - yang

@@ -27,6 +27,9 @@ schema:
             description: Specifies the list of filter entries, in order.
             items:
               properties:
+                description:
+                  description: Description of the FilterEntry.
+                  type: string
                 ipEntry:
                   properties:
                     action:
@@ -272,6 +275,9 @@ schema:
                       maximum: 255
                       minimum: 0
                       type: integer
+                    log:
+                      description: Log the matches for this entry.
+                      type: boolean
                     protocolName:
                       description: Match a specific IP protocol name (specified in the type field of the IP header).
                       enum:
@@ -526,6 +532,7 @@ schema:
                   type: object
                 type:
                   default: Auto
+                  description: Type of the entry which can be IPV4, IPV6 or Auto.
                   enum:
                     - IPV4
                     - IPV6
@@ -535,6 +542,9 @@ schema:
                 - type
               type: object
             type: array
+          statisticsPerEntry:
+            description: Enable or disable per-entry counters.
+            type: boolean
         required:
           - entries
         type: object

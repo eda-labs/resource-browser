@@ -42,6 +42,10 @@ schema:
               ipv6Address:
                 description: The external IPv6 address of the cluster
                 type: string
+              relaxDomainNameEnforcement:
+                default: false
+                description: Relax enforcement of client origins from configured cluster.external.domainName
+                type: boolean
             type: object
         required:
           - dhcp

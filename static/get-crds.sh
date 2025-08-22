@@ -87,7 +87,7 @@ done < <(kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers)
 echo
 export -f process_crd
 printf "%s\n" "${crd_names[@]}" \
-  | xargs -P4 -I{} bash -c 'process_crd "$1" "$2" "$3"' _ {} "$output_dir" "$temp_dir"
+  | xargs -P64 -I{} bash -c 'process_crd "$1" "$2" "$3"' _ {} "$output_dir" "$temp_dir"
 
 cat "$temp_dir"/*.yaml \
   | yq eval 'group_by(.group) | map({(.[0].group): .}) | .[] as $first | $first' - > "$crd_meta_file"

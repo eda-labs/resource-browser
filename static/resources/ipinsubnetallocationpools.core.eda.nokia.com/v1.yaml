@@ -33,6 +33,12 @@ schema:
             description: List of segments containing IPv4 or IPv6 addresses to allocate.
             items:
               properties:
+                allocateBroadcastAddress:
+                  description: Permit the allocation of the broadcast address.
+                  type: boolean
+                allocateNetworkAddress:
+                  description: Permit the allocation of the network address.
+                  type: boolean
                 allocations:
                   description: List of reservations to exclude from allocations from this segment.
                   items:

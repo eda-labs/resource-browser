@@ -202,6 +202,11 @@ schema:
             default: 5s
             description: Timeout specifies the tls timeout
             type: string
+          trustBundle:
+            description: |-
+              TrustBundle is a ConfigMap with a `trust-bundle.pem` key containing
+              certificate authorities to be used to verify the returned certificates.
+            type: string
         type: object
       status:
         description: CertificateCheckStatus defines the observed state of CertificateCheck

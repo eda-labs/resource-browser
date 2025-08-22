@@ -5,6 +5,8 @@ additionalPrinterColumns:
   - jsonPath: .status.lastChange
     name: LastChange
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
@@ -348,16 +350,21 @@ schema:
                           description: Enables Biforward Detection.
                           type: boolean
                         minEchoReceiveInterval:
-                          default: 1000000
+                          default: 0
                           description: The minimum interval between echo packets the local node can receive.
                           maximum: 100000000
-                          minimum: 250000
+                          minimum: 0
                           type: integer
                         requiredMinReceive:
                           default: 1000000
                           description: The minimum interval in microseconds between received BFD control packets that this system should support.
                           maximum: 100000000
                           minimum: 10000
+                          type: integer
+                        ttl:
+                          description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                          maximum: 255
+                          minimum: 2
                           type: integer
                       required:
                         - enabled
@@ -470,6 +477,12 @@ schema:
                       maximum: 9486
                       minimum: 1280
                       type: integer
+                    ipv4Parameters:
+                      properties:
+                        directedBroadcast:
+                          description: Allow receiving and forwarding of directed broadcast packets. Enabled when set to true.
+                          type: boolean
+                      type: object
                     ipv6RouterAdvertisement:
                       properties:
                         currentHopLimit:
@@ -1118,12 +1131,56 @@ schema:
                                         format: int32
                                         type: integer
                                       type: array
+                                    communitySet:
+                                      description: Modify BGP communities associated with the route using hybrid Community Sets.
+                                      properties:
+                                        add:
+                                          description: List of community sets to add to the route.
+                                          items:
+                                            type: string
+                                          maxItems: 1
+                                          type: array
+                                        remove:
+                                          description: List of community sets to remove from the route.
+                                          items:
+                                            type: string
+                                          maxItems: 1
+                                          type: array
+                                        replace:
+                                          description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
+                                          items:
+                                            type: string
+                                          maxItems: 1
+                                          type: array
+                                      type: object
                                     localPreference:
                                       description: Set a new LOCAL_PREF value for matching BGP routes.
                                       format: int32
                                       maximum: 4294967295
                                       minimum: 0
                                       type: integer
+                                    med:
+                                      description: Set a new MED value.
+                                      properties:
+                                        numericalValue:
+                                          description: Fixed numerical value to set or add/subtract.
+                                          maximum: 4294967295
+                                          minimum: 0
+                                          type: integer
+                                        operation:
+                                          description: The operation to perform on the MED value.
+                                          enum:
+                                            - Set
+                                            - Add
+                                            - Subtract
+                                          type: string
+                                        valueType:
+                                          description: Use a fixed value or an IGP metric to adjust the MED.
+                                          enum:
+                                            - Fixed
+                                            - IGP
+                                          type: string
+                                      type: object
                                     setOrigin:
                                       description: Set a new ORIGIN attribute for matching BGP routes.
                                       enum:
@@ -1137,6 +1194,8 @@ schema:
                                   enum:
                                     - accept
                                     - reject
+                                    - NextPolicy
+                                    - NextStatement
                                   type: string
                               type: object
                             statement:
@@ -1164,12 +1223,56 @@ schema:
                                               format: int32
                                               type: integer
                                             type: array
+                                          communitySet:
+                                            description: Modify BGP communities associated with the route using hybrid Community Sets.
+                                            properties:
+                                              add:
+                                                description: List of community sets to add to the route.
+                                                items:
+                                                  type: string
+                                                maxItems: 1
+                                                type: array
+                                              remove:
+                                                description: List of community sets to remove from the route.
+                                                items:
+                                                  type: string
+                                                maxItems: 1
+                                                type: array
+                                              replace:
+                                                description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
+                                                items:
+                                                  type: string
+                                                maxItems: 1
+                                                type: array
+                                            type: object
                                           localPreference:
                                             description: Set a new LOCAL_PREF value for matching BGP routes.
                                             format: int32
                                             maximum: 4294967295
                                             minimum: 0
                                             type: integer
+                                          med:
+                                            description: Set a new MED value.
+                                            properties:
+                                              numericalValue:
+                                                description: Fixed numerical value to set or add/subtract.
+                                                maximum: 4294967295
+                                                minimum: 0
+                                                type: integer
+                                              operation:
+                                                description: The operation to perform on the MED value.
+                                                enum:
+                                                  - Set
+                                                  - Add
+                                                  - Subtract
+                                                type: string
+                                              valueType:
+                                                description: Use a fixed value or an IGP metric to adjust the MED.
+                                                enum:
+                                                  - Fixed
+                                                  - IGP
+                                                type: string
+                                            type: object
                                           setOrigin:
                                             description: Set a new ORIGIN attribute for matching BGP routes.
                                             enum:
@@ -1183,6 +1286,8 @@ schema:
                                         enum:
                                           - accept
                                           - reject
+                                          - NextPolicy
+                                          - NextStatement
                                         type: string
                                     type: object
                                   match:
@@ -1191,6 +1296,23 @@ schema:
                                       bgp:
                                         description: Configuration for BGP-specific policy match criteria.
                                         properties:
+                                          asPathMatch:
+                                            description: AS Path match criteria.
+                                            properties:
+                                              asPathExpression:
+                                                description: A singular regular expression string to match against AS_PATH objects. Mutually exclusive with the ASPathSet reference.
+                                                type: string
+                                              asPathSet:
+                                                description: Reference to an ASPathSet resource. Mutually exclusive with the ASPathExpression.
+                                                type: string
+                                              matchSetOptions:
+                                                description: The matching criteria that applies to the members in the referenced set.
+                                                enum:
+                                                  - Any
+                                                  - All
+                                                  - Invert
+                                                type: string
+                                            type: object
                                           communitySet:
                                             description: Match conditions for BGP communities.
                                             type: string
@@ -1316,6 +1438,9 @@ schema:
                               default: false
                               description: If set to true all traffic destined to the prefixes will be blackholed.  If enabled, next-hops are ignored and this takes precedence.
                               type: boolean
+                            blackholeSendICMP:
+                              description: When enabled, the router will generate ICMP Unreachable messages for packets destined to the blackhole route.
+                              type: boolean
                             nexthops:
                               description: Ordered list of nexthops.
                               items:
@@ -1414,16 +1539,21 @@ schema:
                           description: Enables Biforward Detection.
                           type: boolean
                         minEchoReceiveInterval:
-                          default: 1000000
+                          default: 0
                           description: The minimum interval between echo packets the local node can receive.
                           maximum: 100000000
-                          minimum: 250000
+                          minimum: 0
                           type: integer
                         requiredMinReceive:
                           default: 1000000
                           description: The minimum interval in microseconds between received BFD control packets that this system should support.
                           maximum: 100000000
                           minimum: 10000
+                          type: integer
+                        ttl:
+                          description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                          maximum: 255
+                          minimum: 2
                           type: integer
                       required:
                         - enabled
@@ -1482,6 +1612,12 @@ schema:
                           - ipPrefix
                         type: object
                       type: array
+                    ipv4Parameters:
+                      properties:
+                        directedBroadcast:
+                          description: Allow receiving and forwarding of directed broadcast packets. Enabled when set to true.
+                          type: boolean
+                      type: object
                     ipv6Addresses:
                       description: List of IPv6 addresses in IP/mask form, e.g., fc00::1/120.
                       items:
@@ -2050,6 +2186,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

@@ -1,0 +1,138 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: IslPing is the Schema for the islpings API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          This workflow is used to ping ISLs (Inter-Switch Links) to verify connectivity within a Fabric.
+          It accepts a list of fabrics, ISLs, or selectors for both to match ISLs,
+          and returns the results of the pings, including the status of each ISL.
+        properties:
+          count:
+            default: 1
+            description: Count is the number of pings to send.
+            type: integer
+          fabricSelectors:
+            description: |-
+              Fabric Selectors is a list of fabric selectors to execute ISL pings for.
+              This is a list of label expressions, e.g. ["eda.nokia.com/role=leaf", "eda.nokia.com/region=us-west"].
+            items:
+              type: string
+            type: array
+          fabrics:
+            description: Fabrics is a list of fabrics to execute ISL pings for.
+            items:
+              type: string
+            type: array
+          islSelectors:
+            description: |-
+              Inter-Switch Link Selectors is a list of selectors to execute ISL pings for.
+              This is a list of label expressions, e.g. ["eda.nokia.com/role=leaf", "eda.nokia.com/region=us-west"].
+            items:
+              type: string
+            type: array
+          isls:
+            description: Inter-Switch Links is a list of named ISL resources to execute ISL pings for.
+            items:
+              type: string
+            type: array
+          timeoutSeconds:
+            default: 5
+            description: TimeoutSeconds is the timeout for the ping in seconds.
+            type: integer
+        type: object
+      status:
+        description: IslPingStatus defines the observed state of IslPing
+        properties:
+          details:
+            description: |-
+              Details contains the results of the pings performed for each ISL.
+              Each entry in the list corresponds to an ISL that was pinged.
+            items:
+              properties:
+                details:
+                  properties:
+                    averageTimeNanoseconds:
+                      description: |-
+                        A Duration represents the elapsed time between two instants
+                        as an int64 nanosecond count. The representation limits the
+                        largest representable duration to approximately 290 years.
+                      format: int64
+                      type: integer
+                    maxTimeNanoseconds:
+                      description: |-
+                        A Duration represents the elapsed time between two instants
+                        as an int64 nanosecond count. The representation limits the
+                        largest representable duration to approximately 290 years.
+                      format: int64
+                      type: integer
+                    minTimeNanoseconds:
+                      description: |-
+                        A Duration represents the elapsed time between two instants
+                        as an int64 nanosecond count. The representation limits the
+                        largest representable duration to approximately 290 years.
+                      format: int64
+                      type: integer
+                    received:
+                      type: integer
+                    sent:
+                      type: integer
+                    stdDevNanoseconds:
+                      description: |-
+                        A Duration represents the elapsed time between two instants
+                        as an int64 nanosecond count. The representation limits the
+                        largest representable duration to approximately 290 years.
+                      format: int64
+                      type: integer
+                    totalTimeNanoseconds:
+                      description: |-
+                        A Duration represents the elapsed time between two instants
+                        as an int64 nanosecond count. The representation limits the
+                        largest representable duration to approximately 290 years.
+                      format: int64
+                      type: integer
+                  type: object
+                error:
+                  type: string
+                name:
+                  type: string
+                success:
+                  type: boolean
+              type: object
+            type: array
+          result:
+            description: |-
+              Result is the overall result of the ping operation.
+              It can be one of the following values:
+              - "Success": All pings were successful.
+              - "Failed": No pings were successful.
+              - "PartialSuccess": Some pings were successful, but not all.
+            enum:
+              - Success
+              - Failed
+              - PartialSuccess
+            type: string
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

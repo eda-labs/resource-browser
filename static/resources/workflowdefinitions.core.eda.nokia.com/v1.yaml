@@ -61,6 +61,10 @@ schema:
             items:
               type: string
             type: array
+          namespaced:
+            default: true
+            description: If set, resources of this CRD are namespace scoped
+            type: boolean
         required:
           - image
         type: object

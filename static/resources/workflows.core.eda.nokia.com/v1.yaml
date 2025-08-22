@@ -72,6 +72,7 @@ schema:
               - Running
               - WaitingToStart
               - SubflowWaitingForInput
+              - Completed
             type: string
           stages:
             description: Results of the stages in this Flow
@@ -93,6 +94,7 @@ schema:
                     - Pending
                     - Skipped
                     - Aborted
+                    - Completed
                   type: string
                 subflows:
                   description: Subflows of this stage.
