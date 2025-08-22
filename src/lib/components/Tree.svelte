@@ -1,5 +1,6 @@
 <script lang="ts">
   import { copy } from 'svelte-copy'
+
   import { expandAll, expandAllScope, ulExpanded } from '$lib/store'
 	import { getDescription, getScope, hashExistDeep } from "./functions"
 	import type { Schema } from '$lib/structure'
