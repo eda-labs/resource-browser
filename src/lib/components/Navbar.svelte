@@ -35,7 +35,7 @@
             <span>{validVersions[0]}</span>
           {/if}
           {#if deprecated}
-            <span class="ml-2 px-2 py-1 text-[10px] rounded-lg bg-orange-200 dark:bg-orange-500 text-gray-800">deprecated</span>
+            <span class="ml-2 px-2 py-[3px] text-[10px] rounded-lg bg-orange-200 dark:bg-orange-500 text-gray-800">deprecated</span>
           {/if}
         </div>
       </div>
