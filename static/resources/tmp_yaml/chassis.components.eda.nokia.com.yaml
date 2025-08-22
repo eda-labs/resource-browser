@@ -1,6 +1,0 @@
-- name: chassis.components.eda.nokia.com
-  group: components.eda.nokia.com
-  kind: Chassis
-  versions:
-    - name: v1
-      deprecated: false

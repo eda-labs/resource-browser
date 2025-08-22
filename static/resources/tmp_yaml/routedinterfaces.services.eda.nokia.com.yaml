@@ -1,6 +1,0 @@
-- name: routedinterfaces.services.eda.nokia.com
-  group: services.eda.nokia.com
-  kind: RoutedInterface
-  versions:
-    - name: v1alpha1
-      deprecated: false

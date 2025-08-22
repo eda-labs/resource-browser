@@ -72,9 +72,21 @@ process_crd() {
   done
 }
 
+# Get all CRD names and process them concurrently
+crd_names=()
+while IFS= read -r crd_name; do
+  # populate list with EDA CRDs
+  if [[ "$crd_name" == *".eda.nokia.com"* ]]; then
+    crd_names+=("$crd_name")
+  else
+    echo "Skipping $crd_name"
+  fi
+done < <(kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers)
+
 # parallel CRD processing (adjust -P4 for concurrency)
+echo
 export -f process_crd
-kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers \
+printf "%s\n" "${crd_names[@]}" \
   | xargs -P4 -I{} bash -c 'process_crd "$1" "$2" "$3"' _ {} "$output_dir" "$temp_dir"
 
 cat "$temp_dir"/*.yaml \

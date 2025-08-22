@@ -1,6 +1,0 @@
-- name: bgpadvertisements.metallb.io
-  group: metallb.io
-  kind: BGPAdvertisement
-  versions:
-    - name: v1beta1
-      deprecated: false

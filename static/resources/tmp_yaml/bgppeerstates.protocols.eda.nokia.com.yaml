@@ -1,6 +1,0 @@
-- name: bgppeerstates.protocols.eda.nokia.com
-  group: protocols.eda.nokia.com
-  kind: BGPPeerState
-  versions:
-    - name: v1alpha1
-      deprecated: false

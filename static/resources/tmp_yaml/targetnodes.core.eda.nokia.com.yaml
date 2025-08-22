@@ -1,6 +1,0 @@
-- name: targetnodes.core.eda.nokia.com
-  group: core.eda.nokia.com
-  kind: TargetNode
-  versions:
-    - name: v1
-      deprecated: false

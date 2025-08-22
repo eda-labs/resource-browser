@@ -1,6 +1,0 @@
-- name: lldpoverlays.topologies.eda.nokia.com
-  group: topologies.eda.nokia.com
-  kind: LldpOverlay
-  versions:
-    - name: v1alpha1
-      deprecated: false

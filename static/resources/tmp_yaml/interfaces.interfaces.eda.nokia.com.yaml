@@ -1,6 +1,0 @@
-- name: interfaces.interfaces.eda.nokia.com
-  group: interfaces.eda.nokia.com
-  kind: Interface
-  versions:
-    - name: v1alpha1
-      deprecated: false

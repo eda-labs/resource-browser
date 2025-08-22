@@ -1,6 +1,0 @@
-- name: inits.bootstrap.eda.nokia.com
-  group: bootstrap.eda.nokia.com
-  kind: Init
-  versions:
-    - name: v1alpha1
-      deprecated: false

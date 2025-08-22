@@ -1,6 +1,0 @@
-- name: certificatechecks.certcheck.eda.nokia.com
-  group: certcheck.eda.nokia.com
-  kind: CertificateCheck
-  versions:
-    - name: v1alpha1
-      deprecated: false

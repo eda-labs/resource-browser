@@ -1,6 +1,0 @@
-- name: managementrouterstates.bootstrap.eda.nokia.com
-  group: bootstrap.eda.nokia.com
-  kind: ManagementRouterState
-  versions:
-    - name: v1alpha1
-      deprecated: false

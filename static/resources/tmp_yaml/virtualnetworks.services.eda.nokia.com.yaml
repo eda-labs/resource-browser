@@ -1,6 +1,0 @@
-- name: virtualnetworks.services.eda.nokia.com
-  group: services.eda.nokia.com
-  kind: VirtualNetwork
-  versions:
-    - name: v1alpha1
-      deprecated: false

@@ -1,6 +1,0 @@
-- name: mirrorfilters.filters.eda.nokia.com
-  group: filters.eda.nokia.com
-  kind: MirrorFilter
-  versions:
-    - name: v1alpha1
-      deprecated: false

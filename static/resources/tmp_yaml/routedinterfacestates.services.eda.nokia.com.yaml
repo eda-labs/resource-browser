@@ -1,6 +1,0 @@
-- name: routedinterfacestates.services.eda.nokia.com
-  group: services.eda.nokia.com
-  kind: RoutedInterfaceState
-  versions:
-    - name: v1alpha1
-      deprecated: false

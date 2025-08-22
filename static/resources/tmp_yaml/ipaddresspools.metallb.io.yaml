@@ -1,6 +1,0 @@
-- name: ipaddresspools.metallb.io
-  group: metallb.io
-  kind: IPAddressPool
-  versions:
-    - name: v1beta1
-      deprecated: false

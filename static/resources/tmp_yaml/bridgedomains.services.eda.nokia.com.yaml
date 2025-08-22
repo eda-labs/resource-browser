@@ -1,6 +1,0 @@
-- name: bridgedomains.services.eda.nokia.com
-  group: services.eda.nokia.com
-  kind: BridgeDomain
-  versions:
-    - name: v1alpha1
-      deprecated: false

@@ -1,6 +1,0 @@
-- name: ipallocationpools.core.eda.nokia.com
-  group: core.eda.nokia.com
-  kind: IPAllocationPool
-  versions:
-    - name: v1
-      deprecated: false

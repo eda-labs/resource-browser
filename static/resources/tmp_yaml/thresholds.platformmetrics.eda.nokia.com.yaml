@@ -1,6 +1,0 @@
-- name: thresholds.platformmetrics.eda.nokia.com
-  group: platformmetrics.eda.nokia.com
-  kind: Threshold
-  versions:
-    - name: v1
-      deprecated: false

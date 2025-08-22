@@ -1,6 +1,0 @@
-- name: defaultstaticroutes.protocols.eda.nokia.com
-  group: protocols.eda.nokia.com
-  kind: DefaultStaticRoute
-  versions:
-    - name: v1alpha1
-      deprecated: false

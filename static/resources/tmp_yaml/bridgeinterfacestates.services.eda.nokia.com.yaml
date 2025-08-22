@@ -1,6 +1,0 @@
-- name: bridgeinterfacestates.services.eda.nokia.com
-  group: services.eda.nokia.com
-  kind: BridgeInterfaceState
-  versions:
-    - name: v1alpha1
-      deprecated: false

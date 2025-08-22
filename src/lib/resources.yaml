@@ -1,50 +1,3 @@
-metallb.io:
-  - name: addresspools.metallb.io
-    group: metallb.io
-    kind: AddressPool
-    versions:
-      - name: v1alpha1
-        deprecated: true
-      - name: v1beta1
-        deprecated: true
-  - name: bfdprofiles.metallb.io
-    group: metallb.io
-    kind: BFDProfile
-    versions:
-      - name: v1beta1
-        deprecated: false
-  - name: bgpadvertisements.metallb.io
-    group: metallb.io
-    kind: BGPAdvertisement
-    versions:
-      - name: v1beta1
-        deprecated: false
-  - name: bgppeers.metallb.io
-    group: metallb.io
-    kind: BGPPeer
-    versions:
-      - name: v1beta1
-        deprecated: false
-      - name: v1beta2
-        deprecated: false
-  - name: communities.metallb.io
-    group: metallb.io
-    kind: Community
-    versions:
-      - name: v1beta1
-        deprecated: false
-  - name: ipaddresspools.metallb.io
-    group: metallb.io
-    kind: IPAddressPool
-    versions:
-      - name: v1beta1
-        deprecated: false
-  - name: l2advertisements.metallb.io
-    group: metallb.io
-    kind: L2Advertisement
-    versions:
-      - name: v1beta1
-        deprecated: false
 protocols.eda.nokia.com:
   - name: aggregateroutes.protocols.eda.nokia.com
     group: protocols.eda.nokia.com
@@ -520,13 +473,6 @@ services.eda.nokia.com:
     versions:
       - name: v1alpha1
         deprecated: false
-trust.cert-manager.io:
-  - name: bundles.trust.cert-manager.io
-    group: trust.cert-manager.io
-    kind: Bundle
-    versions:
-      - name: v1alpha1
-        deprecated: false
 appstore.eda.nokia.com:
   - name: catalogs.appstore.eda.nokia.com
     group: appstore.eda.nokia.com
@@ -546,44 +492,6 @@ certcheck.eda.nokia.com:
     kind: CertificateCheck
     versions:
       - name: v1alpha1
-        deprecated: false
-cert-manager.io:
-  - name: certificaterequests.cert-manager.io
-    group: cert-manager.io
-    kind: CertificateRequest
-    versions:
-      - name: v1
-        deprecated: false
-  - name: certificates.cert-manager.io
-    group: cert-manager.io
-    kind: Certificate
-    versions:
-      - name: v1
-        deprecated: false
-  - name: clusterissuers.cert-manager.io
-    group: cert-manager.io
-    kind: ClusterIssuer
-    versions:
-      - name: v1
-        deprecated: false
-  - name: issuers.cert-manager.io
-    group: cert-manager.io
-    kind: Issuer
-    versions:
-      - name: v1
-        deprecated: false
-acme.cert-manager.io:
-  - name: challenges.acme.cert-manager.io
-    group: acme.cert-manager.io
-    kind: Challenge
-    versions:
-      - name: v1
-        deprecated: false
-  - name: orders.acme.cert-manager.io
-    group: acme.cert-manager.io
-    kind: Order
-    versions:
-      - name: v1
         deprecated: false
 components.eda.nokia.com:
   - name: chassis.components.eda.nokia.com
@@ -1074,13 +982,6 @@ timing.eda.nokia.com:
   - name: ntpclients.timing.eda.nokia.com
     group: timing.eda.nokia.com
     kind: NTPClient
-    versions:
-      - name: v1alpha1
-        deprecated: false
-kpt.dev:
-  - name: resourcegroups.kpt.dev
-    group: kpt.dev
-    kind: ResourceGroup
     versions:
       - name: v1alpha1
         deprecated: false

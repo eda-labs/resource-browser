@@ -1,6 +1,0 @@
-- name: bgpgroups.protocols.eda.nokia.com
-  group: protocols.eda.nokia.com
-  kind: BGPGroup
-  versions:
-    - name: v1alpha1
-      deprecated: false

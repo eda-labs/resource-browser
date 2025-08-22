@@ -1,6 +1,0 @@
-- name: cpuutiloverlays.topologies.eda.nokia.com
-  group: topologies.eda.nokia.com
-  kind: CPUUtilOverlay
-  versions:
-    - name: v1alpha1
-      deprecated: false

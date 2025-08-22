@@ -1,6 +1,0 @@
-- name: deviationoverlays.topologies.eda.nokia.com
-  group: topologies.eda.nokia.com
-  kind: DeviationOverlay
-  versions:
-    - name: v1alpha1
-      deprecated: false

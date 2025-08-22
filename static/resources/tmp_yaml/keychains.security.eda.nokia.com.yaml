@@ -1,6 +1,0 @@
-- name: keychains.security.eda.nokia.com
-  group: security.eda.nokia.com
-  kind: Keychain
-  versions:
-    - name: v1alpha1
-      deprecated: false

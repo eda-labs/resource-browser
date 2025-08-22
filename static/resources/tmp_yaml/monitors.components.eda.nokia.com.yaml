@@ -1,6 +1,0 @@
-- name: monitors.components.eda.nokia.com
-  group: components.eda.nokia.com
-  kind: Monitor
-  versions:
-    - name: v1
-      deprecated: false

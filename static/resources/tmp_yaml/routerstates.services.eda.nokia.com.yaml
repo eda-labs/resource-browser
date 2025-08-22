@@ -1,6 +1,0 @@
-- name: routerstates.services.eda.nokia.com
-  group: services.eda.nokia.com
-  kind: RouterState
-  versions:
-    - name: v1alpha1
-      deprecated: false

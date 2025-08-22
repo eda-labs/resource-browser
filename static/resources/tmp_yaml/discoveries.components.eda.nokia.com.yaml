@@ -1,8 +1,0 @@
-- name: discoveries.components.eda.nokia.com
-  group: components.eda.nokia.com
-  kind: Discovery
-  versions:
-    - name: v1
-      deprecated: false
-    - name: v1alpha1
-      deprecated: false

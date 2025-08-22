@@ -1,6 +1,0 @@
-- name: ntpclientstates.timing.eda.nokia.com
-  group: timing.eda.nokia.com
-  kind: NTPClientState
-  versions:
-    - name: v1alpha1
-      deprecated: false

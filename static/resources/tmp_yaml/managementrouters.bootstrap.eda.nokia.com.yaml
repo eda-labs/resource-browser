@@ -1,6 +1,0 @@
-- name: managementrouters.bootstrap.eda.nokia.com
-  group: bootstrap.eda.nokia.com
-  kind: ManagementRouter
-  versions:
-    - name: v1alpha1
-      deprecated: false

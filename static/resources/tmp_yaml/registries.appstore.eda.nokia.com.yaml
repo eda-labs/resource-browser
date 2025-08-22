@@ -1,6 +1,0 @@
-- name: registries.appstore.eda.nokia.com
-  group: appstore.eda.nokia.com
-  kind: Registry
-  versions:
-    - name: v1
-      deprecated: false

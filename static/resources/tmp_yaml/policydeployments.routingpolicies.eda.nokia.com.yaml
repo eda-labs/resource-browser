@@ -1,6 +1,0 @@
-- name: policydeployments.routingpolicies.eda.nokia.com
-  group: routingpolicies.eda.nokia.com
-  kind: PolicyDeployment
-  versions:
-    - name: v1alpha1
-      deprecated: false

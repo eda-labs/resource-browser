@@ -1,6 +1,0 @@
-- name: diskoverlays.topologies.eda.nokia.com
-  group: topologies.eda.nokia.com
-  kind: DiskOverlay
-  versions:
-    - name: v1alpha1
-      deprecated: false

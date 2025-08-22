@@ -1,6 +1,0 @@
-- name: defaultinterfaces.routing.eda.nokia.com
-  group: routing.eda.nokia.com
-  kind: DefaultInterface
-  versions:
-    - name: v1alpha1
-      deprecated: false

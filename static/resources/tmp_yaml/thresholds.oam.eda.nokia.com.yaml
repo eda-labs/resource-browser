@@ -1,6 +1,0 @@
-- name: thresholds.oam.eda.nokia.com
-  group: oam.eda.nokia.com
-  kind: Threshold
-  versions:
-    - name: v1alpha1
-      deprecated: false

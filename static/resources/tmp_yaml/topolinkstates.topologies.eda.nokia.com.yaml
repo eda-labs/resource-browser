@@ -1,6 +1,0 @@
-- name: topolinkstates.topologies.eda.nokia.com
-  group: topologies.eda.nokia.com
-  kind: TopoLinkState
-  versions:
-    - name: v1alpha1
-      deprecated: false

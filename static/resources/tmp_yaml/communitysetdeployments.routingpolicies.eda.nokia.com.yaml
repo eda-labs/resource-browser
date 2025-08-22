@@ -1,6 +1,0 @@
-- name: communitysetdeployments.routingpolicies.eda.nokia.com
-  group: routingpolicies.eda.nokia.com
-  kind: CommunitySetDeployment
-  versions:
-    - name: v1alpha1
-      deprecated: false

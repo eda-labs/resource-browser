@@ -1,6 +1,0 @@
-- name: simnodes.test.eda.nokia.com
-  group: test.eda.nokia.com
-  kind: SimNode
-  versions:
-    - name: v1
-      deprecated: false

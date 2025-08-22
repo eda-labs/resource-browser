@@ -1,6 +1,0 @@
-- name: breakouts.interfaces.eda.nokia.com
-  group: interfaces.eda.nokia.com
-  kind: Breakout
-  versions:
-    - name: v1alpha1
-      deprecated: false

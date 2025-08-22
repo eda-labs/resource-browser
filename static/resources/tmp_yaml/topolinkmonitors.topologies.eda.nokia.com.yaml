@@ -1,6 +1,0 @@
-- name: topolinkmonitors.topologies.eda.nokia.com
-  group: topologies.eda.nokia.com
-  kind: TopoLinkMonitor
-  versions:
-    - name: v1alpha1
-      deprecated: false

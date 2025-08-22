@@ -1,8 +1,0 @@
-- name: addresspools.metallb.io
-  group: metallb.io
-  kind: AddressPool
-  versions:
-    - name: v1alpha1
-      deprecated: true
-    - name: v1beta1
-      deprecated: true

@@ -1,6 +1,0 @@
-- name: waitforinputs.core.eda.nokia.com
-  group: core.eda.nokia.com
-  kind: WaitForInput
-  versions:
-    - name: v1
-      deprecated: false

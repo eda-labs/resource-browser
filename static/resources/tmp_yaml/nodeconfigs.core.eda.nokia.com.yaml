@@ -1,6 +1,0 @@
-- name: nodeconfigs.core.eda.nokia.com
-  group: core.eda.nokia.com
-  kind: NodeConfig
-  versions:
-    - name: v1
-      deprecated: false

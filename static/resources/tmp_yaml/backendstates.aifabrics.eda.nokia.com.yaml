@@ -1,6 +1,0 @@
-- name: backendstates.aifabrics.eda.nokia.com
-  group: aifabrics.eda.nokia.com
-  kind: BackendState
-  versions:
-    - name: v1alpha1
-      deprecated: false

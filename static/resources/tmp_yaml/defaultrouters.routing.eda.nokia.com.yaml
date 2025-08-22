@@ -1,6 +1,0 @@
-- name: defaultrouters.routing.eda.nokia.com
-  group: routing.eda.nokia.com
-  kind: DefaultRouter
-  versions:
-    - name: v1alpha1
-      deprecated: false

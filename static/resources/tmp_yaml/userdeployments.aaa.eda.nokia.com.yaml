@@ -1,6 +1,0 @@
-- name: userdeployments.aaa.eda.nokia.com
-  group: aaa.eda.nokia.com
-  kind: UserDeployment
-  versions:
-    - name: v1alpha1
-      deprecated: false

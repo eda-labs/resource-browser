@@ -1,6 +1,0 @@
-- name: bannerstates.siteinfo.eda.nokia.com
-  group: siteinfo.eda.nokia.com
-  kind: BannerState
-  versions:
-    - name: v1alpha1
-      deprecated: false

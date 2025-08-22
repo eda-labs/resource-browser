@@ -1,6 +1,0 @@
-- name: defaultinterfacestates.routing.eda.nokia.com
-  group: routing.eda.nokia.com
-  kind: DefaultInterfaceState
-  versions:
-    - name: v1alpha1
-      deprecated: false

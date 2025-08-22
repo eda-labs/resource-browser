@@ -1,6 +1,0 @@
-- name: fabricstates.fabrics.eda.nokia.com
-  group: fabrics.eda.nokia.com
-  kind: FabricState
-  versions:
-    - name: v1alpha1
-      deprecated: false

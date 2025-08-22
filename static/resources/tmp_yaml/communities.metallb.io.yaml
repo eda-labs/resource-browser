@@ -1,6 +1,0 @@
-- name: communities.metallb.io
-  group: metallb.io
-  kind: Community
-  versions:
-    - name: v1beta1
-      deprecated: false

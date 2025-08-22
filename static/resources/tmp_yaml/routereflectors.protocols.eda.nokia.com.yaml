@@ -1,6 +1,0 @@
-- name: routereflectors.protocols.eda.nokia.com
-  group: protocols.eda.nokia.com
-  kind: RouteReflector
-  versions:
-    - name: v1alpha1
-      deprecated: false
