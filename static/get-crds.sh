@@ -40,9 +40,9 @@ process_crd() {
   crd_yaml=$(kubectl get crd "$crd_name" -o yaml)
 
   # metadata
-  group=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.group}')
-  kind=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.names.kind}')
-  versions=$(kubectl get crd "$crd_name" -o jsonpath='{.spec.versions[*].name}')
+  group=$(echo "$crd_yaml" | yq eval '.spec.group')
+  kind=$(echo "$crd_yaml" | yq eval '.spec.names.kind')
+  versions=$(echo "$crd_yaml" | yq eval '.spec.versions[].name' | xargs)
 
   # temp file for this CRD
   tmp_file="$temp_dir/$crd_name.yaml"
@@ -56,9 +56,8 @@ process_crd() {
 
   # per-version loop
   for version in $versions; do
-    deprecated=$(kubectl get crd "$crd_name" \
-      -o jsonpath="{.spec.versions[?(@.name==\"$version\")].deprecated}")
-    if [ -z "$deprecated" ]; then
+    deprecated=$(echo "$crd_yaml" | yq eval ".spec.versions[] | select(.name == \"$version\") | .deprecated")
+    if [ -z "$deprecated" ] || [ "$deprecated" == "null" ]; then
       deprecated=false
     fi
 
@@ -67,7 +66,8 @@ process_crd() {
     echo "      deprecated: $deprecated" >> "$tmp_file"
 
     # extract only this version block
-    kubectl get crd "$crd_name" -o jsonpath="{.spec.versions[?(@.name==\"$version\")]}" \
+    echo "$crd_yaml" \
+      | yq eval ".spec.versions[] | select(.name == \"$version\")" \
       | yq eval -P > "$crd_dir/$version.yaml"
   done
 }
