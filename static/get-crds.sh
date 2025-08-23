@@ -91,7 +91,10 @@ printf "%s\n" "${crd_names[@]}" \
 
 # Filter out files ending with 'states.eda.nokia.com.yaml' and cat only the non-states files
 find "$temp_dir" -name "*.yaml" -not -name "*states.*.eda.nokia.com.yaml" -exec cat {} \; \
-  | yq eval 'group_by(.group) | map({(.[0].group): .}) | .[] as $first | $first' - > "$crd_meta_file"
+  | yq eval 'group_by(.group) | map({(.[0].group): (. | sort_by(.name))}) | .[] as $first | $first' - > "$crd_meta_file"
+
+# Sort the top-level groups alphabetically
+yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_file"
 
 rm -rf "$temp_dir"
 
