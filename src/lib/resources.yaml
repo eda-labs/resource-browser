@@ -1,4 +1,543 @@
+core.eda.nokia.com:
+  - name: roles.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Role
+    versions:
+      - name: v1
+        deprecated: false
+  - name: workflows.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Workflow
+    versions:
+      - name: v1
+        deprecated: false
+  - name: workflowdefinitions.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: WorkflowDefinition
+    versions:
+      - name: v1
+        deprecated: false
+  - name: udpproxies.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: UdpProxy
+    versions:
+      - name: v1
+        deprecated: false
+  - name: waitforinputs.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: WaitForInput
+    versions:
+      - name: v1
+        deprecated: false
+  - name: transactionresults.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: TransactionResult
+    versions:
+      - name: v1
+        deprecated: false
+  - name: toponodes.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: TopoNode
+    versions:
+      - name: v1
+        deprecated: false
+  - name: transactions.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Transaction
+    versions:
+      - name: v1
+        deprecated: false
+  - name: topolinks.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: TopoLink
+    versions:
+      - name: v1
+        deprecated: false
+  - name: targetnodes.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: TargetNode
+    versions:
+      - name: v1
+        deprecated: false
+  - name: subnetallocationpools.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: SubnetAllocationPool
+    versions:
+      - name: v1
+        deprecated: false
+  - name: topobreakouts.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: TopoBreakout
+    versions:
+      - name: v1
+        deprecated: false
+  - name: simnodes.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: SimNode
+    versions:
+      - name: v1
+        deprecated: false
+  - name: simlinks.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: SimLink
+    versions:
+      - name: v1
+        deprecated: false
+  - name: nodeusers.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: NodeUser
+    versions:
+      - name: v1
+        deprecated: false
+  - name: nodeprofiles.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: NodeProfile
+    versions:
+      - name: v1
+        deprecated: false
+  - name: nodeconfigs.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: NodeConfig
+    versions:
+      - name: v1
+        deprecated: false
+  - name: nodesecurityprofiles.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: NodeSecurityProfile
+    versions:
+      - name: v1
+        deprecated: false
+  - name: namespaces.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Namespace
+    versions:
+      - name: v1
+        deprecated: false
+  - name: httpproxies.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: HttpProxy
+    versions:
+      - name: v1
+        deprecated: false
+  - name: globalconfigs.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: GlobalConfig
+    versions:
+      - name: v1
+        deprecated: false
+  - name: manifests.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Manifest
+    versions:
+      - name: v1
+        deprecated: false
+  - name: licenses.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: License
+    versions:
+      - name: v1
+        deprecated: false
+  - name: ipinsubnetallocationpools.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: IPInSubnetAllocationPool
+    versions:
+      - name: v1
+        deprecated: false
+  - name: engineconfigs.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: EngineConfig
+    versions:
+      - name: v1
+        deprecated: false
+  - name: ipallocationpools.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: IPAllocationPool
+    versions:
+      - name: v1
+        deprecated: false
+  - name: indexallocationpools.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: IndexAllocationPool
+    versions:
+      - name: v1
+        deprecated: false
+  - name: designers.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Designer
+    versions:
+      - name: v1
+        deprecated: false
+  - name: deviationactions.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: DeviationAction
+    versions:
+      - name: v1
+        deprecated: false
+  - name: clusterroles.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: ClusterRole
+    versions:
+      - name: v1
+        deprecated: false
+  - name: edgeinterfaces.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: EdgeInterface
+    versions:
+      - name: v1
+        deprecated: false
+  - name: deviations.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Deviation
+    versions:
+      - name: v1
+        deprecated: false
+  - name: alarms.core.eda.nokia.com
+    group: core.eda.nokia.com
+    kind: Alarm
+    versions:
+      - name: v1
+        deprecated: false
+services.eda.nokia.com:
+  - name: virtualnetworks.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: VirtualNetwork
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: vlans.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: VLAN
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: routers.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: Router
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: routedinterfaces.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: RoutedInterface
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: stateconfigs.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: StateConfig
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: routerdeployments.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: RouterDeployment
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: irbinterfaces.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: IRBInterface
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: edgepings.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: EdgePing
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: dhcprelays.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: DHCPRelay
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: bridgeinterfaces.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: BridgeInterface
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: bridgedomains.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: BridgeDomain
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: bridgedomaindeployments.services.eda.nokia.com
+    group: services.eda.nokia.com
+    kind: BridgeDomainDeployment
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+components.eda.nokia.com:
+  - name: volumeoverlays.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: VolumeOverlay
+    versions:
+      - name: v1
+        deprecated: false
+  - name: monitors.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: Monitor
+    versions:
+      - name: v1
+        deprecated: false
+  - name: powersupplies.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: PowerSupply
+    versions:
+      - name: v1
+        deprecated: false
+  - name: memoryoverlays.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: MemoryOverlay
+    versions:
+      - name: v1
+        deprecated: false
+  - name: fans.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: Fan
+    versions:
+      - name: v1
+        deprecated: false
+  - name: interfacemodules.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: InterfaceModule
+    versions:
+      - name: v1
+        deprecated: false
+  - name: fabricmodules.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: FabricModule
+    versions:
+      - name: v1
+        deprecated: false
+  - name: discoveries.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: Discovery
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: false
+  - name: components.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: Component
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: false
+  - name: clusterdiscoveries.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: ClusterDiscovery
+    versions:
+      - name: v1
+        deprecated: false
+  - name: chassis.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: Chassis
+    versions:
+      - name: v1
+        deprecated: false
+  - name: cpuoverlays.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: CPUOverlay
+    versions:
+      - name: v1
+        deprecated: false
+  - name: controlmodules.components.eda.nokia.com
+    group: components.eda.nokia.com
+    kind: ControlModule
+    versions:
+      - name: v1
+        deprecated: false
+aaa.eda.nokia.com:
+  - name: userdeployments.aaa.eda.nokia.com
+    group: aaa.eda.nokia.com
+    kind: UserDeployment
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: nodegroupdeployments.aaa.eda.nokia.com
+    group: aaa.eda.nokia.com
+    kind: NodeGroupDeployment
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: nodegroups.aaa.eda.nokia.com
+    group: aaa.eda.nokia.com
+    kind: NodeGroup
+    versions:
+      - name: v1alpha1
+        deprecated: false
+topologies.eda.nokia.com:
+  - name: topologygroupings.topologies.eda.nokia.com
+    group: topologies.eda.nokia.com
+    kind: TopologyGrouping
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: trafficrateoverlays.topologies.eda.nokia.com
+    group: topologies.eda.nokia.com
+    kind: TrafficRateOverlay
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: topologies.topologies.eda.nokia.com
+    group: topologies.eda.nokia.com
+    kind: Topology
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: topolinkmonitors.topologies.eda.nokia.com
+    group: topologies.eda.nokia.com
+    kind: TopoLinkMonitor
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: lldpoverlays.topologies.eda.nokia.com
+    group: topologies.eda.nokia.com
+    kind: LldpOverlay
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: deviationoverlays.topologies.eda.nokia.com
+    group: topologies.eda.nokia.com
+    kind: DeviationOverlay
+    versions:
+      - name: v1alpha1
+        deprecated: false
 protocols.eda.nokia.com:
+  - name: staticroutes.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: StaticRoute
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: routereflectors.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: RouteReflector
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: routereflectorclients.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: RouteReflectorClient
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultroutereflectors.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultRouteReflector
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultbgppeers.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultBGPPeer
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultstaticroutes.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultStaticRoute
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultroutereflectorclients.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultRouteReflectorClient
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: bgppeers.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: BGPPeer
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultbgpgroups.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultBGPGroup
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultaggregateroutes.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultAggregateRoute
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: checkdefaultbgppeerss.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: CheckDefaultBgpPeers
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: defaultbgpgroupdeployments.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: DefaultBGPGroupDeployment
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: bgpgroups.protocols.eda.nokia.com
+    group: protocols.eda.nokia.com
+    kind: BGPGroup
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
   - name: aggregateroutes.protocols.eda.nokia.com
     group: protocols.eda.nokia.com
     kind: AggregateRoute
@@ -15,345 +554,92 @@ protocols.eda.nokia.com:
         deprecated: false
       - name: v1alpha1
         deprecated: true
-  - name: bgpgroups.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: BGPGroup
+oam.eda.nokia.com:
+  - name: thresholds.oam.eda.nokia.com
+    group: oam.eda.nokia.com
+    kind: Threshold
     versions:
-      - name: v1
-        deprecated: false
       - name: v1alpha1
-        deprecated: true
-  - name: bgpgroupstates.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: BGPGroupState
-    versions:
-      - name: v1
         deprecated: false
+  - name: techsupports.oam.eda.nokia.com
+    group: oam.eda.nokia.com
+    kind: TechSupport
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: bgppeers.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: BGPPeer
-    versions:
-      - name: v1
         deprecated: false
+  - name: mirrors.oam.eda.nokia.com
+    group: oam.eda.nokia.com
+    kind: Mirror
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: bgppeerstates.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: BGPPeerState
-    versions:
-      - name: v1
         deprecated: false
+  - name: newpings.oam.eda.nokia.com
+    group: oam.eda.nokia.com
+    kind: NewPing
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: checkdefaultbgppeerss.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: CheckDefaultBgpPeers
+        deprecated: false
+platformmetrics.eda.nokia.com:
+  - name: thresholds.platformmetrics.eda.nokia.com
+    group: platformmetrics.eda.nokia.com
+    kind: Threshold
     versions:
       - name: v1
         deprecated: false
+routing.eda.nokia.com:
+  - name: systeminterfaces.routing.eda.nokia.com
+    group: routing.eda.nokia.com
+    kind: SystemInterface
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultaggregateroutes.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultAggregateRoute
-    versions:
-      - name: v1
         deprecated: false
+  - name: routelookups.routing.eda.nokia.com
+    group: routing.eda.nokia.com
+    kind: RouteLookup
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultbgpgroupdeployments.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultBGPGroupDeployment
-    versions:
-      - name: v1
         deprecated: false
+  - name: drains.routing.eda.nokia.com
+    group: routing.eda.nokia.com
+    kind: Drain
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultbgpgroups.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultBGPGroup
-    versions:
-      - name: v1
         deprecated: false
+  - name: defaultrouters.routing.eda.nokia.com
+    group: routing.eda.nokia.com
+    kind: DefaultRouter
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultbgppeers.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultBGPPeer
-    versions:
-      - name: v1
         deprecated: false
+  - name: defaultinterfaces.routing.eda.nokia.com
+    group: routing.eda.nokia.com
+    kind: DefaultInterface
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultroutereflectorclients.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultRouteReflectorClient
-    versions:
-      - name: v1
         deprecated: false
+  - name: attachmentlookups.routing.eda.nokia.com
+    group: routing.eda.nokia.com
+    kind: AttachmentLookup
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultroutereflectors.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultRouteReflector
-    versions:
-      - name: v1
         deprecated: false
+environment.eda.nokia.com:
+  - name: setupenvs.environment.eda.nokia.com
+    group: environment.eda.nokia.com
+    kind: SetupEnv
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: defaultstaticroutes.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: DefaultStaticRoute
-    versions:
-      - name: v1
         deprecated: false
+  - name: cliplugins.environment.eda.nokia.com
+    group: environment.eda.nokia.com
+    kind: CliPlugin
+    versions:
       - name: v1alpha1
-        deprecated: true
-  - name: routereflectorclients.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: RouteReflectorClient
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routereflectorclientstates.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: RouteReflectorClientState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routereflectors.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: RouteReflector
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routereflectorstates.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: RouteReflectorState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: staticroutes.protocols.eda.nokia.com
-    group: protocols.eda.nokia.com
-    kind: StaticRoute
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-core.eda.nokia.com:
-  - name: alarms.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Alarm
-    versions:
-      - name: v1
-        deprecated: false
-  - name: clusterroles.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: ClusterRole
-    versions:
-      - name: v1
-        deprecated: false
-  - name: designers.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Designer
-    versions:
-      - name: v1
-        deprecated: false
-  - name: deviationactions.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: DeviationAction
-    versions:
-      - name: v1
-        deprecated: false
-  - name: deviations.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Deviation
-    versions:
-      - name: v1
-        deprecated: false
-  - name: edgeinterfaces.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: EdgeInterface
-    versions:
-      - name: v1
-        deprecated: false
-  - name: engineconfigs.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: EngineConfig
-    versions:
-      - name: v1
-        deprecated: false
-  - name: globalconfigs.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: GlobalConfig
-    versions:
-      - name: v1
-        deprecated: false
-  - name: httpproxies.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: HttpProxy
-    versions:
-      - name: v1
-        deprecated: false
-  - name: indexallocationpools.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: IndexAllocationPool
-    versions:
-      - name: v1
-        deprecated: false
-  - name: ipallocationpools.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: IPAllocationPool
-    versions:
-      - name: v1
-        deprecated: false
-  - name: ipinsubnetallocationpools.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: IPInSubnetAllocationPool
-    versions:
-      - name: v1
-        deprecated: false
-  - name: licenses.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: License
-    versions:
-      - name: v1
-        deprecated: false
-  - name: manifests.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Manifest
-    versions:
-      - name: v1
-        deprecated: false
-  - name: namespaces.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Namespace
-    versions:
-      - name: v1
-        deprecated: false
-  - name: nodeconfigs.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: NodeConfig
-    versions:
-      - name: v1
-        deprecated: false
-  - name: nodeprofiles.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: NodeProfile
-    versions:
-      - name: v1
-        deprecated: false
-  - name: nodesecurityprofiles.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: NodeSecurityProfile
-    versions:
-      - name: v1
-        deprecated: false
-  - name: nodeusers.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: NodeUser
-    versions:
-      - name: v1
-        deprecated: false
-  - name: roles.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Role
-    versions:
-      - name: v1
-        deprecated: false
-  - name: simlinks.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: SimLink
-    versions:
-      - name: v1
-        deprecated: false
-  - name: simnodes.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: SimNode
-    versions:
-      - name: v1
-        deprecated: false
-  - name: subnetallocationpools.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: SubnetAllocationPool
-    versions:
-      - name: v1
-        deprecated: false
-  - name: targetnodes.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: TargetNode
-    versions:
-      - name: v1
-        deprecated: false
-  - name: topobreakouts.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: TopoBreakout
-    versions:
-      - name: v1
-        deprecated: false
-  - name: topolinks.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: TopoLink
-    versions:
-      - name: v1
-        deprecated: false
-  - name: toponodes.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: TopoNode
-    versions:
-      - name: v1
-        deprecated: false
-  - name: transactionresults.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: TransactionResult
-    versions:
-      - name: v1
-        deprecated: false
-  - name: transactions.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Transaction
-    versions:
-      - name: v1
-        deprecated: false
-  - name: udpproxies.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: UdpProxy
-    versions:
-      - name: v1
-        deprecated: false
-  - name: waitforinputs.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: WaitForInput
-    versions:
-      - name: v1
-        deprecated: false
-  - name: workflowdefinitions.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: WorkflowDefinition
-    versions:
-      - name: v1
-        deprecated: false
-  - name: workflows.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Workflow
-    versions:
-      - name: v1
         deprecated: false
 appstore.eda.nokia.com:
-  - name: appinstallers.appstore.eda.nokia.com
+  - name: registries.appstore.eda.nokia.com
     group: appstore.eda.nokia.com
-    kind: AppInstaller
+    kind: Registry
     versions:
       - name: v1
         deprecated: false
@@ -363,50 +649,20 @@ appstore.eda.nokia.com:
     versions:
       - name: v1
         deprecated: false
-  - name: registries.appstore.eda.nokia.com
+  - name: appinstallers.appstore.eda.nokia.com
     group: appstore.eda.nokia.com
-    kind: Registry
+    kind: AppInstaller
     versions:
       - name: v1
         deprecated: false
-artifacts.eda.nokia.com:
-  - name: artifacts.artifacts.eda.nokia.com
-    group: artifacts.eda.nokia.com
-    kind: Artifact
+cx.eda.nokia.com:
+  - name: cxclusters.cx.eda.nokia.com
+    group: cx.eda.nokia.com
+    kind: CxCluster
     versions:
-      - name: v1
+      - name: v1alpha1
         deprecated: false
 routingpolicies.eda.nokia.com:
-  - name: aspathsetdeployments.routingpolicies.eda.nokia.com
-    group: routingpolicies.eda.nokia.com
-    kind: ASPathSetDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: aspathsets.routingpolicies.eda.nokia.com
-    group: routingpolicies.eda.nokia.com
-    kind: ASPathSet
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: communitysetdeployments.routingpolicies.eda.nokia.com
-    group: routingpolicies.eda.nokia.com
-    kind: CommunitySetDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: communitysets.routingpolicies.eda.nokia.com
-    group: routingpolicies.eda.nokia.com
-    kind: CommunitySet
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: policydeployments.routingpolicies.eda.nokia.com
-    group: routingpolicies.eda.nokia.com
-    kind: PolicyDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
   - name: policys.routingpolicies.eda.nokia.com
     group: routingpolicies.eda.nokia.com
     kind: Policy
@@ -425,507 +681,56 @@ routingpolicies.eda.nokia.com:
     versions:
       - name: v1alpha1
         deprecated: false
-routing.eda.nokia.com:
-  - name: attachmentlookups.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: AttachmentLookup
+  - name: policydeployments.routingpolicies.eda.nokia.com
+    group: routingpolicies.eda.nokia.com
+    kind: PolicyDeployment
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: defaultinterfaces.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: DefaultInterface
+  - name: communitysetdeployments.routingpolicies.eda.nokia.com
+    group: routingpolicies.eda.nokia.com
+    kind: CommunitySetDeployment
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: defaultinterfacestates.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: DefaultInterfaceState
+  - name: communitysets.routingpolicies.eda.nokia.com
+    group: routingpolicies.eda.nokia.com
+    kind: CommunitySet
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: defaultrouters.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: DefaultRouter
+  - name: aspathsets.routingpolicies.eda.nokia.com
+    group: routingpolicies.eda.nokia.com
+    kind: ASPathSet
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: defaultrouterstates.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: DefaultRouterState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: drains.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: Drain
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: drainstates.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: DrainState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: routelookups.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: RouteLookup
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: systeminterfaces.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: SystemInterface
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: systeminterfacestates.routing.eda.nokia.com
-    group: routing.eda.nokia.com
-    kind: SystemInterfaceState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-aifabrics.eda.nokia.com:
-  - name: backends.aifabrics.eda.nokia.com
-    group: aifabrics.eda.nokia.com
-    kind: Backend
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: backendstates.aifabrics.eda.nokia.com
-    group: aifabrics.eda.nokia.com
-    kind: BackendState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-siteinfo.eda.nokia.com:
-  - name: banners.siteinfo.eda.nokia.com
-    group: siteinfo.eda.nokia.com
-    kind: Banner
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: bannerstates.siteinfo.eda.nokia.com
-    group: siteinfo.eda.nokia.com
-    kind: BannerState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-interfaces.eda.nokia.com:
-  - name: breakouts.interfaces.eda.nokia.com
-    group: interfaces.eda.nokia.com
-    kind: Breakout
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: checkinterfacess.interfaces.eda.nokia.com
-    group: interfaces.eda.nokia.com
-    kind: CheckInterfaces
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: interfaces.interfaces.eda.nokia.com
-    group: interfaces.eda.nokia.com
-    kind: Interface
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: interfacestates.interfaces.eda.nokia.com
-    group: interfaces.eda.nokia.com
-    kind: InterfaceState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-services.eda.nokia.com:
-  - name: bridgedomaindeployments.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: BridgeDomainDeployment
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: bridgedomains.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: BridgeDomain
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: bridgedomainstates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: BridgeDomainState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: bridgeinterfaces.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: BridgeInterface
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: bridgeinterfacestates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: BridgeInterfaceState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: dhcprelays.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: DHCPRelay
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: edgepings.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: EdgePing
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: irbinterfaces.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: IRBInterface
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: irbinterfacestates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: IRBInterfaceState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routedinterfaces.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: RoutedInterface
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routedinterfacestates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: RoutedInterfaceState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routerdeployments.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: RouterDeployment
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routers.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: Router
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: routerstates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: RouterState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: stateconfigs.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: StateConfig
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: virtualnetworks.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: VirtualNetwork
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: virtualnetworkstates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: VirtualNetworkState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: vlans.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: VLAN
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-  - name: vlanstates.services.eda.nokia.com
-    group: services.eda.nokia.com
-    kind: VLANState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: true
-certcheck.eda.nokia.com:
-  - name: certificatechecks.certcheck.eda.nokia.com
-    group: certcheck.eda.nokia.com
-    kind: CertificateCheck
-    versions:
-      - name: v1alpha1
-        deprecated: false
-components.eda.nokia.com:
-  - name: chassis.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: Chassis
-    versions:
-      - name: v1
-        deprecated: false
-  - name: clusterdiscoveries.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: ClusterDiscovery
-    versions:
-      - name: v1
-        deprecated: false
-  - name: components.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: Component
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: false
-  - name: controlmodules.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: ControlModule
-    versions:
-      - name: v1
-        deprecated: false
-  - name: cpuoverlays.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: CPUOverlay
-    versions:
-      - name: v1
-        deprecated: false
-  - name: discoveries.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: Discovery
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: false
-  - name: discoveryaggregatestates.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: DiscoveryAggregateState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: false
-  - name: discoverystates.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: DiscoveryState
-    versions:
-      - name: v1
-        deprecated: false
-      - name: v1alpha1
-        deprecated: false
-  - name: fabricmodules.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: FabricModule
-    versions:
-      - name: v1
-        deprecated: false
-  - name: fans.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: Fan
-    versions:
-      - name: v1
-        deprecated: false
-  - name: interfacemodules.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: InterfaceModule
-    versions:
-      - name: v1
-        deprecated: false
-  - name: memoryoverlays.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: MemoryOverlay
-    versions:
-      - name: v1
-        deprecated: false
-  - name: monitoraggregatestates.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: MonitorAggregateState
-    versions:
-      - name: v1
-        deprecated: false
-  - name: monitors.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: Monitor
-    versions:
-      - name: v1
-        deprecated: false
-  - name: monitorstates.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: MonitorState
-    versions:
-      - name: v1
-        deprecated: false
-  - name: powersupplies.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: PowerSupply
-    versions:
-      - name: v1
-        deprecated: false
-  - name: volumeoverlays.components.eda.nokia.com
-    group: components.eda.nokia.com
-    kind: VolumeOverlay
-    versions:
-      - name: v1
-        deprecated: false
-environment.eda.nokia.com:
-  - name: cliplugins.environment.eda.nokia.com
-    group: environment.eda.nokia.com
-    kind: CliPlugin
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: setupenvs.environment.eda.nokia.com
-    group: environment.eda.nokia.com
-    kind: SetupEnv
-    versions:
-      - name: v1alpha1
-        deprecated: false
-config.eda.nokia.com:
-  - name: configlets.config.eda.nokia.com
-    group: config.eda.nokia.com
-    kind: Configlet
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: configletstates.config.eda.nokia.com
-    group: config.eda.nokia.com
-    kind: ConfigletState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-filters.eda.nokia.com:
-  - name: controlplanefilters.filters.eda.nokia.com
-    group: filters.eda.nokia.com
-    kind: ControlPlaneFilter
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: filterdeployments.filters.eda.nokia.com
-    group: filters.eda.nokia.com
-    kind: FilterDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: filters.filters.eda.nokia.com
-    group: filters.eda.nokia.com
-    kind: Filter
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: mirrorfilterdeployments.filters.eda.nokia.com
-    group: filters.eda.nokia.com
-    kind: MirrorFilterDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: mirrorfilters.filters.eda.nokia.com
-    group: filters.eda.nokia.com
-    kind: MirrorFilter
-    versions:
-      - name: v1alpha1
-        deprecated: false
-cx.eda.nokia.com:
-  - name: cxclusters.cx.eda.nokia.com
-    group: cx.eda.nokia.com
-    kind: CxCluster
-    versions:
-      - name: v1alpha1
-        deprecated: false
-os.eda.nokia.com:
-  - name: deployimages.os.eda.nokia.com
-    group: os.eda.nokia.com
-    kind: DeployImage
-    versions:
-      - name: v1alpha1
-        deprecated: false
-topologies.eda.nokia.com:
-  - name: deviationoverlays.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: DeviationOverlay
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: lldpoverlays.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: LldpOverlay
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: topolinkmonitors.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: TopoLinkMonitor
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: topolinkstates.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: TopoLinkState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: topologies.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: Topology
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: topologygroupings.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: TopologyGrouping
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: trafficrateoverlays.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: TrafficRateOverlay
+  - name: aspathsetdeployments.routingpolicies.eda.nokia.com
+    group: routingpolicies.eda.nokia.com
+    kind: ASPathSetDeployment
     versions:
       - name: v1alpha1
         deprecated: false
 qos.eda.nokia.com:
-  - name: egresspolicys.qos.eda.nokia.com
+  - name: policyattachments.qos.eda.nokia.com
     group: qos.eda.nokia.com
-    kind: EgressPolicy
+    kind: PolicyAttachment
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: queues.qos.eda.nokia.com
+    group: qos.eda.nokia.com
+    kind: Queue
+    versions:
+      - name: v1
+        deprecated: false
+      - name: v1alpha1
+        deprecated: true
+  - name: policydeployments.qos.eda.nokia.com
+    group: qos.eda.nokia.com
+    kind: PolicyDeployment
     versions:
       - name: v1
         deprecated: false
@@ -947,43 +752,86 @@ qos.eda.nokia.com:
         deprecated: false
       - name: v1alpha1
         deprecated: true
-  - name: policyattachments.qos.eda.nokia.com
+  - name: egresspolicys.qos.eda.nokia.com
     group: qos.eda.nokia.com
-    kind: PolicyAttachment
+    kind: EgressPolicy
     versions:
       - name: v1
         deprecated: false
       - name: v1alpha1
         deprecated: true
-  - name: policydeployments.qos.eda.nokia.com
-    group: qos.eda.nokia.com
-    kind: PolicyDeployment
+timing.eda.nokia.com:
+  - name: ntpclients.timing.eda.nokia.com
+    group: timing.eda.nokia.com
+    kind: NTPClient
     versions:
-      - name: v1
-        deprecated: false
       - name: v1alpha1
-        deprecated: true
-  - name: queues.qos.eda.nokia.com
-    group: qos.eda.nokia.com
-    kind: Queue
+        deprecated: false
+system.eda.nokia.com:
+  - name: monitors.system.eda.nokia.com
+    group: system.eda.nokia.com
+    kind: Monitor
     versions:
-      - name: v1
-        deprecated: false
       - name: v1alpha1
-        deprecated: true
+        deprecated: false
+filters.eda.nokia.com:
+  - name: filters.filters.eda.nokia.com
+    group: filters.eda.nokia.com
+    kind: Filter
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: mirrorfilters.filters.eda.nokia.com
+    group: filters.eda.nokia.com
+    kind: MirrorFilter
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: filterdeployments.filters.eda.nokia.com
+    group: filters.eda.nokia.com
+    kind: FilterDeployment
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: mirrorfilterdeployments.filters.eda.nokia.com
+    group: filters.eda.nokia.com
+    kind: MirrorFilterDeployment
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: controlplanefilters.filters.eda.nokia.com
+    group: filters.eda.nokia.com
+    kind: ControlPlaneFilter
+    versions:
+      - name: v1alpha1
+        deprecated: false
+security.eda.nokia.com:
+  - name: keychains.security.eda.nokia.com
+    group: security.eda.nokia.com
+    kind: Keychain
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: keychaindeployments.security.eda.nokia.com
+    group: security.eda.nokia.com
+    kind: KeychainDeployment
+    versions:
+      - name: v1alpha1
+        deprecated: false
+bootstrap.eda.nokia.com:
+  - name: managementrouters.bootstrap.eda.nokia.com
+    group: bootstrap.eda.nokia.com
+    kind: ManagementRouter
+    versions:
+      - name: v1alpha1
+        deprecated: false
+  - name: inits.bootstrap.eda.nokia.com
+    group: bootstrap.eda.nokia.com
+    kind: Init
+    versions:
+      - name: v1alpha1
+        deprecated: false
 fabrics.eda.nokia.com:
-  - name: fabrics.fabrics.eda.nokia.com
-    group: fabrics.eda.nokia.com
-    kind: Fabric
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: fabricstates.fabrics.eda.nokia.com
-    group: fabrics.eda.nokia.com
-    kind: FabricState
-    versions:
-      - name: v1alpha1
-        deprecated: false
   - name: islpings.fabrics.eda.nokia.com
     group: fabrics.eda.nokia.com
     kind: IslPing
@@ -996,136 +844,70 @@ fabrics.eda.nokia.com:
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: islstates.fabrics.eda.nokia.com
+  - name: fabrics.fabrics.eda.nokia.com
     group: fabrics.eda.nokia.com
-    kind: ISLState
+    kind: Fabric
     versions:
       - name: v1alpha1
         deprecated: false
-bootstrap.eda.nokia.com:
-  - name: inits.bootstrap.eda.nokia.com
-    group: bootstrap.eda.nokia.com
-    kind: Init
+interfaces.eda.nokia.com:
+  - name: interfaces.interfaces.eda.nokia.com
+    group: interfaces.eda.nokia.com
+    kind: Interface
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: managementrouters.bootstrap.eda.nokia.com
-    group: bootstrap.eda.nokia.com
-    kind: ManagementRouter
+  - name: checkinterfacess.interfaces.eda.nokia.com
+    group: interfaces.eda.nokia.com
+    kind: CheckInterfaces
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: managementrouterstates.bootstrap.eda.nokia.com
-    group: bootstrap.eda.nokia.com
-    kind: ManagementRouterState
+  - name: breakouts.interfaces.eda.nokia.com
+    group: interfaces.eda.nokia.com
+    kind: Breakout
     versions:
       - name: v1alpha1
         deprecated: false
-security.eda.nokia.com:
-  - name: keychaindeployments.security.eda.nokia.com
-    group: security.eda.nokia.com
-    kind: KeychainDeployment
+siteinfo.eda.nokia.com:
+  - name: banners.siteinfo.eda.nokia.com
+    group: siteinfo.eda.nokia.com
+    kind: Banner
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: keychains.security.eda.nokia.com
-    group: security.eda.nokia.com
-    kind: Keychain
+config.eda.nokia.com:
+  - name: configlets.config.eda.nokia.com
+    group: config.eda.nokia.com
+    kind: Configlet
     versions:
       - name: v1alpha1
         deprecated: false
-oam.eda.nokia.com:
-  - name: mirrors.oam.eda.nokia.com
-    group: oam.eda.nokia.com
-    kind: Mirror
+os.eda.nokia.com:
+  - name: deployimages.os.eda.nokia.com
+    group: os.eda.nokia.com
+    kind: DeployImage
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: mirrorstates.oam.eda.nokia.com
-    group: oam.eda.nokia.com
-    kind: MirrorState
+certcheck.eda.nokia.com:
+  - name: certificatechecks.certcheck.eda.nokia.com
+    group: certcheck.eda.nokia.com
+    kind: CertificateCheck
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: newpings.oam.eda.nokia.com
-    group: oam.eda.nokia.com
-    kind: NewPing
+aifabrics.eda.nokia.com:
+  - name: backends.aifabrics.eda.nokia.com
+    group: aifabrics.eda.nokia.com
+    kind: Backend
     versions:
       - name: v1alpha1
         deprecated: false
-  - name: techsupports.oam.eda.nokia.com
-    group: oam.eda.nokia.com
-    kind: TechSupport
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: thresholds.oam.eda.nokia.com
-    group: oam.eda.nokia.com
-    kind: Threshold
-    versions:
-      - name: v1alpha1
-        deprecated: false
-system.eda.nokia.com:
-  - name: monitoraggregatestates.system.eda.nokia.com
-    group: system.eda.nokia.com
-    kind: MonitorAggregateState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: monitors.system.eda.nokia.com
-    group: system.eda.nokia.com
-    kind: Monitor
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: monitorstates.system.eda.nokia.com
-    group: system.eda.nokia.com
-    kind: MonitorState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-aaa.eda.nokia.com:
-  - name: nodegroupdeployments.aaa.eda.nokia.com
-    group: aaa.eda.nokia.com
-    kind: NodeGroupDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: nodegroups.aaa.eda.nokia.com
-    group: aaa.eda.nokia.com
-    kind: NodeGroup
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: nodeuserstates.aaa.eda.nokia.com
-    group: aaa.eda.nokia.com
-    kind: NodeUserState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: userdeployments.aaa.eda.nokia.com
-    group: aaa.eda.nokia.com
-    kind: UserDeployment
-    versions:
-      - name: v1alpha1
-        deprecated: false
-timing.eda.nokia.com:
-  - name: ntpclients.timing.eda.nokia.com
-    group: timing.eda.nokia.com
-    kind: NTPClient
-    versions:
-      - name: v1alpha1
-        deprecated: false
-  - name: ntpclientstates.timing.eda.nokia.com
-    group: timing.eda.nokia.com
-    kind: NTPClientState
-    versions:
-      - name: v1alpha1
-        deprecated: false
-platformmetrics.eda.nokia.com:
-  - name: thresholds.platformmetrics.eda.nokia.com
-    group: platformmetrics.eda.nokia.com
-    kind: Threshold
+artifacts.eda.nokia.com:
+  - name: artifacts.artifacts.eda.nokia.com
+    group: artifacts.eda.nokia.com
+    kind: Artifact
     versions:
       - name: v1
         deprecated: false

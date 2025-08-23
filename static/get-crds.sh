@@ -83,13 +83,14 @@ while IFS= read -r crd_name; do
   fi
 done < <(kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers)
 
-# parallel CRD processing (adjust -P4 for concurrency)
+# parallel CRD processing
 echo
 export -f process_crd
 printf "%s\n" "${crd_names[@]}" \
   | xargs -P64 -I{} bash -c 'process_crd "$1" "$2" "$3"' _ {} "$output_dir" "$temp_dir"
 
-cat "$temp_dir"/*.yaml \
+# Filter out files ending with 'states.eda.nokia.com.yaml' and cat only the non-states files
+find "$temp_dir" -name "*.yaml" -not -name "*states.*.eda.nokia.com.yaml" -exec cat {} \; \
   | yq eval 'group_by(.group) | map({(.[0].group): .}) | .[] as $first | $first' - > "$crd_meta_file"
 
 rm -rf "$temp_dir"
