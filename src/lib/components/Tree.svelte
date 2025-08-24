@@ -79,11 +79,14 @@
     <ul class="ml-[9px] px-3 pt-2 dark:bg-gray-800 border-l border-gray-300 dark:border-gray-600">
       <li class="px-1 text-gray-400 dark:text-gray-500 text-sm font-nunito">{getDescription(folder)}</li>
       {#if folder.type === "object" || folder.type === "array"}
-        {#each Object.entries(propExist()) as [subkey, subfolder]}
-          {@const scope = getScope(folder)}
-          {@const requiredList = ('required' in scope ? scope.required : [])}
-          <svelte:self {hash} {source} key={subkey} folder={subfolder} {requiredList} parent={currentId} expanded={hashExistDeep(hash, `${currentId}.${subkey}`)} />
-        {/each}
+        {@const props = propExist()}
+        {#if typeof props === "object"}
+          {#each Object.entries(propExist()) as [subkey, subfolder]}
+            {@const scope = getScope(folder)}
+            {@const requiredList = ('required' in scope ? scope.required : [])}
+            <svelte:self {hash} {source} key={subkey} folder={subfolder} {requiredList} parent={currentId} expanded={hashExistDeep(hash, `${currentId}.${subkey}`)} />
+          {/each}
+        {/if}
       {/if}
     </ul>
   {/if}
