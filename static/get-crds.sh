@@ -7,7 +7,7 @@ output_dir="${SCRIPT_DIR}/resources"
 
 # Source directory where the resources.yaml metadata file is located
 # it drives the menu on the home page.
-src_lib_dir="${SCRIPT_DIR}/../src/lib"
+src_lib_dir="${SCRIPT_DIR}"
 
 # Cleanup existing directory
 if [ -d "$output_dir" ]; then
@@ -25,11 +25,15 @@ crd_meta_file="$src_lib_dir/resources.yaml"
 temp_dir=$(mktemp -d)
 trap "rm -rf $temp_dir" EXIT
 
+# Get installed manifests
+manifests=$(kubectl get -n eda-system manifests -o yaml)
+
 # Function to process a single CRD
 process_crd() {
   local crd_name="$1"
   local output_dir="$2"
   local temp_dir="$3"
+  local manifests="$4"
 
   echo "Processing $crd_name"
 
@@ -65,6 +69,11 @@ process_crd() {
     echo "    - name: $version" >> "$tmp_file"
     echo "      deprecated: $deprecated" >> "$tmp_file"
 
+    appVersion=$(echo "$manifests" | yq eval ".items[] | select(.metadata.name == \"$group\" and .spec.version == \"$version\") | .metadata.annotations.[\"appstore.eda.nokia.com/version-value\"]")
+    if [ -z "$appVersion" ] || [ "$appVersion" == "null" ]; then
+      echo "      appVersion: $appVersion" >> "$tmp_file"
+    fi
+
     # extract only this version block
     echo "$crd_yaml" \
       | yq eval ".spec.versions[] | select(.name == \"$version\")" \
@@ -87,7 +96,7 @@ done < <(kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers)
 echo
 export -f process_crd
 printf "%s\n" "${crd_names[@]}" \
-  | xargs -P64 -I{} bash -c 'process_crd "$1" "$2" "$3"' _ {} "$output_dir" "$temp_dir"
+  | xargs -P64 -I{} bash -c 'process_crd "$1" "$2" "$3" "$4"' _ {} "$output_dir" "$temp_dir" "$manifests"
 
 # Filter out files ending with 'states.eda.nokia.com.yaml' and cat only the non-states files
 find "$temp_dir" -name "*.yaml" -not -name "*states.*.eda.nokia.com.yaml" -exec cat {} \; \

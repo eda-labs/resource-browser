@@ -15,10 +15,10 @@
 
   const resourceNameStore = derived(crdMetaStore, $crdMetaStore => $crdMetaStore.map(x => x.name))
   const resourceSearchFilter = derived([resourceSearch, resourceNameStore], ([$resourceSearch, $resourceNameStore]) => 
-    $resourceNameStore.filter(x => $resourceSearch.split(/\s+/).every(y => x.includes(y))))
+    $resourceNameStore.filter(x => $resourceSearch.split(/\s+/).every(y => x.includes(y.toLowerCase()))))
 </script>
 
-<div class="flex flex-col min-h-screen has-header-img font-nunito">
+<div class="flex flex-col min-h-screen has-header-img">
   <div class="flex grow items-center mx-auto px-8 md:px-14 py-10">
     <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-5">
       <div>

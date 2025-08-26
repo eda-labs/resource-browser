@@ -2,7 +2,7 @@
 	import { page } from '$app/stores'
 </script>
 
-<div class="flex h-screen p-7 font-nokia-headline-light">
+<div class="flex h-screen p-7 font-nokia">
 	<div class="m-auto">
 		<div class="rounded md:min-w-[400px]">
 			<div class="text-white bg-red-500 px-5 py-3 rounded-t flex items-center">
