@@ -26,6 +26,10 @@
   }
 </script>
 
+<svelte:head>
+	<title>EDA Resource Browser | {name} {versionOnFocus}</title>
+</svelte:head>
+
 <Navbar {name} {versionOnFocus} {kind} {group} {deprecated} {validVersions} />
 <div class="pt-[100px] px-6 pb-6 space-y-4">
   <div class="flex items-center space-x-2">

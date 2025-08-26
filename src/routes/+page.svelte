@@ -18,13 +18,17 @@
     $resourceNameStore.filter(x => $resourceSearch.split(/\s+/).every(y => x.includes(y.toLowerCase()))))
 </script>
 
+<svelte:head>
+	<title>EDA Resource Browser</title>
+</svelte:head>
+
 <div class="flex flex-col min-h-screen has-header-img">
   <div class="flex grow items-center mx-auto px-8 md:px-14 py-10">
     <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-5">
       <div>
         <p class="mb-4"><img src="/images/eda.png" width="60" alt="Logo" /></p>
         <h3 class="text-3xl text-yellow-300 font-light mt-6">EDA Resource Browser</h3>
-        <div class="text-gray-300 mt-2 max-w-[500px] text-sm">
+        <div class="text-gray-300 mt-2 max-w-[500px] text-sm font-light">
           <p>View Custom Resource Definitions (CRD)</p>
         </div>
         <!--<a class="px-2 py-2 rounded-lg text-nowrap text-center text-white bg-gray-600 hover:bg-gray-700" href="/uploads">Uploads</a>-->
