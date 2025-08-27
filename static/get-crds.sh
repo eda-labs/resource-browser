@@ -7,7 +7,7 @@ output_dir="${SCRIPT_DIR}/resources"
 
 # Source directory where the resources.yaml metadata file is located
 # it drives the menu on the home page.
-src_lib_dir="${SCRIPT_DIR}"
+src_lib_dir="${SCRIPT_DIR}/../src/lib"
 
 # Cleanup existing directory
 if [ -d "$output_dir" ]; then
@@ -19,7 +19,7 @@ mkdir -p "$output_dir"
 
 # YAML dictionary for CRD versions + group + kind
 crd_meta_file="$src_lib_dir/resources.yaml"
-> "$crd_meta_file"
+crd_meta_tmp_file="$src_lib_dir/resources_tmp.yaml"
 
 # Create temp directory for metadata files
 temp_dir=$(mktemp -d)
@@ -70,7 +70,7 @@ process_crd() {
     echo "      deprecated: $deprecated" >> "$tmp_file"
 
     appVersion=$(echo "$manifests" | yq eval ".items[] | select(.metadata.name == \"$group\" and .spec.version == \"$version\") | .metadata.annotations.[\"appstore.eda.nokia.com/version-value\"]")
-    if [ -z "$appVersion" ] || [ "$appVersion" == "null" ]; then
+    if [ -n "$appVersion" ]; then
       echo "      appVersion: $appVersion" >> "$tmp_file"
     fi
 
@@ -100,12 +100,21 @@ printf "%s\n" "${crd_names[@]}" \
 
 # Filter out files ending with 'states.eda.nokia.com.yaml' and cat only the non-states files
 find "$temp_dir" -name "*.yaml" -not -name "*states.*.eda.nokia.com.yaml" -exec cat {} \; \
-  | yq eval 'group_by(.group) | map({(.[0].group): (. | sort_by(.name))}) | .[] as $first | $first' - > "$crd_meta_file"
+  | yq eval 'group_by(.group) | map({(.[0].group): (. | sort_by(.name))}) | .[] as $first | $first' > "$crd_meta_tmp_file"
 
 # Sort the top-level groups alphabetically
-yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_file"
+yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_tmp_file"
 
-rm -rf "$temp_dir"
+# Merging new CRD metadata into existing (if necessary)
+if [ -f "$crd_meta_file" ]; then
+  yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' \
+    "$crd_meta_file" "$crd_meta_tmp_file" | \
+    yq eval 'to_entries | sort_by(.key) | from_entries' > "$crd_meta_file.tmp" \
+    && mv "$crd_meta_file.tmp" "$crd_meta_file"
+  rm -rf "$crd_meta_tmp_file"
+else
+  mv "$crd_meta_tmp_file" "$crd_meta_file"
+fi
 
 echo
 echo "CRDs saved in $output_dir"

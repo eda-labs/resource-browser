@@ -44,7 +44,7 @@
               </svg>
             </button>
             <div class="dropdown-content absolute z-10 hidden bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg shadow">
-              <p class="my-2 max-w-[200px] px-1 text-xs">
+              <p class="my-2 max-w-[200px] px-2 text-xs">
                 Version: v3.0.2+25.4.3
               </p>
             </div>
