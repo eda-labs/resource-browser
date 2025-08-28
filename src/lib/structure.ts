@@ -48,6 +48,7 @@ export type Schema = ObjectSchema | ArraySchema | PrimitiveSchema;
 
 export interface OpenAPISchema { 
   name: string;
+  deprecated: boolean;
   schema: { 
     openAPIV3Schema: { 
       properties: { 
@@ -56,4 +57,12 @@ export interface OpenAPISchema {
       } 
     } 
   } 
+}
+
+export interface VersionSchema {
+  [key: string]: {
+    spec: Schema; 
+    status: Schema;
+    deprecated: boolean; 
+  }
 }

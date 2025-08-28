@@ -61,10 +61,6 @@
 
   .dropdown:hover .dropdown-content {display: block;}
 
-  .font-fira {
-    font-size: 12.5px;
-  }
-
   .scroll-light::-webkit-scrollbar {
     width: 2px;
     height: 2px;
