@@ -1,6 +1,7 @@
 export interface CrdVersions {
   name: string;
   deprecated: boolean;
+  appVersion: string;
 }
 
 export interface CrdResource {

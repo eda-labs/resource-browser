@@ -31,12 +31,13 @@ export async function load({ fetch, params }) {
     const group = crdMeta[0].group
     const kind = crdMeta[0].kind
     const deprecated = crdMetaVersion[0].deprecated
+    const appVersion = ('appVersion' in crdMetaVersion[0] ? crdMetaVersion[0].appVersion : "")
     const validVersions = crdMeta[0].versions.map(x => x.name)
 
     const spec = crd.schema.openAPIV3Schema.properties.spec
     const status = crd.schema.openAPIV3Schema.properties.status
 
-    return { name, versionOnFocus, kind, group, deprecated, validVersions, spec, status }
+    return { name, versionOnFocus, kind, group, deprecated, appVersion, validVersions, spec, status }
   } catch(e) {
     throw error(404, "Error fetching resource" + e)
   }

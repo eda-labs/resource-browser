@@ -8,7 +8,7 @@
   import { expandAll, expandAllScope, ulExpanded } from '$lib/store'
 
   export let data
-  let { name, versionOnFocus, kind, group, deprecated, validVersions, spec, status } = data
+  let { name, versionOnFocus, kind, group, deprecated, appVersion, validVersions, spec, status } = data
 
   const hash = $page.url.hash?.substring(1)
 
@@ -30,7 +30,7 @@
 	<title>EDA Resource Browser | {name} {versionOnFocus}</title>
 </svelte:head>
 
-<Navbar {name} {versionOnFocus} {kind} {group} {deprecated} {validVersions} />
+<Navbar {name} {versionOnFocus} {kind} {group} {deprecated} {appVersion} {validVersions} />
 <div class="pt-[100px] px-6 pb-6 space-y-4">
   <div class="flex items-center space-x-2">
     <button class="px-2 py-1 text-xs rounded-lg cursor-pointer border 
