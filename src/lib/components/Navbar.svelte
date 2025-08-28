@@ -45,7 +45,7 @@
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
               </button>
-              <div class="dropdown-content absolute right-0 z-10 hidden bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg shadow">
+              <div class="dropdown-content absolute z-10 hidden bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg shadow">
                 <p class="my-2 max-w-[200px] px-2 text-xs">
                   Version: {appVersion}
                 </p>
