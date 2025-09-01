@@ -26,14 +26,15 @@ temp_dir=$(mktemp -d)
 trap "rm -rf $temp_dir" EXIT
 
 # Get installed manifests
-manifests=$(kubectl get -n eda-system manifests -o yaml)
+manifests_file="$src_lib_dir/manifests.yaml"
+kubectl get -n eda-system manifests -o yaml > "$manifests_file"
 
 # Function to process a single CRD
 process_crd() {
   local crd_name="$1"
   local output_dir="$2"
   local temp_dir="$3"
-  local manifests="$4"
+  local manifests="$(cat $4)"
 
   echo "Processing $crd_name"
 
@@ -96,7 +97,9 @@ done < <(kubectl get crds -o custom-columns=NAME:.metadata.name --no-headers)
 echo
 export -f process_crd
 printf "%s\n" "${crd_names[@]}" \
-  | xargs -P64 -I{} bash -c 'process_crd "$1" "$2" "$3" "$4"' _ {} "$output_dir" "$temp_dir" "$manifests"
+  | xargs -P64 -I{} bash -c 'process_crd "$1" "$2" "$3" "$4"' _ {} "$output_dir" "$temp_dir" "$manifests_file"
+
+rm -rf "$manifests_file"
 
 # Filter out files ending with 'states.eda.nokia.com.yaml' and cat only the non-states files
 find "$temp_dir" -name "*.yaml" -not -name "*states.*.eda.nokia.com.yaml" -exec cat {} \; \
@@ -107,9 +110,9 @@ yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_tmp_file"
 
 # Merging new CRD metadata into existing (if necessary)
 if [ -f "$crd_meta_file" ]; then
-  yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' \
-    "$crd_meta_file" "$crd_meta_tmp_file" | \
-    yq eval 'to_entries | sort_by(.key) | from_entries' > "$crd_meta_file.tmp" \
+  echo
+  echo "Merging meta file with new information..."
+  python3 merge-crds.py "$crd_meta_file" "$crd_meta_tmp_file" > "$crd_meta_file.tmp" \
     && mv "$crd_meta_file.tmp" "$crd_meta_file"
   rm -rf "$crd_meta_tmp_file"
 else

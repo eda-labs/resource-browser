@@ -1,0 +1,130 @@
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: notifier-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: notifiers.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v4.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: prom-exporter-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: prom.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v4.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: remote-write-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: remotewrite.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v2.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: kafka-exporter-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: kafka.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v4.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: netbox-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: netbox.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v2.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: nats-exporter-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: nats.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v2.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: influxdb-exporter-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: influxdb.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v1.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: otlp-exporter-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: otlp.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v1.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: pagers-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: pagers.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v3.0.0
+---
+apiVersion: appstore.eda.nokia.com/v1
+kind: AppInstaller
+metadata:
+  name: servicenow-install
+  namespace: eda-system
+spec:
+  operation: install
+  apps:
+    - appId: snow.eda.nokia.com
+      catalog: eda-catalog-builtin-apps
+      version:
+        value: v3.0.0
+---
