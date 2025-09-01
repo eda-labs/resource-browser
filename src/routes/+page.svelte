@@ -54,7 +54,9 @@
 				</div>
 				<!--<a class="px-2 py-2 rounded-lg text-nowrap text-center text-white bg-gray-600 hover:bg-gray-700" href="/uploads">Uploads</a>-->
 			</div>
-			<div class="rounded-lg bg-gray-100 pb-1.5 shadow-xl dark:bg-gray-800">
+			<div
+				class="max-w-[380px] rounded-lg bg-gray-100 pb-1.5 shadow-xl lg:w-[380px] dark:bg-gray-800"
+			>
 				<div class="border-b border-gray-300 p-3 dark:border-gray-600">
 					<input
 						type="text"
@@ -64,7 +66,7 @@
               text-[12.5px] text-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
 					/>
 				</div>
-				<div class="scroll-thin h-[280px] max-w-[380px] overflow-y-auto lg:w-[380px]">
+				<div class="scroll-thin h-[280px] overflow-y-auto">
 					<ul>
 						{#each $resourceSearchFilter as resource, i}
 							{@const resDef = $crdMetaStore.filter((x) => x.name == resource)[0]}
