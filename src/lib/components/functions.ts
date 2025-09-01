@@ -23,6 +23,21 @@ export function getDefault(resource: Schema) {
   }
 }
 
+// Get the enum values for a resource field as a string like "[a, b, c]"
+export function getEnum(resource: Schema) {
+  const e = (resource && 'enum' in resource && Array.isArray((resource as any).enum) && (resource as any).enum.length)
+    ? (resource as any).enum
+    : (resource.type === 'array' && resource.items && 'enum' in resource.items && Array.isArray((resource.items as any).enum) ? (resource.items as any).enum : undefined)
+
+  if (!e || !Array.isArray(e) || e.length === 0) return ''
+
+  try {
+    return `[${e.join(', ')}]`
+  } catch (err) {
+    return String(e)
+  }
+}
+
 export function hashExistDeep(hash: string, currentId: string) {
   if (hash.indexOf(currentId) !== -1) {
     return true

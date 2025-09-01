@@ -2,7 +2,7 @@
 	import { copy } from 'svelte-copy';
 
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
-	import { getDescription, getScope, hashExistDeep, getDefault } from './functions';
+	import { getDescription, getScope, hashExistDeep, getDefault, getEnum } from './functions';
 	import type { Schema } from '$lib/structure';
 
 	export let hash: string;
@@ -111,10 +111,13 @@
 				{getDescription(folder)}
 			</li>
 			{#if defaultVal}
-				<li>
-					<span class="font-nokia px-1 text-sm text-gray-400 opacity-60 dark:text-gray-500"
-						>[default: {defaultVal}]</span
-					>
+				<li class="font-nokia px-1 text-sm font-light text-gray-400 opacity-60 dark:text-gray-500">
+					<span>default: {defaultVal}</span>
+				</li>
+			{/if}
+			{#if getEnum(folder)}
+				<li class="font-nokia px-1 text-sm font-light text-gray-400 opacity-60 dark:text-gray-500">
+					<span>enum: {getEnum(folder)}</span>
 				</li>
 			{/if}
 			{#if folder.type === 'object' || folder.type === 'array'}
