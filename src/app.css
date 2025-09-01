@@ -49,50 +49,61 @@
   --default-font-family: 'NokiaPureText', sans-serif;
 }
 
-@layer utilities {
+@layer base {
   :global(html) {
     scroll-behavior: smooth;
   }
+}
 
+@layer components {
   .has-header-img {
     background: url(/images/background.webp) center center;
     background-size: cover;
   }
 
-  .dropdown:hover .dropdown-content {display: block;}
-
-  .scroll-light::-webkit-scrollbar {
-    width: 2px;
-    height: 2px;
-  }
-
-  .scroll-light::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  .scroll-light::-webkit-scrollbar-thumb {
-    background: #bec4c4;
-  }
-
-  .scroll-light::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-
-  .dark\:scroll-dark::-webkit-scrollbar {
-    width: 2px;
-    height: 2px; 
-  }
-
-  .dark\:scroll-dark::-webkit-scrollbar-track {
-    background: rgb(55 65 81);
-  }
-
-  .dark\:scroll-dark::-webkit-scrollbar-thumb {
-    background: rgb(109, 109, 109);
-  }
-
-  .dark\:scroll-dark::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  .dropdown:hover .dropdown-content {
+    display: block;
   }
 }
 
+@layer components {
+  .scroll-thin {
+    /* Scrollbar size */
+    &::-webkit-scrollbar {
+      width: 2px;
+      height: 2px;
+    }
+
+    /* Light mode track and thumb */
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #bec4c4;
+    }
+
+    /* Light mode hover */
+    @variant hover {
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    }
+
+    /* Dark mode overrides */
+    @variant dark {
+      &::-webkit-scrollbar-track {
+        background: rgb(55 65 81);
+      }
+      &::-webkit-scrollbar-thumb {
+        background: rgb(109, 109, 109);
+      }
+
+      /* Dark mode hover */
+      @variant hover {
+        &::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+      }
+    }
+  }
+}

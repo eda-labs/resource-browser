@@ -53,7 +53,7 @@
 
 <li id="{currentId}" class="pt-1 scroll-mt-[80px]">
   <div class="px-1 pt-2 flex items-center space-x-2 group">
-    <button class="text-gray-800 dark:text-gray-200 flex items-center space-x-2 cursor-pointer overflow-x-auto scroll-light dark:scroll-dark" 
+    <button class="text-gray-800 dark:text-gray-200 flex items-center space-x-2 cursor-pointer overflow-x-auto scroll-thin" 
       on:click={handleLocalExpand}>
       <svg class="w-3 h-3 group-hover:text-gray-400 text-gray-800 dark:text-gray-200 transition-transform duration-200 svg-arrow {expanded ? 'rotate-90' : ''}"
           fill="none" stroke="currentColor" viewBox="0 0 24 24">

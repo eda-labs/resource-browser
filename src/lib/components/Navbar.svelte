@@ -20,7 +20,7 @@
   <div class="flex items-center justify-between">
     <div class="flex items-center space-x-2 min-w-0">
       <a href="/"><img class="min-w-8" src="/images/eda.png" width="35" alt="Logo"/></a>
-      <div class="flex flex-col overflow-x-auto scroll-light dark:scroll-dark">
+      <div class="flex flex-col overflow-x-auto scroll-thin">
         <p class="text-lg">{kind}</p>
         <div class="text-[12px] text-gray-500 dark:text-gray-400 font-fira flex items-center">
           {#if appVersion !== ""}

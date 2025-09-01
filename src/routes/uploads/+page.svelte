@@ -86,7 +86,7 @@
 
 <nav class="fixed top-0 z-20 pl-6 pr-4 py-4 w-screen text-black dark:text-white backdrop-filter backdrop-blur-lg border-b border-gray-300 dark:border-gray-700">
   <div class="flex items-center justify-between">
-    <div class="flex items-center space-x-2 overflow-x-auto scroll-light dark:scroll-dark">
+    <div class="flex items-center space-x-2 overflow-x-auto scroll-thin">
       <a href="/"><img class="min-w-8" src="/images/eda.png" width="35" alt="Logo"/></a>
       <div class="flex flex-col">
         <p class="text-xs font-light">Resource Browser</p>

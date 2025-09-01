@@ -39,15 +39,15 @@
             class="px-3 py-2 rounded-lg w-full text-[12.5px] text-gray-800 dark:text-gray-200 
               dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
         </div>
-				<div class="h-[280px] max-w-[380px] lg:w-[380px] overflow-y-auto scroll-light dark:scroll-dark">
+				<div class="h-[280px] max-w-[380px] lg:w-[380px] overflow-y-auto scroll-thin">
           <ul>
             {#each $resourceSearchFilter as resource, i}
               {@const resDef = $crdMetaStore.filter(x => x.name == resource)[0]}
               {@const targetVersion = resDef.versions.map(x => x.name)[0]}
               <li class="text-gray-900 hover:bg-gray-200 {i > 0 ? 'border-t border-gray-300 dark:border-gray-600' : ''} dark:hover:bg-gray-700">
                 <a class="flex flex-col px-4 py-3" href={`${resource}/${targetVersion}`}>
-                  <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.kind}</span>
-                  <span class="font-fira text-xs dark:text-gray-200 overflow-x-auto scroll-light dark:scroll-dark">{resDef.group}</span>
+                  <span class="text-sm dark:text-gray-200 overflow-x-auto scroll-thin">{resDef.kind}</span>
+                  <span class="font-fira text-xs dark:text-gray-200 overflow-x-auto scroll-thin">{resDef.group}</span>
                 </a>
               </li>
             {/each}
