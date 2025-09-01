@@ -17,6 +17,8 @@ fi
 
 mkdir -p "$output_dir"
 
+uv sync --all-groups
+
 # YAML dictionary for CRD versions + group + kind
 crd_meta_file="$src_lib_dir/resources.yaml"
 crd_meta_tmp_file="$src_lib_dir/resources_tmp.yaml"
@@ -112,7 +114,7 @@ yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_tmp_file"
 if [ -f "$crd_meta_file" ]; then
   echo
   echo "Merging meta file with new information..."
-  python3 merge-crds.py "$crd_meta_file" "$crd_meta_tmp_file" > "$crd_meta_file.tmp" \
+  uv run merge-crds.py "$crd_meta_file" "$crd_meta_tmp_file" > "$crd_meta_file.tmp" \
     && mv "$crd_meta_file.tmp" "$crd_meta_file"
   rm -rf "$crd_meta_tmp_file"
 else
