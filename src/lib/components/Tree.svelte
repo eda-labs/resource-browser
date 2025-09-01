@@ -65,7 +65,7 @@
       {/if}
     </button>
     {#if source !== "uploaded"}
-      <a href={`#${currentId}`} class="text-gray-400 dark:text-gray-500 cursor-pointer hidden group-hover:block group-active:block hover:text-gray-700 dark:hover:text-gray-300" use:copy={{
+      <a href={`#${currentId}`} class="text-gray-400 dark:text-gray-500 cursor-pointer {expanded ? 'block' : 'hidden'} md:hidden md:group-hover:block md:group-active:block hover:text-gray-700 dark:hover:text-gray-300" use:copy={{
         text: window.location.origin + window.location.pathname + `#${currentId}`,
         onCopy({event}) {
           event.target.innerHTML = "&check;"
