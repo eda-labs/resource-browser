@@ -1,14 +1,7 @@
-additionalPrinterColumns:
-  - jsonPath: .spec.type
-    name: Type
-    type: string
-  - jsonPath: .metadata.creationTimestamp
-    name: Age
-    type: date
 name: v1
 schema:
   openAPIV3Schema:
-    description: Workflow is the Schema for the workflows API
+    description: Provider is the Schema for the providers API
     properties:
       apiVersion:
         description: |-
@@ -28,23 +21,25 @@ schema:
       metadata:
         type: object
       spec:
-        description: WorkflowSpec defines the desired state of Flow
+        description: ProviderSpec defines the desired state of Provider
         properties:
-          input:
-            description: Input to this flow, adhering to the JSON schema defined in the referenced WorkflowDefinition.
-            x-kubernetes-preserve-unknown-fields: true
-          type:
-            description: Select the WorkflowDefinition to execute.
+          description:
+            description: A simple user provided description of this Provider
+            type: string
+          enabled:
+            default: true
+            description: Enable or disable this Provider
+            type: boolean
+          uri:
+            description: |-
+              A URI to send notifications to. For example 'slack://token-a/token-b/token-c',
+              or 'discord://discord.com/api/webhooks/channel/token'.
             type: string
         required:
-          - type
+          - uri
         type: object
       status:
-        description: WorkflowStatus defines the observed state of Flow
-        properties:
-          output:
-            description: Output from this flow, adhering to the JSON schema defined in the referenced FlowDefinition
-            x-kubernetes-preserve-unknown-fields: true
+        description: ProviderStatus defines the observed state of Provider
         type: object
     type: object
 served: true

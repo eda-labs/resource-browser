@@ -180,6 +180,42 @@ config.eda.nokia.com:
       - name: v1alpha1
         deprecated: false
         appVersion: v4.0.0
+connect.eda.nokia.com:
+  - name: connectaudits.connect.eda.nokia.com
+    group: connect.eda.nokia.com
+    kind: ConnectAudit
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0+25.8.1
+  - name: connectinterfaces.connect.eda.nokia.com
+    group: connect.eda.nokia.com
+    kind: ConnectInterface
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0+25.8.1
+  - name: connectpluginactionables.connect.eda.nokia.com
+    group: connect.eda.nokia.com
+    kind: ConnectPluginActionable
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0+25.8.1
+  - name: connectpluginheartbeats.connect.eda.nokia.com
+    group: connect.eda.nokia.com
+    kind: ConnectPluginHeartbeat
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0+25.8.1
+  - name: connectplugins.connect.eda.nokia.com
+    group: connect.eda.nokia.com
+    kind: ConnectPlugin
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0+25.8.1
 core.eda.nokia.com:
   - name: alarms.core.eda.nokia.com
     group: core.eda.nokia.com
@@ -477,6 +513,35 @@ filters.eda.nokia.com:
       - name: v1alpha1
         deprecated: false
         appVersion: v4.0.0
+influxdb.eda.nokia.com:
+  - name: clusterexports.influxdb.eda.nokia.com
+    group: influxdb.eda.nokia.com
+    kind: ClusterExport
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+  - name: clusterservers.influxdb.eda.nokia.com
+    group: influxdb.eda.nokia.com
+    kind: ClusterServer
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+  - name: exports.influxdb.eda.nokia.com
+    group: influxdb.eda.nokia.com
+    kind: Export
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+  - name: servers.influxdb.eda.nokia.com
+    group: influxdb.eda.nokia.com
+    kind: Server
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
 interfaces.eda.nokia.com:
   - name: breakouts.interfaces.eda.nokia.com
     group: interfaces.eda.nokia.com
@@ -497,6 +562,94 @@ interfaces.eda.nokia.com:
     kind: Interface
     versions:
       - name: v1alpha1
+        deprecated: false
+        appVersion: v4.0.0
+kafka.eda.nokia.com:
+  - name: clusterproducers.kafka.eda.nokia.com
+    group: kafka.eda.nokia.com
+    kind: ClusterProducer
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v4.0.0
+  - name: producers.kafka.eda.nokia.com
+    group: kafka.eda.nokia.com
+    kind: Producer
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v4.0.0
+nats.eda.nokia.com:
+  - name: clusterexports.nats.eda.nokia.com
+    group: nats.eda.nokia.com
+    kind: ClusterExport
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: clusterpublishers.nats.eda.nokia.com
+    group: nats.eda.nokia.com
+    kind: ClusterPublisher
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: exports.nats.eda.nokia.com
+    group: nats.eda.nokia.com
+    kind: Export
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: publishers.nats.eda.nokia.com
+    group: nats.eda.nokia.com
+    kind: Publisher
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+netbox.eda.nokia.com:
+  - name: allocations.netbox.eda.nokia.com
+    group: netbox.eda.nokia.com
+    kind: Allocation
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: instances.netbox.eda.nokia.com
+    group: netbox.eda.nokia.com
+    kind: Instance
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+notifiers.eda.nokia.com:
+  - name: clusternotifiers.notifiers.eda.nokia.com
+    group: notifiers.eda.nokia.com
+    kind: ClusterNotifier
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0
+  - name: clusterproviders.notifiers.eda.nokia.com
+    group: notifiers.eda.nokia.com
+    kind: ClusterProvider
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0
+  - name: notifiers.notifiers.eda.nokia.com
+    group: notifiers.eda.nokia.com
+    kind: Notifier
+    versions:
+      - name: v1
+        deprecated: false
+        appVersion: v4.0.0
+  - name: providers.notifiers.eda.nokia.com
+    group: notifiers.eda.nokia.com
+    kind: Provider
+    versions:
+      - name: v1
         deprecated: false
         appVersion: v4.0.0
 oam.eda.nokia.com:
@@ -536,6 +689,50 @@ os.eda.nokia.com:
       - name: v1alpha1
         deprecated: false
         appVersion: v4.0.0
+otlp.eda.nokia.com:
+  - name: clustermetricexports.otlp.eda.nokia.com
+    group: otlp.eda.nokia.com
+    kind: ClusterMetricExport
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+  - name: clusterreceivers.otlp.eda.nokia.com
+    group: otlp.eda.nokia.com
+    kind: ClusterReceiver
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+  - name: metricexports.otlp.eda.nokia.com
+    group: otlp.eda.nokia.com
+    kind: MetricExport
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+  - name: receivers.otlp.eda.nokia.com
+    group: otlp.eda.nokia.com
+    kind: Receiver
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v1.0.0
+pagers.eda.nokia.com:
+  - name: clusterpagers.pagers.eda.nokia.com
+    group: pagers.eda.nokia.com
+    kind: ClusterPager
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v3.0.0
+  - name: pagers.pagers.eda.nokia.com
+    group: pagers.eda.nokia.com
+    kind: Pager
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v3.0.0
 platformmetrics.eda.nokia.com:
   - name: thresholds.platformmetrics.eda.nokia.com
     group: platformmetrics.eda.nokia.com
@@ -543,6 +740,14 @@ platformmetrics.eda.nokia.com:
     versions:
       - name: v1
         deprecated: false
+prom.eda.nokia.com:
+  - name: exports.prom.eda.nokia.com
+    group: prom.eda.nokia.com
+    kind: Export
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v4.0.0
 protocols.eda.nokia.com:
   - name: aggregateroutes.protocols.eda.nokia.com
     group: protocols.eda.nokia.com
@@ -754,6 +959,35 @@ qos.eda.nokia.com:
       - name: v1alpha1
         deprecated: true
         appVersion: v3.0.2+25.4.3
+remotewrite.eda.nokia.com:
+  - name: clusterdestinations.remotewrite.eda.nokia.com
+    group: remotewrite.eda.nokia.com
+    kind: ClusterDestination
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: clusterexports.remotewrite.eda.nokia.com
+    group: remotewrite.eda.nokia.com
+    kind: ClusterExport
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: destinations.remotewrite.eda.nokia.com
+    group: remotewrite.eda.nokia.com
+    kind: Destination
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
+  - name: exports.remotewrite.eda.nokia.com
+    group: remotewrite.eda.nokia.com
+    kind: Export
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v2.0.0
 routing.eda.nokia.com:
   - name: attachmentlookups.routing.eda.nokia.com
     group: routing.eda.nokia.com
@@ -997,6 +1231,35 @@ siteinfo.eda.nokia.com:
       - name: v1alpha1
         deprecated: false
         appVersion: v4.0.0
+snow.eda.nokia.com:
+  - name: clusterincidents.snow.eda.nokia.com
+    group: snow.eda.nokia.com
+    kind: ClusterIncident
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v3.0.0
+  - name: clusterinstances.snow.eda.nokia.com
+    group: snow.eda.nokia.com
+    kind: ClusterInstance
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v3.0.0
+  - name: incidents.snow.eda.nokia.com
+    group: snow.eda.nokia.com
+    kind: Incident
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v3.0.0
+  - name: instances.snow.eda.nokia.com
+    group: snow.eda.nokia.com
+    kind: Instance
+    versions:
+      - name: v1alpha1
+        deprecated: false
+        appVersion: v3.0.0
 system.eda.nokia.com:
   - name: monitors.system.eda.nokia.com
     group: system.eda.nokia.com
@@ -1090,230 +1353,3 @@ topologies.eda.nokia.com:
       - name: v1alpha1
         deprecated: false
         appVersion: v4.0.0
-influxdb.eda.nokia.com:
-  - name: clusterexports.influxdb.eda.nokia.com
-    group: influxdb.eda.nokia.com
-    kind: ClusterExport
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-  - name: clusterservers.influxdb.eda.nokia.com
-    group: influxdb.eda.nokia.com
-    kind: ClusterServer
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-  - name: exports.influxdb.eda.nokia.com
-    group: influxdb.eda.nokia.com
-    kind: Export
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-  - name: servers.influxdb.eda.nokia.com
-    group: influxdb.eda.nokia.com
-    kind: Server
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-kafka.eda.nokia.com:
-  - name: clusterproducers.kafka.eda.nokia.com
-    group: kafka.eda.nokia.com
-    kind: ClusterProducer
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v4.0.0
-  - name: producers.kafka.eda.nokia.com
-    group: kafka.eda.nokia.com
-    kind: Producer
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v4.0.0
-nats.eda.nokia.com:
-  - name: clusterexports.nats.eda.nokia.com
-    group: nats.eda.nokia.com
-    kind: ClusterExport
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: clusterpublishers.nats.eda.nokia.com
-    group: nats.eda.nokia.com
-    kind: ClusterPublisher
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: exports.nats.eda.nokia.com
-    group: nats.eda.nokia.com
-    kind: Export
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: publishers.nats.eda.nokia.com
-    group: nats.eda.nokia.com
-    kind: Publisher
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-netbox.eda.nokia.com:
-  - name: allocations.netbox.eda.nokia.com
-    group: netbox.eda.nokia.com
-    kind: Allocation
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: instances.netbox.eda.nokia.com
-    group: netbox.eda.nokia.com
-    kind: Instance
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-notifiers.eda.nokia.com:
-  - name: clusternotifiers.notifiers.eda.nokia.com
-    group: notifiers.eda.nokia.com
-    kind: ClusterNotifier
-    versions:
-      - name: v1
-        deprecated: false
-        appVersion: v4.0.0
-  - name: clusterproviders.notifiers.eda.nokia.com
-    group: notifiers.eda.nokia.com
-    kind: ClusterProvider
-    versions:
-      - name: v1
-        deprecated: false
-        appVersion: v4.0.0
-  - name: notifiers.notifiers.eda.nokia.com
-    group: notifiers.eda.nokia.com
-    kind: Notifier
-    versions:
-      - name: v1
-        deprecated: false
-        appVersion: v4.0.0
-  - name: providers.notifiers.eda.nokia.com
-    group: notifiers.eda.nokia.com
-    kind: Provider
-    versions:
-      - name: v1
-        deprecated: false
-        appVersion: v4.0.0
-otlp.eda.nokia.com:
-  - name: clustermetricexports.otlp.eda.nokia.com
-    group: otlp.eda.nokia.com
-    kind: ClusterMetricExport
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-  - name: clusterreceivers.otlp.eda.nokia.com
-    group: otlp.eda.nokia.com
-    kind: ClusterReceiver
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-  - name: metricexports.otlp.eda.nokia.com
-    group: otlp.eda.nokia.com
-    kind: MetricExport
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-  - name: receivers.otlp.eda.nokia.com
-    group: otlp.eda.nokia.com
-    kind: Receiver
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v1.0.0
-pagers.eda.nokia.com:
-  - name: clusterpagers.pagers.eda.nokia.com
-    group: pagers.eda.nokia.com
-    kind: ClusterPager
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.0
-  - name: pagers.pagers.eda.nokia.com
-    group: pagers.eda.nokia.com
-    kind: Pager
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.0
-prom.eda.nokia.com:
-  - name: exports.prom.eda.nokia.com
-    group: prom.eda.nokia.com
-    kind: Export
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v4.0.0
-remotewrite.eda.nokia.com:
-  - name: clusterdestinations.remotewrite.eda.nokia.com
-    group: remotewrite.eda.nokia.com
-    kind: ClusterDestination
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: clusterexports.remotewrite.eda.nokia.com
-    group: remotewrite.eda.nokia.com
-    kind: ClusterExport
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: destinations.remotewrite.eda.nokia.com
-    group: remotewrite.eda.nokia.com
-    kind: Destination
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-  - name: exports.remotewrite.eda.nokia.com
-    group: remotewrite.eda.nokia.com
-    kind: Export
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v2.0.0
-snow.eda.nokia.com:
-  - name: clusterincidents.snow.eda.nokia.com
-    group: snow.eda.nokia.com
-    kind: ClusterIncident
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.0
-  - name: clusterinstances.snow.eda.nokia.com
-    group: snow.eda.nokia.com
-    kind: ClusterInstance
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.0
-  - name: incidents.snow.eda.nokia.com
-    group: snow.eda.nokia.com
-    kind: Incident
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.0
-  - name: instances.snow.eda.nokia.com
-    group: snow.eda.nokia.com
-    kind: Instance
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.0

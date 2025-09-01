@@ -30,18 +30,6 @@ schema:
             default: 1
             description: Count is the number of pings to send.
             type: integer
-          fabricSelectors:
-            description: |-
-              Fabric Selectors is a list of fabric selectors to execute ISL pings for.
-              This is a list of label expressions, e.g. ["eda.nokia.com/role=leaf", "eda.nokia.com/region=us-west"].
-            items:
-              type: string
-            type: array
-          fabrics:
-            description: Fabrics is a list of fabrics to execute ISL pings for.
-            items:
-              type: string
-            type: array
           islSelectors:
             description: |-
               Inter-Switch Link Selectors is a list of selectors to execute ISL pings for.
@@ -60,7 +48,7 @@ schema:
             type: integer
         type: object
       status:
-        description: IslPingStatus defines the observed state of IslPing
+        description: The result of the ISL ping
         properties:
           details:
             description: |-
@@ -69,53 +57,49 @@ schema:
             items:
               properties:
                 details:
+                  description: Details of the ping result, if available.
                   properties:
                     averageTimeNanoseconds:
-                      description: |-
-                        A Duration represents the elapsed time between two instants
-                        as an int64 nanosecond count. The representation limits the
-                        largest representable duration to approximately 290 years.
+                      description: Average time taken for a ping reply.
                       format: int64
                       type: integer
                     maxTimeNanoseconds:
-                      description: |-
-                        A Duration represents the elapsed time between two instants
-                        as an int64 nanosecond count. The representation limits the
-                        largest representable duration to approximately 290 years.
+                      description: Maximum time taken for a ping reply.
                       format: int64
                       type: integer
                     minTimeNanoseconds:
-                      description: |-
-                        A Duration represents the elapsed time between two instants
-                        as an int64 nanosecond count. The representation limits the
-                        largest representable duration to approximately 290 years.
+                      description: Minimum time taken for a ping reply.
                       format: int64
                       type: integer
                     received:
+                      description: Number of pings received.
                       type: integer
                     sent:
+                      description: Number of pings sent.
                       type: integer
                     stdDevNanoseconds:
-                      description: |-
-                        A Duration represents the elapsed time between two instants
-                        as an int64 nanosecond count. The representation limits the
-                        largest representable duration to approximately 290 years.
+                      description: Standard deviation of time taken for all pings.
                       format: int64
                       type: integer
                     totalTimeNanoseconds:
-                      description: |-
-                        A Duration represents the elapsed time between two instants
-                        as an int64 nanosecond count. The representation limits the
-                        largest representable duration to approximately 290 years.
+                      description: Total time taken for all pings.
                       format: int64
                       type: integer
+                  required:
+                    - received
+                    - sent
                   type: object
                 error:
+                  description: Error message, if the ping failed.
                   type: string
                 name:
+                  description: Name of the ping result.
                   type: string
                 success:
+                  description: Indicates if the ping was successful.
                   type: boolean
+              required:
+                - success
               type: object
             type: array
           result:

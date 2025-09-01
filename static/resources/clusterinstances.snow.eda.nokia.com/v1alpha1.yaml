@@ -1,0 +1,80 @@
+additionalPrinterColumns:
+  - description: Indicates if the instance is reachable
+    jsonPath: .status.reachable
+    name: Reachable
+    type: boolean
+  - description: Reason for instance being unreachable
+    jsonPath: .status.errorReason
+    name: Error Reason
+    type: string
+  - description: Last time the instance's status was checked
+    jsonPath: .status.lastChecked
+    name: Last Checked
+    type: date
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: ClusterInstance is the Schema for the clusterinstances API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: ClusterInstanceSpec defines the desired state of ClusterInstance
+        properties:
+          clientCredentials:
+            description: |-
+              Reference to a Kubernetes secret containing client credentials
+              Secret. It must includes the keys: `client_id`, `client_secret`,
+              `username` and `password`.
+            type: string
+          retryCount:
+            description: Number of retries for API requests. Defaults to 0 i.e no retries.
+            type: integer
+          retryInterval:
+            description: Interval between retries in case of a failed request
+            type: string
+          timeout:
+            default: 10s
+            description: Timeout for API requests to ServiceNow
+            type: string
+          url:
+            description: The URL of the ServiceNow instance
+            type: string
+          version:
+            description: API version to use when connecting to ServiceNow
+            type: string
+        type: object
+      status:
+        description: InstanceStatus defines the observed state of Instance
+        properties:
+          errorReason:
+            description: Provides an error reason if the instance is unreachable
+            type: string
+          lastChecked:
+            description: Last checked time for connectivity status
+            format: date-time
+            type: string
+          reachable:
+            description: Indicates if the ServiceNow instance is reachable
+            type: boolean
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

@@ -1,0 +1,142 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: Incident is the Schema for the incidents API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: IncidentSpec defines the desired state of Incident
+        properties:
+          description:
+            description: A short description of the Incident generator
+            type: string
+          enabled:
+            description: Indicates if the incident generator is enabled
+            type: boolean
+          instance:
+            description: Instances associated with this incident generator
+            items:
+              type: string
+            minItems: 1
+            type: array
+          sources:
+            description: Sources for incident generation
+            properties:
+              query:
+                description: Include a query source in this incident generator
+                properties:
+                  assignedTo:
+                    description: The individual assigned to resolve the incident (references the User table).
+                    type: string
+                  assignmentGroup:
+                    description: The group responsible for addressing the incident (references the Group table).
+                    type: string
+                  autoResolve:
+                    description: If true this app will automatically resolve the incident when the object is deleted.
+                    type: boolean
+                  callerId:
+                    description: The user who reported the incident (references the User table).
+                    type: string
+                  category:
+                    description: General category of the incident (e.g., Software, Hardware, Network).
+                    type: string
+                  closeCode:
+                    description: A code indicating how the incident was resolved (e.g., Solved (Workaround), Solved (Permanently)).
+                    type: string
+                  closeNotes:
+                    description: Notes on how the incident was resolved.
+                    type: string
+                  cmdbci:
+                    description: |-
+                      The Configuration Item (CI) associated with the incident,
+                      linking it to an asset or service in the CMDB (Configuration Management Database).
+                    type: string
+                  customFields:
+                    description: List of custom fields to add to the incident
+                    items:
+                      properties:
+                        name:
+                          description: Custom field name
+                          type: string
+                        value:
+                          description: Custom field value, a Go template
+                          type: string
+                      type: object
+                    type: array
+                  description:
+                    description: A detailed description of the issue.
+                    type: string
+                  fields:
+                    description: |-
+                      Fields to include in the subscribe results, which can then be used in the template,
+                      e.g. '.namespace.node.name' or '.namespace.node.srl.interface.name"'.
+                    items:
+                      type: string
+                    type: array
+                  impact:
+                    description: Impact level on the organization, usually from 1 (highest) to 3 (lowest).
+                    type: string
+                  location:
+                    description: Physical or logical location related to the incident.
+                    type: string
+                  priority:
+                    description: Numeric priority of the incident, usually from 1 (highest) to 5 (lowest).
+                    type: string
+                  resolutionCode:
+                    description: Indicates the type of resolution applied.
+                    type: string
+                  shortDescription:
+                    description: |-
+                      A Go template used to generate a brief summary of the incident
+                      when raising it in service now.
+                      The template can use the fields from the subscription results.
+                      e.g. 'Interface {{.node.srl.interface.name}} is down on node {{.node.name}}'.
+                    type: string
+                  state:
+                    description: |-
+                      The current status of the incident, typically represented by codes:
+                        1: New
+                        2: In Progress
+                        3: On Hold
+                        4: Resolved
+                        6: Closed
+                    type: string
+                  subCategory:
+                    description: More specific subcategory within the main category.
+                    type: string
+                  table:
+                    description: EDB table to subscribe to. e.g. '.namespace.node.srl.interface'
+                    type: string
+                  urgency:
+                    description: Urgency level, typically from 1 (highest) to 5 (lowest).
+                    type: string
+                  where:
+                    description: 'A where clause to use for the subscribe request, e.g: ''oper-state = down''. You can omit enclosing parentheses.'
+                    type: string
+                type: object
+            type: object
+        type: object
+      status:
+        description: IncidentStatus defines the observed state of Incident
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

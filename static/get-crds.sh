@@ -107,19 +107,19 @@ rm -rf "$manifests_file"
 find "$temp_dir" -name "*.yaml" -not -name "*states.*.eda.nokia.com.yaml" -exec cat {} \; \
   | yq eval 'group_by(.group) | map({(.[0].group): (. | sort_by(.name))}) | .[] as $first | $first' > "$crd_meta_tmp_file"
 
-# Sort the top-level groups alphabetically
-yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_tmp_file"
-
 # Merging new CRD metadata into existing (if necessary)
 if [ -f "$crd_meta_file" ]; then
   echo
   echo "Merging meta file with new information..."
-  uv run merge-crds.py "$crd_meta_file" "$crd_meta_tmp_file" > "$crd_meta_file.tmp" \
+  uv run ${SCRIPT_DIR}/merge-crds.py "$crd_meta_file" "$crd_meta_tmp_file" > "$crd_meta_file.tmp" \
     && mv "$crd_meta_file.tmp" "$crd_meta_file"
   rm -rf "$crd_meta_tmp_file"
 else
   mv "$crd_meta_tmp_file" "$crd_meta_file"
 fi
+
+# Sort the top-level groups alphabetically
+yq eval 'to_entries | sort_by(.key) | from_entries' -i "$crd_meta_file"
 
 echo
 echo "CRDs saved in $output_dir"

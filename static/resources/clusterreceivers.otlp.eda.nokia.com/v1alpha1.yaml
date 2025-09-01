@@ -1,0 +1,151 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: ClusterReceiver is the Schema for the clusterreceivers API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: ClusterReceiverSpec defines the desired state of ClusterReceiver
+        properties:
+          authorization:
+            description: Authorization token for accessing the server.
+            properties:
+              credentials:
+                description: Credentials such as a token value
+                type: string
+              type:
+                default: Bearer
+                description: Authorization type
+                type: string
+            type: object
+          endpoint:
+            description: Receiver endpoint.
+            type: string
+          protocol:
+            default: http
+            description: Export client protocol. Once of `http` or `grpc`.
+            enum:
+              - http
+              - grpc
+            type: string
+          tls:
+            description: TLS configuration for secure connection to the remote server.
+            properties:
+              fromFiles:
+                description: Certificates files.
+                properties:
+                  caFile:
+                    description: Path to a certificate authority file.
+                    type: string
+                  certFile:
+                    description: The client certificate file location.
+                    type: string
+                  keyFile:
+                    description: The client private key location.
+                    type: string
+                  skipVerify:
+                    description: If true the client will not verify the server's certificate.
+                    type: boolean
+                type: object
+              fromSecret:
+                description: |-
+                  Secret containing a `tls.crt`, a `tls.key` and a `ca.crt` keys.
+                  Both `tls.crt` and `tls.key` must be present.
+                  If `ca.crt` is not present and `.trustBundle` is not set
+                  the remote server certificate is not verified.
+                type: string
+              trustBundle:
+                description: |-
+                  ConfigMap containing a set of trust bundles (key `trust-bundle.pem`) used to
+                  verify the remote server certificates.
+                type: string
+            type: object
+          writeOptions:
+            description: 'Remote write options such as: Flush interval, Retries, etc.'
+            properties:
+              bufferSize:
+                default: 1000
+                description: The buffer size threshold that initiates sending the accumulated metrics to the receiver.
+                format: int64
+                type: integer
+              compression:
+                description: Compression algorithm. Only gzip supported.
+                enum:
+                  - gzip
+                type: string
+              flushInterval:
+                default: 5s
+                description: |-
+                  Interval at which metrics stored in the local buffer are sent to the receiver.
+                  Metrics are sent regardless of the buffer size threshold.
+                type: string
+              headers:
+                description: Custom HTTP headers to be sent along with each remote write request.
+                items:
+                  properties:
+                    name:
+                      description: Header name
+                      type: string
+                    value:
+                      description: Header value
+                      type: string
+                  type: object
+                type: array
+              maxMetricsPerExport:
+                default: 500
+                description: Maximum number of metrics per export request.
+                format: int64
+                type: integer
+              retries:
+                description: Retries options
+                properties:
+                  initialInterval:
+                    type: string
+                  maxElapsedTime:
+                    type: string
+                  maxInterval:
+                    type: string
+                type: object
+              timeout:
+                description: Export timeout.
+                type: string
+            type: object
+        required:
+          - endpoint
+        type: object
+      status:
+        description: ClusterReceiverStatus defines the observed state of ClusterReceiver
+        properties:
+          error:
+            description: Last encountered error for this receiver
+            type: string
+          lastChecked:
+            description: Last checked time for connectivity status
+            format: date-time
+            type: string
+          reachable:
+            default: false
+            description: Specifies if the receiver is reachable
+            type: boolean
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

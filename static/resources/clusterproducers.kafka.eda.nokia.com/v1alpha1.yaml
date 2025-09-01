@@ -1,0 +1,148 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: ClusterProducer is the Schema for the clusterproducers API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: ClusterProducerSpec defines the desired state of ClusterProducer
+        properties:
+          brokers:
+            description: Comma separated Kafka brokers list
+            type: string
+          compression-codec:
+            default: none
+            description: Data compression codec
+            enum:
+              - none
+              - gzip
+              - snappy
+              - zstd
+              - lz4
+            type: string
+          exports:
+            description: Exports is the list of paths to be exported as well as the topic and mode for each.
+            items:
+              description: Export defines an object to be exported and
+              properties:
+                fields:
+                  description: list of fields to be exported from the configured EDB table.
+                  items:
+                    type: string
+                  type: array
+                mode:
+                  default: on-change
+                  description: Export Mode
+                  enum:
+                    - on-change
+                    - periodic
+                    - periodic-on-change
+                  type: string
+                path:
+                  description: The EDB path to export, in the format '.namespace.node.srl.interface'
+                  type: string
+                period:
+                  default: 10s
+                  description: Export Period. A 1s minimum is enforced.
+                  type: string
+                topic:
+                  description: |-
+                    A topic name to which the producer must write
+                    updates from this export path
+                  type: string
+                where:
+                  description: A where clause to use for the query, e.g. 'oper-state = down'. You can omit enclosing parentheses.
+                  type: string
+              required:
+                - path
+                - topic
+              type: object
+            type: array
+          flush-frequency:
+            description: The best-effort frequency of flushes
+            type: string
+          max-retry:
+            default: 3
+            description: The total number of times to retry sending a message
+            type: integer
+          required-acks:
+            default: no-response
+            description: Number of replica acknowledgements the broker must see before responding
+            enum:
+              - no-response
+              - wait-for-local
+              - wait-for-all
+            type: string
+          sasl:
+            description: Kafka SASL configuration
+            properties:
+              mechanism:
+                default: plain
+                description: SASL Mechanism
+                enum:
+                  - plain
+                  - scram-sha-256
+                  - scram-sha-512
+                  - oauthbearer
+                type: string
+              password:
+                description: SASL password
+                type: string
+              token-url:
+                description: token url for OAUTHBEARER SASL mechanism
+                type: string
+              user:
+                description: SASL user name
+                type: string
+            type: object
+          sync-producer:
+            description: Start a sync producer
+            type: boolean
+          timeout:
+            default: 10s
+            description: Kafka producer timeout
+            type: string
+          tls:
+            description: Kafka TLS configuration
+            properties:
+              ca-file:
+                description: TLS Certificate Authority file path
+                type: string
+              cert-file:
+                description: TLS Certificate file path
+                type: string
+              key-file:
+                description: TLS Key file path
+                type: string
+              skip-verify:
+                description: Skip verifying the server certificate
+                type: boolean
+            type: object
+        required:
+          - brokers
+          - exports
+        type: object
+      status:
+        description: ClusterProducerStatus defines the observed state of ClusterProducer
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

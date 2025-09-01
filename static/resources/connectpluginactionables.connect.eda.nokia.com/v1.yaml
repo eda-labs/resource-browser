@@ -1,14 +1,7 @@
-additionalPrinterColumns:
-  - jsonPath: .spec.type
-    name: Type
-    type: string
-  - jsonPath: .metadata.creationTimestamp
-    name: Age
-    type: date
 name: v1
 schema:
   openAPIV3Schema:
-    description: Workflow is the Schema for the workflows API
+    description: ConnectPluginActionable is the Schema for the connectpluginactionables API.
     properties:
       apiVersion:
         description: |-
@@ -28,23 +21,21 @@ schema:
       metadata:
         type: object
       spec:
-        description: WorkflowSpec defines the desired state of Flow
+        description: ConnectPluginActionableSpec defines the desired state of ConnectPluginActionable.
         properties:
-          input:
-            description: Input to this flow, adhering to the JSON schema defined in the referenced WorkflowDefinition.
-            x-kubernetes-preserve-unknown-fields: true
-          type:
-            description: Select the WorkflowDefinition to execute.
+          attributes:
+            additionalProperties:
+              type: string
+            description: Attributes is a map of attributes associated with the Verb for this Actionable.
+            type: object
+          verb:
+            description: Verb is the keyword for the operation that should be executed by the Plugin.
             type: string
         required:
-          - type
+          - verb
         type: object
       status:
-        description: WorkflowStatus defines the observed state of Flow
-        properties:
-          output:
-            description: Output from this flow, adhering to the JSON schema defined in the referenced FlowDefinition
-            x-kubernetes-preserve-unknown-fields: true
+        description: ConnectPluginActionableStatus defines the observed state of ConnectPluginActionable.
         type: object
     type: object
 served: true

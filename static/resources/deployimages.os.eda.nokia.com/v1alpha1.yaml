@@ -1,7 +1,4 @@
 additionalPrinterColumns:
-  - jsonPath: .status.id
-    name: ID
-    type: integer
   - jsonPath: .status.result
     name: Result
     type: string

@@ -40,7 +40,6 @@ schema:
                   description: |-
                     AppSettings defines a list of variables and their value. Only variables that are customised need to be mentioned.
                     If AppSettings are not again mentioned on upgrade, values will remain as is.
-                  type: object
                   x-kubernetes-preserve-unknown-fields: true
                 catalog:
                   description: |-
