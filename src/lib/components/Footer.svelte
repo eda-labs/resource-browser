@@ -67,13 +67,13 @@
 		<!-- svelte-ignore a11y_consider_explicit_label -->
 		<a
 			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
-			href="https://eda.dev/discord"
+			href="https://docs.eda.dev"
 			target="_blank"
 		>
 			<svg
 				class="h-5 w-5 {home
 					? 'text-white hover:text-gray-300'
-					: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex"
+					: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex origin-center scale-80 transform"
 				fill="currentColor"
 				viewBox="556.382 193.2939 90 96.7689"
 				xmlns="http://www.w3.org/2000/svg"
@@ -85,4 +85,5 @@
 			</svg>
 		</a>
 	</div>
+	<small class="opacity-70">Not an official Nokia product</small>
 </div>
