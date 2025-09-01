@@ -1,19 +1,26 @@
 <script lang="ts">
-	export let home: boolean
+	export let home: boolean;
 </script>
 
-<div class="p-5 text-sm flex flex-col space-y-1 text-center items-center justify-center select-none {home ? 'text-gray-400' : 'text-gray-800 dark:text-gray-300 dark:bg-gray-800'}">
+<div
+	class="flex flex-col items-center justify-center space-y-1 p-5 text-center text-sm select-none {home
+		? 'text-gray-400'
+		: 'text-gray-800 dark:bg-gray-800 dark:text-gray-300'}"
+>
 	<div>
 		Created by
-		<a 
+		<a
 			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
-			href="https://www.linkedin.com/in/siva19susi" target="_blank">Siva Sivakumar
+			href="https://www.linkedin.com/in/siva19susi"
+			target="_blank"
+			>Siva Sivakumar
 		</a>
 		/
 		<a
 			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
 			href="https://www.linkedin.com/in/rdodin"
-			target="_blank">Roman Dodin
+			target="_blank"
+			>Roman Dodin
 		</a>
 	</div>
 	<div class="space-x-2">
@@ -21,9 +28,12 @@
 		<a
 			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
 			href="https://github.com/eda-labs/resource-browser"
-			target="_blank">
+			target="_blank"
+		>
 			<svg
-				class="w-5 h-5 {home ? 'text-white hover:text-gray-300' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex"
+				class="h-5 w-5 {home
+					? 'text-white hover:text-gray-300'
+					: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex"
 				fill="currentColor"
 				viewBox="0 0 25 25"
 				xmlns="http://www.w3.org/2000/svg"
@@ -39,10 +49,41 @@
 		<a
 			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
 			href="https://eda.dev/discord"
-			target="_blank">
-			<svg class="w-5 h-5 {home ? 'text-white hover:text-gray-300' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex" fill="currentColor" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-				<path d="M18.942 5.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.586 11.586 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3 17.392 17.392 0 0 0-2.868 11.662 15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.638 10.638 0 0 1-1.706-.83c.143-.106.283-.217.418-.331a11.664 11.664 0 0 0 10.118 0c.137.114.277.225.418.331-.544.328-1.116.606-1.71.832a12.58 12.58 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM8.678 14.813a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.929 1.929 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"/>
+			target="_blank"
+		>
+			<svg
+				class="h-5 w-5 {home
+					? 'text-white hover:text-gray-300'
+					: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex"
+				fill="currentColor"
+				viewBox="0 0 25 25"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M18.942 5.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.586 11.586 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3 17.392 17.392 0 0 0-2.868 11.662 15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.638 10.638 0 0 1-1.706-.83c.143-.106.283-.217.418-.331a11.664 11.664 0 0 0 10.118 0c.137.114.277.225.418.331-.544.328-1.116.606-1.71.832a12.58 12.58 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM8.678 14.813a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.929 1.929 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"
+				/>
+			</svg>
+		</a>
+		<!-- svelte-ignore a11y_consider_explicit_label -->
+		<a
+			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
+			href="https://docs.eda.dev"
+			target="_blank"
+		>
+			<svg
+				class="h-5 w-5 {home
+					? 'text-white hover:text-gray-300'
+					: 'text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300'} inline-flex origin-center scale-80 transform"
+				fill="currentColor"
+				viewBox="556.382 193.2939 90 96.7689"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M 0 0.000011 L 0 125.8460006714 L 19.482088089 125.8460006714 L 19.4820976257 42.6795005798 L 120.7220535278 129.7931976318 L 120.7220535278 103.7016983032 L 0 0.000011 Z"
+					transform="matrix(0.745513916015625, 0, 0, 0.7455624938011169, 556.3819580078125, 193.29393005371094)"
+				/>
 			</svg>
 		</a>
 	</div>
+	<small class="opacity-50">Not an official Nokia product</small>
 </div>
