@@ -23,18 +23,25 @@ export function getDefault(resource: Schema) {
   }
 }
 
+// Helper to safely get enum array from resource or its items
+function getEnumArray(resource: Schema): string[] | undefined {
+  if ('enum' in resource && Array.isArray(resource.enum)) {
+    return resource.enum;
+  }
+  if (resource.type === 'array' && resource.items && 'enum' in resource.items && Array.isArray(resource.items.enum)) {
+    return resource.items.enum;
+  }
+  return undefined;
+}
+
 // Get the enum values for a resource field as a string like "[a, b, c]"
 export function getEnum(resource: Schema) {
-  const e = (resource && 'enum' in resource && Array.isArray((resource as any).enum) && (resource as any).enum.length)
-    ? (resource as any).enum
-    : (resource.type === 'array' && resource.items && 'enum' in resource.items && Array.isArray((resource.items as any).enum) ? (resource.items as any).enum : undefined)
-
-  if (!e || !Array.isArray(e) || e.length === 0) return ''
-
+  const e = getEnumArray(resource);
+  if (!e || e.length === 0) return '';
   try {
-    return `[${e.join(', ')}]`
+    return `[${e.join(', ')}]`;
   } catch (err) {
-    return String(e)
+    return String(e);
   }
 }
 
