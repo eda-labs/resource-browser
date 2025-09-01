@@ -17,7 +17,7 @@ fi
 
 mkdir -p "$output_dir"
 
-uv sync --all-groups
+uv --project ${SCRIPT_DIR} sync --all-groups
 
 # YAML dictionary for CRD versions + group + kind
 crd_meta_file="$src_lib_dir/resources.yaml"
