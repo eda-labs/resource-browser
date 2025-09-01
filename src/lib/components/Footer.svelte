@@ -85,5 +85,5 @@
 			</svg>
 		</a>
 	</div>
-	<small class="opacity-70">Not an official Nokia product</small>
+	<small class="opacity-50">Not an official Nokia product</small>
 </div>
