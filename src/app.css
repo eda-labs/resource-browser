@@ -117,6 +117,10 @@
 
 @layer components {
   .scroll-thin {
+    /* Firefox support */
+    scrollbar-width: thin;
+    scrollbar-color: #bec4c4 #f1f1f1;
+
     /* Scrollbar size */
     &::-webkit-scrollbar {
       width: 2px;
@@ -140,6 +144,9 @@
 
     /* Dark mode overrides */
     @variant dark {
+      /* Firefox support */
+      scrollbar-color: rgb(109, 109, 109) rgb(55 65 81);
+
       &::-webkit-scrollbar-track {
         background: rgb(55 65 81);
       }
