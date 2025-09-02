@@ -91,8 +91,8 @@
 		<div class="scroll-thin flex items-center space-x-2 overflow-x-auto">
 			<a href="/"><img class="min-w-8" src="/images/eda.svg" width="35" alt="Logo" /></a>
 			<div class="flex flex-col">
-				<p class="text-xs font-light">Resource Browser</p>
-				<p class="text-sm">Uploads</p>
+				<p class="text-sm font-nokia-headline font-light">Resource Browser</p>
+				<p class="font-nokia-headline">Uploads</p>
 			</div>
 		</div>
 		<Theme />
@@ -160,7 +160,7 @@
 
 	{#if kind !== ''}
 		<div class="flex flex-col pt-2">
-			<p class="text-gray-800 dark:text-gray-200">{kind}</p>
+			<p class="text-gray-800 dark:text-gray-200 font-nokia-headline">{kind}</p>
 			<div class="font-fira flex items-center text-sm text-[12px] text-gray-500 dark:text-gray-400">
 				<span>{group}</span>
 				<span class="mx-0.5">/</span>

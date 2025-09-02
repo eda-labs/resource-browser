@@ -15,7 +15,7 @@
 			target="_blank"
 			>Siva Sivakumar
 		</a>
-		/
+		&
 		<a
 			class="hover:underline {home ? 'text-blue-400' : 'text-blue-600 dark:text-blue-500'}"
 			href="https://www.linkedin.com/in/rdodin"
@@ -85,5 +85,5 @@
 			</svg>
 		</a>
 	</div>
-	<small class="opacity-50">Not an official Nokia product</small>
+	<small class="opacity-50 mt-0.5">Not an official Nokia product</small>
 </div>

@@ -42,10 +42,59 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "NokiaPureHeadline";
+  src: url("/fonts/NokiaPureHeadline_Rg.ttf");
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NokiaPureHeadline";
+  src: url("/fonts/NokiaPureHeadline_ULt.ttf");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NokiaPureHeadline";
+  src: url("/fonts/NokiaPureHeadline_Lt.ttf");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NokiaPureHeadline";
+  src: url("/fonts/NokiaPureHeadline_Rg.ttf");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NokiaPureHeadline";
+  src: url("/fonts/NokiaPureHeadline_Bd.ttf");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NokiaPureHeadline";
+  src: url("/fonts/NokiaPureHeadline_XBd.ttf");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-nunito: 'Nunito', sans-serif;
   --font-fira: 'Fira Code', monospace;
   --font-nokia: 'NokiaPureText', sans-serif;
+  --font-nokia-headline: 'NokiaPureHeadline', sans-serif;
   --default-font-family: 'NokiaPureText', sans-serif;
 }
 

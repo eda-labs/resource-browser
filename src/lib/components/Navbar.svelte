@@ -21,9 +21,9 @@
 >
 	<div class="flex items-center justify-between">
 		<div class="flex min-w-0 items-center space-x-2">
-			<a href="/"><img class="min-w-8" src="/images/eda.svg" width="35" alt="Logo" /></a>
+			<a href="/"><img class="min-w-9 max-w-9" src="/images/eda.svg" width="35" alt="Logo" /></a>
 			<div class="scroll-thin flex flex-col overflow-x-auto">
-				<p class="text-lg">{kind}</p>
+				<p class="text-lg font-nokia-headline">{kind}</p>
 				<div class="font-fira flex items-center text-[12px] text-gray-500 dark:text-gray-400">
 					{#if appVersion !== ''}
 						<span class="dropdown">
