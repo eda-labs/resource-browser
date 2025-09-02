@@ -65,7 +65,7 @@
               text-[12.5px] text-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
 					/>
 				</div>
-				<div class="scroll-thin h-[280px] overflow-y-auto">
+				<div class="scroll-thin h-[300px] overflow-y-auto">
 					<ul>
 						{#each $resourceSearchFilter as resource, i}
 							{@const resDef = $crdMetaStore.filter((x) => x.name == resource)[0]}
@@ -76,7 +76,7 @@
 									: ''} dark:hover:bg-gray-700"
 							>
 								<a class="flex flex-col px-4 py-3" href={`${resource}/${targetVersion}`}>
-									<span class="scroll-thin overflow-x-auto text-sm font-nokia-headline dark:text-gray-200"
+									<span class="scroll-thin overflow-x-auto font-nokia-headline dark:text-gray-200"
 										>{resDef.kind}</span
 									>
 									<span class="font-fira scroll-thin overflow-x-auto text-xs dark:text-gray-200"
