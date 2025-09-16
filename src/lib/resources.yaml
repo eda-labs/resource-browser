@@ -349,18 +349,6 @@ core.eda.nokia.com:
     versions:
       - name: v1
         deprecated: false
-  - name: simtopologies.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: SimTopology
-    versions:
-      - name: v1
-        deprecated: false
-  - name: simtoponodes.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: SimTopoNode
-    versions:
-      - name: v1
-        deprecated: false
   - name: subnetallocationpools.core.eda.nokia.com
     group: core.eda.nokia.com
     kind: SubnetAllocationPool
@@ -382,12 +370,6 @@ core.eda.nokia.com:
   - name: topolinks.core.eda.nokia.com
     group: core.eda.nokia.com
     kind: TopoLink
-    versions:
-      - name: v1
-        deprecated: false
-  - name: topologies.core.eda.nokia.com
-    group: core.eda.nokia.com
-    kind: Topology
     versions:
       - name: v1
         deprecated: false
