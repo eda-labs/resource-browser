@@ -2,6 +2,7 @@ export interface CrdVersions {
   name: string;
   deprecated: boolean;
   appVersion: string;
+  edaRelease?: string; // EDA release version (e.g., "24.10", "24.11")
 }
 
 export interface CrdResource {
@@ -9,6 +10,7 @@ export interface CrdResource {
   group: string;
   kind: string;
   versions: CrdVersions[];
+  edaRelease?: string; // EDA release this resource belongs to
 }
 
 export interface CrdVersionsMap {
@@ -65,4 +67,15 @@ export interface VersionSchema {
     status: Schema;
     deprecated: boolean; 
   }
+}
+
+export interface EdaRelease {
+  name: string;        // "latest", "24.11", "24.10"
+  label: string;       // "Latest", "EDA 24.11", "EDA 24.10"
+  folder: string;      // "resources", "resources-24.11", "resources-24.10"
+  default?: boolean;   // Is this the default release?
+}
+
+export interface ReleasesConfig {
+  releases: EdaRelease[];
 }

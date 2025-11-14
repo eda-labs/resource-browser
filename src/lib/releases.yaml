@@ -1,0 +1,16 @@
+# EDA Release Configuration
+# This file defines available EDA releases
+releases:
+  - name: "25.8.3"
+    label: "EDA 25.8.3"
+    folder: "resources/25.8.3"
+    default: true
+  - name: "25.8.2"
+    label: "EDA 25.8.2"
+    folder: "resources/25.8.2"
+  - name: "25.8.1"
+    label: "EDA 25.8.1"
+    folder: "resources/25.8.1"
+  - name: "25.4.2"
+    label: "EDA 25.4.2"
+    folder: "resources/25.4.2"

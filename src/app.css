@@ -2,14 +2,9 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: "NokiaPureText";
-  src: url("/fonts/NokiaPureText_Rg.ttf");
-  font-style: normal;
-  font-weight: normal;
-  font-display: swap;
-}
-
+/* ============================================
+   FONT FACES
+   ============================================ */
 @font-face {
   font-family: "NokiaPureText";
   src: url("/fonts/NokiaPureText_Lt.ttf");
@@ -39,14 +34,6 @@
   src: url("/fonts/NokiaPureText_Bd.ttf");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_Rg.ttf");
-  font-style: normal;
-  font-weight: normal;
   font-display: swap;
 }
 
@@ -84,12 +71,15 @@
 
 @font-face {
   font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_XBd.ttf");
+  src: url("/fonts/NokiaPureHeadline_XBd..ttf");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 
+/* ============================================
+   THEME VARIABLES
+   ============================================ */
 @theme {
   --font-nunito: 'Nunito', sans-serif;
   --font-fira: 'Fira Code', monospace;
@@ -98,68 +88,214 @@
   --default-font-family: 'NokiaPureText', sans-serif;
 }
 
+/* ============================================
+   BASE STYLES
+   ============================================ */
 @layer base {
+  /* Modern CSS reset */
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
   :global(html) {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  :global(body) {
+    @apply antialiased text-gray-100;
+    font-family: var(--font-nokia), 'Nunito', sans-serif;
+    background-color: #0f172a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Headings and display text should use the Nokia headline family */
+  :global(h1),
+  :global(h2),
+  :global(h3),
+  :global(h4) {
+    font-family: var(--font-nokia-headline), var(--font-nokia), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+
+  /* Small UI copy / pills use medium weight for clarity */
+  :global(.pill),
+  :global(.badge) {
+    font-family: var(--font-nokia), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* Ensure images and media are responsive by default */
+  :global(img),
+  :global(picture),
+  :global(video),
+  :global(canvas),
+  :global(svg) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Remove default button styles */
+  :global(button) {
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+  }
+  
+  /* Smooth transitions for interactive elements */
+  :global(button),
+  :global(a),
+  :global(input),
+  :global(select),
+  :global(textarea) {
+    @apply transition-colors duration-200;
+  }
+  
+  /* Modern focus styles */
+  :global(*:focus-visible) {
+    @apply outline-2 outline-offset-2 outline-blue-500;
+  }
+
+  /* Remove default list styles */
+  :global(ul),
+  :global(ol) {
+    list-style: none;
   }
 }
 
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
 @layer utilities {
-  .has-header-img {
-    background: url(/images/background.webp) center center;
-    background-size: cover;
+  /* Prevent root scrolling (for modals/overlays) */
+  .no-root-scroll {
+    overflow: hidden !important;
+    height: 100% !important;
   }
 
+  /* Background with header image */
+  .has-header-img {
+    background-image:
+      linear-gradient(120deg, rgba(4, 20, 48, 0.92), rgba(6, 65, 150, 0.9)),
+      linear-gradient(60deg, rgba(18, 164, 228, 0.45), rgba(7, 36, 120, 0.15)),
+      url('/images/background.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-blend-mode: screen, overlay, normal;
+  }
+  
+  /* Subtle grid pattern background (dark) */
+  .bg-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  
+  /* Grid pattern for light backgrounds */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Dropdown hover effect */
   .dropdown:hover .dropdown-content {
     display: block;
   }
+  
+  /* Custom border width for diff indicators */
+  .border-l-3 {
+    border-left-width: 3px;
+  }
+  
+  /* Smooth fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Pulse animation for interactive elements */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Professional glow effect for amber elements */
+  .glow-amber {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), 0 0 40px rgba(245, 158, 11, 0.1);
+  }
+
+  /* Enhanced shadow for cards */
+  .shadow-pro {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Subtle border glow */
+  .border-glow {
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
 }
 
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
 @layer components {
+  /* Custom scrollbar styling */
   .scroll-thin {
     /* Firefox support */
     scrollbar-width: thin;
-    scrollbar-color: #bec4c4 #f1f1f1;
+    scrollbar-color: rgb(109, 109, 109) rgb(55 65 81);
 
-    /* Scrollbar size */
+    /* Webkit scrollbar */
     &::-webkit-scrollbar {
-      width: 2px;
-      height: 2px;
+      width: 6px;
+      height: 6px;
     }
 
-    /* Light mode track and thumb */
     &::-webkit-scrollbar-track {
-      background: #f1f1f1;
+      background: rgb(55 65 81);
     }
+    
     &::-webkit-scrollbar-thumb {
-      background: #bec4c4;
+      background: rgb(109, 109, 109);
+      border-radius: 3px;
     }
 
-    /* Light mode hover */
-    @variant hover {
-      &::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-    }
-
-    /* Dark mode overrides */
-    @variant dark {
-      /* Firefox support */
-      scrollbar-color: rgb(109, 109, 109) rgb(55 65 81);
-
-      &::-webkit-scrollbar-track {
-        background: rgb(55 65 81);
-      }
-      &::-webkit-scrollbar-thumb {
-        background: rgb(109, 109, 109);
-      }
-
-      /* Dark mode hover */
-      @variant hover {
-        &::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-      }
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgb(156, 163, 175);
     }
   }
 }

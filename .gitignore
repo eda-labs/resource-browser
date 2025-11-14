@@ -24,3 +24,57 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 .envrc
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Build output
+dist/
+out/
+tmp/
+temp/
+
+# Dependency directories
+bower_components/
+jspm_packages/
+
+# Compiled source
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Package files
+*.tgz
+*.zip
+
+# IDE and editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files
+.env.local

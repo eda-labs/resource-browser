@@ -45,6 +45,39 @@ export function getEnum(resource: Schema) {
   }
 }
 
+// Get the format of a resource field (e.g., "int32", "date-time")
+export function getFormat(resource: Schema): string {
+  if ('format' in resource && resource.format) {
+    return resource.format;
+  }
+  if (resource.type === 'array' && resource.items && 'format' in resource.items && resource.items.format) {
+    return resource.items.format;
+  }
+  return '';
+}
+
+// Get minimum constraint value
+export function getMinimum(resource: Schema): number | undefined {
+  if ('minimum' in resource && resource.minimum !== undefined) {
+    return resource.minimum;
+  }
+  if (resource.type === 'array' && resource.items && 'minimum' in resource.items && resource.items.minimum !== undefined) {
+    return resource.items.minimum;
+  }
+  return undefined;
+}
+
+// Get maximum constraint value
+export function getMaximum(resource: Schema): number | undefined {
+  if ('maximum' in resource && resource.maximum !== undefined) {
+    return resource.maximum;
+  }
+  if (resource.type === 'array' && resource.items && 'maximum' in resource.items && resource.items.maximum !== undefined) {
+    return resource.items.maximum;
+  }
+  return undefined;
+}
+
 export function hashExistDeep(hash: string, currentId: string) {
   if (hash.indexOf(currentId) !== -1) {
     return true

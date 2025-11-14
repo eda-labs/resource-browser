@@ -21,7 +21,7 @@
 
 <p class="mb-0 py-1 text-sm text-gray-800 dark:text-gray-200">{type.toUpperCase()}</p>
 <ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
-	<li class="px-1 pt-1.5 text-sm font-light text-gray-400 dark:text-gray-500">
+	<li class="px-1 pt-1.5 text-sm font-light text-gray-400 dark:text-gray-500 whitespace-normal leading-relaxed">
 		{desc}
 	</li>
 	{#if 'properties' in scope}

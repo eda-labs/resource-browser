@@ -1,28 +1,25 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/images/eda.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" href="%sveltekit.assets%/images/eda.svg" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap"
+    />
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap">
-	%sveltekit.head%
+    %sveltekit.head%
+    <script>
+      // Only dark mode
+      document.documentElement.classList.add("dark");
+    </script>
+  </head>
 
-	<script>
-		if (localStorage.getItem("theme") === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-			document.documentElement.classList.add("dark")
-		} else {
-			document.documentElement.classList.remove("dark")
-		}
-	</script>
-</head>
-
-<body class="dark:bg-gray-800 scroll-thin" data-sveltekit-preload-data="hover">
-	<div style="display: contents">%sveltekit.body%</div>
-</body>
-
+  <body class="dark:bg-gray-800 scroll-thin antialiased" data-sveltekit-preload-data="hover">
+    <div id="app-root">%sveltekit.body%</div>
+  </body>
 </html>

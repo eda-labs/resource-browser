@@ -1,0 +1,217 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.platform
+    name: Platform
+    type: string
+  - jsonPath: .spec.version
+    name: Version
+    type: string
+  - jsonPath: .spec.operatingSystem
+    name: OS
+    type: string
+  - jsonPath: .spec.onBoarded
+    name: OnBoarded
+    type: boolean
+  - jsonPath: .spec.npp.mode
+    name: Mode
+    type: string
+  - jsonPath: .status.npp-state
+    name: NPP
+    type: string
+  - jsonPath: .status.node-state
+    name: Node
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+name: v1
+schema:
+  openAPIV3Schema:
+    description: TopoNode is the Schema for the toponodes API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: A managed network element is represented via a TopoNode resource, describing characteristics of a specific element in the topology.
+        properties:
+          component:
+            description: |-
+              List of components within the TopoNode.
+              Used to define the type and location of linecards, fabrics (SFM), media adapter cards (MDA) and control cards (CPM).
+            items:
+              properties:
+                kind:
+                  description: The kind of Component, e.g. lineCard.
+                  enum:
+                    - lineCard
+                    - fabric
+                    - mda
+                    - connector
+                    - xiom
+                    - powerShelf
+                    - powerModule
+                  type: string
+                slot:
+                  description: |-
+                    The slot this Component resides in, unset for Components that do not have a slot or ID.
+                    e.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.
+                  type: string
+                type:
+                  description: Denotes the type of hardware being provisioned, e.g. xcm-x20.
+                  type: string
+              required:
+                - kind
+                - type
+              type: object
+            type: array
+          license:
+            description: Reference to a ConfigMap containing a license for the TopoNode. Overrides the license set in the referenced NodeProfile, if present.
+            type: string
+          macAddress:
+            description: |-
+              MAC address to associate with this TopoNode.
+              Typically the chassis MAC address, optionally sent by a node in DHCP requests.
+              Not required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.
+            type: string
+          nodeProfile:
+            description: Reference to a NodeProfile to use with this TopoNode.
+            type: string
+          npp:
+            description: Options relating to NPP interactions with the node.
+            properties:
+              mode:
+                default: normal
+                description: |-
+                  The mode in which this TopoNode is functioning.
+                  "normal" (the default)
+                     indicates that NPP is expecting an endpoint to exist, and will accept and confirm changes only if the endpoint
+                     accepts them.
+                  "maintenance"
+                     indicates that no changes will be accepted for the TopoNode, irrespective if the endpoint is up and reachable.
+                     The exception is if an upgrade is occuring, in which case changes will be accepted.
+                  "null"
+                  	  indicates that changes will be accepted from CRs and no NPP will be spun up. NPP validation will not occur.
+                     This may be useful in playground mode to avoid spinning up of 1000s of NPPs.
+                  "emulate"
+                     indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation
+                     still occurs.  If no IP address is present, we also run in emulate mode.
+                enum:
+                  - normal
+                  - maintenance
+                  - "null"
+                  - emulate
+                type: string
+            type: object
+          onBoarded:
+            default: false
+            description: |-
+              Indicates if this TopoNode has been bootstrapped or is reachable via configured credentials. Set by BootstrapServer when it completes onboarding functions for a given TopoNode.
+              Most applications ignore TopoNodes that have not been onboarded yet.
+            type: boolean
+          operatingSystem:
+            default: srl
+            description: Operating system running on this TopoNode, e.g. srl.
+            enum:
+              - srl
+              - sros
+              - nxos
+            type: string
+          platform:
+            description: Platform type of this TopoNode, e.g. 7220 IXR-D3L.
+            type: string
+          productionAddress:
+            description: |-
+              Production address of this TopoNode - this is the address the real, production instance of this TopoNode uses.
+              If left blank, an address will be allocated from the management IP pool specified in the referenced NodeProfile.
+              If this TopoNode is not bootstrapped by EDA this field must be provided.
+            properties:
+              ipv4:
+                description: The IPv4 production address
+                type: string
+              ipv6:
+                description: The IPv6 production address
+                type: string
+            type: object
+          serialNumber:
+            description: |-
+              Serial number of this TopoNode, optionally sent by a node in DHCP requests.
+              Not required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.
+            type: string
+          systemInterface:
+            description: Name of the Interface resource representing the primary loopback on the TopoNode.
+            type: string
+          version:
+            description: Sets the software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).
+            type: string
+        required:
+          - nodeProfile
+          - operatingSystem
+          - platform
+          - version
+        type: object
+      status:
+        description: TopoNodeStatus defines the observed state of TopoNode
+        properties:
+          node-details:
+            description: Address and port used to connected to the node.
+            type: string
+          node-state:
+            description: |-
+              The current state of the connection between NPP and the node.
+              "TryingToConnect"
+                 NPP is attempting to connect and establish connectivity to the node
+              "WaitingForInitialCfg"
+                 NPP is connected to the node but waiting for intial config to push
+              "Committing"
+              	  NPP is in progress of commiting
+              "RetryingCommit"
+                 NPP lost sync to node and is re-pushing current config
+              "Synced"
+                 NPP is in fully synced state
+              "Standby"
+                 NPP is running in standby mode. This state is only used on standby clusters with georedundancy.
+              "NoIpAddress"
+                 NPP is running but there is no IP address for node. This only happen in sim setups when
+                 CX has not created the simulated node, or the simulated pod failed to launch due to image error.
+            type: string
+          npp-details:
+            description: NPP address and port for this TopoNode.
+            type: string
+          npp-pod:
+            description: NPP pod name
+            type: string
+          npp-state:
+            description: The current state of the connection between ConfigEngine and NPP.
+            type: string
+          operatingSystem:
+            description: Operational operating system running on this TopoNode, e.g. srl, sros.
+            type: string
+          platform:
+            description: Operational platform type of this TopoNode, e.g. 7220 IXR-D3L.
+            type: string
+          simulate:
+            description: Simulate using CX - if true CX is reponsible for generating the TargetNode resource.
+            type: boolean
+          version:
+            description: Operational software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).
+            type: string
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

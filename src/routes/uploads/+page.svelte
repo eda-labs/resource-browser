@@ -2,7 +2,6 @@
 	import yaml from 'js-yaml';
 
 	import Footer from '$lib/components/Footer.svelte';
-	import Theme from '$lib/components/Theme.svelte';
 	import Render from '$lib/components/Render.svelte';
 
 	import type { OpenAPISchema, Schema, VersionSchema } from '$lib/structure';
@@ -26,7 +25,7 @@
 
 	function processYaml() {
 		try {
-			const crd = yaml.load(plaintextCrd);
+			const crd = yaml.load(plaintextCrd) as any;
 			group = crd.spec.group;
 			kind = crd.spec.names.kind;
 
@@ -95,7 +94,6 @@
 				<p class="font-nokia-headline">Uploads</p>
 			</div>
 		</div>
-		<Theme />
 	</div>
 </nav>
 <div class="space-y-4 px-6 pt-[100px] pb-6">
@@ -202,4 +200,4 @@
 	{/if}
 </div>
 
-<Footer home={false} />
+<Footer />

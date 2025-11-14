@@ -1,67 +1,75 @@
 <script lang="ts">
-	import Theme from './Theme.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	export let name: string;
-	export let kind: string;
-	export let group: string;
 	export let versionOnFocus: string;
 	export let validVersions: string[];
 	export let deprecated: boolean;
-	export let appVersion: string;
+	export let sidebarOpen: boolean = false; // Add this prop to track sidebar state
+
+	// Extract short name and group path from full name
+	$: shortName = name.split('.')[0];
+	$: groupPath = name.split('.').slice(1).join('.');
 
 	function handleVersionChange(event: Event) {
 		const select = event.target as HTMLSelectElement;
 		const changedVersion = select.value;
-		window.location.href = `/${name}/${changedVersion}`;
+		// Use goto with preserve to avoid full page reload and keep sidebar state
+		const currentRelease = $page.url.searchParams.get('release');
+		const url = currentRelease 
+			? `/${name}/${changedVersion}?release=${currentRelease}`
+			: `/${name}/${changedVersion}`;
+		goto(url, { replaceState: false, keepFocus: true });
 	}
 </script>
 
 <nav
-	class="fixed top-0 z-20 w-screen border-b border-gray-300 py-4 pr-4 pl-6 text-black backdrop-blur-lg backdrop-filter dark:border-gray-700 dark:text-white"
+	class="fixed top-0 z-20 w-screen border-b border-white/10 bg-black/40 backdrop-blur-xl shadow-md"
 >
-	<div class="flex items-center justify-between">
-		<div class="flex min-w-0 items-center space-x-2">
-			<a href="/"><img class="min-w-9 max-w-9" src="/images/eda.svg" width="35" alt="Logo" /></a>
-			<div class="scroll-thin flex flex-col overflow-x-auto">
-				<p class="text-lg font-nokia-headline">{kind}</p>
-				<div class="font-fira flex items-center text-[12px] text-gray-500 dark:text-gray-400">
-					{#if appVersion !== ''}
-						<span class="dropdown">
-							<button class="dropdown-button cursor-pointer border-b border-dashed">{group}</button>
-							<div
-								class="dropdown-content absolute z-10 hidden rounded-lg bg-gray-100 shadow dark:bg-gray-700 dark:text-white"
-							>
-								<p class="my-2 px-2 text-xs">
-									App version: {appVersion}
-								</p>
-							</div>
-						</span>
-					{:else}
-						<span>{group}</span>
-					{/if}
-					<span class="mx-0.5">/</span>
+	<div class="mx-auto max-w-full px-4 py-3 pl-16 sm:px-6 lg:pl-20">
+		<div class="flex items-center justify-between gap-6">
+			<!-- Left side - Resource Info -->
+			<div class="flex items-center gap-4 min-w-0 flex-1">
+				<!-- Resource Info -->
+				<div class="min-w-0">
+					<h1 class="text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 font-nokia-headline leading-tight truncate">
+						{shortName}
+					</h1>
+					<p class="text-sm sm:text-base text-gray-400 dark:text-gray-500 font-medium mt-1 truncate">
+						{groupPath}
+					</p>
+				</div>
+				
+				<!-- Version -->
+				<div class="flex items-center gap-2 px-2 py-1 sm:px-4 sm:py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 shrink-0">
+					<svg class="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+					</svg>
 					{#if validVersions.length > 1}
 						<select
-							class="rounded-lg border border-gray-300 bg-gray-50 p-[1px] text-xs text-gray-900 focus:ring-0 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+							class="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-300 bg-transparent border-none cursor-pointer focus:outline-none font-nokia-text"
 							bind:value={versionOnFocus}
 							on:change={handleVersionChange}
 						>
 							{#each validVersions as version}
-								<option value={version}>{version}</option>
+								<option value={version} class="bg-white dark:bg-gray-800">{version}</option>
 							{/each}
 						</select>
 					{:else}
-						<span>{validVersions[0]}</span>
-					{/if}
-					{#if deprecated}
-						<span
-							class="ml-2 rounded-lg bg-orange-200 px-2 py-[3px] text-[10px] text-gray-800 dark:bg-orange-500"
-							>deprecated</span
-						>
+						<span class="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-300 font-nokia-text">{validVersions[0]}</span>
 					{/if}
 				</div>
+				
+				{#if deprecated}
+					<div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/30 border border-orange-300 dark:border-orange-700 shrink-0">
+						<svg class="h-4 w-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+						</svg>
+						<span class="text-xs font-bold text-orange-700 dark:text-orange-400 font-nokia-text">DEPRECATED</span>
+					</div>
+				{/if}
 			</div>
 		</div>
-		<Theme />
 	</div>
 </nav>
