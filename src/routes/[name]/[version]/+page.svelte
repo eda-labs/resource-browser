@@ -69,22 +69,23 @@
 				compareReleaseVersions = [];
 				return;
 			}
-			
-			const manifestUrl = `/${release.folder}/manifest.json`;
-			const manifestResponse = await fetch(manifestUrl);
-			
-			if (manifestResponse.ok) {
-				const manifest = await manifestResponse.json();
-				const resource = manifest.find((r: any) => r.name === resourceName);
-				
-				if (resource && resource.versions) {
-					compareReleaseVersions = resource.versions.map((v: any) => v.name);
-				} else {
-					compareReleaseVersions = [];
+			// Try to load the release manifest and extract versions for the requested resource
+			try {
+				const resp = await fetch(`/${release.folder}/manifest.json`);
+				if (resp.ok) {
+					const manifest = await resp.json();
+					const entry = manifest.find((m: any) => m.name === resourceName);
+					if (entry && entry.versions) {
+						compareReleaseVersions = entry.versions.map((v: any) => v.name);
+						return;
+					}
 				}
-			} else {
-				compareReleaseVersions = [];
+			} catch (innerErr) {
+				// We ignore inner manifest fetch errors and fall through to empty versions
+				console.warn('Could not fetch manifest for compare release', releaseName, innerErr);
 			}
+			compareReleaseVersions = [];
+			return;
 		} catch (e) {
 			console.warn(`Could not load versions for ${resourceName} in release ${releaseName}`, e);
 			compareReleaseVersions = [];
@@ -319,13 +320,10 @@
 					<div class="px-4 py-3 md:px-6 md:py-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50">
 						<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-4">
 							<!-- Left: View Mode Buttons - Stacked on mobile -->
-							<div class="inline-flex items-center gap-1 md:gap-2 bg-white dark:bg-gray-900/50 p-1 md:p-1.5 rounded-lg md:rounded-xl shadow-inner border border-gray-200 dark:border-gray-700 overflow-x-auto">
+							<div class="inline-flex flex-wrap items-center gap-1 md:gap-2 bg-white dark:bg-gray-900/50 p-1 md:p-1.5 rounded-lg md:rounded-xl shadow-inner border border-gray-200 dark:border-gray-700 overflow-y-hidden md:overflow-x-auto">
 								<button
 									on:click={() => viewMode = 'schema'}
-									class="relative inline-flex items-center gap-1 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 whitespace-nowrap group flex-shrink-0
-									       {viewMode === 'schema' 
-										? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30 scale-105' 
-										: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}"
+												class="relative inline-flex items-center gap-1 md:gap-2 md:px-5 px-3 md:py-2.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 md:whitespace-nowrap whitespace-normal group md:flex-shrink-0 {viewMode === 'schema' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30 scale-105' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}"
 								>
 									<svg class="h-3.5 w-3.5 md:h-4 md:w-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -337,10 +335,7 @@
 								</button>
 								<button
 									on:click={() => viewMode = 'compare'}
-									class="relative inline-flex items-center gap-1 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 whitespace-nowrap group flex-shrink-0
-									       {viewMode === 'compare' 
-										? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg shadow-orange-500/30 scale-105' 
-										: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}"
+												class="relative inline-flex items-center gap-1 md:gap-2 md:px-5 px-3 md:py-2.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 md:whitespace-nowrap whitespace-normal group md:flex-shrink-0 {viewMode === 'compare' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg shadow-orange-500/30 scale-105' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}"
 								>
 									<svg class="h-3.5 w-3.5 md:h-4 md:w-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -352,10 +347,7 @@
 								</button>
 								<button
 									on:click={() => viewMode = 'validate'}
-									class="relative inline-flex items-center gap-1 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 whitespace-nowrap group flex-shrink-0
-									       {viewMode === 'validate' 
-										? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 scale-105' 
-										: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}"
+												class="relative inline-flex items-center gap-1 md:gap-2 md:px-5 px-3 md:py-2.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all duration-300 md:whitespace-nowrap whitespace-normal group md:flex-shrink-0 {viewMode === 'validate' ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 scale-105' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}"
 								>
 									<svg class="h-3.5 w-3.5 md:h-4 md:w-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -535,7 +527,7 @@
 								<h3 class="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1 md:mb-2">
 									No Version Selected
 								</h3>
-								<p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 max-w-md">
+								<p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 max-w-md">
 									Select a version to compare with {versionOnFocus}.
 								</p>
 							</div>
@@ -544,29 +536,27 @@
 								<div class="animate-spin rounded-full h-10 md:h-12 w-10 md:w-12 border-b-2 border-orange-600"></div>
 							</div>
 						{:else if comparisonResult}
-							<div class="space-y-6 md:space-y-8">
+								<div class="space-y-6 md:space-y-8">
 								<!-- Comparison Header -->
-								<div class="flex items-center justify-center p-3 md:p-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-lg border border-orange-200 dark:border-orange-800 overflow-x-auto">
-									<div class="flex items-center space-x-3 md:space-x-6">
-										<div class="text-center flex-shrink-0">
-											<div class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Base</div>
-											<div class="text-xs md:text-sm font-semibold text-blue-600 dark:text-blue-400">{comparisonResult.baseRelease}</div>
-											<div class="text-sm md:text-lg font-bold text-orange-700 dark:text-orange-400">{versionOnFocus}</div>
-										</div>
-										<svg class="h-6 md:h-8 w-6 md:w-8 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<div class="flex items-center justify-center p-2 md:p-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-lg border border-orange-200 dark:border-orange-800 overflow-x-auto">
+										<div class="flex items-center space-x-2 md:space-x-4">
+											<div class="flex items-center gap-2 text-sm md:text-sm whitespace-nowrap flex-shrink-0">
+												<span class="text-xs md:text-sm font-semibold text-blue-600 dark:text-blue-400 max-w-[10rem] sm:max-w-[12rem] truncate inline-block">{comparisonResult.baseRelease}</span>
+												<span class="text-xs md:text-sm font-semibold text-orange-700 dark:text-orange-400 ml-1">{versionOnFocus}</span>
+											</div>
+											<svg class="h-5 md:h-6 w-5 md:w-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
 										</svg>
-										<div class="text-center flex-shrink-0">
-											<div class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Compare</div>
-											<div class="text-xs md:text-sm font-semibold text-blue-600 dark:text-blue-400">{comparisonResult.compareRelease}</div>
-											<div class="text-sm md:text-lg font-bold text-orange-700 dark:text-orange-400">{compareVersion}</div>
+										<div class="flex items-center gap-2 text-sm md:text-sm whitespace-nowrap flex-shrink-0">
+											<span class="text-xs md:text-sm font-semibold text-blue-600 dark:text-blue-400 max-w-[10rem] sm:max-w-[12rem] truncate inline-block">{comparisonResult.compareRelease}</span>
+											<span class="text-xs md:text-sm font-semibold text-orange-700 dark:text-orange-400 ml-1">{compareVersion}</span>
 										</div>
 									</div>
 								</div>
 
 								<!-- Specification Comparison -->
 								<div>
-									<h3 class="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-3 md:mb-4 flex items-center space-x-2">
+									<h3 class="text-sm md:text-base font-semibold text-gray-900 dark:text-white mb-3 md:mb-4 flex items-center space-x-2">
 										<svg class="h-4 md:h-5 w-4 md:w-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 										</svg>
@@ -577,7 +567,7 @@
 											<h4 class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2">
 												{versionOnFocus}
 											</h4>
-											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 md:p-4 overflow-x-auto">
+											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-3 overflow-x-auto">
 												<DiffRender
 													hash=""
 													source="eda"
@@ -592,7 +582,7 @@
 											<h4 class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2">
 												{compareVersion}
 											</h4>
-											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 md:p-4 overflow-x-auto">
+											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-3 overflow-x-auto">
 												<DiffRender
 													hash=""
 													source="eda"
@@ -608,7 +598,7 @@
 
 								<!-- Status Comparison -->
 								<div>
-									<h3 class="text-base md:text-lg font-semibold text-gray-900 dark:text-white mb-3 md:mb-4 flex items-center space-x-2">
+									<h3 class="text-sm md:text-base font-semibold text-gray-900 dark:text-white mb-3 md:mb-4 flex items-center space-x-2">
 										<svg class="h-4 md:h-5 w-4 md:w-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 										</svg>
@@ -619,7 +609,7 @@
 											<h4 class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2">
 												{versionOnFocus}
 											</h4>
-											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 md:p-4 overflow-x-auto">
+											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-3 overflow-x-auto">
 												<DiffRender
 													hash=""
 													source="eda"
@@ -634,7 +624,7 @@
 											<h4 class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2">
 												{compareVersion}
 											</h4>
-											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 md:p-4 overflow-x-auto">
+											<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-3 overflow-x-auto">
 												<DiffRender
 													hash=""
 													source="eda"
@@ -667,7 +657,7 @@
 								<h2 class="text-lg md:text-2xl font-semibold text-gray-900 dark:text-white">
 									YAML Validation
 								</h2>
-								<p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+								<p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-0.5">
 									Validate YAML against CRD schema
 								</p>
 							</div>
@@ -794,7 +784,7 @@
 				{/if}
 			</div>
 		</main>
-		<Footer />
+        
 	</div>
 </div>
 {/key}

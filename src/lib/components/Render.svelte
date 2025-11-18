@@ -19,9 +19,9 @@
 			: 'border-gray-300 dark:border-gray-600';
 </script>
 
-<p class="mb-0 py-1 text-sm text-gray-800 dark:text-gray-200">{type.toUpperCase()}</p>
+<p class="mb-0 py-1 text-sm text-gray-900 dark:text-gray-200">{type.toUpperCase()}</p>
 <ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
-	<li class="px-1 pt-1.5 text-sm font-light text-gray-400 dark:text-gray-500 whitespace-normal leading-relaxed">
+	<li class="px-1 pt-1.5 text-sm font-light text-gray-600 dark:text-gray-300 whitespace-normal leading-relaxed">
 		{desc}
 	</li>
 	{#if 'properties' in scope}

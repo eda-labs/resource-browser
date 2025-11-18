@@ -18,9 +18,9 @@
 // Mobile panel state for compact release list (declared later)
 
 // Short Nokia EDA description (sourced from Nokia pages)
-const nokiaEdaDescription = `Nokia Event-Driven Automation (EDA) provides model-driven automation for networks, using open standards and YANG-based models to define configuration, validation and telemetry. It enables applications and operations to detect, react and automate across multi-vendor and cloud-native environments.
+const nokiaEdaDescription = `The Nokia EDA Resource Browser helps you discover Nokia EDA Custom Resource Definitions (CRDs) across releases, providing the specification and status fields needed to manage resources in your EDA environment.
 
-EDA is designed to reduce operational complexity and accelerate intent-to-deployment by exposing programmable interfaces, model-driven APIs and automated workflows for real-time network operations.`;
+This browser makes it easier to find, validate and compare definitions for Nokia applications, helping developers and operators work with model-driven APIs and simplified tooling.`;
 	const defaultRelease = releasesConfig.releases.find(r => r.default) || releasesConfig.releases[0];
 	const crdMetaStore = writable<CrdResource[]>([]);
 	const resourceSearch = writable('');
@@ -32,7 +32,8 @@ EDA is designed to reduce operational complexity and accelerate intent-to-deploy
 	});
 
 	// Group releases by major version (e.g., 25 -> v25)
-	const groupedReleases = (() => {
+	// Add a `showMore` property to each group for dropdown toggles.
+	let groupedReleases = (() => {
 		const groups: Record<string, any[]> = {};
 		(releasesConfig.releases || []).forEach(r => {
 			const major = String(r.name).split('.')[0];
@@ -41,7 +42,7 @@ EDA is designed to reduce operational complexity and accelerate intent-to-deploy
 			groups[label].push(r);
 		});
 		// sort groups by major desc
-		return Object.entries(groups).sort((a,b) => parseInt(b[0].replace('v','')) - parseInt(a[0].replace('v',''))).map(([label, releases]) => ({ label, releases: releases.sort((a,b)=> b.name.localeCompare(a.name)) }));
+		return Object.entries(groups).sort((a,b) => parseInt(b[0].replace('v','')) - parseInt(a[0].replace('v',''))).map(([label, releases]) => ({ label, releases: releases.sort((a,b)=> b.name.localeCompare(a.name)), showMore: false }));
 	})();
 
 	let selectedResource: string | null = null;
@@ -217,6 +218,14 @@ $: if (typeof window !== 'undefined') {
 	function handleGlobalExpand() { expandAllScope.set('global'); if ($ulExpanded.length > 0) { expandAll.set(false); } else { expandAll.set(true); } }
 	function toggleMobileMenu() { mobileMenuOpen = !mobileMenuOpen; }
 
+	function toggleGroupShow(label: string) {
+		groupedReleases = groupedReleases.map(g => g.label === label ? { ...g, showMore: !g.showMore } : g);
+	}
+
+	function setGroupShow(label: string, value: boolean) {
+		groupedReleases = groupedReleases.map(g => g.label === label ? { ...g, showMore: value } : g);
+	}
+
 // Focus trap helpers
 function focusableElements(container: HTMLElement) {
 	return Array.from(container.querySelectorAll<HTMLElement>(`a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])`)).filter(el => !el.hasAttribute('disabled'));
@@ -251,9 +260,25 @@ function trapFocus(container: HTMLElement) {
 	return () => { container.removeEventListener('keydown', keyHandler); if (lastActiveElement instanceof HTMLElement) lastActiveElement.focus(); };
 }
 
-	async function loadCrdsForRelease(release: EdaRelease) {
-		try { const manifestResponse = await fetch(`/${release.folder}/manifest.json`); if (manifestResponse.ok) { const manifest = await manifestResponse.json(); crdMetaStore.set(manifest); return; } } catch (e) { }
-		try { const res = await import('$lib/resources.yaml?raw'); const resources = yaml.load(res.default) as CrdVersionsMap; const crdMeta = Object.values(resources).flat(); crdMetaStore.set(crdMeta); } catch (e) { crdMetaStore.set([]); }
+	async function loadCrdsForRelease(release: EdaRelease): Promise<CrdResource[]> {
+		try {
+			const manifestResponse = await fetch(`/${release.folder}/manifest.json`);
+			if (manifestResponse.ok) {
+				const manifest = await manifestResponse.json();
+				crdMetaStore.set(manifest);
+				return manifest as CrdResource[];
+			}
+		} catch (e) { }
+		try {
+			const res = await import('$lib/resources.yaml?raw');
+			const resources = yaml.load(res.default) as CrdVersionsMap;
+			const crdMeta = Object.values(resources).flat();
+			crdMetaStore.set(crdMeta);
+			return crdMeta as CrdResource[];
+		} catch (e) {
+			crdMetaStore.set([]);
+			return [] as CrdResource[];
+		}
 	}
 	async function loadVersionsForRelease(release: EdaRelease): Promise<string[]> {
 			try {
@@ -276,6 +301,19 @@ function trapFocus(container: HTMLElement) {
 		selectedResource = resourceName; selectedVersion = version; loading = true; showDiff = false; compareVersion = null; compareData = null; showReleaseComparison = false; compareRelease = null; compareReleaseData = null; mobileMenuOpen = false;
 		expandAll.set(false); expandAllScope.set('local'); ulExpanded.set([]);
 		try { const folder = $releaseFolder; const response = await fetch(`/${folder}/${resourceName}/${version}.yaml`); if (!response.ok) throw new Error('Failed to load resource'); const yamlText = await response.text(); resourceData = yaml.load(yamlText) as any; } catch (error) { resourceData = null; } finally { loading = false; }
+	}
+
+	async function handleHomeResourceClick(resourceName: string) {
+		// Ensure we have the manifest for the selected release and pick a version that exists in this release
+		const manifest = await loadCrdsForRelease($selectedRelease);
+		const resourceInRelease = (manifest || []).find((r: any) => r.name === resourceName);
+		if (resourceInRelease && resourceInRelease.versions && resourceInRelease.versions.length) {
+			const version = resourceInRelease.versions[0].name;
+			goto(`/${resourceName}/${version}?release=${$selectedRelease.name}`);
+		} else {
+			// If not found, go to browse mode for the selected release
+			goto(`/?browse=true&release=${$selectedRelease.name}`);
+		}
 	}
 	async function toggleDiff(version: string) {
 		if (showDiff && compareVersion === version) { showDiff = false; compareVersion = null; compareData = null; return; }
@@ -475,7 +513,10 @@ function trapFocus(container: HTMLElement) {
 			<div class="p-4 border-b border-gray-200 dark:border-gray-700">
 				<button on:click={() => { showBrowseMode = false; mobileMenuOpen = false; goto('/'); }} class="flex items-center space-x-2 group">
 					<img src="/images/eda.svg" width="48" height="48" alt="Nokia EDA" />
-					<div><h1 class="text-lg font-bold text-gray-900 dark:text-white">Nokia EDA</h1><p class="text-xs text-gray-500 dark:text-gray-400">Resource Browser</p></div>
+										<div>
+																							<h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold font-nokia-headline text-yellow-400 leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">Nokia EDA</h1>
+																						<p class="text-sm md:text-base text-blue-200 font-light font-nokia-headline mt-1">Resource Browser</p>
+										</div>
 				</button>
 				<div class="mt-4 relative"><input id="resource-search-input" type="text" placeholder="Search resources..." bind:value={$resourceSearch} class="w-full rounded-lg pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" /></div>
 			</div>
@@ -484,7 +525,7 @@ function trapFocus(container: HTMLElement) {
 					{#each $resourceSearchFilter as resource}
 						{@const resDef = $crdMetaStore.filter((x) => x.name == resource)[0]}
 						{#if resDef}
-							<li><button class="w-full px-3 py-2 text-left rounded-lg transition-colors {resource === selectedResource ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}" on:click={() => goto(`/${resource}/${resDef.versions[0].name}?release=${$selectedRelease.name}`)}><span class="font-medium text-sm">{resDef.kind || resDef.name.split('.')[0]}</span></button></li>
+							<li><button class="w-full px-3 py-2 text-left rounded-lg transition-colors {resource === selectedResource ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}" on:click={() => handleHomeResourceClick(resource)}><span class="font-medium text-sm">{resDef.kind || resDef.name.split('.')[0]}</span></button></li>
 						{/if}
 					{/each}
 				</ul>
@@ -493,7 +534,7 @@ function trapFocus(container: HTMLElement) {
 		{/if}
 		{#if mobileMenuOpen && selectedResource}<button class="lg:hidden fixed inset-0 bg-black/50 z-30" on:click={() => mobileMenuOpen = false} aria-label="Close"></button>{/if}
 		
-		<div id="main-scroll" class="flex-1 overflow-y-auto flex flex-col">
+		<div id="main-scroll" class="flex-1 overflow-y-auto flex flex-col has-header-img">
 			{#if !selectedResource && !showBrowseMode}
 				<!-- YANG-Style Homepage -->
 				<div class="block">
@@ -533,12 +574,19 @@ function trapFocus(container: HTMLElement) {
 								<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 									<!-- Left: grouped releases -->
 									<div class="space-y-6">
-										<h2 class="text-3xl font-semibold text-amber-300 flex items-center">
-											<img src="/images/bird-logo.svg" alt="Nokia" class="w-20 h-20 mr-3" />
-											<img src="/images/eda.svg" alt="EDA" class="w-20 h-20 mr-3" />
-											Nokia Event-Driven Automation Resources
-										</h2>
-										<p class="text-sm text-gray-400">Browse released EDA Custom Resource Definitions grouped by major version</p>
+										<div class="flex items-center gap-6">
+											<div class="flex items-center gap-3 mr-2">
+												<img src="/images/bird-logo.svg" alt="Nokia" class="w-24 h-24" />
+												<img src="/images/eda.svg" alt="EDA" class="w-20 h-20" />
+											</div>
+											<div>
+												<h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold font-nokia-headline text-yellow-400 leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+													Nokia EDA
+												</h1>
+												<p class="text-xl md:text-2xl text-blue-200 mt-1 font-light font-nokia-headline tracking-tight">Resource Browser</p>
+											</div>
+										</div>
+										<p class="text-base text-gray-300 mt-4">Browse released EDA Custom Resource Definitions grouped by major version</p>
 										<div class="mt-4 space-y-6">
 											{#each groupedReleases as group}
 												<div class="flex items-start gap-4">
@@ -546,18 +594,18 @@ function trapFocus(container: HTMLElement) {
 													<div class="flex-1">
 														<div class="flex flex-wrap gap-2">
 															{#each group.releases.slice(0,3) as release}
-																<button on:click={() => { selectedRelease.set(release); const firstResource = $crdMetaStore[0]; if (firstResource) { const firstVersion = firstResource.versions?.[0]?.name; if (firstVersion) { goto(`/${firstResource.name}/${firstVersion}?release=${release.name}`); } } mobileReleasesOpen = false; }} class="px-3 py-2 rounded-xl bg-gray-800/60 border-2 border-slate-700/30 text-amber-200 text-xs font-medium hover:bg-gray-800/80 hover:border-amber-500 dark:hover:border-amber-400 transition-all duration-200 shadow-pro">{release.name}</button>
+																<button on:click={async () => { selectedRelease.set(release); const manifest = await loadCrdsForRelease(release); const firstResource = manifest && manifest.length ? manifest[0] : undefined; if (firstResource) { const firstVersion = firstResource.versions?.[0]?.name; if (firstVersion) { goto(`/${firstResource.name}/${firstVersion}?release=${release.name}`); } } mobileReleasesOpen = false; }} class="px-3 py-2 rounded-xl bg-gray-800/60 border-2 border-slate-700/30 text-amber-200 text-xs font-medium hover:bg-gray-800/80 hover:border-amber-500 dark:hover:border-amber-400 transition-all duration-200 shadow-pro">{release.name}</button>
 															{/each}
 															{#if group.releases.length > 3}
 																<div class="relative inline-block">
-																	<button on:click={() => { group.showMore = !group.showMore; }} on:keydown={(e) => {
-																		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); group.showMore = !group.showMore; }
-																		if (e.key === 'ArrowDown') { e.preventDefault(); group.showMore = true; setTimeout(() => { const menu = e.currentTarget.nextElementSibling as HTMLElement; if (menu) { const first = menu.querySelector<HTMLElement>('button[tabindex="0"]'); if (first) first.focus(); } }, 0); }
+																	<button on:click={() => toggleGroupShow(group.label)} on:keydown={(e) => {
+																		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleGroupShow(group.label); }
+																		if (e.key === 'ArrowDown') { e.preventDefault(); setGroupShow(group.label, true); setTimeout(() => { const menu = e.currentTarget.nextElementSibling as HTMLElement; if (menu) { const first = menu.querySelector<HTMLElement>('button[tabindex="0"]'); if (first) first.focus(); } }, 0); }
 																	}} tabindex="0" class="px-3 py-2 rounded-xl bg-gray-800/60 border-2 border-slate-700/30 text-amber-200 text-xs font-medium hover:bg-gray-800/80 hover:border-amber-500 dark:hover:border-amber-400 transition-all duration-200 shadow-pro">More ▾</button>
 																	{#if group.showMore}
 																		<div class="absolute mt-2 bg-gray-800 dark:bg-gray-900 border-2 border-gray-700 rounded-xl shadow-pro p-2 z-40 min-w-32 max-h-60 overflow-y-auto">
 																			{#each group.releases.slice(3) as r}
-																				<button tabindex="0" on:click={() => { selectedRelease.set(r); const firstResource = $crdMetaStore[0]; if (firstResource) { const firstVersion = firstResource.versions?.[0]?.name; if (firstVersion) { goto(`/${firstResource.name}/${firstVersion}?release=${r.name}`); } } mobileReleasesOpen = false; group.showMore = false; }} class="block w-full text-left px-3 py-2 rounded-lg text-amber-200 hover:bg-gray-700 hover:text-amber-100 transition-colors text-sm">{r.name}</button>
+																				<button tabindex="0" on:click={async () => { selectedRelease.set(r); const manifest = await loadCrdsForRelease(r); const firstResource = manifest && manifest.length ? manifest[0] : undefined; if (firstResource) { const firstVersion = firstResource.versions?.[0]?.name; if (firstVersion) { goto(`/${firstResource.name}/${firstVersion}?release=${r.name}`); } } mobileReleasesOpen = false; setGroupShow(group.label, false); }} class="block w-full text-left px-3 py-2 rounded-lg text-amber-200 hover:bg-gray-700 hover:text-amber-100 transition-colors text-sm">{r.name}</button>
 																			{/each}
 																		</div>
 																	{/if}
@@ -571,9 +619,9 @@ function trapFocus(container: HTMLElement) {
 									</div>
 									<!-- Right: info panel -->
 									<div class="flex items-center">
-											<div class="w-full bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 shadow-pro">
-												<h3 class="text-sm font-semibold text-amber-300 mb-3">About Nokia EDA</h3>
-												<div class="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
+											<div class="w-full bg-transparent dark:bg-black/20 rounded-xl p-6 border border-white/10 dark:border-white/10 shadow-pro">
+												<h3 class="text-xl font-semibold text-yellow-400 mb-3">About Nokia EDA</h3>
+												<div class="text-lg text-gray-200 dark:text-gray-200 leading-relaxed">
 													{@html nokiaEdaDescription.split('\n\n').map(p => `<p class="mb-2">${p}</p>`).join('')}
 												</div>
 											</div>
@@ -583,11 +631,10 @@ function trapFocus(container: HTMLElement) {
 
 							<!-- Quick Tools -->
 							<div class="mt-12">
-								<h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Tools</h2>
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<button
 										on:click={()=> showBulkDiffModal = true}
-										class="bg-white dark:bg-gray-900 rounded-xl border-2 border-gray-200 dark:border-gray-700 p-6 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-200 hover:shadow-lg text-left group shadow-pro"
+										class="bg-white/5 dark:bg-gray-900/70 rounded-xl border-2 border-white/10 dark:border-white/10 p-6 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-200 hover:shadow-lg text-left group shadow-pro"
 									>
 										<div class="flex items-start space-x-4">
 											<div class="flex-shrink-0 w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors">
@@ -599,7 +646,7 @@ function trapFocus(container: HTMLElement) {
 												<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
 													Release Comparison
 												</h3>
-												<p class="text-sm text-gray-600 dark:text-gray-400">
+												<p class="text-sm text-gray-600 dark:text-gray-300">
 													Compare CRDs across different EDA releases and generate detailed diff reports
 												</p>
 											</div>
@@ -610,7 +657,7 @@ function trapFocus(container: HTMLElement) {
 										href="https://docs.eda.dev"
 										target="_blank"
 										rel="noopener noreferrer"
-										class="bg-white dark:bg-gray-900 rounded-xl border-2 border-gray-200 dark:border-gray-700 p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-200 hover:shadow-lg text-left group block shadow-pro"
+										class="bg-white/5 dark:bg-gray-900/70 rounded-xl border-2 border-white/10 dark:border-white/10 p-6 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-200 hover:shadow-lg text-left group block shadow-pro"
 									>
 										<div class="flex items-start space-x-4">
 											<div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
@@ -622,7 +669,7 @@ function trapFocus(container: HTMLElement) {
 												<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
 													Documentation
 												</h3>
-												<p class="text-sm text-gray-600 dark:text-gray-400">
+												<p class="text-sm text-gray-600 dark:text-gray-300">
 													Visit the official Nokia EDA documentation for guides and tutorials
 												</p>
 											</div>
@@ -645,7 +692,7 @@ function trapFocus(container: HTMLElement) {
 							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 						</svg>
-						<p class="text-gray-600 dark:text-gray-400">Loading resource...</p>
+						<p class="text-gray-600 dark:text-gray-300">Loading resource...</p>
 					</div>
 				</div>
 			{:else if resourceData}
@@ -656,7 +703,7 @@ function trapFocus(container: HTMLElement) {
 								<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
 									<div>
 										<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{formatResourceName(resourceInfo?.name || '')}</h2>
-										<p class="text-sm text-gray-600 dark:text-gray-400 font-mono">{formatGroupName(resourceInfo?.name || '')}</p>
+										<p class="text-sm text-gray-600 dark:text-gray-300 font-mono">{formatGroupName(resourceInfo?.name || '')}</p>
 									</div>
 									<div class="flex items-center space-x-2 mt-4 lg:mt-0">
 										<button
@@ -743,7 +790,7 @@ function trapFocus(container: HTMLElement) {
 			{/if}
 		</div>
 	</div>
-	<Footer />
+        
 </div>
 
 <!-- Bulk Diff Modal -->
@@ -905,7 +952,7 @@ function trapFocus(container: HTMLElement) {
 											</svg>
 										</div>
 										<div class="text-center sm:text-left">
-											<div class="text-lg sm:text-2xl font-bold text-{item.color}-600 dark:text-{item.color}-400">{bulkDiffReport.crds.filter((c) => c.status === item.status).length}</div>
+											<div class="text-lg sm:text-2xl font-bold text-{item.color}-600 dark:text-{item.color}-400">{bulkDiffReport.crds.filter((c: any) => c.status === item.status).length}</div>
 											<div class="text-xs sm:text-sm font-medium text-{item.color}-700 dark:text-{item.color}-300">{item.label}</div>
 										</div>
 									</div>
@@ -924,7 +971,7 @@ function trapFocus(container: HTMLElement) {
 									</div>
 									<div class="min-w-0">
 										<h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Comparison Report</h3>
-										<div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-2 gap-1">
+										<div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-2 gap-1">
 											<span class="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs truncate">{bulkDiffReport.sourceRelease} {bulkDiffReport.sourceVersion}</span>
 											<span class="hidden sm:inline text-gray-400">→</span>
 											<span class="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs truncate">{bulkDiffReport.targetRelease} {bulkDiffReport.targetVersion}</span>
@@ -944,14 +991,20 @@ function trapFocus(container: HTMLElement) {
 							<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
 								<h4 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Results</h4>
 								<div class="flex items-center gap-2 sm:gap-3">
-									<button on:click={() => { expandedCrdNames = filteredBulkDiffCrds.map(c => c.name); }} class="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs sm:text-sm font-medium">Expand All</button>
+									<button on:click={() => { expandedCrdNames = filteredBulkDiffCrds.map((c: any) => c.name); }} class="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs sm:text-sm font-medium">Expand All</button>
 									<button on:click={() => { expandedCrdNames = []; }} class="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs sm:text-sm font-medium">Collapse All</button>
 								</div>
 							</div>
 
 							{#if filteredBulkDiffCrds.length > 0}
-								<div class="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-									<table class="min-w-full text-xs sm:text-sm">
+								<div class="overflow-x-hidden rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+									<table class="table-fixed w-full text-xs sm:text-sm">
+										<colgroup>
+											<col style="width: 35%" />
+											<col style="width: 25%" />
+											<col style="width: 20%" />
+											<col style="width: 20%" />
+										</colgroup>
 										<thead class="bg-gray-50 dark:bg-gray-900">
 											<tr>
 												<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Name</th>
@@ -963,8 +1016,8 @@ function trapFocus(container: HTMLElement) {
 										<tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
 											{#each filteredBulkDiffCrds as crd}
 												<tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-													<td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white truncate">{crd.name}</td>
-													<td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 truncate">{crd.kind}</td>
+													<td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-normal">{crd.name}</td>
+													<td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-normal">{crd.kind}</td>
 													<td class="px-3 sm:px-6 py-3 sm:py-4">
 														<span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium {crd.status === 'added' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : crd.status === 'removed' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : crd.status === 'unchanged' ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'} whitespace-nowrap">
 															{#if crd.status === 'added'}
@@ -1014,14 +1067,14 @@ function trapFocus(container: HTMLElement) {
 																				</div>
 																			{:else}
 																				<div class="flex items-start gap-2 sm:gap-3 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg p-2 sm:p-3">
-																					<svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+																					<svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
 																					<span class="text-gray-800 dark:text-gray-200 text-xs sm:text-sm break-words">{d}</span>
 																				</div>
 																			{/if}
 																		{/each}
 																	</div>
 																{:else}
-																	<div class="flex items-start gap-2 sm:gap-3 text-gray-500 dark:text-gray-400">
+																	<div class="flex items-start gap-2 sm:gap-3 text-gray-500 dark:text-gray-300">
 																		<svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
 																		<span class="text-xs sm:text-sm italic">No additional details available.</span>
 																	</div>
@@ -1044,7 +1097,7 @@ function trapFocus(container: HTMLElement) {
 										</div>
 										<div>
 											<h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-1 sm:mb-2">No Results Found</h3>
-											<p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">No CRDs match the selected filters. Try adjusting your filter criteria.</p>
+											<p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">No CRDs match the selected filters. Try adjusting your filter criteria.</p>
 										</div>
 									</div>
 								</div>

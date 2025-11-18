@@ -5,7 +5,7 @@
 	import yaml from 'js-yaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 	const defaultRelease = releasesConfig.releases.find(r => r.default) || releasesConfig.releases[0];
@@ -16,6 +16,9 @@
 	
 	// Mobile menu state
 	let isMobileMenuOpen = false;
+	let resourceListEl: HTMLElement | null = null;
+	let sidebarThumbEl: HTMLElement | null = null;
+	let hideThumbTimer: number | null = null;
 	
 	// Load CRDs dynamically for the selected release
 	async function loadCrdsForRelease(release: EdaRelease) {
@@ -24,7 +27,9 @@
 			if (manifestResponse.ok) {
 				const manifest = await manifestResponse.json();
 				crdMetaStore.set(manifest);
-				return;
+				// ensure the scroll thumb updates once the DOM is updated with new content
+				setTimeout(() => updateThumb(), 0);
+				return manifest as CrdResource[];
 			}
 		} catch (e) {
 			// No manifest file found, loading from resources.yaml (fallback)
@@ -35,9 +40,12 @@
 			const resources = yaml.load(res.default) as any;
 			const crdMeta = Object.values(resources).flat() as CrdResource[];
 			crdMetaStore.set(crdMeta);
+			setTimeout(() => updateThumb(), 0);
+			return crdMeta;
 		} catch (e) {
 			console.error('Failed to load resources:', e);
 			crdMetaStore.set([]);
+			return [] as CrdResource[];
 		}
 	}
 	
@@ -65,7 +73,7 @@
 		}
 	});
 	
-	function handleReleaseChange(event: Event) {
+	async function handleReleaseChange(event: Event) {
 		const select = event.target as HTMLSelectElement;
 		const newReleaseName = select.value;
 		const newRelease = releasesConfig.releases.find(r => r.name === newReleaseName);
@@ -77,22 +85,32 @@
 			const isDetailPage = currentPath !== '/' && currentPath.includes('/');
 			
 			if (isDetailPage) {
-				// Extract current resource name from URL
+				// Extract current resource name and version from URL
 				const pathParts = currentPath.split('/').filter(p => p);
 				if (pathParts.length >= 1) {
 					const currentResourceName = pathParts[0];
-					// Try to navigate to the same resource in the new release
-					// Note: We'll need to wait for the manifest to load first
-					setTimeout(() => {
-						const resourceInNewRelease = $crdMetaStore.find(r => r.name === currentResourceName);
-						if (resourceInNewRelease) {
-							// Resource exists in new release, navigate to it
-							goto(`/${currentResourceName}/${resourceInNewRelease.versions[0].name}?release=${newRelease.name}`);
+					const currentVersion = pathParts.length >= 2 ? pathParts[1] : '';
+
+					// Load the manifest for the new release and search for the resource
+					const manifest = await loadCrdsForRelease(newRelease);
+					const resourceInNewRelease = (manifest || []).find(r => r.name === currentResourceName);
+					if (resourceInNewRelease) {
+						// If the same version exists in the new release, choose it; otherwise fall back to the first available version
+						let targetVersion = resourceInNewRelease.versions?.find(v => v.name === currentVersion)?.name;
+						if (!targetVersion) {
+							// Pick a reasonable default: prefer the last version in array if sorted or the first entry
+							targetVersion = resourceInNewRelease.versions && resourceInNewRelease.versions.length ? resourceInNewRelease.versions[0].name : '';
+						}
+						if (targetVersion) {
+							goto(`/${currentResourceName}/${targetVersion}?release=${newRelease.name}`);
 						} else {
-							// Resource doesn't exist in new release, go to browse mode
+							// No version found; redirect to browse mode for the new release
 							goto(`/?browse=true&release=${newRelease.name}`);
 						}
-					}, 300); // Wait for manifest to load
+					} else {
+						// Resource doesn't exist in new release, go to browse mode
+						goto(`/?browse=true&release=${newRelease.name}`);
+					}
 					return;
 				}
 			}
@@ -102,8 +120,29 @@
 		}
 	}
 	
-	function handleResourceClick(resource: string, resDef: CrdResource) {
-		goto(`/${resource}/${resDef.versions[0].name}?release=${$selectedRelease.name}`);
+	async function handleResourceClick(resource: string, resDef: CrdResource) {
+		// Ensure we select a version that exists in the currently selected release
+		try {
+			const manifest = await loadCrdsForRelease($selectedRelease);
+			const resourceInRelease = (manifest || []).find(r => r.name === resource);
+			let targetVersion = '';
+			// Prefer the same version that the resources.yaml object suggests if available in the release manifest
+			if (resourceInRelease && resourceInRelease.versions && resourceInRelease.versions.length) {
+				const pref = resDef?.versions?.[0]?.name;
+				targetVersion = resourceInRelease.versions.find(v => v.name === pref)?.name || resourceInRelease.versions[0].name;
+			} else {
+				// Fallback to the resources.yaml version if the manifest doesn't include it
+				targetVersion = resDef?.versions?.[0]?.name || '';
+			}
+			if (targetVersion) {
+				goto(`/${resource}/${targetVersion}?release=${$selectedRelease.name}`);
+			} else {
+				goto(`/?browse=true&release=${$selectedRelease.name}`);
+			}
+		} catch (e) {
+			// In case of any error, fallback to the original behavior to avoid blocking navigation
+			goto(`/${resource}/${resDef.versions[0].name}?release=${$selectedRelease.name}`);
+		}
 		// Close mobile menu after navigation
 		isMobileMenuOpen = false;
 	}
@@ -115,6 +154,43 @@
 	function closeMobileMenu() {
 		isMobileMenuOpen = false;
 	}
+
+	function handleListScroll() {
+		updateThumb();
+	}
+
+	function updateThumb() {
+		if (!resourceListEl || !sidebarThumbEl) return;
+		const { scrollTop, scrollHeight, clientHeight } = resourceListEl;
+		if (scrollHeight <= clientHeight) {
+			// no scroll needed
+			sidebarThumbEl.style.opacity = '0';
+			return;
+		}
+		const thumbHeight = Math.max((clientHeight / scrollHeight) * clientHeight, 20);
+		const maxTop = clientHeight - thumbHeight;
+		const top = (scrollTop / (scrollHeight - clientHeight)) * maxTop;
+		sidebarThumbEl.style.height = `${thumbHeight}px`;
+		sidebarThumbEl.style.transform = `translateY(${top}px)`;
+		sidebarThumbEl.style.opacity = '1';
+		// reset hide timer so the thumb fades out after a brief idle
+		if (hideThumbTimer) window.clearTimeout(hideThumbTimer);
+		hideThumbTimer = window.setTimeout(() => {
+			if (sidebarThumbEl) sidebarThumbEl.style.opacity = '0';
+		}, 1200);
+	}
+
+	onMount(() => {
+		// initial calculation and listen for resizes to adjust thumb
+		updateThumb();
+		const resizeObserver = new ResizeObserver(() => updateThumb());
+		if (resourceListEl) resizeObserver.observe(resourceListEl);
+		window.addEventListener('resize', updateThumb);
+		onDestroy(() => {
+			if (resourceListEl) resizeObserver.unobserve(resourceListEl);
+			window.removeEventListener('resize', updateThumb);
+		});
+	});
 </script>
 
 <!-- Hamburger Button (Mobile Only) - Shows hamburger/X toggle -->
@@ -155,7 +231,7 @@
 	bg-white dark:bg-gray-900 
 	flex flex-col shadow-2xl
 	lg:relative lg:translate-x-0
-	fixed inset-y-0 left-0 z-40
+	 fixed inset-y-0 left-0 z-20
 	transform transition-transform duration-300 ease-in-out
 	{isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
 ">
@@ -176,24 +252,24 @@
 					<img src="/images/eda.svg" width="32" height="32" alt="Nokia EDA" class="relative drop-shadow-lg" />
 				</div>
 				<div class="text-left">
-					<h1 class="text-base md:text-lg font-bold font-nokia-headline bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+					<h1 class="text-base md:text-lg font-bold font-nokia-headline text-yellow-400 drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
 						Nokia EDA
 					</h1>
-					<p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Resource Browser</p>
+					<p class="text-xs text-gray-200 font-medium">Resource Browser</p>
 				</div>
 			</button>
 		</div>
 		
 		<!-- Release Selector -->
 		<div class="mb-4">
-			<label for="release-select" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+			<label for="release-select" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
 				Select Release
 			</label>
 			<select
 				id="release-select"
 				on:change={handleReleaseChange}
 				value={$selectedRelease.name}
-				class="w-full px-3 py-2 text-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-cyan-400 bg-black/30 text-white transition-colors"
+				class="select-pro w-full"
 			>
 				{#each releasesConfig.releases as release}
 					<option value={release.name}>
@@ -212,7 +288,7 @@
 				class="w-full px-3 py-2 pl-9 text-sm border border-white/20 rounded-lg focus:ring-2 focus:ring-cyan-400 bg-black/30 text-white placeholder-gray-400 transition-colors"
 			/>
 			<svg
-				class="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400"
+				class="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500"
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
@@ -228,9 +304,11 @@
 	</div>
 
 	<!-- Resource List -->
-	<div class="flex-1 overflow-y-auto p-3 md:p-4 space-y-1">
-		<div class="mb-3 text-xs font-medium text-gray-500 dark:text-gray-400">
+		<div class="flex-1 overflow-y-auto p-3 md:p-4 space-y-1 scroll-thin relative" bind:this={resourceListEl} on:scroll={handleListScroll}>
+		<div class="mb-3 text-xs font-medium text-gray-600 dark:text-gray-300">
 			{$resourceSearchFilter.length} resource{$resourceSearchFilter.length !== 1 ? 's' : ''} available
+			<!-- Custom sidebar scroll thumb (visible on mobile and desktop) -->
+			<div aria-hidden="true" class="sidebar-scroll-thumb" bind:this={sidebarThumbEl}></div>
 		</div>
 		{#each $resourceSearchFilter as resDef}
 			{@const isSelected = $page.url.pathname.startsWith(`/${resDef.name}/`)}
@@ -252,7 +330,7 @@
 						<div class="text-xs truncate
 						            {isSelected 
 							? 'text-blue-100' 
-							: 'text-gray-500 dark:text-gray-400'}">
+							: 'text-gray-500 dark:text-gray-300'}">
 							{resDef.name.split('.').slice(1).join('.')}
 						</div>
 						{#if resDef.versions.length > 1}

@@ -6,7 +6,7 @@
 	export let versionOnFocus: string;
 	export let validVersions: string[];
 	export let deprecated: boolean;
-	export let sidebarOpen: boolean = false; // Add this prop to track sidebar state
+	// 'sidebarOpen' was unused here — removed to prevent Svelte compile warnings
 
 	// Extract short name and group path from full name
 	$: shortName = name.split('.')[0];
@@ -36,7 +36,7 @@
 					<h1 class="text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 font-nokia-headline leading-tight truncate">
 						{shortName}
 					</h1>
-					<p class="text-sm sm:text-base text-gray-400 dark:text-gray-500 font-medium mt-1 truncate">
+					<p class="text-sm sm:text-base text-gray-500 dark:text-gray-300 font-medium mt-1 truncate">
 						{groupPath}
 					</p>
 				</div>
@@ -48,7 +48,7 @@
 					</svg>
 					{#if validVersions.length > 1}
 						<select
-							class="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-300 bg-transparent border-none cursor-pointer focus:outline-none font-nokia-text"
+							class="select-pro text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-300 bg-transparent font-nokia-text"
 							bind:value={versionOnFocus}
 							on:change={handleVersionChange}
 						>

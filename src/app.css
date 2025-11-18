@@ -108,7 +108,7 @@
   }
   
   :global(body) {
-    @apply antialiased text-gray-100;
+    @apply antialiased text-white;
     font-family: var(--font-nokia), 'Nunito', sans-serif;
     background-color: #0f172a;
     min-height: 100vh;
@@ -186,14 +186,17 @@
   /* Background with header image */
   .has-header-img {
     background-image:
-      linear-gradient(120deg, rgba(4, 20, 48, 0.92), rgba(6, 65, 150, 0.9)),
-      linear-gradient(60deg, rgba(18, 164, 228, 0.45), rgba(7, 36, 120, 0.15)),
-      url('/images/background.webp');
+      linear-gradient(120deg, rgba(2,10,35,0.42), rgba(4,45,120,0.48)),
+      linear-gradient(60deg, rgba(7,36,120,0.25), rgba(18,164,228,0.2)),
+      url('/images/background-crd.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-blend-mode: screen, overlay, normal;
+    /* Use overlay to keep the blue tones visible while providing a darkened foreground for contrast */
+    background-blend-mode: overlay, screen, normal;
+    /* Use a light foreground text color when over the header image to better contrast with darker background */
+    color: rgba(255, 255, 255, 0.95);
   }
   
   /* Subtle grid pattern background (dark) */
@@ -297,5 +300,44 @@
     &::-webkit-scrollbar-thumb:hover {
       background: rgb(156, 163, 175);
     }
+  }
+
+  /* Sidebar scroll thumb - a small visible indicator suitable for mobile and desktop */
+  .sidebar-scroll-thumb {
+    position: absolute;
+    right: 6px;
+    top: 0;
+    width: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.12);
+    transition: transform 120ms linear, opacity 200ms ease-in-out;
+    will-change: transform, opacity;
+    opacity: 0;
+    pointer-events: none; /* don't block clicks */
+  }
+
+  /* slightly more visible on hover or when user is actively interacting*/
+  .scroll-thin:hover + .sidebar-scroll-thumb, .sidebar-scroll-thumb:hover {
+    background: rgba(255,255,255,0.18);
+    opacity: 1;
+  }
+
+  /* Ensure side-scroll thumb is more visible on mobile devices */
+  @media (max-width: 1024px) {
+    .sidebar-scroll-thumb {
+      right: 10px;
+      width: 6px;
+      background: rgba(255,255,255,0.22);
+      box-shadow: 0 0 6px rgba(0,0,0,0.25) inset;
+    }
+  }
+
+  /* Pro select styling used for release dropdowns and tool selects */
+  .select-pro {
+    @apply px-3 py-2 rounded-lg text-sm transition-colors bg-white/5 dark:bg-black/30 text-gray-900 dark:text-gray-200 border border-white/10 dark:border-white/10;
+  }
+
+  .select-pro:focus {
+    @apply outline-none ring-2 ring-cyan-400;
   }
 }

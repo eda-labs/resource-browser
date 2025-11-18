@@ -124,7 +124,7 @@
 			/>
 			<label
 				for="dropzone"
-				class="flex h-36 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-100 px-4 py-3 text-gray-500 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+				class="flex h-36 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-100 px-4 py-3 text-gray-500 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
 			>
 				<div class="flex items-center space-x-2 pr-2">
 					<svg
@@ -159,12 +159,12 @@
 	{#if kind !== ''}
 		<div class="flex flex-col pt-2">
 			<p class="text-gray-800 dark:text-gray-200 font-nokia-headline">{kind}</p>
-			<div class="font-fira flex items-center text-sm text-[12px] text-gray-500 dark:text-gray-400">
+			<div class="font-fira flex items-center text-sm text-[12px] text-gray-500 dark:text-gray-300">
 				<span>{group}</span>
 				<span class="mx-0.5">/</span>
 				{#if validVersions.length > 1}
 					<select
-						class="rounded-lg border border-gray-300 bg-gray-50 p-[1px] text-xs text-gray-900 focus:ring-0 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+						class="select-pro rounded-lg border-gray-300 bg-gray-50 p-[1px] text-xs text-gray-900 dark:bg-gray-700 dark:text-gray-200"
 						bind:value={versionOnFocus}
 						on:change={handleVersionChange}
 					>
@@ -200,4 +200,4 @@
 	{/if}
 </div>
 
-<Footer />
+    

@@ -78,3 +78,5 @@ __pycache__/
 
 # Environment files
 .env.local
+docs/DEVELOPER.md
+static/merge-crds.py

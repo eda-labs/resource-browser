@@ -156,11 +156,11 @@
 			</span>
 		{/if}
 		<button
-			class="scroll-thin flex cursor-pointer items-center space-x-2.5 overflow-x-auto text-gray-800 dark:text-gray-200"
+			class="scroll-thin flex cursor-pointer items-center space-x-2.5 overflow-x-auto text-gray-800 dark:text-gray-300"
 			on:click={handleLocalExpand}
 		>
 			<svg
-				class="svg-arrow h-3.5 w-3.5 text-gray-500 transition-all duration-200 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 {expanded
+				class="svg-arrow h-3.5 w-3.5 text-gray-600 transition-all duration-200 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-blue-400 {expanded
 					? 'rotate-90'
 					: ''}"
 				fill="none"
@@ -215,7 +215,7 @@
 	</div>
 	{#if expanded}
 		<ul class="ml-[9px] border-l-2 px-4 pt-2 pb-1 dark:bg-gray-800/30 {borderColor}">
-			<li class="font-nokia px-2 py-1.5 text-sm font-light text-gray-600 dark:text-gray-400 leading-relaxed bg-gray-50 dark:bg-gray-800/50 rounded-md whitespace-normal">
+			<li class="font-nokia px-2 py-1.5 text-sm font-light text-gray-600 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-800/50 rounded-md whitespace-normal">
 				{getDescription(folder)}
 			</li>
 			
