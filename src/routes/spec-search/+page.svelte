@@ -323,7 +323,7 @@
 </script>
 
 <svelte:head>
-  <title>Search CRD Specs</title>
+  <title>EDA Resource Browser | Search CRD Specs</title>
 </svelte:head>
 
 <AnimatedBackground />
@@ -334,10 +334,16 @@
         <div class="max-w-7xl mx-auto px-4 py-8">
           <div class="flex items-center justify-between mb-6 gap-4">
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center text-white shadow-md"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></div>
+              <a href="/" class="flex items-center gap-3 no-underline">
+                <img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" />
+                <div class="leading-tight">
+                  <div class="text-sm font-semibold text-yellow-400 dark:text-yellow-400">Nokia EDA</div>
+                  <div class="text-xs text-white">Resource Browser</div>
+                </div>
+              </a>
               <div>
                 <h1 class="text-2xl font-extrabold">Search CRD Specs</h1>
-                <p class="text-sm text-gray-500">Select a release and version, then search inside CRD spec schemas (descriptions are ignored).</p>
+                <p class="text-sm text-white">Select a release and version, then search inside CRD spec schemas (descriptions are ignored).</p>
               </div>
             </div>
           </div>

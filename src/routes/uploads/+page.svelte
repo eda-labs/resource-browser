@@ -90,7 +90,7 @@
 		<div class="scroll-thin flex items-center space-x-2 overflow-x-auto">
 			<a href="/"><img class="min-w-8" src="/images/eda.svg" width="35" alt="Logo" /></a>
 			<div class="flex flex-col">
-				<p class="text-sm font-nokia-headline font-light">Resource Browser</p>
+				<p class="text-sm font-nokia-headline font-light text-white">Resource Browser</p>
 				<p class="font-nokia-headline">Uploads</p>
 			</div>
 		</div>

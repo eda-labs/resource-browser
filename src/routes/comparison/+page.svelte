@@ -519,7 +519,7 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 </script>
 
 <svelte:head>
-	<title>EDA Resource Browser | Bulk Diff</title>
+	<title>EDA Resource Browser | Release Comparison</title>
 </svelte:head>
 
 <AnimatedBackground />
@@ -530,10 +530,16 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 			<div class="max-w-7xl mx-auto px-4 py-8">
 				<div class="flex items-center justify-between mb-6 gap-4">
 					<div class="flex items-center gap-4">
-						<div class="w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center text-white shadow-md"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></div>
+						<a href="/" class="flex items-center gap-3 no-underline">
+							<img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" />
+							<div class="leading-tight">
+								<div class="text-sm font-semibold text-yellow-400 dark:text-yellow-400">Nokia EDA</div>
+								<div class="text-xs text-white">Resource Browser</div>
+							</div>
+						</a>
 						<div>
 							<h1 class="text-2xl font-extrabold">Release Comparison</h1>
-							<p class="text-sm text-gray-500">Compare CRDs across two release versions to understand additions, removals, and modifications.</p>
+							<p class="text-sm text-white">Compare CRDs across two release versions to understand additions, removals, and modifications.</p>
 						</div>
 					</div>
 					<!-- Reset button removed per request -->

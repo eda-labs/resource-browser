@@ -255,7 +255,7 @@
 					<h1 class="text-base md:text-lg font-bold font-nokia-headline text-yellow-400 drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
 						Nokia EDA
 					</h1>
-					<p class="text-xs text-gray-200 font-medium">Resource Browser</p>
+					<p class="text-xs text-white font-medium">Resource Browser</p>
 				</div>
 			</button>
 		</div>
