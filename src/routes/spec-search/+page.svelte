@@ -433,7 +433,11 @@
                   <div class="text-xs text-gray-600 dark:text-gray-300">{r.kind}</div>
                 </div>
                 <div class="flex items-center gap-2">
-                  <button on:click={() => window.location.href = `/${r.name}`} class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-xs font-medium">Open</button>
+                  <button on:click={() => {
+                      const targetVersion = version || (r.versions && r.versions[0]) || '';
+                      const path = `/${r.name}${targetVersion ? `/${targetVersion}` : ''}`;
+                      window.location.href = releaseName ? `${path}?release=${releaseName}` : path;
+                    }} class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-xs font-medium">Open</button>
                 </div>
               </div>
               <div class="mt-3">
@@ -463,7 +467,11 @@
                   <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[20%]">{r.kind}</td>
                   <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-700 dark:text-gray-300 break-words whitespace-normal max-w-[40%]"><div class="pro-spec-preview max-h-[40rem] overflow-auto"><Render hash={`${r.name}.${version}`} source={release?.name || 'release'} type="spec" data={r.spec} /></div></td>
                   <td class="px-3 sm:px-6 py-3 sm:py-4 max-w-[20%]">
-                    <button on:click={() => window.location.href = `/${r.name}`} class="px-2 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap">Open</button>
+                    <button on:click={() => {
+                        const targetVersion = version || (r.versions && r.versions[0]) || '';
+                        const path = `/${r.name}${targetVersion ? `/${targetVersion}` : ''}`;
+                        window.location.href = releaseName ? `${path}?release=${releaseName}` : path;
+                      }} class="px-2 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap">Open</button>
                   </td>
                 </tr>
               {/each}
