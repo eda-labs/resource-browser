@@ -6,7 +6,7 @@ module.exports = {
       script: 'pnpm',
       args: 'run dev -- --host 0.0.0.0',
       // Ensure cwd points to the actual workspace path for this environment
-      cwd: '/home/noksysadm/work/resource-browser',
+      cwd: '/home/noksysadm/work/save/resource-browser',
       // Do not specify an interpreter; allow PM2 to execute `pnpm` directly
       // interpreter: 'bash',
       env: {

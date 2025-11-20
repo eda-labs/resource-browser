@@ -108,7 +108,8 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 	let releaseAvailability: Map<string, boolean> = new Map();
 	
 	$: currentResourceDef = selectedResource ? $crdMetaStore.find(x => x.name === selectedResource) : null;
-	$: filteredBulkDiffCrds = bulkDiffReport ? bulkDiffReport.crds.filter((crd: any) => bulkDiffStatusFilter.includes(crd.status)) : [];
+	// Filter out CRDs that match the status filter and exclude 'states' CRDs from UI
+	$: filteredBulkDiffCrds = bulkDiffReport ? bulkDiffReport.crds.filter((crd: any) => bulkDiffStatusFilter.includes(crd.status) && !crd.name.includes('states')) : [];
 	$: resourceInfo = resourceData ? { kind: resourceData.spec?.names?.kind || '', group: resourceData.spec?.group || '', name: selectedResource || '' } : null;
 	$: if (selectedResource || selectedVersion) { releaseAvailability.clear(); }
 	$: { loadCrdsForRelease($selectedRelease); selectedResource = null; selectedVersion = null; resourceData = null; }
@@ -332,7 +333,9 @@ function trapFocus(container: HTMLElement) {
 		if (!bulkDiffSourceRelease || !bulkDiffTargetRelease || !bulkDiffSourceVersion || !bulkDiffTargetVersion) { alert('Please select both releases'); return; }
 		bulkDiffGenerating = true; bulkDiffProgress = 0;
 		const report: any = { sourceRelease: bulkDiffSourceRelease.label, sourceVersion: bulkDiffSourceVersion, targetRelease: bulkDiffTargetRelease.label, targetVersion: bulkDiffTargetVersion, generatedAt: new Date().toISOString(), crds: [] };
-		const allCrds = $crdMetaStore; const totalCrds = allCrds.length; const batchSize = 20; const batches = [];
+		// Exclude CRDs with 'states' in their name from the bulk-diff generation
+		const allCrds = $crdMetaStore.filter((c: any) => !c.name.includes('states'));
+		const totalCrds = allCrds.length; const batchSize = 20; const batches = [];
 		for (let i = 0; i < allCrds.length; i += batchSize) { batches.push(allCrds.slice(i, i + batchSize)); }
 		for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
 			const batch = batches[batchIndex];
@@ -952,7 +955,7 @@ function trapFocus(container: HTMLElement) {
 											</svg>
 										</div>
 										<div class="text-center sm:text-left">
-											<div class="text-lg sm:text-2xl font-bold text-{item.color}-600 dark:text-{item.color}-400">{bulkDiffReport.crds.filter((c: any) => c.status === item.status).length}</div>
+											<div class="text-lg sm:text-2xl font-bold text-{item.color}-600 dark:text-{item.color}-400">{bulkDiffReport ? bulkDiffReport.crds.filter((c: any) => c.status === item.status && !c.name.includes('states')).length : 0}</div>
 											<div class="text-xs sm:text-sm font-medium text-{item.color}-700 dark:text-{item.color}-300">{item.label}</div>
 										</div>
 									</div>
