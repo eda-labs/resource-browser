@@ -777,8 +777,7 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 										<table class="table-auto w-full text-xs sm:text-sm">
 											<thead class="bg-gray-50 dark:bg-gray-900">
 												<tr>
-													<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Name</th>
-													<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Kind</th>
+													<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Resource</th>
 													<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Status</th>
 													<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Actions</th>
 												</tr>
@@ -786,8 +785,7 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 											<tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
 												{#each filteredBulkDiffCrds as crd}
 													<tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-															<td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]">{@html highlightMatches(crd.name, debouncedBulkDiffSearch, bulkDiffSearchRegex)}</td>
-														<td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[20%]">{crd.kind}</td>
+															<td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]"><div class="font-semibold">{crd.kind}</div><div class="text-xs text-gray-500">{@html highlightMatches(crd.name, debouncedBulkDiffSearch, bulkDiffSearchRegex)}</div></td>
 														<td class="px-3 sm:px-6 py-3 sm:py-4">
 															<span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium {crd.status === 'added' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : crd.status === 'removed' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : crd.status === 'unchanged' ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'} whitespace-nowrap break-words">
 																	{#if crd.status === 'added'}
