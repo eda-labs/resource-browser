@@ -1,6 +1,7 @@
 <script lang="ts">
   import yaml from 'js-yaml';
   import AnimatedBackground from '$lib/components/AnimatedBackground.svelte';
+  import TopHeader from '$lib/components/TopHeader.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import Render from '$lib/components/Render.svelte';
   import { expandAll, expandAllScope } from '$lib/store';
@@ -352,24 +353,14 @@
 
 <AnimatedBackground />
 
+<TopHeader title="Search CRD Specs & Status" subtitle="Select a release and version (leave version blank to search all versions), then search inside CRD spec and status schemas (descriptions are ignored)." />
+
 <div class="relative flex flex-col lg:min-h-screen overflow-y-auto lg:overflow-hidden pt-[64px]">
     <div class="flex flex-1 flex-col lg:flex-row relative z-10">
       <div class="flex-1 overflow-auto pb-16">
         <div class="max-w-7xl mx-auto px-4 py-8">
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
-              <a href="/" class="flex items-center gap-3 no-underline">
-                <img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" />
-                <div class="leading-tight">
-                  <div class="text-sm font-semibold text-yellow-400 dark:text-yellow-400">Nokia EDA</div>
-                  <div class="text-xs text-white">Resource Browser</div>
-                </div>
-              </a>
-              <div>
-                <h1 class="text-2xl font-extrabold">Search CRD Specs & Status</h1>
-                <p class="text-sm text-white">Select a release and version (leave version blank to search all versions), then search inside CRD spec and status schemas (descriptions are ignored).</p>
-              </div>
-            </div>
+            <!-- Header moved to TopHeader component (fixed top) -->
           </div>
 
           <div class="space-y-6 sm:space-y-8">

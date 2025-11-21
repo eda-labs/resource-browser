@@ -4,6 +4,7 @@
 	import yaml from 'js-yaml';
 	import Footer from '$lib/components/Footer.svelte';
 	import AnimatedBackground from '$lib/components/AnimatedBackground.svelte';
+	import TopHeader from '$lib/components/TopHeader.svelte';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
 
@@ -523,26 +524,14 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 </svelte:head>
 
 <AnimatedBackground />
+<TopHeader title="Release Comparison" subtitle="Compare CRDs across two release versions to understand additions, removals, and modifications." />
 
 <div class="relative flex flex-col lg:min-h-screen overflow-y-auto lg:overflow-hidden pt-[64px]">
 	<div class="flex flex-1 flex-col lg:flex-row relative z-10">
 		<div class="flex-1 overflow-auto pb-16">
 			<div class="max-w-7xl mx-auto px-4 py-8">
 				<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-					<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
-						<a href="/" class="flex items-center gap-3 no-underline">
-							<img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" />
-							<div class="leading-tight">
-								<div class="text-sm font-semibold text-yellow-400 dark:text-yellow-400">Nokia EDA</div>
-								<div class="text-xs text-white">Resource Browser</div>
-							</div>
-						</a>
-						<div>
-							<h1 class="text-2xl font-extrabold">Release Comparison</h1>
-							<p class="text-sm text-white">Compare CRDs across two release versions to understand additions, removals, and modifications.</p>
-						</div>
-					</div>
-					<!-- Reset button removed per request -->
+					<!-- Title is shown in top header */ -->
 				</div>
 
 				<!-- Top banner with about/export removed per request; export controls remain in the report header -->
