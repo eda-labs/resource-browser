@@ -12,7 +12,7 @@
   export let versionOnFocus: string = '';
   export let validVersions: string[] = [];
   export let deprecated: boolean = false;
-  export let deprecatedSince: string | null = null;
+  export const deprecatedSince: string | null = null;
   export let kind: string = '';
 
   $: shortName = name ? name.split('.')[0] : '';

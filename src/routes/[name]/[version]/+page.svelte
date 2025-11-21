@@ -7,10 +7,6 @@
 	import yaml from 'js-yaml';
 
 	import Footer from '$lib/components/Footer.svelte';
-<<<<<<< HEAD
-	import Navbar from '$lib/components/Navbar.svelte';
-=======
->>>>>>> recover/search-links
 	import TopHeader from '$lib/components/TopHeader.svelte';
 	import Render from '$lib/components/Render.svelte';
 	import DiffRender from '$lib/components/DiffRender.svelte';
@@ -338,12 +334,7 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 </svelte:head>
 
 {#key `${name}-${versionOnFocus}`}
-<<<<<<< HEAD
-<TopHeader title={`${name} ${versionOnFocus}`} subtitle={`${group || ''}`} />
-<Navbar {name} {versionOnFocus} {deprecated} {validVersions} {kind} showPageTitle={false} isFixed={false} />
-=======
 <TopHeader name={name} versionOnFocus={versionOnFocus} validVersions={validVersions} deprecated={deprecated} deprecatedSince={undefined} kind={kind} subtitle={releaseLabel} />
->>>>>>> recover/search-links
 
 <div class="relative flex flex-col min-h-screen overflow-hidden pt-16 md:pt-[64px]">
 	<div class="relative flex-1">
