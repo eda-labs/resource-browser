@@ -42,7 +42,10 @@
       }
 
   let loading = false;
-  let results: Array<{ name: string; kind?: string; spec: any }> = [];
+  let results: Array<{ name: string; kind?: string; schema: any; version?: string; type?: 'spec'|'status' }> = [];
+  let filterType: 'all' | 'spec' | 'status' = 'all';
+
+  $: displayedResults = results.filter(r => filterType === 'all' || r.type === filterType);
 
   $: release = releaseName ? releasesConfig.releases.find(r => r.name === releaseName) || null : null;
 
@@ -249,7 +252,7 @@
 
   async function performSearch() {
     results = [];
-    if (!release || !version || !query) return;
+    if (!release || !query) return;
     loading = true;
     try {
       const resp = await fetch(`/${release.folder}/manifest.json`);
@@ -259,65 +262,86 @@
       let re: RegExp | null = null;
       try { re = new RegExp(q, 'i'); } catch (e) { re = null; }
 
-      const promises = manifest.map(async (res: any) => {
-        try {
-          // Skip CRDs that are states (we don't search inside state CRDs)
-          if (res && res.name && String(res.name).toLowerCase().includes('states')) return null;
-          const path = `/${release.folder}/${res.name}/${version}.yaml`;
-          const r = await fetch(path);
-          if (!r.ok) return null;
-          const txt = await r.text();
-          const parsed = yaml.load(txt) as any;
-          const spec = parsed?.schema?.openAPIV3Schema?.properties?.spec;
-          if (!spec) return null;
-          const stripped = stripDescriptions(spec);
-          const pruned = pruneSchema(stripped, re, q);
-          if (pruned) {
-            // If pruned returned only a minimal shape (for example only `required`/`type` but
-            // no `properties`), construct a focused properties object from the original
-            // stripped spec so the renderer has real property nodes (e.g., interfaceSelector).
-            let readySchema = pruned;
-            try {
-              if ((!pruned.properties || Object.keys(pruned.properties).length === 0) && Array.isArray(pruned.required) && stripped && stripped.properties) {
-                const focusedProps: any = {};
-                for (const rk of pruned.required) {
-                  if (rk in stripped.properties) focusedProps[rk] = stripped.properties[rk];
-                }
-                if (Object.keys(focusedProps).length > 0) {
-                  readySchema = { type: 'object', properties: focusedProps, required: pruned.required };
-                }
-              }
-            } catch (e) {
-              // ignore and fall back to pruned
-              readySchema = pruned;
-            }
-            // restore descriptions from original spec so Render shows helpful text
-            try { readySchema = restoreDescriptions(readySchema, spec, true); } catch (e) { /* ignore */ }
-            const ready = ensureRenderable(readySchema);
-            console.debug('[spec-search] pruned match', { name: res.name, kind: res.kind, hasProperties: !!ready.properties, topKeys: Object.keys(ready || {}), propKeys: ready && ready.properties ? Object.keys(ready.properties) : [] });
-            return { name: res.name, kind: res.kind, spec: ready };
-          }
-          // Fallback: if the pruner didn't return a focused subtree but the whole spec
-          // contains the query, return the stripped full spec so users can see context.
+      const promises = manifest.flatMap(async (res: any) => {
+        if (!res || !res.name) return [];
+        // Skip CRDs that are states
+        if (String(res.name).toLowerCase().includes('states')) return [];
+        // select candidate versions according to flag
+          const candidateVersions = version ? [version] : (res.versions ? res.versions.map((v:any) => v.name) : []);
+        const matches: Array<any> = [];
+        for (const ver of candidateVersions) {
           try {
-            const hay = JSON.stringify(stripped);
-            if (re ? re.test(hay) : hay.toLowerCase().includes(q.toLowerCase())) {
-              // use the original spec (with descriptions) for the fallback so Render shows descriptions
-              let readySchema = spec;
-              try { readySchema = restoreDescriptions(readySchema, spec, true); } catch (e) { /* ignore */ }
-              const ready = ensureRenderable(readySchema);
-              console.debug('[spec-search] fallback full spec match', { name: res.name, kind: res.kind, hasProperties: !!ready.properties, topKeys: Object.keys(ready || {}), propKeys: ready && ready.properties ? Object.keys(ready.properties) : [] });
-              return { name: res.name, kind: res.kind, spec: ready };
+            const path = `/${release.folder}/${res.name}/${ver}.yaml`;
+            const r = await fetch(path);
+            if (!r.ok) continue;
+            const txt = await r.text();
+            const parsed = yaml.load(txt) as any;
+            const spec = parsed?.schema?.openAPIV3Schema?.properties?.spec;
+            const status = parsed?.schema?.openAPIV3Schema?.properties?.status;
+
+            // search spec
+            if (spec) {
+              const stripped = stripDescriptions(spec);
+              const pruned = pruneSchema(stripped, re, q);
+              if (pruned) {
+                let readySchema = pruned;
+                try {
+                  if ((!pruned.properties || Object.keys(pruned.properties).length === 0) && Array.isArray(pruned.required) && stripped && stripped.properties) {
+                    const focusedProps: any = {};
+                    for (const rk of pruned.required) {
+                      if (rk in stripped.properties) focusedProps[rk] = stripped.properties[rk];
+                    }
+                    if (Object.keys(focusedProps).length > 0) {
+                      readySchema = { type: 'object', properties: focusedProps, required: pruned.required };
+                    }
+                  }
+                } catch (e) { readySchema = pruned; }
+                try { readySchema = restoreDescriptions(readySchema, spec, true); } catch (e) { /* ignore */ }
+                const ready = ensureRenderable(readySchema);
+                matches.push({ name: res.name, kind: res.kind, schema: ready, version: ver, type: 'spec' });
+                // continue to next version; we still check status though for same version
+              } else {
+                try {
+                  const hay = JSON.stringify(stripped);
+                  if (re ? re.test(hay) : hay.toLowerCase().includes(q.toLowerCase())) {
+                    let readySchema = spec;
+                    try { readySchema = restoreDescriptions(readySchema, spec, true); } catch (e) { /* ignore */ }
+                    const ready = ensureRenderable(readySchema);
+                    matches.push({ name: res.name, kind: res.kind, schema: ready, version: ver, type: 'spec' });
+                  }
+                } catch (e) { /* ignore */ }
+              }
+            }
+
+            // search status
+            if (status) {
+              const strippedStatus = stripDescriptions(status);
+              const prunedStatus = pruneSchema(strippedStatus, re, q);
+              if (prunedStatus) {
+                let readyStatus = prunedStatus;
+                try { readyStatus = restoreDescriptions(readyStatus, status, true); } catch (e) { /* ignore */ }
+                const ensured = ensureRenderable(readyStatus);
+                matches.push({ name: res.name, kind: res.kind, schema: ensured, version: ver, type: 'status' });
+              } else {
+                try {
+                  const hay = JSON.stringify(strippedStatus);
+                  if (re ? re.test(hay) : hay.toLowerCase().includes(q.toLowerCase())) {
+                    let readyStatus = status;
+                    try { readyStatus = restoreDescriptions(readyStatus, status, true); } catch (e) { /* ignore */ }
+                    const ensured = ensureRenderable(readyStatus);
+                    matches.push({ name: res.name, kind: res.kind, schema: ensured, version: ver, type: 'status' });
+                  }
+                } catch (e) { /* ignore */ }
+              }
             }
           } catch (e) {
-            // ignore and continue
+            // ignore and continue to next version
           }
-          return null;
-        } catch (e) { return null; }
+        }
+        return matches;
       });
-
       const settled = await Promise.all(promises);
-      results = settled.filter(Boolean) as any;
+      results = settled.flat().filter(Boolean) as any;
     } finally { loading = false; }
   }
 </script>
@@ -342,8 +366,8 @@
                 </div>
               </a>
               <div>
-                <h1 class="text-2xl font-extrabold">Search CRD Specs</h1>
-                <p class="text-sm text-white">Select a release and version, then search inside CRD spec schemas (descriptions are ignored).</p>
+                <h1 class="text-2xl font-extrabold">Search CRD Specs & Status</h1>
+                <p class="text-sm text-white">Select a release and version (leave version blank to search all versions), then search inside CRD spec and status schemas (descriptions are ignored).</p>
               </div>
             </div>
           </div>
@@ -367,12 +391,13 @@
                 </div>
                 <div class="relative">
                   <select id="spec-version" bind:value={version} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!release || versions.length === 0 || loadingVersions}>
-                    <option value="">{loadingVersions ? 'Loading versions...' : 'Select version...'}</option>
+                    <option value="">{loadingVersions ? 'Loading versions...' : 'All versions'}</option>
                     {#each versions as v}
                       <option value={v}>{v}</option>
                     {/each}
                   </select>
                 </div>
+                <!-- By default we search all versions if none selected -->
               </div>
 
               <div class="relative pt-4">
@@ -387,7 +412,7 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
             </div>
-            <input id="spec-query" bind:value={query} on:input={() => { /* no-op */ }} on:keydown={(e) => e.key === 'Enter' && performSearch()} placeholder="Search specs (regex)" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 pl-9 pr-10 py-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" />
+            <input id="spec-query" bind:value={query} on:input={() => { /* no-op */ }} on:keydown={(e) => e.key === 'Enter' && performSearch()} placeholder="Search specs & status (regex)" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 pl-9 pr-10 py-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" />
             {#if query}
               <button aria-label="Clear search" on:click={() => { query = ''; results = []; }} class="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-200">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -395,18 +420,25 @@
             {/if}
           </div>
           <div class="flex items-center gap-3">
-            <button on:click={performSearch} class="px-4 py-2 rounded bg-purple-600 text-white" disabled={!release || !version || loading}>
+            <button on:click={performSearch} class="px-4 py-2 rounded bg-purple-600 text-white" disabled={!release || !query || loading}>
               {#if loading}
                 <span>Searching...</span>
               {:else}
                 Search
               {/if}
             </button>
+            <div class="relative ml-2">
+              <select id="spec-filter" bind:value={filterType} class="appearance-none pl-3 pr-8 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-xs sm:text-sm text-gray-900 dark:text-white min-w-[92px] sm:min-w-[120px] h-10">
+                <option value="all">All</option>
+                <option value="spec">Spec</option>
+                <option value="status">Status</option>
+              </select>
+            </div>
             <button on:click={() => { expandAll.update(v => { const nv = !v; expandAllScope.set('global'); return nv }); }} class="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
               {#if $expandAll}Collapse All{:else}Expand All{/if}
             </button>
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">{results.length} matches</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">{displayedResults.length} matches</div>
         </div>
       </div>
 
@@ -422,19 +454,22 @@
       </div>
 
       <!-- Results -->
-      {#if results.length > 0}
+      {#if displayedResults.length > 0}
         <!-- Mobile stacked cards -->
         <div class="space-y-3 sm:hidden">
-          {#each results as r}
+          {#each displayedResults as r}
             <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
               <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 mr-2">
-                  <div class="text-sm font-semibold text-gray-900 dark:text-white break-words">{r.name}</div>
-                  <div class="text-xs text-gray-600 dark:text-gray-300">{r.kind}</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white break-words">{r.kind}</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-300">{r.name}</div>
                 </div>
                 <div class="flex items-center gap-2">
+                  {#if r.version}
+                    <div class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-200">{r.version}</div>
+                  {/if}
                   <button on:click={() => {
-                      const targetVersion = version || (r.versions && r.versions[0]) || '';
+                      const targetVersion = r.version || version || '';
                       const path = `/${r.name}${targetVersion ? `/${targetVersion}` : ''}`;
                       window.location.href = releaseName ? `${path}?release=${releaseName}` : path;
                     }} class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-xs font-medium">Open</button>
@@ -442,7 +477,7 @@
               </div>
               <div class="mt-3">
                 <div class="text-xs text-gray-700 dark:text-gray-300 whitespace-normal break-words">
-                  <Render hash={`${r.name}.${version}`} source={release?.name || 'release'} type="spec" data={r.spec} />
+                  <Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} />
                 </div>
               </div>
             </div>
@@ -454,21 +489,21 @@
           <table class="table-auto w-full text-xs sm:text-sm">
             <thead class="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Name</th>
-                <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Kind</th>
+                <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Resource</th>
+                <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Version</th>
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Match</th>
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Actions</th>
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {#each results as r}
+              {#each displayedResults as r}
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]">{r.name}</td>
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[20%]">{r.kind}</td>
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-700 dark:text-gray-300 break-words whitespace-normal max-w-[40%]"><div class="pro-spec-preview max-h-[40rem] overflow-auto"><Render hash={`${r.name}.${version}`} source={release?.name || 'release'} type="spec" data={r.spec} /></div></td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]"><div class="font-semibold">{r.kind}</div><div class="text-xs text-gray-500">{r.name}</div></td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[12%]">{r.version}</td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-700 dark:text-gray-300 break-words whitespace-normal max-w-[40%]"><div class="pro-spec-preview max-h-[40rem] overflow-auto"><Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} /></div></td>
                   <td class="px-3 sm:px-6 py-3 sm:py-4 max-w-[20%]">
                     <button on:click={() => {
-                        const targetVersion = version || (r.versions && r.versions[0]) || '';
+                        const targetVersion = r.version || version || '';
                         const path = `/${r.name}${targetVersion ? `/${targetVersion}` : ''}`;
                         window.location.href = releaseName ? `${path}?release=${releaseName}` : path;
                       }} class="px-2 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap">Open</button>
@@ -486,7 +521,7 @@
             </div>
             <div>
               <h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-1 sm:mb-2">No Results Found</h3>
-              <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">No CRD spec matches the selected release/version and query. Try adjusting your query.</p>
+              <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">No CRD spec/status matches the selected release/version (or all versions) and query. Try adjusting your query.</p>
             </div>
           </div>
         </div>
