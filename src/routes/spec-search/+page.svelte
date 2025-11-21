@@ -4,6 +4,7 @@
   import TopHeader from '$lib/components/TopHeader.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import Render from '$lib/components/Render.svelte';
+  import YangView from '$lib/components/YangView.svelte';
   import { expandAll, expandAllScope } from '$lib/store';
   import releasesYaml from '$lib/releases.yaml?raw';
   import type { EdaRelease, ReleasesConfig } from '$lib/structure';
@@ -46,6 +47,9 @@
   let results: Array<{ name: string; kind?: string; schema: any; version?: string; type?: 'spec'|'status' }> = [];
   // No filtering via dropdown - always show all results
   $: displayedResults = results;
+
+  // Results view mode: 'tree' shows Render, 'yang' shows dotted path view
+  let resultsViewMode: 'tree' | 'yang' = 'tree';
 
   $: release = releaseName ? releasesConfig.releases.find(r => r.name === releaseName) || null : null;
 
@@ -417,7 +421,7 @@
             </div>
           </div>
       <!-- Independent Search Bar (clean, pro) like Bulk Diff (separate from result table) -->
-      <div class="mb-4">
+          <div class="mb-4">
             <div class="flex items-center gap-3">
           <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -444,6 +448,17 @@
             </button>
           </div>
           <div class="text-sm text-gray-500 dark:text-gray-400">{displayedResults.length} matches</div>
+          <div class="ml-3 flex items-center gap-2">
+            <label class="text-xs text-gray-500 mr-2">View:</label>
+            <button
+              on:click={() => resultsViewMode = 'tree'}
+              class="px-2 py-1 rounded-md text-xs font-semibold {resultsViewMode === 'tree' ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}"
+            >Tree</button>
+            <button
+              on:click={() => resultsViewMode = 'yang'}
+              class="px-2 py-1 rounded-md text-xs font-semibold {resultsViewMode === 'yang' ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}"
+            >YANG</button>
+          </div>
         </div>
       </div>
 
@@ -473,16 +488,15 @@
                   {#if r.version}
                     <div class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-200">{r.version}</div>
                   {/if}
-                  <button on:click={() => {
-                      const targetVersion = r.version || version || '';
-                      const path = `/${r.name}${targetVersion ? `/${targetVersion}` : ''}`;
-                      window.location.href = releaseName ? `${path}?release=${releaseName}` : path;
-                    }} class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-xs font-medium">Open</button>
                 </div>
               </div>
               <div class="mt-3">
                 <div class="text-xs text-gray-700 dark:text-gray-300 whitespace-normal break-words">
-                  <Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} />
+                  {#if resultsViewMode === 'tree'}
+                    <Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} />
+                  {:else}
+                    <YangView hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} resourceName={r.name} resourceVersion={r.version} releaseName={releaseName} />
+                  {/if}
                 </div>
               </div>
             </div>
@@ -497,7 +511,7 @@
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Resource</th>
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Version</th>
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Match</th>
-                <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Actions</th>
+                <!-- Actions column removed to avoid duplicate 'Open' behavior; use '#' anchor inside Tree/YANG items instead -->
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -505,14 +519,14 @@
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]"><div class="font-semibold">{r.kind}</div><div class="text-xs text-gray-500">{r.name}</div></td>
                   <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[12%]">{r.version}</td>
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-700 dark:text-gray-300 break-words whitespace-normal max-w-[40%]"><div class="pro-spec-preview max-h-[40rem] overflow-auto"><Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} /></div></td>
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 max-w-[20%]">
-                    <button on:click={() => {
-                        const targetVersion = r.version || version || '';
-                        const path = `/${r.name}${targetVersion ? `/${targetVersion}` : ''}`;
-                        window.location.href = releaseName ? `${path}?release=${releaseName}` : path;
-                      }} class="px-2 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap">Open</button>
-                  </td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-700 dark:text-gray-300 break-words whitespace-normal max-w-[40%]"><div class="pro-spec-preview max-h-[40rem] overflow-auto">
+                    {#if resultsViewMode === 'tree'}
+                      <Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} />
+                    {:else}
+                      <YangView hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} resourceName={r.name} resourceVersion={r.version} releaseName={releaseName} />
+                    {/if}
+                  </div></td>
+                
                 </tr>
               {/each}
             </tbody>
