@@ -7,7 +7,7 @@
 	import yaml from 'js-yaml';
 
 	import Footer from '$lib/components/Footer.svelte';
-	import Navbar from '$lib/components/Navbar.svelte';
+	import TopHeader from '$lib/components/TopHeader.svelte';
 	import Render from '$lib/components/Render.svelte';
 	import DiffRender from '$lib/components/DiffRender.svelte';
 
@@ -308,7 +308,7 @@
 </svelte:head>
 
 {#key `${name}-${versionOnFocus}`}
-<Navbar {name} {versionOnFocus} {deprecated} {validVersions} {kind} />
+<TopHeader name={name} versionOnFocus={versionOnFocus} validVersions={validVersions} deprecated={deprecated} deprecatedSince={undefined} kind={kind} subtitle={releaseLabel} />
 
 <div class="relative flex flex-col min-h-screen overflow-hidden pt-16 md:pt-[64px]">
 	<div class="relative flex-1">
@@ -380,15 +380,7 @@
 									<span class="text-xs md:text-sm">{$ulExpanded.length > 0 ? 'Collapse' : 'Expand'} All</span>
 								</button>
 								
-								<!-- Deprecated Badge -->
-								{#if deprecated}
-									<div class="inline-flex items-center justify-center gap-2 rounded-lg md:rounded-xl bg-gradient-to-br from-orange-50 to-yellow-50 px-3 md:px-4 py-2 md:py-2.5 border-2 border-orange-200 shadow-sm dark:from-orange-900/20 dark:to-yellow-900/20 dark:border-orange-700 w-full sm:w-auto -translate-y-1 relative z-30">
-										<svg class="h-3.5 w-3.5 md:h-4 md:w-4 text-orange-600 dark:text-orange-400 animate-pulse flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-										</svg>
-										<span class="text-xs md:text-sm font-bold text-orange-700 dark:text-orange-400">DEPRECATED</span>
-									</div>
-								{/if}
+
 							</div>
 						</div>
 					</div>

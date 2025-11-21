@@ -105,6 +105,8 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent the browser (document) from showing a scrollbar; child containers handle scrolling */
+    overflow: hidden;
   }
   
   :global(body) {
@@ -112,7 +114,8 @@
     font-family: var(--font-nokia), 'Nunito', sans-serif;
     background-color: #0f172a;
     min-height: 100vh;
-    overflow-x: hidden;
+    /* Hide the document scrollbar so child containers manage scrolling */
+    overflow: hidden;
   }
 
   /* Headings and display text should use the Nokia headline family */

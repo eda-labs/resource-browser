@@ -263,44 +263,25 @@
 
 <!-- Sidebar -->
 <div class="
-	w-full lg:w-64 xl:w-72 flex-shrink-0 
-	lg:border-r border-gray-200 dark:border-gray-700 
-	bg-white dark:bg-gray-900 
+	w-full lg:w-64 xl:w-72 flex-shrink-0
+	lg:border-r border-gray-200 dark:border-gray-700
+	bg-white dark:bg-gray-900
 	flex flex-col shadow-2xl
-	lg:relative
-	fixed inset-y-0 left-0 z-40 lg:z-20
+	fixed lg:sticky top-20 bottom-0 lg:bottom-auto left-0 lg:left-auto lg:top-20
+	z-40 lg:z-20
 	transform transition-transform duration-300 ease-in-out
 	{isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
 	{ $sidebarOpen ? 'lg:translate-x-0' : 'lg:-translate-x-full' }
+	lg:max-h-[calc(100vh-5rem)] lg:overflow-visible
 ">
 	<!-- Header -->
-	<div class="sidebar-header relative p-3 md:p-4 pt-14 lg:pt-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+	<div class="sidebar-header relative p-3 md:p-4 pt-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
 		
-		<!-- Logo/Title - No close button here, removed justify-between -->
-		<div class="mb-4">
-			<button
-				on:click={() => {
-					goto('/');
-					closeMobileMenu();
-				}}
-				class="flex items-center space-x-2.5 group cursor-pointer transition-transform hover:scale-105"
-			>
-				<div class="relative">
-					<div class="absolute inset-0 bg-blue-500/20 dark:bg-blue-600/20 rounded-lg blur group-hover:blur-md transition-all"></div>
-					<img src="/images/eda.svg" width="32" height="32" alt="Nokia EDA" class="relative drop-shadow-lg" />
-				</div>
-				<div class="text-left">
-					<h1 class="text-base md:text-lg font-bold font-nokia-headline text-yellow-400 drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
-						Nokia EDA
-					</h1>
-					<p class="text-xs text-white font-medium">Resource Browser</p>
-				</div>
-			</button>
-		</div>
+		<!-- Logo/Title removed from sidebar; moved to topbar -->
 
 		<!-- Desktop toggle placed top-right inside the sidebar header -->
 		<button
-			class="hidden lg:inline-flex absolute top-3 right-3 items-center justify-center p-2 rounded-md bg-white/80 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:opacity-95"
+			class="hidden lg:inline-flex absolute top-1 right-3 items-center justify-center p-2 rounded-md bg-white/80 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:opacity-95"
 			on:click={() => sidebarOpen.toggle()}
 			aria-label={$sidebarOpen ? 'Collapse sidebar' : 'Open sidebar'}
 		>
@@ -326,7 +307,8 @@
 				id="release-select"
 				on:change={handleReleaseChange}
 				value={$selectedRelease.name}
-				class="select-pro w-full"
+				class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm"
+				style="z-index:1000;"
 			>
 				{#each releasesConfig.releases as release}
 					<option value={release.name}>
@@ -361,7 +343,7 @@
 			<!-- Resource Type Filter -->
 			<div class="mt-3">
 				<label for="resource-type-filter" class="sr-only">Filter resources</label>
-				<select id="resource-type-filter" bind:value={$resourceTypeFilter} class="select-pro w-full">
+				<select id="resource-type-filter" bind:value={$resourceTypeFilter} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm" style="z-index:1000;">
 					<option value="all">All</option>
 					<option value="state">State</option>
 					<option value="config">Config</option>
@@ -399,10 +381,10 @@
 										<span class="text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-md">DEPRECATED</span>
 									{/if}
 								</div>
-						<div class="text-xs truncate
-						            {isSelected 
-							? 'text-blue-100' 
-							: 'text-gray-500 dark:text-gray-300'}">
+						<div class="text-sm truncate
+							{isSelected 
+						? 'text-blue-100' 
+						: 'text-gray-500 dark:text-gray-300'}">
 							{resDef.name.split('.').slice(1).join('.')}
 						</div>
 						{#if resDef.versions.length > 1}

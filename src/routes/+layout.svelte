@@ -21,14 +21,14 @@
 <AnimatedBackground />
 
 {#if $isDetailPage}
-	<div class="flex h-screen has-header-img">
+	<div class="flex h-screen has-header-img pt-20">
 		<Sidebar />
 		<div class="flex-1 overflow-auto pb-16">
 			{@render children()}
 		</div>
 	</div>
 {:else}
-	<div class="pb-16 has-header-img">
+	<div class="pt-20 pb-16 has-header-img">
 		{@render children()}
 	</div>
 {/if}
