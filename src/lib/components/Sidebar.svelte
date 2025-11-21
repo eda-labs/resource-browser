@@ -312,7 +312,7 @@
 				id="release-select"
 				on:change={handleReleaseChange}
 				value={$selectedRelease.name}
-				class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm"
+				class="w-full px-3 sm:px-4 py-1 sm:py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-xs sm:text-sm"
 				style="z-index:1000;"
 			>
 				{#each releasesConfig.releases as release}
@@ -348,7 +348,7 @@
 			<!-- Resource Type Filter -->
 			<div class="mt-3">
 				<label for="resource-type-filter" class="sr-only">Filter resources</label>
-				<select id="resource-type-filter" bind:value={$resourceTypeFilter} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm" style="z-index:1000;">
+				<select id="resource-type-filter" bind:value={$resourceTypeFilter} class="w-full px-3 sm:px-4 py-1 sm:py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-xs sm:text-sm" style="z-index:1000;">
 					<option value="all">All</option>
 					<option value="state">State</option>
 					<option value="config">Config</option>

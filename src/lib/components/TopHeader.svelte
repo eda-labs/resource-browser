@@ -81,7 +81,7 @@
                 <span class="flex items-center">
                     {#if validVersions && validVersions.length > 1}
                     <select
-                      class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-black/30 text-white focus:bg-white dark:focus:bg-gray-700 focus:text-gray-900 dark:focus:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm"
+                      class="w-full px-3 sm:px-4 py-1 sm:py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-black/30 text-white focus:bg-white dark:focus:bg-gray-700 focus:text-gray-900 dark:focus:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-xs sm:text-sm"
                       style="z-index:1000; width: auto;"
                       bind:value={versionOnFocus}
                       on:change={handleVersionChange}

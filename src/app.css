@@ -346,7 +346,7 @@
 
   /* Pro select styling used for release dropdowns and tool selects */
   .select-pro {
-    @apply px-3 py-2 rounded-lg text-sm transition-colors bg-white/5 dark:bg-black/30 text-gray-900 dark:text-gray-200 border border-white/10 dark:border-white/10;
+    @apply px-3 py-1 rounded-lg text-sm transition-colors bg-white/5 dark:bg-black/30 text-gray-900 dark:text-gray-200 border border-white/10 dark:border-white/10;
   }
 
   .select-pro:focus {

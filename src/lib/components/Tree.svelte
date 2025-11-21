@@ -212,13 +212,16 @@
 							resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
 						}
 						const urlSearch = new URLSearchParams(window.location.search);
-						const releaseParam = urlSearch.get('release') || source || '';
+						const selectedReleaseParam = urlSearch.get('release');
+						// Use explicit URL release param if present; otherwise use `source` only when
+						// it represents a real release name (avoid fallback `release` string).
+						const releaseParam = selectedReleaseParam || (source && source !== 'release' ? source : '');
 						const url = `${window.location.origin}/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
 						// open in a new tab/window so search results are not lost
 						window.open(url, '_blank');
 						e.preventDefault();
 					}}
-					use:copy={{
+						use:copy={{
 						text: (() => {
 							const pathParts = window.location.pathname.split('/').filter(Boolean);
 							let resName = '';
@@ -232,7 +235,8 @@
 								resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
 							}
 							const urlSearch = new URLSearchParams(window.location.search);
-							const releaseParam = urlSearch.get('release') || source || '';
+							const selectedReleaseParam = urlSearch.get('release');
+							const releaseParam = selectedReleaseParam || (source && source !== 'release' ? source : '');
 							return window.location.origin + `/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
 						})(),
 						onCopy({ event }: any) {
