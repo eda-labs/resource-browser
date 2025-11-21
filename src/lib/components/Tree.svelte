@@ -199,21 +199,41 @@
 						? 'block'
 						: 'hidden'} hover:text-gray-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-gray-300"
 					on:click={(e) => {
-						// build URL to resource page including version and release (source)
-						const lastDot = (hash || '').lastIndexOf('.');
-						const resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : (hash || '');
-						const resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
-						const url = `${window.location.origin}/${resName}/${resVersion}${source ? `?release=${encodeURIComponent(source)}` : ''}#${currentId}`;
+						// Prefer using the current page path/search when available (resource view)
+						const pathParts = window.location.pathname.split('/').filter(Boolean);
+						let resName = '';
+						let resVersion = '';
+						if (pathParts.length >= 2) {
+							resName = pathParts[0];
+							resVersion = pathParts[1];
+						} else {
+							const lastDot = (hash || '').lastIndexOf('.');
+							resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : (hash || '');
+							resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
+						}
+						const urlSearch = new URLSearchParams(window.location.search);
+						const releaseParam = urlSearch.get('release') || source || '';
+						const url = `${window.location.origin}/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
 						// open in a new tab/window so search results are not lost
 						window.open(url, '_blank');
 						e.preventDefault();
 					}}
 					use:copy={{
 						text: (() => {
-							const lastDot = (hash || '').lastIndexOf('.');
-							const resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : (hash || '');
-							const resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
-							return window.location.origin + `/${resName}/${resVersion}${source ? `?release=${encodeURIComponent(source)}` : ''}#${currentId}`;
+							const pathParts = window.location.pathname.split('/').filter(Boolean);
+							let resName = '';
+							let resVersion = '';
+							if (pathParts.length >= 2) {
+								resName = pathParts[0];
+								resVersion = pathParts[1];
+							} else {
+								const lastDot = (hash || '').lastIndexOf('.');
+								resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : (hash || '');
+								resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
+							}
+							const urlSearch = new URLSearchParams(window.location.search);
+							const releaseParam = urlSearch.get('release') || source || '';
+							return window.location.origin + `/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
 						})(),
 						onCopy({ event }: any) {
 							const target = event?.target as HTMLElement | null;
