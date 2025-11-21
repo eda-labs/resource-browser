@@ -35,7 +35,7 @@
 		class="absolute inset-y-0 z-10 transition-all duration-300 bg-transparent dark:bg-transparent pointer-events-none"
 		style="left: 0; right: 0;"
 	></div>
-	<div class="mx-auto max-w-full px-4 py-3 pl-16 sm:px-6 lg:pl-20 relative z-20">
+	<div class="mx-auto max-w-full px-4 py-3 pl-20 sm:px-6 lg:pl-24 relative z-20">
 		<div class="flex items-center justify-between gap-6">
 			{#if !$sidebarOpen}
 				<!-- Reopen sidebar - fixed top-left on desktop to match mobile hamburger -->

@@ -25,7 +25,7 @@
 		{desc}
 	</li>
 	{#if 'properties' in scope}
-		<div class="font-fira text-[12.5px]">
+		<div class="font-fira text-sm">
 			{#each Object.entries(scope.properties) as [key, folder]}
 				{@const requiredList = 'required' in scope ? scope.required : []}
 				<Tree
