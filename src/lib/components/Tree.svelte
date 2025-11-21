@@ -139,12 +139,12 @@
 	}
 </script>
 
-<li id={currentId} class="scroll-mt-[80px] pt-1 {showDiffIndicator ? (
+<li id={currentId} tabindex="-1" class="scroll-mt-[80px] pt-1 {showDiffIndicator ? (
 		nestedDiffStatus === 'added' ? 'bg-green-100/70 dark:bg-green-900/10 border-l-3 border-green-600 dark:border-green-500 pl-2 -ml-2 rounded-md' :
 		nestedDiffStatus === 'removed' ? 'bg-red-100/70 dark:bg-red-900/10 border-l-3 border-red-600 dark:border-red-500 pl-2 -ml-2 rounded-md' :
 		nestedDiffStatus === 'modified' ? 'bg-amber-100/70 dark:bg-yellow-900/10 border-l-3 border-amber-600 dark:border-yellow-500 pl-2 -ml-2 rounded-md' :
 		''
-	) : ''}">
+	) : ''} focus:bg-orange-50 dark:focus:bg-orange-900/20 focus:ring-2 focus:ring-orange-400 focus:rounded-md">
 	<div class="group flex items-center space-x-2 px-2 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors relative">
 		{#if showDiffIndicator}
 			<span class="absolute -left-3 top-2 text-xs font-bold {
@@ -193,24 +193,38 @@
 			{/if}
 		</button>
 		{#if source !== 'uploaded'}
-			<a
-				href={`#${currentId}`}
-				class="cursor-pointer text-gray-400 dark:text-gray-500 {expanded
-					? 'block'
-					: 'hidden'} hover:text-gray-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-gray-300"
-				use:copy={{
-					text: window.location.origin + window.location.pathname + `#${currentId}`,
-					onCopy({ event }: any) {
-						const target = event?.target as HTMLElement | null;
-						if (target) {
-							target.innerHTML = '&check;';
-							timeout = setTimeout(() => {
-								target.innerHTML = '#';
-							}, 500);
+				<a
+					href={() => '#'}
+					class="cursor-pointer text-gray-400 dark:text-gray-500 {expanded
+						? 'block'
+						: 'hidden'} hover:text-gray-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-gray-300"
+					on:click={(e) => {
+						// build URL to resource page including version and release (source)
+						const lastDot = (hash || '').lastIndexOf('.');
+						const resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : (hash || '');
+						const resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
+						const url = `${window.location.origin}/${resName}/${resVersion}${source ? `?release=${encodeURIComponent(source)}` : ''}#${currentId}`;
+						// open in a new tab/window so search results are not lost
+						window.open(url, '_blank');
+						e.preventDefault();
+					}}
+					use:copy={{
+						text: (() => {
+							const lastDot = (hash || '').lastIndexOf('.');
+							const resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : (hash || '');
+							const resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
+							return window.location.origin + `/${resName}/${resVersion}${source ? `?release=${encodeURIComponent(source)}` : ''}#${currentId}`;
+						})(),
+						onCopy({ event }: any) {
+							const target = event?.target as HTMLElement | null;
+							if (target) {
+								target.innerHTML = '&check;';
+								timeout = setTimeout(() => {
+									target.innerHTML = '#';
+								}, 500);
+							}
 						}
-					}
-				}}>#</a
-			>
+					}}>#</a>
 		{/if}
 	</div>
 	{#if expanded}

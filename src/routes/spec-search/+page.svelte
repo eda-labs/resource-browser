@@ -51,18 +51,39 @@
   $: release = releaseName ? releasesConfig.releases.find(r => r.name === releaseName) || null : null;
 
   async function loadVersions() {
-    if (!release) { versions = []; version = ''; return; }
+    // Ensure we use the freshly selected release even if the reactive `release` hasn't updated yet
+    const rel = release || (releaseName ? releasesConfig.releases.find(r => r.name === releaseName) || null : null);
+    if (!rel) { versions = []; version = ''; return; }
     loadingVersions = true;
     try {
-      const resp = await fetch(`/${release.folder}/manifest.json`);
-      if (!resp.ok) { versions = []; version = ''; return; }
-      const manifest = await resp.json();
-      const versionSet = new Set<string>();
-      manifest.forEach((resource: any) => { resource.versions?.forEach((v: any) => { if (v && v.name) versionSet.add(v.name); }); });
-      versions = Array.from(versionSet).sort();
+      const resp = await fetch(`/${rel.folder}/manifest.json`);
+      if (resp.ok) {
+        const manifest = await resp.json();
+        const versionSet = new Set<string>();
+        manifest.forEach((resource: any) => { resource.versions?.forEach((v: any) => { if (v && v.name) versionSet.add(v.name); }); });
+        versions = Array.from(versionSet).sort();
+      }
+
+      // If manifest fetch failed or produced no versions, fall back to resources.yaml
+      if (!versions || versions.length === 0) {
+        try {
+          const res = await import('$lib/resources.yaml?raw');
+          const resources = yaml.load(res.default) as any;
+          // resources may be an object with arrays; flatten and collect versions
+          const allResources = Object.values(resources).flat();
+          const fallbackSet = new Set<string>();
+          allResources.forEach((r: any) => { r.versions?.forEach((v: any) => { if (v && v.name) fallbackSet.add(v.name); }); });
+          versions = Array.from(fallbackSet).sort();
+        } catch (e) {
+          // keep versions empty
+          versions = [];
+        }
+      }
+
       if (!versions.includes(version)) version = '';
     } catch (e) {
-      versions = []; version = '';
+      versions = [];
+      version = '';
     } finally { loadingVersions = false; }
   }
   function stripDescriptions(obj: any): any {

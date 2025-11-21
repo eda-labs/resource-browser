@@ -37,7 +37,33 @@
 
 	expandAll.set(false);
 	expandAllScope.set('local');
+
+// If the URL contains a hash like `spec.some.path`, expand the tree to that path
+$: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
+	const parts = hash.split('.');
+	const ancestors: string[] = [];
+	for (let i = 1; i <= parts.length; i++) {
+		ancestors.push(parts.slice(0, i).join('.'));
+	}
+	ulExpanded.set(ancestors);
+	// After a short delay (allow DOM to render and tree to expand), focus and scroll to the element
+	setTimeout(() => {
+		try {
+			const target = document.getElementById(hash);
+			if (target) {
+				// ensure it's focusable
+				if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+				(target as HTMLElement).focus({ preventScroll: true });
+				// smooth scroll into view and center the element
+				(target as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		} catch (e) {
+			// ignore
+		}
+	}, 80);
+} else {
 	ulExpanded.set([]);
+}
 
 	// View mode state - start with schema view showing both spec and status
 	let viewMode: 'schema' | 'compare' | 'validate' = 'schema';
