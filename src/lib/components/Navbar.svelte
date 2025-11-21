@@ -9,6 +9,8 @@
 	export let deprecated: boolean;
 	export let deprecatedSince: string | null = null;
 	export let kind: string;
+	export let showPageTitle: boolean = true;
+	export let isFixed: boolean = true;
 	// 'sidebarOpen' was unused here — removed to prevent Svelte compile warnings
 
 	// Extract short name and group path from full name
@@ -27,12 +29,12 @@
 	}
 </script>
 
-<nav class="fixed top-0 z-20 w-screen">
+<nav class="{isFixed ? 'fixed top-0 z-20 w-screen' : 'relative w-full'}">
 	<!-- Nav background that expands left when sidebar is closed; stays aligned to sidebar when open -->
 	<div
 		class="absolute inset-y-0 z-10 transition-all duration-300 bg-transparent dark:bg-transparent pointer-events-none"
 		style="left: 0; right: 0;"
-	/>
+	></div>
 	<div class="mx-auto max-w-full px-4 py-3 pl-16 sm:px-6 lg:pl-20 relative z-20">
 		<div class="flex items-center justify-between gap-6">
 			{#if !$sidebarOpen}
@@ -50,6 +52,7 @@
 			<!-- Left side - Resource Info -->
 			<div class="flex items-center gap-4 min-w-0 flex-1">
 						<!-- Resource Info: show kind then full name with version selector -->
+						{#if showPageTitle}
 						<div class="min-w-0">
 							<h1 class="text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 font-nokia-headline leading-tight truncate">
 								{kind || shortName}
@@ -75,6 +78,7 @@
 								</span>
 							</p>
 						</div>
+						{/if}
 				
 				{#if deprecated}
 					<div class="hidden sm:flex items-center gap-1.5 px-2 py-1 sm:px-4 sm:py-2 rounded-lg bg-orange-50 dark:bg-orange-900/30 border border-orange-300 dark:border-orange-700 shrink-0 self-end -translate-y-1 relative z-30"

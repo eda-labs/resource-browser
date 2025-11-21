@@ -8,6 +8,7 @@
 
 	import Footer from '$lib/components/Footer.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import TopHeader from '$lib/components/TopHeader.svelte';
 	import Render from '$lib/components/Render.svelte';
 	import DiffRender from '$lib/components/DiffRender.svelte';
 
@@ -308,7 +309,8 @@
 </svelte:head>
 
 {#key `${name}-${versionOnFocus}`}
-<Navbar {name} {versionOnFocus} {deprecated} {validVersions} {kind} />
+<TopHeader title={`${name} ${versionOnFocus}`} subtitle={`${group || ''}`} />
+<Navbar {name} {versionOnFocus} {deprecated} {validVersions} {kind} showPageTitle={false} isFixed={false} />
 
 <div class="relative flex flex-col min-h-screen overflow-hidden pt-16 md:pt-[64px]">
 	<div class="relative flex-1">

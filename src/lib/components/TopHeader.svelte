@@ -5,7 +5,7 @@
 
 <nav class="fixed top-0 left-0 right-0 z-20 border-b border-white/10 dark:border-white/10 bg-white/5 dark:bg-transparent backdrop-blur-sm shadow-lg">
   <!-- Logo / app identity stays pinned to the far left edge -->
-  <div class="absolute left-0 inset-y-0 flex items-center pl-4 sm:pl-6">
+  <div class="absolute left-0 inset-y-0 flex items-center pl-12 sm:pl-16">
     <a href="/" class="flex items-center gap-3 no-underline">
       <img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" />
       <div class="leading-tight hidden sm:block">
