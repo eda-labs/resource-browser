@@ -527,24 +527,28 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 <AnimatedBackground />
 <TopHeader title="Release Comparison" />
 
-<div class="relative flex flex-col lg:min-h-screen overflow-y-auto lg:overflow-hidden pt-16 md:pt-20">
+<!-- Inline page description moved out of the fixed header to improve readability -->
+<div class="max-w-7xl mx-auto px-4 py-2">
+</div>
+
+<div class="relative flex flex-col lg:min-h-screen overflow-y-auto lg:overflow-hidden pt-12 md:pt-14">
 	<div class="flex flex-1 flex-col lg:flex-row relative z-10">
 		<div class="flex-1 overflow-auto pb-16">
-			<div class="max-w-7xl mx-auto px-4 py-8">
-				<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+			<div class="max-w-7xl mx-auto px-4 py-4">
+				<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-3">
 					<!-- Title is shown in top header */ -->
 				</div>
 
 				<!-- Top banner with about/export removed per request; export controls remain in the report header -->
 
 				<!-- Main Panel: release selection + report -->
-										<div class="space-y-6 sm:space-y-8">
-											<div id="comparison-description" class="mb-3 text-base text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/10 border border-gray-200 dark:border-gray-800 rounded-lg p-3">Compare CRDs across two release versions to understand additions, removals, and modifications. Use version selectors and filters below to narrow down results and generate the comparison report.</div>
-					<div>
-						<label for="bulk-source-release" class="block text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Source Release & Version</label>
-										  <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 items-start">
+					<div class="space-y-2 sm:space-y-4">
+						<div>
+							<p class="text-sm sm:text-base text-white leading-relaxed mb-2">Compare CRDs across two release versions to understand additions, removals, and modifications. Use version selectors and filters below to narrow down results and generate the comparison report.</p>
+							<label for="bulk-source-release" class="block text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">Source Release & Version</label>
+										<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
 											<div class="relative">
-												<select id="bulk-source-release" aria-describedby="comparison-description"
+												<select id="bulk-source-release"
 													bind:value={bulkDiffSourceReleaseName}
 													on:change={() => { bulkDiffSourceRelease = bulkDiffSourceReleaseName ? (releasesConfig.releases.find(r => r.name === bulkDiffSourceReleaseName) || null) : null; }}
 													on:mousedown={handleSelectOpen}
@@ -560,23 +564,21 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 								</select>
 							</div>
 							<div class="relative">
-								<select id="bulk-source-version" aria-describedby="comparison-description" bind:value={bulkDiffSourceVersion} on:mousedown={handleSelectOpen} on:focus={handleSelectOpen} on:blur={handleSelectClose} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!bulkDiffSourceRelease || bulkDiffSourceVersions.length === 0 || bulkDiffSourceVersionsLoading}>
+								<select id="bulk-source-version" bind:value={bulkDiffSourceVersion} on:mousedown={handleSelectOpen} on:focus={handleSelectOpen} on:blur={handleSelectClose} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!bulkDiffSourceRelease || bulkDiffSourceVersions.length === 0 || bulkDiffSourceVersionsLoading}>
 									<option value="">{bulkDiffSourceVersionsLoading ? 'Loading versions...' : 'Select version...'}</option>
 									{#each bulkDiffSourceVersions as version}
 										<option value={version}>{version}</option>
 									{/each}
 								</select>
-												</div>
-												<!-- moved description above selectors; keep this spot empty so the grid layout remains consistent -->
+							</div>
 						</div>
 					</div>
 
 					<div>
-						<label for="bulk-target-release" class="block text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Target Release & Version</label>
-												<div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 items-start">
-													<div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+						<label for="bulk-target-release" class="block text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">Target Release & Version</label>
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
 							<div class="relative">
-								<select id="bulk-target-release" aria-describedby="comparison-description" bind:value={bulkDiffTargetReleaseName} on:change={() => { bulkDiffTargetRelease = bulkDiffTargetReleaseName ? (releasesConfig.releases.find(r => r.name === bulkDiffTargetReleaseName) || null) : null; }} on:mousedown={handleSelectOpen} on:focus={handleSelectOpen} on:blur={handleSelectClose} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm" style="z-index:1000;">
+								<select id="bulk-target-release" bind:value={bulkDiffTargetReleaseName} on:change={() => { bulkDiffTargetRelease = bulkDiffTargetReleaseName ? (releasesConfig.releases.find(r => r.name === bulkDiffTargetReleaseName) || null) : null; }} on:mousedown={handleSelectOpen} on:focus={handleSelectOpen} on:blur={handleSelectClose} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm" style="z-index:1000;">
 									<option value="">Select release...</option>
 									{#each releasesConfig.releases as r}
 										<option value={r.name}>{r.label}</option>
@@ -584,17 +586,14 @@ $: if (bulkDiffReport) console.debug('[diagnostic] bulk-diff page filtered count
 								</select>
 							</div>
 							<div class="relative">
-								<select id="bulk-target-version" aria-describedby="comparison-description" bind:value={bulkDiffTargetVersion} on:mousedown={handleSelectOpen} on:focus={handleSelectOpen} on:blur={handleSelectClose} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!bulkDiffTargetRelease || bulkDiffTargetVersions.length === 0 || bulkDiffTargetVersionsLoading}>
+								<select id="bulk-target-version" bind:value={bulkDiffTargetVersion} on:mousedown={handleSelectOpen} on:focus={handleSelectOpen} on:blur={handleSelectClose} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!bulkDiffTargetRelease || bulkDiffTargetVersions.length === 0 || bulkDiffTargetVersionsLoading}>
 									<option value="">{bulkDiffTargetVersionsLoading ? 'Loading versions...' : 'Select version...'}</option>
 									{#each bulkDiffTargetVersions as version}
 										<option value={version}>{version}</option>
 									{/each}
 								</select>
-														</div>
-													</div>
-													<!-- empty 3rd column placeholder to keep layout symmetrical -->
-													<div class="col-span-1"></div>
-												</div>
+							</div>
+						</div>
 					</div>
 
 					<div class="relative pt-4 border-t border-gray-200">

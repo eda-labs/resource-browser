@@ -64,16 +64,16 @@
   {/if}
 
   <div class="max-w-7xl mx-auto px-4 pl-4 sm:pl-20 md:pl-24 lg:pl-28 h-full">
-    <div class="flex items-center justify-between gap-3 h-full">
-      <div class="min-w-0">
+    <div class="flex items-center justify-center sm:justify-between gap-3 h-full">
+      <div class="min-w-0 text-center sm:text-left">
         {#if title}
-          <div class="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">{title}</div>
+          <div class="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white w-full text-center sm:text-left sm:w-auto">{title}</div>
           {#if subtitle}
-              <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">{subtitle}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300 mt-1 w-full text-center sm:text-left sm:w-auto">{subtitle}</div>
             {/if}
         {:else if name}
-          <div class="flex items-center gap-4">
-            <div class="min-w-0">
+          <div class="flex items-center gap-4 justify-center sm:justify-start">
+            <div class="min-w-0 text-center sm:text-left">
               <h1 class="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white leading-tight truncate">{kind || shortName}</h1>
               <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 truncate flex items-center gap-2 -translate-y-0.5">
                 <span class="truncate">{groupPath || name}</span>

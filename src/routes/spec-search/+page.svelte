@@ -380,22 +380,25 @@
 
 <TopHeader title="Search CRD Specs & Status" />
 
-<div class="relative flex flex-col lg:min-h-screen overflow-y-auto lg:overflow-hidden pt-16 md:pt-20">
+<!-- Inline page description moved out of the fixed header to improve readability -->
+<div class="max-w-7xl mx-auto px-4 py-2">
+</div>
+
+<div class="relative flex flex-col lg:min-h-screen overflow-y-auto lg:overflow-hidden pt-12 md:pt-14">
     <div class="flex flex-1 flex-col lg:flex-row relative z-10">
       <div class="flex-1 overflow-auto pb-16">
-        <div class="max-w-7xl mx-auto px-4 py-8">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-3">
             <!-- Header moved to TopHeader component (fixed top) -->
           </div>
 
-          <div class="space-y-6 sm:space-y-8">
+          <div class="space-y-2 sm:space-y-4">
             <div>
-              <div id="spec-search-description" class="mb-3 text-base text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/10 border border-gray-200 dark:border-gray-800 rounded-lg p-3">Select a release and version (leave the version blank to search all versions), then search inside CRD spec and status schemas. Descriptions are ignored to focus matches on parameters and values.</div>
-              <label for="spec-release" class="block text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 sm:mb-3">Release & Version</label>
-              <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 items-start">
-                <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
-                  <div class="relative">
-                  <select id="spec-release" aria-describedby="spec-search-description"
+              <p class="text-sm sm:text-base text-white leading-relaxed mb-2">Select a release and version (leave the version blank to search all versions), then search inside CRD spec and status schemas. Descriptions are ignored to focus matches on parameters and values.</p>
+              <label for="spec-release" class="block text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">Release & Version</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+                <div class="relative">
+                  <select id="spec-release"
                     bind:value={releaseName}
                     on:change={loadVersions}
                     class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-sm"
@@ -406,9 +409,9 @@
                       <option value={r.name}>{r.label}</option>
                     {/each}
                   </select>
-                  </div>
-                  <div class="relative">
-                  <select id="spec-version" aria-describedby="spec-search-description" bind:value={version} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!release || versions.length === 0 || loadingVersions}>
+                </div>
+                <div class="relative">
+                  <select id="spec-version" bind:value={version} class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm" style="z-index:1000;" disabled={!release || versions.length === 0 || loadingVersions}>
                     <option value="">{loadingVersions ? 'Loading versions...' : 'All versions'}</option>
                     {#each versions as v}
                       <option value={v}>{v}</option>
@@ -416,16 +419,15 @@
                   </select>
                 </div>
                 <!-- By default we search all versions if none selected -->
-                
               </div>
 
-              <div class="relative pt-4">
+              <div class="relative pt-2">
                 <!-- divider moved below search row -->
               </div>
             </div>
           </div>
       <!-- Independent Search Bar (clean, pro) like Bulk Diff (separate from result table) -->
-          <div class="mb-4">
+          <div class="mb-2">
             <div class="flex items-center gap-3">
           <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -451,7 +453,7 @@
               {#if $expandAll}Collapse All{:else}Expand All{/if}
             </button>
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">{displayedResults.length} matches</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">{displayedResults.length} matches</div>
           <div class="ml-3 flex items-center gap-2">
             <span class="text-xs text-gray-900 dark:text-gray-200 mr-2">View:</span>
             <button
@@ -493,7 +495,6 @@
                     <div class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-200">{r.version}</div>
                   {/if}
                 </div>
-                
               </div>
               <div class="mt-3">
                 <div class="text-xs text-gray-900 dark:text-gray-200 whitespace-normal break-words">
@@ -543,9 +544,8 @@
             <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
               <svg class="w-7 h-7 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
             </div>
-                  </div>
-                </div>
-                <!-- By default we search all versions if none selected -->
+            <div>
+              <h3 class="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-1 sm:mb-2">No Results Found</h3>
               <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">No CRD spec/status matches the selected release/version (or all versions) and query. Try adjusting your query.</p>
             </div>
           </div>
