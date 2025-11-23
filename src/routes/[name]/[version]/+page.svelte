@@ -435,7 +435,7 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 							</div>
 						</div>
 						<div class="p-4 md:p-8 bg-black/10 overflow-x-auto">
-							<Render {hash} source={'eda'} type={'spec'} data={spec} />
+							<Render {hash} source={'eda'} type={'spec'} data={spec} showType={false} />
 						</div>
 					</div>
 
@@ -459,7 +459,7 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 							</div>
 						</div>
 						<div class="p-4 md:p-8 bg-black/10 overflow-x-auto">
-							<Render {hash} source={'eda'} type={'status'} data={status} />
+							<Render {hash} source={'eda'} type={'status'} data={status} showType={false} />
 						</div>
 					</div>
 				</div>

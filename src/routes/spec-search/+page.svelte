@@ -49,6 +49,21 @@
   // No filtering via dropdown - always show all results
   $: displayedResults = results;
 
+  // Group results by resource name + version so we can show SPEC and STATUS together
+  type GroupedResult = { name: string; kind?: string; version?: string; spec?: any; status?: any };
+  let groupedResults: GroupedResult[] = [];
+  $: groupedResults = (() => {
+    const map = new Map<string, GroupedResult>();
+    for (const r of displayedResults) {
+      const key = `${r.name}::${r.version || ''}`;
+      if (!map.has(key)) map.set(key, { name: r.name, kind: r.kind, version: r.version, spec: undefined, status: undefined });
+      const entry = map.get(key)!;
+      if (r.type === 'spec') entry.spec = entry.spec || r.schema;
+      if (r.type === 'status') entry.status = entry.status || r.schema;
+    }
+    return Array.from(map.values());
+  })();
+
   // Results view mode: 'tree' shows Render, 'yang' shows dotted path view
   let resultsViewMode: 'tree' | 'yang' = 'tree';
 
@@ -453,7 +468,7 @@
               {#if $expandAll}Collapse All{:else}Expand All{/if}
             </button>
           </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">{displayedResults.length} matches</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">{groupedResults.length} matches</div>
           <div class="ml-3 flex items-center gap-2">
             <span class="text-xs text-gray-900 dark:text-gray-200 mr-2">View:</span>
             <button
@@ -481,28 +496,50 @@
 
       <!-- Results -->
       {#if displayedResults.length > 0}
-        <!-- Mobile stacked cards -->
+        <!-- Mobile stacked grouped cards (SPEC + STATUS together) -->
         <div class="space-y-3 sm:hidden">
-          {#each displayedResults as r}
+          {#each groupedResults as g}
             <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
               <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 mr-2">
-                    <div class="text-sm font-semibold text-gray-900 dark:text-white break-words">{r.kind}</div>
-                                    <div class="text-xs text-gray-600 dark:text-gray-300">{stripResourcePrefixFQDN(String(r.name))}</div>
+                  <div class="text-sm font-semibold text-gray-900 dark:text-white break-words">{g.kind}</div>
+                  <div class="text-xs text-gray-600 dark:text-gray-300">{stripResourcePrefixFQDN(String(g.name))}</div>
                 </div>
                 <div class="flex items-center gap-2">
-                  {#if r.version}
-                    <div class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-200">{r.version}</div>
+                  {#if g.version}
+                    <div class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-200">{g.version}</div>
                   {/if}
                 </div>
               </div>
               <div class="mt-3">
                 <div class="text-xs text-gray-900 dark:text-gray-200 whitespace-normal break-words">
-                  {#if resultsViewMode === 'tree'}
-                    <Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} />
-                  {:else}
-                    <YangView hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} resourceName={r.name} resourceVersion={r.version} releaseName={releaseName} />
-                  {/if}
+                  <div class="overflow-x-auto">
+                    <div class="min-w-[640px] {g.spec && g.status ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1'}">
+                      {#if g.spec}
+                        <div>
+                          <div class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">SPEC</div>
+                            {#if resultsViewMode === 'tree'}
+                              <Render hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} showType={false} />
+                          {:else}
+                            <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} releaseName={releaseName} />
+                          {/if}
+                        </div>
+                      {/if}
+                      {#if g.status}
+                        <div>
+                          <div class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">STATUS</div>
+                          {#if resultsViewMode === 'tree'}
+                            <Render hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} showType={false} />
+                          {:else}
+                            <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} releaseName={releaseName} />
+                          {/if}
+                        </div>
+                      {/if}
+                      {#if !g.spec && !g.status}
+                        <div class="text-xs text-gray-500 dark:text-gray-400">No matching content</div>
+                      {/if}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -517,22 +554,44 @@
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Resource</th>
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Version</th>
                 <th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-gray-900 dark:text-white text-left">Match</th>
-                <!-- Actions column removed to avoid duplicate 'Open' behavior; use '#' anchor inside Tree/YANG items instead -->
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {#each displayedResults as r}
+              {#each groupedResults as g}
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]"><div class="font-semibold">{r.kind}</div><div class="text-xs text-gray-500 dark:text-gray-300">{stripResourcePrefixFQDN(String(r.name))}</div></td>
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[12%]">{r.version}</td>
-                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-gray-200 break-words whitespace-normal max-w-[40%]"><div class="pro-spec-preview max-h-[40rem] overflow-auto">
-                    {#if resultsViewMode === 'tree'}
-                      <Render hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} />
-                    {:else}
-                      <YangView hash={`${r.name}.${r.version}`} source={release?.name || 'release'} type={r.type || 'spec'} data={r.schema} resourceName={r.name} resourceVersion={r.version} releaseName={releaseName} />
-                    {/if}
-                  </div></td>
-                
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900 dark:text-white break-words whitespace-pre-wrap max-w-[40%]"><div class="font-semibold">{g.kind}</div><div class="text-xs text-gray-500 dark:text-gray-300">{stripResourcePrefixFQDN(String(g.name))}</div></td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap max-w-[12%]">{g.version}</td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-gray-200 break-words whitespace-normal">
+                    <div class="pro-spec-preview max-h-[40rem]">
+                      <div class="overflow-x-auto">
+                        <div class="min-w-[640px] space-y-4">
+                          {#if g.spec}
+                            <div>
+                              <div class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">SPEC</div>
+                              {#if resultsViewMode === 'tree'}
+                                <Render hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} showType={false} />
+                              {:else}
+                                <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} releaseName={releaseName} />
+                              {/if}
+                            </div>
+                          {/if}
+                          {#if g.status}
+                            <div>
+                              <div class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">STATUS</div>
+                              {#if resultsViewMode === 'tree'}
+                                <Render hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} showType={false} />
+                              {:else}
+                                <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} releaseName={releaseName} />
+                              {/if}
+                            </div>
+                          {/if}
+                          {#if !g.spec && !g.status}
+                            <div class="text-xs text-gray-500 dark:text-gray-400">No matching content</div>
+                          {/if}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               {/each}
             </tbody>

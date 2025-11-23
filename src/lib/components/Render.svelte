@@ -8,6 +8,7 @@
 	export let source: string;
 	export let type: string;
 	export let data: Schema;
+	export let showType: boolean = true;
 
 	const desc = getDescription(data);
 	const scope = getScope(data);
@@ -19,7 +20,9 @@
 			: 'border-gray-300 dark:border-gray-600';
 </script>
 
-<p class="mb-0 py-1 text-sm text-gray-900 dark:text-gray-200">{type.toUpperCase()}</p>
+{#if showType}
+	<p class="mb-0 py-1 text-sm text-gray-900 dark:text-gray-200">{type.toUpperCase()}</p>
+{/if}
 <ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
 	<li class="px-1 pt-1.5 text-sm font-light text-gray-600 dark:text-gray-300 whitespace-normal leading-relaxed">
 		{desc}
