@@ -1,6 +1,12 @@
 <script lang="ts">
   import { copy } from 'svelte-copy';
+  import Render from './Render.svelte';
+  import yaml from 'js-yaml';
+  import releasesYaml from '$lib/releases.yaml?raw';
+  import type { ReleasesConfig } from '$lib/structure';
+  import { onDestroy } from 'svelte';
   import { getScope } from './functions';
+  import { expandAll, ulExpanded } from '$lib/store';
   import type { Schema } from '$lib/structure';
 
   export let hash: string = '';
@@ -119,11 +125,99 @@
   $: { void hash; void source; }
   // (no per-field expanded values required for YANG view summary)
 
-  function openResource(path: string) {
-    const ver = resourceVersion ? `/${resourceName}/${resourceVersion}` : `/${resourceName}`;
-    const q = releaseName ? `?release=${encodeURIComponent(releaseName)}` : '';
-    const url = `${window.location.origin}${ver}${q}#${path}`;
-    window.open(url, '_blank');
+  // Modal state for displaying full resource tree for a selected path
+  let showResourceModal: boolean = false;
+  let modalSpec: Schema | null = null;
+  let modalStatus: Schema | null = null;
+  let modalError: string | null = null;
+  // the hash to expand/focus inside the modal, e.g. 'spec.attachments.interface'
+  let modalHash: string = '';
+  let isLoadingModal: boolean = false;
+
+  async function openResource(path: string) {
+    // Instead of opening a new tab, show the compact resource modal and focus the path.
+    modalSpec = null; modalStatus = null; modalError = null; modalHash = path;
+    isLoadingModal = true;
+    showResourceModal = true;
+    expandAll.set(false);
+    // compute ulExpanded from path (expand only ancestors)
+    const parts = path.split('.');
+    const ancestors: string[] = [];
+    for (let i = 1; i <= parts.length; i++) {
+      ancestors.push(parts.slice(0, i).join('.'));
+    }
+    ulExpanded.set(ancestors);
+
+    // fetch the resource YAML for the given release/resource/version
+    try {
+      // Resolve the release folder from releaseName (if provided)
+      let releaseFolder = '';
+      try {
+        const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+        if (releaseName && releaseName !== 'release') {
+          const found = releasesConfig.releases.find((r) => r.name === releaseName);
+          if (found) releaseFolder = found.folder;
+        }
+        if (!releaseFolder && (releasesConfig && releasesConfig.releases && releasesConfig.releases.length > 0)) {
+          // fallback to default release folder
+          const defaultRel = releasesConfig.releases.find(r => r.default) || releasesConfig.releases[0];
+          releaseFolder = defaultRel.folder;
+        }
+      } catch (e) {
+        // ignore and fallback to raw release name
+      }
+      let folder = releaseName || '';
+      let url = '';
+      if (releaseFolder) {
+        folder = releaseFolder;
+      }
+      if (resourceVersion) {
+        url = `/${folder}/${resourceName}/${resourceVersion}.yaml`;
+      } else {
+        url = `/${folder}/${resourceName}.yaml`;
+      }
+      let resp = await fetch(url);
+      if (!resp.ok) {
+        // fallback to `/resources` static path
+        if (resourceVersion) {
+          resp = await fetch(`/resources/${resourceName}/${resourceVersion}.yaml`);
+        } else {
+          resp = await fetch(`/resources/${resourceName}.yaml`);
+        }
+      }
+      if (!resp.ok) {
+        modalError = `Failed to load resource ${resourceName} ${resourceVersion || ''}`;
+        return;
+      }
+      const txt = await resp.text();
+      const parsed = yaml.load(txt) as any;
+      modalSpec = parsed?.schema?.openAPIV3Schema?.properties?.spec || null;
+      modalStatus = parsed?.schema?.openAPIV3Schema?.properties?.status || null;
+      // Fallback to the current data if parsed YAML doesn't include full spec/status
+      if (!modalSpec && type === 'spec' && data) {
+        modalSpec = data as Schema;
+      }
+      if (!modalStatus && type === 'status' && data) {
+        modalStatus = data as Schema;
+      }
+      // Wait for next tick to allow modal to render, then focus the element
+      setTimeout(() => {
+        try {
+          const elem = document.getElementById(modalHash);
+          if (elem) {
+            elem.setAttribute('tabindex', '-1');
+            (elem as HTMLElement).focus({ preventScroll: true });
+            (elem as HTMLElement).scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }
+        } catch (e) {
+          // ignore
+        }
+      }, 100);
+    } catch (e) {
+      modalError = String(e);
+    } finally {
+      isLoadingModal = false;
+    }
   }
 
   function copyUrl(path: string) {
@@ -131,6 +225,27 @@
     const q = releaseName ? `?release=${encodeURIComponent(releaseName)}` : '';
     const url = `${window.location.origin}${ver}${q}#${path}`;
     return url;
+  }
+
+  function closeModal() {
+    showResourceModal = false;
+    modalSpec = null; modalStatus = null; modalHash = '';
+    // reset ulExpanded to nothing
+    ulExpanded.set([]);
+  }
+
+  // Handle ESC key to close modal
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape' && showResourceModal) {
+      closeModal();
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleKeydown);
+    onDestroy(() => {
+      window.removeEventListener('keydown', handleKeydown);
+    });
   }
 </script>
 
@@ -178,6 +293,46 @@
     </li>
   {/each}
 </ul>
+
+{#if showResourceModal}
+  <!-- Modal overlay -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/50" on:click={closeModal} aria-hidden="true"></div>
+    <div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl overflow-hidden max-w-6xl w-full mx-4 sm:mx-6 md:mx-8">
+      <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100 dark:border-gray-800">
+        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{resourceName} {resourceVersion ? ` ${resourceVersion}` : ''}</div>
+          <div class="flex items-center gap-2">
+            {#if isLoadingModal}
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+            {/if}
+            {#if modalError}
+              <div class="text-xs text-red-600 dark:text-red-400">{modalError}</div>
+            {/if}
+            <button class="text-xs px-3 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" on:click={closeModal}>Close</button>
+            <button class="text-xs px-3 py-1 rounded bg-cyan-600 text-white" on:click={() => window.open(`/${resourceName}/${resourceVersion ? resourceVersion : ''}${releaseName ? `?release=${encodeURIComponent(releaseName)}` : ''}`, '_blank')}>Open</button>
+          </div>
+      </div>
+      <div class="p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-h-[70vh] overflow-auto bg-white dark:bg-gray-900">
+        <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-2 md:p-3 bg-gray-50 dark:bg-gray-800">
+          <div class="text-xs font-semibold text-cyan-600 dark:text-cyan-400 mb-2">SPEC</div>
+          {#if modalSpec}
+            <Render hash={modalHash} source={releaseName || 'release'} type={'spec'} data={modalSpec} showType={false} />
+          {:else}
+            <div class="text-xs text-gray-500">No spec available</div>
+          {/if}
+        </div>
+        <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-2 md:p-3 bg-gray-50 dark:bg-gray-800">
+          <div class="text-xs font-semibold text-green-600 dark:text-green-400 mb-2">STATUS</div>
+          {#if modalStatus}
+            <Render hash={modalHash} source={releaseName || 'release'} type={'status'} data={modalStatus} showType={false} />
+          {:else}
+            <div class="text-xs text-gray-500">No status available</div>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; }

@@ -193,8 +193,8 @@
 			{/if}
 		</button>
 		{#if source !== 'uploaded'}
-				<a
-					href={() => '#'}
+				<button
+					type="button"
 					class="cursor-pointer text-gray-400 dark:text-gray-500 {expanded
 						? 'block'
 						: 'hidden'} hover:text-gray-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-gray-300"
@@ -248,7 +248,7 @@
 								}, 500);
 							}
 						}
-					}}>#</a>
+					}}>#</button>
 		{/if}
 	</div>
 	{#if expanded}
