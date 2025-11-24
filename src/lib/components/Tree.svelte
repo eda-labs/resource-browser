@@ -312,8 +312,14 @@
 						// If so, just update the hash to highlight and scroll to this field rather than opening a new page.
 						const isOnResourcePage = onResourcePage && pathParts.length >= 2 && pathParts[0] === resName && (!resVersion || pathParts[1] === resVersion);
 						// Construct the URL using parsed resName/resVersion from `hash` if possible
-						const verPath = parsedResVersion ? `/${parsedResVersion}` : '';
-						const resourcePath = parsedResName || '';
+						// Prefer the pathname-resolved resource name/version when on a resource page
+						let resourcePath = resName || '';
+						let verPath = resVersion ? `/${resVersion}` : '';
+						if (pathParts.length < 2) {
+							const { resName: parsedResName, resVersion: parsedResVersion } = parseResourceFromHash(hash || '');
+							if (parsedResName) resourcePath = parsedResName;
+							if (parsedResVersion) verPath = `/${parsedResVersion}`;
+						}
 						const base = window.location.origin;
 						const fullUrl = `${base}/${resourcePath}${verPath}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
 						if (isOnResourcePage) {
@@ -337,7 +343,9 @@
 								} catch (e) { /* ignore */ }
 							}
 						} else {
-							// Open in a new tab/window so search results are not lost
+							// Prefetch the resource YAML to warm the HTTP cache and reduce the two-step blank loading,
+							// but don't block the UI for too long — try fetch and open immediately.
+							try { fetch(fullUrl, { mode: 'same-origin', cache: 'reload' }); } catch (e) { /* ignore */ }
 							window.open(fullUrl, '_blank');
 						}
 						e.preventDefault();

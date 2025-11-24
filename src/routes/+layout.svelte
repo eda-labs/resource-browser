@@ -2,7 +2,7 @@
 	import '../app.css';
 	import Footer from '$lib/components/Footer.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	let AnimatedBackground: any = null;
+	 let AnimatedBackground: any = $state(null);
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
@@ -24,7 +24,7 @@
 </script>
 
 {#if AnimatedBackground}
-	<svelte:component this={AnimatedBackground} />
+	<AnimatedBackground />
 {/if}
 
 {#if $isDetailPage}

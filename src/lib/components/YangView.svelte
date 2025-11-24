@@ -204,7 +204,9 @@
     isLoadingModal = true;
     // Save previous expand state and enforce collapse except for selected path
     prevExpandAll = null; prevExpandAllScope = null;
+    let yamlLib: any = null;
     try {
+      yamlLib = (await import('js-yaml')).default;
       prevExpandAll = $expandAll;
       prevExpandAllScope = $expandAllScope;
     } catch (e) {
@@ -215,19 +217,8 @@
     // Create a unique title id for the modal so we can attach aria-labelledby and
     // include the resource name in the title for accessibility and clarity.
     modalTitleId = `yangview-dialog-title-${stripResourcePrefixFQDN(resourceName || 'resource')}-${Math.random().toString(36).slice(2,8)}`;
-    // Update the document title while the modal is open to reflect the resource
-    if (typeof window !== 'undefined') {
-      try {
-        const yamlLib = (await import('js-yaml')).default;
-        prevDocumentTitle = document.title;
-        const kindLabel = kind ? ` ${shortKind(kind)} ·` : '';
-        document.title = `${stripResourcePrefixFQDN(resourceName || '')}${kindLabel}${resourceVersion ? ' ' + resourceVersion : ''}${releaseName ? ' · ' + releaseName : ''} | EDA Resource Browser`;
-        // Prevent background scrolling to avoid visual overlap
-        try { document.body.style.overflow = 'hidden'; } catch (e) { /* ignore */ }
-      } catch (e) { /* ignore */ }
-    }
+    // Deferred: the document title is set after we fetch content to avoid showing empty modal.
     modalCompact = true; // default to tooltip (compact) mode when opening modal
-    showResourceModal = true;
     expandAll.set(false);
     // compute ulExpanded from path (expand only ancestors)
     const parts = path.split('.');
@@ -294,12 +285,24 @@
       }
       if (!resp.ok) {
         modalError = `Failed to load resource ${resourceName} ${resourceVersion || ''}`;
+        isLoadingModal = false;
+        showResourceModal = true;
         return;
       }
       const txt = await resp.text();
-      const parsed = (await import('js-yaml')).then(m => m.default.load(txt)) as any;
+      const parsed = yamlLib.load(txt) as any;
       modalSpec = parsed?.schema?.openAPIV3Schema?.properties?.spec || null;
       modalStatus = parsed?.schema?.openAPIV3Schema?.properties?.status || null;
+      // Set document title now that we have parsed content and show it populated.
+      if (typeof window !== 'undefined') {
+        try {
+          prevDocumentTitle = document.title;
+          const kindLabel = kind ? ` ${shortKind(kind)} ·` : '';
+          document.title = `${stripResourcePrefixFQDN(resourceName || '')}${kindLabel}${resourceVersion ? ' ' + resourceVersion : ''}${releaseName ? ' · ' + releaseName : ''} | EDA Resource Browser`;
+          try { document.body.style.overflow = 'hidden'; } catch (e) { /* ignore */ }
+        } catch (e) { /* ignore */ }
+      }
+      showResourceModal = true;
       // Fallback to the current data if parsed YAML doesn't include full spec/status
       if (!modalSpec && type === 'spec' && data && typeof data === 'object') {
         modalSpec = data as Schema;
@@ -418,6 +421,8 @@
                     } catch (e) { /* ignore */ }
                   }
                 } else if (resourceName) {
+                  // Prefetch the resource to warm the cache and reduce blank-to-populate step in new tabs
+                  try { fetch(url, { mode: 'same-origin', cache: 'reload' }); } catch (err) { /* ignore */ }
                   window.open(url, '_blank');
                 } else {
                   // no resource name available - copy the current page + hash
