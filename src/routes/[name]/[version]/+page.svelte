@@ -2,9 +2,8 @@
 	import { page } from '$app/stores';
 	import { derived, writable } from 'svelte/store';
 	import { onDestroy } from 'svelte';
-	import Ajv from 'ajv';
-	import type { ErrorObject, ValidateFunction } from 'ajv';
-	import yaml from 'js-yaml';
+	// Ajv and js-yaml are used only by validation flow; load dynamically to reduce initial bundle
+	import type { ErrorObject } from 'ajv';
 
 	import Footer from '$lib/components/Footer.svelte';
 	import TopHeader from '$lib/components/TopHeader.svelte';
@@ -128,6 +127,8 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 	}
 
 	async function validateYaml() {
+		const [{ default: Ajv }] = await Promise.all([import('ajv')]);
+		const yamlLib = (await import('js-yaml')).default;
 		if (!yamlInput.trim()) {
 			validationErrors = [];
 			validationResult = null;
@@ -144,18 +145,18 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 			
 			for (const doc of yamlDocs) {
 				try {
-					const parsed = yaml.load(doc.trim());
+						const parsed = yamlLib.load(doc.trim());
 					if (parsed) {
 						parsedDocs.push(parsed);
 					}
 				} catch (e) {
-					const allDocs = yaml.loadAll(doc.trim());
+					const allDocs = yamlLib.loadAll(doc.trim());
 					parsedDocs.push(...allDocs.filter(d => d !== null && d !== undefined));
 				}
 			}
 
 			if (parsedDocs.length === 0) {
-				const allDocs = yaml.loadAll(yamlInput);
+				const allDocs = yamlLib.loadAll(yamlInput);
 				parsedDocs.push(...allDocs.filter(d => d !== null && d !== undefined));
 			}
 

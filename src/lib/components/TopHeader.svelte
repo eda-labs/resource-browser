@@ -42,7 +42,7 @@
   <!-- Logo / app identity stays pinned to the far left edge (desktop only) -->
   <div class="absolute left-0 inset-y-0 flex items-center pl-4 sm:pl-20 hidden sm:flex">
     <a href="/" class="flex items-center gap-3 no-underline">
-      <img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" />
+      <img src="/images/eda.svg" alt="Nokia EDA" width="40" height="40" class="rounded" loading="eager" fetchpriority="high" />
       <div class="leading-tight hidden sm:block">
         <div class="text-sm font-semibold text-yellow-400 dark:text-yellow-400">Nokia EDA</div>
         <div class="text-xs text-gray-900 dark:text-gray-300">Resource Browser</div>
@@ -69,7 +69,7 @@
           <!-- Mobile: compact app identity (left-aligned, smaller text) -->
           <div class="block sm:hidden w-full mb-0.5">
             <a href="/" class="inline-flex items-center gap-3 no-underline text-white dark:text-white">
-              <img src="/images/eda.svg" alt="Nokia EDA" width="24" height="24" class="w-6 h-6 rounded" />
+              <img src="/images/eda.svg" alt="Nokia EDA" width="24" height="24" class="w-6 h-6 rounded" loading="eager" fetchpriority="high" />
               <div class="leading-tight text-left">
                 <div class="text-xs font-semibold text-white">Nokia EDA</div>
                 <div class="text-[11px] text-white/80">Resource Browser</div>

@@ -2,7 +2,7 @@
 	import { derived, writable } from 'svelte/store';
 	import { onMount, onDestroy } from 'svelte';
 	import { goto, afterNavigate } from '$app/navigation';
-	import Ajv from 'ajv';
+	// Ajv is used only for YAML validation; load dynamically to avoid increasing main bundle size
 	import Footer from '$lib/components/Footer.svelte';
 	import AnimatedBackground from '$lib/components/AnimatedBackground.svelte';
 	import Render from '$lib/components/Render.svelte';
@@ -236,6 +236,7 @@ function trapFocus(container: HTMLElement) {
 
     
 	async function validateYaml() {
+		const { default: Ajv } = await import('ajv');
 		if (!yamlInput.trim()) { validationErrors = []; validationResult = null; return; }
 		isValidating = true; validationErrors = []; validationResult = null;
 		try {
@@ -336,8 +337,8 @@ function trapFocus(container: HTMLElement) {
 									<div class="space-y-6">
 										<div class="flex items-center gap-4 ml-0 sm:ml-0 justify-start flex-nowrap">
 											<div class="flex items-center gap-3 mr-2">
-												<img src="/images/bird-logo.svg" alt="Nokia" class="w-14 h-14 sm:w-24 sm:h-24" />
-												<img src="/images/eda.svg" alt="EDA" class="w-12 h-12 sm:w-20 sm:h-20" />
+												<img src="/images/bird-logo.svg" alt="Nokia" class="w-14 h-14 sm:w-24 sm:h-24" loading="eager" fetchpriority="high" />
+												<img src="/images/eda.svg" alt="EDA" class="w-12 h-12 sm:w-20 sm:h-20" loading="eager" fetchpriority="high" />
 											</div>
 											<div>
 												<h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-nokia-headline text-yellow-400 leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] text-left">

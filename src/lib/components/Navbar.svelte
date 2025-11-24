@@ -54,9 +54,9 @@
 						<!-- Resource Info: show kind then full name with version selector -->
 						{#if showPageTitle}
 						<div class="min-w-0">
-							<h1 class="text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 font-nokia-headline leading-tight truncate">
+							<h2 class="text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 font-nokia-headline leading-tight truncate">
 								{kind || shortName}
-							</h1>
+							</h2>
 							<p class="text-sm sm:text-base text-gray-500 dark:text-gray-300 font-medium mt-0 truncate flex items-center gap-2 -translate-y-0.5">
 								<span class="truncate">{groupPath || name}</span>
 								<span class="text-gray-400">/</span>

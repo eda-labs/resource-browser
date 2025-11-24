@@ -3,7 +3,6 @@
   import Render from './Render.svelte';
   import { stripResourcePrefixFQDN } from './functions';
   import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
-  import yaml from 'js-yaml';
   import releasesYaml from '$lib/releases.yaml?raw';
   import type { ReleasesConfig } from '$lib/structure';
   import { onDestroy } from 'svelte';
@@ -219,6 +218,7 @@
     // Update the document title while the modal is open to reflect the resource
     if (typeof window !== 'undefined') {
       try {
+        const yamlLib = (await import('js-yaml')).default;
         prevDocumentTitle = document.title;
         const kindLabel = kind ? ` ${shortKind(kind)} ·` : '';
         document.title = `${stripResourcePrefixFQDN(resourceName || '')}${kindLabel}${resourceVersion ? ' ' + resourceVersion : ''}${releaseName ? ' · ' + releaseName : ''} | EDA Resource Browser`;
@@ -242,7 +242,7 @@
       // Resolve the release folder from releaseName (if provided)
       let releaseFolder = '';
       try {
-        const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+        const releasesConfig = yamlLib.load(releasesYaml) as ReleasesConfig;
         if (releaseName && releaseName !== 'release') {
           const found = releasesConfig.releases.find((r) => r.name === releaseName);
           if (found) releaseFolder = found.folder;
@@ -277,7 +277,8 @@
       // If we still don't have resource YAML, try to locate it in other releases
       if (!resp.ok) {
         try {
-          const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+          const yamlLib = (await import('js-yaml')).default;
+          const releasesConfig = yamlLib.load(releasesYaml) as ReleasesConfig;
           for (const r of releasesConfig.releases) {
             try {
               const pathCandidate = resourceVersion ? `/${r.folder}/${resourceName}/${resourceVersion}.yaml` : `/${r.folder}/${resourceName}.yaml`;
@@ -296,7 +297,7 @@
         return;
       }
       const txt = await resp.text();
-      const parsed = yaml.load(txt) as any;
+      const parsed = (await import('js-yaml')).then(m => m.default.load(txt)) as any;
       modalSpec = parsed?.schema?.openAPIV3Schema?.properties?.spec || null;
       modalStatus = parsed?.schema?.openAPIV3Schema?.properties?.status || null;
       // Fallback to the current data if parsed YAML doesn't include full spec/status
