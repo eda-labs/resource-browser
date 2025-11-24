@@ -2,7 +2,8 @@
 	import '../app.css';
 	import Footer from '$lib/components/Footer.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	import AnimatedBackground from '$lib/components/AnimatedBackground.svelte';
+	let AnimatedBackground: any = null;
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
 
@@ -16,9 +17,15 @@
 		// Match two segments like /resource/version; do not show for single-segment paths
 		return /^\/[^\/]+\/[^\/]+$/.test(path);
 	});
+	onMount(async () => {
+		const m = await import('$lib/components/AnimatedBackground.svelte');
+		AnimatedBackground = m.default;
+	});
 </script>
 
-<AnimatedBackground />
+{#if AnimatedBackground}
+	<svelte:component this={AnimatedBackground} />
+{/if}
 
 {#if $isDetailPage}
 	<div class="flex h-screen has-header-img pt-16 md:pt-20">

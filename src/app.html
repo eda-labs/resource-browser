@@ -4,16 +4,24 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%sveltekit.assets%/images/eda.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Nokia EDA Resource Browser - browse and compare Nokia EDA Custom Resource Definitions (CRDs) across releases." />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap"
-    />
+    <!-- Load Google Fonts non-blocking to avoid render-blocking CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap" rel="stylesheet">
+    </noscript>
     <!-- Preload critical LCP images -->
     <link rel="preload" as="image" href="%sveltekit.assets%/images/bird-logo.svg" />
     <link rel="preload" as="image" href="%sveltekit.assets%/images/eda.svg" />
+    <!-- Preload background image (LCP) and a smaller fallback for mobile -->
+    <link rel="preload" as="image" href="%sveltekit.assets%/images/background-crd.webp">
+    <link rel="preload" as="image" href="%sveltekit.assets%/images/background.webp">
+    <!-- Preload locally hosted fonts as early hints (preferably convert to woff2 in future) -->
+    <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureText_Rg.ttf" type="font/ttf" crossorigin>
+    <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureHeadline_Rg.ttf" type="font/ttf" crossorigin>
 
     %sveltekit.head%
     <script>

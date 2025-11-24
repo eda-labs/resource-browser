@@ -201,6 +201,18 @@
     /* Use a light foreground text color when over the header image to better contrast with darker background */
     color: rgba(255, 255, 255, 0.95);
   }
+
+  /* Mobile - use lighter background image and scroll attachment to reduce performance cost */
+  @media (max-width: 768px) {
+    .has-header-img {
+      background-image:
+        linear-gradient(120deg, rgba(2,10,35,0.42), rgba(4,45,120,0.48)),
+        linear-gradient(60deg, rgba(7,36,120,0.25), rgba(18,164,228,0.2)),
+        url('/images/background.webp');
+      background-attachment: scroll; /* Fixed is heavy on mobile */
+      background-position: center center;
+    }
+  }
   
   /* Subtle grid pattern background (dark) */
   .bg-pattern {

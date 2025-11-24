@@ -77,7 +77,17 @@ This browser makes it easier to find, validate and compare definitions for Nokia
     
 	$: resourceInfo = resourceData ? { kind: resourceData.spec?.names?.kind || '', group: resourceData.spec?.group || '', name: selectedResource || '' } : null;
 	$: if (selectedResource || selectedVersion) { releaseAvailability.clear(); }
-	$: { loadCrdsForRelease($selectedRelease); selectedResource = null; selectedVersion = null; resourceData = null; }
+	// Defer initial heavy manifest load until after paint to improve LCP (use requestIdleCallback where available)
+	let initialLoaded = false;
+	onMount(() => {
+		if (typeof (window as any).requestIdleCallback === 'function') {
+			(window as any).requestIdleCallback(() => { loadCrdsForRelease($selectedRelease); initialLoaded = true; });
+		} else {
+			setTimeout(() => { loadCrdsForRelease($selectedRelease); initialLoaded = true; }, 200);
+		}
+	});
+	// After initial load, reactively reload when selectedRelease changes.
+	$: if (initialLoaded) { loadCrdsForRelease($selectedRelease); selectedResource = null; selectedVersion = null; resourceData = null; }
 	// When the selected release object changes, load versions and set version lists
 	$: if (compareRelease && selectedResource) { loadVersionsForResourceInRelease(compareRelease, selectedResource).then(versions => { compareReleaseVersions = versions; }); } else { compareReleaseVersions = []; }
 	$: updateRootScroll();
@@ -295,7 +305,13 @@ function trapFocus(container: HTMLElement) {
 		{/if}
 		{#if mobileMenuOpen && selectedResource}<button class="lg:hidden fixed inset-0 bg-black/50 z-30" on:click={() => mobileMenuOpen = false} aria-label="Close"></button>{/if}
 		
-		<div id="main-scroll" class="flex-1 overflow-y-auto flex flex-col has-header-img">
+		<div id="main-scroll" class="relative flex-1 overflow-y-auto flex flex-col has-header-img">
+			<!-- LCP background image as an actual <picture> so we can set fetchpriority and loading attributes -->
+			<picture aria-hidden="true" class="pointer-events-none absolute inset-0 z-0 w-full h-full">
+				<source media="(max-width: 768px)" srcset="/images/background.webp">
+				<source media="(min-width: 769px)" srcset="/images/background-crd.webp">
+				<img loading="eager" fetchpriority="high" src="/images/background-crd.webp" alt="" class="w-full h-full object-cover" />
+			</picture>
 			{#if !selectedResource && !showBrowseMode}
 				<!-- YANG-Style Homepage -->
 				<div class="block">
