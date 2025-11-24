@@ -56,7 +56,8 @@
 			const compute = async () => {
 				try {
 					// iterate releases in chronological order (old to new), same as before
-					const releases = allReleases?.slice?.(0) || [];
+					// iterate releases in chronological order (old to new)
+					const releases = allReleases?.slice?.(0).reverse?.() || [];
 					for (const r of releases) {
 						try {
 							const res = await fetch(`/${r.folder}/manifest.json`);

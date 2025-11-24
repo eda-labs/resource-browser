@@ -57,12 +57,20 @@ for release_dir in sorted(resources_dir.iterdir()):
             version_name = yaml_file.stem
             version_obj = {"name": version_name}
             
-            # Check if deprecated in metadata
-            if crd_meta and 'versions' in crd_meta:
+            # Prefer per-release YAML flag for "deprecated" if present
+            try:
+                with open(yaml_file, 'r') as yf:
+                    parsed = yaml.safe_load(yf)
+                    if isinstance(parsed, dict) and parsed.get('deprecated', False):
+                        version_obj['deprecated'] = True
+            except Exception:
+                # If YAML parsing fails, we'll fall back to the global metadata below
+                pass
+
+            # Fall back to appVersion from resources.yaml metadata if not present in YAML
+            if 'appVersion' not in version_obj and crd_meta and 'versions' in crd_meta:
                 for meta_version in crd_meta['versions']:
                     if meta_version.get('name') == version_name:
-                        if meta_version.get('deprecated', False):
-                            version_obj['deprecated'] = True
                         if 'appVersion' in meta_version:
                             version_obj['appVersion'] = meta_version['appVersion']
                         break

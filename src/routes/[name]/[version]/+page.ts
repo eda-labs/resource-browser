@@ -99,10 +99,34 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
 		// lazily on the client if needed.
 		let deprecatedSince: string | null = null;
 		// Use the releaseManifest (selected release) if it marks the version deprecated.
+		// If the selected release marks it deprecated, compute the earliest release
+		// in allReleases where the version was first marked deprecated by iterating
+		// releases in chronological order (old -> new).
 		const manifestEntry = releaseManifest.find((r: any) => r.name === name);
 		const manifestVersion = manifestEntry?.versions?.find((v: any) => v.name === versionOnFocus);
 		if (manifestVersion && manifestVersion.deprecated) {
-			deprecatedSince = selectedRelease.label || selectedRelease.name || null;
+			// Iterate the releases from oldest to newest so we find the FIRST release
+			// where the `deprecated` flag becomes true for this version.
+			const sortedReleases = (allReleases || []).slice(0).reverse();
+			for (const r of sortedReleases) {
+				try {
+					const resp = await fetch(`/${r.folder}/manifest.json`);
+					if (!resp.ok) continue;
+					const manifest = await resp.json();
+					const entry = manifest.find((x: any) => x.name === name);
+					if (!entry || !entry.versions) continue;
+					const v = entry.versions.find((vv: any) => vv.name === versionOnFocus);
+					if (v && v.deprecated) {
+						deprecatedSince = r.label || r.name || null;
+						break;
+					}
+				} catch (e) {
+					// ignore fetch errors for a given release and continue
+					continue;
+				}
+			}
+			// Fallback: if we couldn't find an earlier release (rare), use the selected release label
+			if (!deprecatedSince) deprecatedSince = selectedRelease.label || selectedRelease.name || null;
 		}
 		return {
 			name,

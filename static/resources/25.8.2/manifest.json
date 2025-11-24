@@ -161,7 +161,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -190,7 +191,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -246,7 +248,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -275,7 +278,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1017,7 +1021,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1505,7 +1510,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1561,7 +1567,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1590,7 +1597,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1619,7 +1627,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1909,7 +1918,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
@@ -1938,7 +1948,8 @@
         "name": "v1"
       },
       {
-        "name": "v1alpha1"
+        "name": "v1alpha1",
+        "deprecated": true
       }
     ]
   },
