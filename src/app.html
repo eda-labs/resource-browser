@@ -20,9 +20,12 @@
           avoid downloading a large image and improve LCP. If you add a mobile-optimized image,
           you can preload it here with a media attribute for (max-width:768px). -->
         <link rel="preload" as="image" href="%sveltekit.assets%/images/background-crd.webp" media="(min-width: 769px)">
-    <!-- Preload locally hosted fonts as early hints (preferably convert to woff2 in future) -->
+    <!-- Preload the base text/headline fonts for faster paint; if needed, add specific weights for the hero to reduce font swap. Convert to woff2 for smaller payloads. -->
     <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureText_Rg.ttf" type="font/ttf" crossorigin>
     <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureHeadline_Rg.ttf" type="font/ttf" crossorigin>
+    <!-- Preload bold weights used by hero/title to reduce layout shifts (increase prior payload slightly) -->
+    <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureText_Bd.ttf" type="font/ttf" crossorigin>
+    <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureHeadline_XBd..ttf" type="font/ttf" crossorigin>
 
     %sveltekit.head%
     <script>

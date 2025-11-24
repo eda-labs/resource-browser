@@ -118,6 +118,14 @@
     overflow: hidden;
   }
 
+  /* Reduce CLS by stabilizing headline and hero typography metrics across font swap.
+     `font-size-adjust` helps keep x-height consistent across fallback and web fonts. */
+  :global(h1),
+  :global(.font-nokia-headline) {
+    font-size-adjust: 0.5; /* conservative default for Nokia headline to reduce size shift */
+    line-height: 1.02; /* stabilize line height for large titles */
+  }
+
   /* Headings and display text should use the Nokia headline family */
   :global(h1),
   :global(h2),
@@ -215,6 +223,14 @@
       background-attachment: scroll; /* Fixed is heavy on mobile */
       background-position: center center;
     }
+  }
+
+  /* Avoid layout shifts for short action buttons by sizing them in CSS. */
+  :global(.release-more-btn) {
+    min-width: 84px; /* ensures min width for 'More' button to avoid width change when fonts load */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   
   /* Subtle grid pattern background (dark) */

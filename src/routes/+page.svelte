@@ -372,7 +372,7 @@ function trapFocus(container: HTMLElement) {
 																	<button on:click={() => toggleGroupShow(group.label)} on:keydown={(e) => {
 																		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleGroupShow(group.label); }
 																		if (e.key === 'ArrowDown') { e.preventDefault(); setGroupShow(group.label, true); setTimeout(() => { const menu = e.currentTarget.nextElementSibling as HTMLElement; if (menu) { const first = menu.querySelector<HTMLElement>('button[tabindex="0"]'); if (first) first.focus(); } }, 0); }
-																	}} tabindex="0" class="px-4 py-3 rounded-xl bg-gray-800/60 border-2 border-slate-700/30 text-white text-sm font-medium hover:bg-gray-800/80 hover:border-amber-500 dark:hover:border-amber-400 transition-all duration-200 shadow-pro">More ▾</button>
+																	}} tabindex="0" class="release-more-btn px-4 py-3 rounded-xl bg-gray-800/60 border-2 border-slate-700/30 text-white text-sm font-medium hover:bg-gray-800/80 hover:border-amber-500 dark:hover:border-amber-400 transition-all duration-200 shadow-pro">More ▾</button>
 																	{#if group.showMore}
 																		<div class="absolute mt-2 bg-gray-800 dark:bg-gray-900 border-2 border-gray-700 rounded-xl shadow-pro p-2 z-40 min-w-32 max-h-60 overflow-y-auto">
 																			{#each group.releases.slice(3) as r}
