@@ -294,7 +294,8 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 			}
 
 			const crdText = await response.text();
-			const crd = yaml.load(crdText) as any;
+			const { default: yamlLib } = await import('js-yaml');
+			const crd = yamlLib.load(crdText) as any;
 			const compareSpec = crd.schema.openAPIV3Schema.properties.spec;
 			const compareStatus = crd.schema.openAPIV3Schema.properties.status;
 
@@ -498,7 +499,7 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 											}}
 											class="appearance-none w-full sm:min-w-[140px] md:min-w-[180px] pl-3 md:pl-4 pr-8 md:pr-10 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-white/20 bg-black/30 text-xs md:text-sm font-semibold text-white hover:border-cyan-400 focus:border-cyan-400 focus:outline-none focus:ring-4 focus:ring-cyan-400/20 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
 										>
-											<option value={null} class="bg-gray-900 text-white">Current ({releaseLabel})</option>
+											<option value="" class="bg-gray-900 text-white">Current ({releaseLabel})</option>
 											{#each allReleases as release}
 												{#if release.label !== releaseLabel}
 													<option value={release.name} class="bg-gray-900 text-white">{release.label}</option>
@@ -520,7 +521,7 @@ $: if (typeof hash !== 'undefined' && hash && hash.length > 0) {
 											class="appearance-none w-full sm:min-w-[130px] md:min-w-[160px] pl-3 md:pl-4 pr-8 md:pr-10 py-2 md:py-2.5 rounded-lg md:rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs md:text-sm font-semibold text-gray-900 dark:text-gray-100 hover:border-blue-400 dark:hover:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-400/10 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 dark:disabled:hover:border-gray-700 disabled:hover:shadow-sm"
 											disabled={compareReleaseVersions.length === 0}
 										>
-											<option value={null} class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+											<option value="" class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
 												{compareReleaseVersions.length === 0 ? 'No versions' : 'Select...'}
 											</option>
 											{#each compareReleaseVersions as version}
