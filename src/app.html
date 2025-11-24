@@ -16,9 +16,10 @@
     <!-- Preload critical LCP images -->
     <link rel="preload" as="image" href="%sveltekit.assets%/images/bird-logo.svg" />
     <link rel="preload" as="image" href="%sveltekit.assets%/images/eda.svg" />
-    <!-- Preload background image (LCP) and a smaller fallback for mobile -->
-    <link rel="preload" as="image" href="%sveltekit.assets%/images/background-crd.webp">
-    <link rel="preload" as="image" href="%sveltekit.assets%/images/background.webp">
+        <!-- Preload background image (LCP) only for larger viewports; mobile uses a CSS gradient to
+          avoid downloading a large image and improve LCP. If you add a mobile-optimized image,
+          you can preload it here with a media attribute for (max-width:768px). -->
+        <link rel="preload" as="image" href="%sveltekit.assets%/images/background-crd.webp" media="(min-width: 769px)">
     <!-- Preload locally hosted fonts as early hints (preferably convert to woff2 in future) -->
     <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureText_Rg.ttf" type="font/ttf" crossorigin>
     <link rel="preload" as="font" href="%sveltekit.assets%/fonts/NokiaPureHeadline_Rg.ttf" type="font/ttf" crossorigin>

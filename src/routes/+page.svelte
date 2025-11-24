@@ -341,15 +341,15 @@ function trapFocus(container: HTMLElement) {
 
 					<!-- Main Content -->
 					<div class="relative">
-						<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:py-12">
+						<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:py-12 min-h-[220px] sm:min-h-[340px] md:min-h-[420px]">
 							<!-- YANG-style Releases + Info two-column hero -->
 							<div class="mb-8">
 								<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 									<!-- Left: grouped releases -->
 									<div class="space-y-6">
 										<div class="flex items-center gap-4 ml-0 sm:ml-0 justify-start flex-nowrap">
-											<img src="/images/bird-logo.svg" alt="Nokia" class="w-14 h-14 sm:w-24 sm:h-24" loading="eager" fetchpriority="high" />
-											<img src="/images/eda.svg" alt="EDA" class="w-12 h-12 sm:w-20 sm:h-20" loading="eager" fetchpriority="high" />
+											<img src="/images/bird-logo.svg" alt="Nokia" class="w-14 h-14 sm:w-24 sm:h-24" loading="eager" fetchpriority="high" width="96" height="96" />
+											<img src="/images/eda.svg" alt="EDA" class="w-12 h-12 sm:w-20 sm:h-20" loading="eager" fetchpriority="high" width="80" height="80" />
 										</div>
 										<div>
 											<h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-nokia-headline text-yellow-400 leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] text-left">
