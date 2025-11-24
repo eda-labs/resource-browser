@@ -1,27 +1,29 @@
 <script lang="ts">
   // Compact inline credits: logos + links (no copyright lines)
+  export let compact: boolean = false;
 </script>
 
-<div class="mt-6 mb-6 text-center text-xs text-gray-400 dark:text-gray-300">
+<div class={`text-center text-xs text-gray-400 dark:text-gray-300 ${compact ? 'mt-2 mb-2' : 'mt-6 mb-6'}`}>
   <div class="max-w-2xl mx-auto px-4">
     <div class="flex items-center justify-center gap-4">
-      <a href="https://docs.eda.dev" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" aria-label="Documentation">
-        <svg class="h-5 w-5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-          <!-- Arrow up-right / compact docs icon (monochrome) -->
-          <path d="M3.5 12.5a.75.75 0 0 1 0-1.06L10.94 4 7 4a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75V9a.75.75 0 0 1-1.5 0V5.06L4.56 12.5a.75.75 0 0 1-1.06 0z" />
-        </svg>
-        <span class="hidden sm:inline text-xs">Documentation</span>
+      <!-- GitHub icon (exact from crd.eda.dev) - linked to the repo -->
+      <a href="https://github.com/eda-labs/resource-browser" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300" aria-label="GitHub repository">
+        <svg class="h-5 w-5 text-white hover:text-gray-300 inline-flex" fill="currentColor" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
+        <span class="sr-only">GitHub</span>
       </a>
 
-      <a href="https://github.com/eda-labs/resource-browser" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors" aria-label="GitHub repository">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        <span class="hidden sm:inline text-xs">GitHub</span>
+      <!-- Discord icon (exact from crd.eda.dev) - community link -->
+      <a href="https://eda.dev/discord" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300" aria-label="Community Discord">
+        <svg class="h-5 w-5 text-white hover:text-gray-300 inline-flex" fill="currentColor" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.942 5.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.586 11.586 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3 17.392 17.392 0 0 0-2.868 11.662 15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.638 10.638 0 0 1-1.706-.83c.143-.106.283-.217.418-.331a11.664 11.664 0 0 0 10.118 0c.137.114.277.225.418.331-.544.328-1.116.606-1.71.832a12.58 12.58 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM8.678 14.813a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.929 1.929 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"/></svg>
+        <span class="sr-only">Community</span>
       </a>
 
-      <a href="https://eda.dev/discord" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" aria-label="Community Discord">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892..077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-        <span class="hidden sm:inline text-xs">Community</span>
+      <!-- Documentation icon (exact from crd.eda.dev) - docs link -->
+      <a href="https://docs.eda.dev" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300" aria-label="Documentation">
+        <svg class="h-5 w-5 text-white hover:text-gray-300 inline-flex origin-center scale-80 transform" fill="currentColor" viewBox="556.382 193.2939 90 96.7689" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M 0 0.000011 L 0 125.8460006714 L 19.482088089 125.8460006714 L 19.4820976257 42.6795005798 L 120.7220535278 129.7931976318 L 120.7220535278 103.7016983032 L 0 0.000011 Z" transform="matrix(0.745513916015625, 0, 0, 0.7455624938011169, 556.3819580078125, 193.29393005371094)"></path></svg>
       </a>
+
+      <!-- (Removed CRD site text link per request) -->
     </div>
   </div>
 </div>
