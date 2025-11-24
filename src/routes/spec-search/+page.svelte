@@ -65,7 +65,8 @@
   })();
 
   // Results view mode: 'tree' shows Render, 'yang' shows dotted path view
-  let resultsViewMode: 'tree' | 'yang' = 'tree';
+  // Default to YANG view for search results as it's generally more compact and focused
+  let resultsViewMode: 'tree' | 'yang' = 'yang';
 
   $: release = releaseName ? releasesConfig.releases.find(r => r.name === releaseName) || null : null;
 
@@ -470,15 +471,15 @@
           </div>
             <div class="text-sm text-gray-500 dark:text-gray-400">{groupedResults.length} matches</div>
           <div class="ml-3 flex items-center gap-2">
-            <span class="text-xs text-gray-900 dark:text-gray-200 mr-2">View:</span>
-            <button
-              on:click={() => resultsViewMode = 'tree'}
-              class="px-2 py-1 rounded-md text-xs font-semibold {resultsViewMode === 'tree' ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}"
-            >Tree</button>
+            <span class="text-sm sm:text-base text-gray-900 dark:text-gray-200 mr-2 font-medium">View:</span>
             <button
               on:click={() => resultsViewMode = 'yang'}
-              class="px-2 py-1 rounded-md text-xs font-semibold {resultsViewMode === 'yang' ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}"
+              class="px-3 py-1.5 rounded-md text-sm sm:text-base font-semibold transition-colors {resultsViewMode === 'yang' ? 'bg-cyan-600 text-white shadow-sm' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}"
             >YANG</button>
+            <button
+              on:click={() => resultsViewMode = 'tree'}
+              class="px-3 py-1.5 rounded-md text-sm sm:text-base font-semibold transition-colors {resultsViewMode === 'tree' ? 'bg-purple-600 text-white shadow-sm' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}"
+            >Tree</button>
           </div>
         </div>
       </div>

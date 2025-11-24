@@ -246,7 +246,7 @@
 			aria-describedby={compact ? `${currentId}-tooltip` : undefined}
 		>
 			<svg
-				class="svg-arrow h-3 w-3 text-gray-600 transition-all duration-200 group-hover:text-blue-600 dark:text-gray-300 dark:group-hover:text-blue-400 {expanded
+				class="svg-arrow h-3 w-3 text-gray-600 transition-all duration-200 group-hover:text-cyan-700 dark:text-gray-300 dark:group-hover:text-cyan-400 {expanded
 					? 'rotate-90'
 					: ''}"
 				fill="none"
@@ -256,8 +256,8 @@
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
 			</svg>
 			<span
-				class="font-medium {compact ? 'text-sm' : ''} transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400 {hash === currentId
-					? 'text-green-600 dark:text-green-400'
+				class="font-medium {compact ? 'text-sm' : ''} transition-colors text-gray-900 dark:text-gray-100 group-hover:text-cyan-700 dark:group-hover:text-cyan-400 {hash === currentId
+					? 'text-cyan-700 dark:text-cyan-400'
 					: ''}"
 				>{key}{#if requiredList.includes(key)}<sup class="text-xs font-bold text-red-500 dark:text-red-400"
 						>*</sup
@@ -287,9 +287,7 @@
 		{#if source !== 'uploaded'}
 				<button
 					type="button"
-					class="cursor-pointer text-gray-400 dark:text-gray-500 {expanded
-						? 'block'
-						: 'hidden'} hover:text-gray-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-gray-300"
+					class="cursor-pointer text-cyan-600 dark:text-cyan-400 {expanded ? 'block' : 'hidden'} hover:text-cyan-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-cyan-300"
 					on:click|capture={(e) => {
 						// Prefer using the current page path/search when available (resource view)
 						const pathParts = window.location.pathname.split('/').filter(Boolean);

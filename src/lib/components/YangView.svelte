@@ -376,7 +376,7 @@
     <li class="flex items-start gap-2 justify-between py-1">
       <div class="min-w-0">
             <div class="flex items-center gap-2">
-          <button type="button" class="text-sm text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium hover:underline" on:click={() => openResource(p.path)}>
+          <button type="button" class="text-sm text-gray-900 dark:text-gray-100 hover:text-cyan-700 dark:hover:text-cyan-400 font-medium hover:underline" on:click={() => openResource(p.path)}>
             <span class="max-w-[70%] break-words">{p.displayPath}{#if p.required}<sup class="text-xs font-bold text-red-500 dark:text-red-400">*</sup>{/if}</span>
           </button>
           {#if p.t}
@@ -385,7 +385,7 @@
           {/if}
           <button
             type="button"
-            class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded text-sm font-semibold"
+            class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 p-1 rounded text-sm font-semibold"
             on:click={(e) => {
               // If we are already on a resource page for this resource (resourceName/resourceVersion),
               // just update the hash to highlight the field rather than opening a new page.
