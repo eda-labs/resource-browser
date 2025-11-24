@@ -1,10 +1,10 @@
 {
-  "version": "1.0.0",
-  "buildDate": "2025-11-04T00:00:00Z",
-  "commit": "",
-  "crdVersion": "v4.0.0",
-  "compatibility": {
-    "minEdaVersion": "4.0.0",
-    "maxEdaVersion": "5.0.0"
-  }
+	"version": "1.0.0",
+	"buildDate": "2025-11-04T00:00:00Z",
+	"commit": "",
+	"crdVersion": "v4.0.0",
+	"compatibility": {
+		"minEdaVersion": "4.0.0",
+		"maxEdaVersion": "5.0.0"
+	}
 }

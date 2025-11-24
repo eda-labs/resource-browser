@@ -10,10 +10,10 @@ const suppressCrdCheckLogs = (): Plugin => ({
 		// @ts-ignore - Intercept console output to suppress CRD check 404s
 		const proc = globalThis.process;
 		if (!proc) return;
-		
+
 		const originalStdoutWrite = proc.stdout.write.bind(proc.stdout);
 		const originalStderrWrite = proc.stderr.write.bind(proc.stderr);
-		
+
 		// @ts-ignore - Override stdout
 		proc.stdout.write = (chunk: any, ...args: any[]) => {
 			const str = chunk?.toString() || '';
@@ -22,8 +22,8 @@ const suppressCrdCheckLogs = (): Plugin => ({
 			}
 			return originalStdoutWrite(chunk, ...args);
 		};
-		
-		// @ts-ignore - Override stderr  
+
+		// @ts-ignore - Override stderr
 		proc.stderr.write = (chunk: any, ...args: any[]) => {
 			const str = chunk?.toString() || '';
 			if (str.includes('Not found:') && str.includes('/resources/') && str.includes('.yaml')) {

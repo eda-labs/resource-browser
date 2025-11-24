@@ -1,16 +1,16 @@
 <script lang="ts">
 	import '../app.css';
- 
+
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	 let AnimatedBackground: any = $state(null);
+	let AnimatedBackground: any = $state(null);
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
 
 	let { children } = $props();
-	
+
 	// Show sidebar on resource detail pages (only when path looks like /<resource>/<version>)
-	const isDetailPage = derived(page, $page => {
+	const isDetailPage = derived(page, ($page) => {
 		const path = $page.url.pathname || '/';
 		// Explicit exclusion for certain routes that should never show the sidebar
 		if (path.startsWith('/bulk-diff') || path.startsWith('/spec-search')) return false;
@@ -19,22 +19,22 @@
 	});
 
 	// Only show the global footer on the homepage
-		// no special-case: show credits on all pages
+	// no special-case: show credits on all pages
 	onMount(async () => {
-			// Defer loading heavy animated background until the browser is idle so it doesn't
-			// compete with LCP-critical assets and main-thread tasks.
-			if (typeof (window as any).requestIdleCallback === 'function') {
-				(window as any).requestIdleCallback(async () => {
-					const m = await import('$lib/components/AnimatedBackground.svelte');
-					AnimatedBackground = m.default;
-				});
-			} else {
-				setTimeout(async () => {
-					const m = await import('$lib/components/AnimatedBackground.svelte');
-					AnimatedBackground = m.default;
-				}, 300);
-			}
-		});
+		// Defer loading heavy animated background until the browser is idle so it doesn't
+		// compete with LCP-critical assets and main-thread tasks.
+		if (typeof (window as any).requestIdleCallback === 'function') {
+			(window as any).requestIdleCallback(async () => {
+				const m = await import('$lib/components/AnimatedBackground.svelte');
+				AnimatedBackground = m.default;
+			});
+		} else {
+			setTimeout(async () => {
+				const m = await import('$lib/components/AnimatedBackground.svelte');
+				AnimatedBackground = m.default;
+			}, 300);
+		}
+	});
 </script>
 
 {#if AnimatedBackground}
@@ -46,21 +46,51 @@
 		 overlay and the content flush on top of the image. -->
 <div class="header-bg-container" aria-hidden="true">
 	<picture>
-		<!-- Only load the large hero background for desktop devices to reduce mobile bytes -->
-		<source media="(min-width: 769px)" srcset="/images/background-crd.webp">
-		<img src="/images/background.webp" alt="" class="header-bg-img" loading="eager" fetchpriority="high" width="1920" height="720" />
+		<!-- Desktop: prefer a larger photo optimized for the layout -->
+		<source
+			media="(min-width: 1200px)"
+			type="image/webp"
+			srcset="/images/background-1920.webp 1920w, /images/background-1600.webp 1600w, /images/background-1280.webp 1280w"
+			sizes="(min-width:1200px) 1920px"
+		/>
+		<!-- Tablet / small desktop: mid-sized image -->
+		<source
+			media="(min-width: 769px)"
+			type="image/webp"
+			srcset="/images/background-1280.webp 1280w, /images/background-1024.webp 1024w"
+			sizes="(min-width:769px) 1280px"
+		/>
+		<!-- Small devices: use a smaller optimized image to reduce downloads and LCP impact -->
+		<source
+			media="(max-width: 768px)"
+			type="image/webp"
+			srcset="/images/background-640.webp 640w, /images/background-480.webp 480w, /images/background-360.webp 360w"
+			sizes="100vw"
+		/>
+		<!-- Fallback small image for non-WebP capable clients; default optimised mobile image -->
+		<img
+			src="/images/background-small.webp"
+			srcset="/images/background-360.webp 360w, /images/background-640.webp 640w"
+			sizes="100vw"
+			alt=""
+			class="header-bg-img"
+			loading="eager"
+			fetchpriority="high"
+			width="1920"
+			height="720"
+		/>
 	</picture>
 </div>
 
 {#if $isDetailPage}
-	<div class="flex h-screen has-header-img pt-16 md:pt-20">
+	<div class="has-header-img flex h-screen pt-16 md:pt-20">
 		<Sidebar />
 		<div class="flex-1 overflow-auto pb-16">
 			{@render children()}
 		</div>
 	</div>
 {:else}
-	<div class="pt-16 md:pt-20 pb-16 has-header-img">
+	<div class="has-header-img pt-16 pb-16 md:pt-20">
 		{@render children()}
 	</div>
 {/if}

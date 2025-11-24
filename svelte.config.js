@@ -11,12 +11,7 @@ const config = {
 			fallback: 'plaintext',
 			routes: {
 				include: ['/*'],
-				exclude: [
-					"/_app/*",
-					"/fonts/*",
-					"/images/*",
-					"/releases/*",
-				]
+				exclude: ['/_app/*', '/fonts/*', '/images/*', '/releases/*']
 			}
 		})
 	}

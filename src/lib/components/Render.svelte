@@ -27,7 +27,9 @@
 {/if}
 <div class="relative isolate overflow-auto">
 	<ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
-		<li class="px-1 pt-1.5 text-sm font-light text-gray-600 dark:text-gray-300 whitespace-normal leading-relaxed">
+		<li
+			class="px-1 pt-1.5 text-sm leading-relaxed font-light whitespace-normal text-gray-600 dark:text-gray-300"
+		>
 			{desc}
 		</li>
 		{#if 'properties' in scope}
@@ -44,7 +46,7 @@
 						parent={type}
 						expanded={hashExistDeep(hash, `${type}.${key}`)}
 						{compact}
-						onResourcePage={onResourcePage}
+						{onResourcePage}
 					/>
 				{/each}
 			</div>
