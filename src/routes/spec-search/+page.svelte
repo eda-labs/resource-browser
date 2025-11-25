@@ -20,6 +20,12 @@
 	let loadingVersions = false;
 
 	let query = '';
+	let includeEnum = false;
+
+	let selectedTokens = new Set<string>();
+	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+	// Monotonic search id to ignore stale async search results
+	let searchId = 0;
 
 	function ensureRenderable(schema: any) {
 		if (!schema || typeof schema !== 'object') return schema;
@@ -59,6 +65,24 @@
 	}> = [];
 	// No filtering via dropdown - always show all results
 	$: displayedResults = results;
+
+	// token set for UI chips
+	$: selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
+
+	// schedule debounced search when user types
+	function scheduleSearch() {
+		if (debounceTimer) clearTimeout(debounceTimer);
+		// quick debug/log to observe input-driven searches
+		if (typeof console !== 'undefined') console.debug('scheduleSearch() fired, query=', query, 'releaseName=', releaseName);
+		debounceTimer = setTimeout(() => {
+			debounceTimer = null;
+			performSearch();
+		}, 80);
+	}
+
+	// simple in-memory caches to reduce repeated network fetches during fast typing
+	const manifestCache: Map<string, any> = new Map();
+	const yamlCache: Map<string, string> = new Map();
 
 	// Group results by resource name + version so we can show SPEC and STATUS together
 	type GroupedResult = { name: string; kind?: string; version?: string; spec?: any; status?: any };
@@ -199,39 +223,49 @@
 	// This implementation traverses all common schema branches and returns a schema
 	// containing the full ancestor path(s) down to any matching leaf nodes.
 	function pruneSchema(node: any, re: RegExp | null, q: string): any | null {
+		// Only match structural paths (property names / titles) by default.
+		// Avoid matching descriptions, format, enum values, or other internal fields
+		// unless a regex is explicitly provided that matches those values.
 		if (node == null) return null;
-
-		// If primitive-like (no nested schema keys), test stringified value
 		if (typeof node !== 'object' || (Array.isArray(node) === true && node.length === 0)) {
-			const s = String(node);
-			if (re ? re.test(s) : s.toLowerCase().includes(q.toLowerCase())) return node;
+			// Do not match primitive leaf values by default (prevents matching enum values, formats, etc.)
 			return null;
 		}
-
 		const out: any = {};
 		let matched = false;
-
-		// Helper to shallow-copy useful meta (type, format, enum, default, minimum/maximum)
 		function copyMeta(src: any, dst: any) {
-			// Keep only small, useful metadata to avoid pulling large sibling trees.
 			const keys = ['type', 'format', 'enum', 'default', 'minimum', 'maximum', 'pattern', 'title'];
 			for (const k of keys) {
 				if (k in src && src[k] !== undefined) dst[k] = src[k];
 			}
 		}
-
-		// 1) Handle properties
 		if (node.properties && typeof node.properties === 'object') {
 			const props: any = {};
 			for (const [pname, pval] of Object.entries(node.properties)) {
-				const pr = pruneSchema(pval as any, re, q);
-				if (pr != null) {
-					props[pname] = pr;
-					matched = true;
-				} else {
-					// also consider property NAME matching the query
-					if (q && String(pname).toLowerCase().includes(q.toLowerCase())) {
+				// First, check if the property name itself matches the query (normalize camelCase/underscores)
+				let nameMatched = false;
+				if (q) {
+					const normalizedName = String(pname)
+						.replace(/([a-z])([A-Z])/g, '$1 $2')
+						.replace(/[_.\-]/g, ' ')
+						.toLowerCase();
+					// Also consider a spaceless/compact form so queries like "maclimit"
+					// match camelCase names like "macLimit" (which normalize to "mac limit").
+					const normalizedNameNoSpace = normalizedName.replace(/\s+/g, '');
+					const qLower = q.toLowerCase();
+					const qNoSpace = qLower.replace(/[\s_.\-]/g, '');
+					if (normalizedName.includes(qLower) || normalizedNameNoSpace.includes(qNoSpace)) {
 						props[pname] = stripDescriptions(pval);
+						matched = true;
+						nameMatched = true;
+					}
+				}
+
+				// If name didn't match, recurse into the property's schema to find deeper property-name matches
+				if (!nameMatched) {
+					const pr = pruneSchema(pval as any, re, q);
+					if (pr != null) {
+						props[pname] = pr;
 						matched = true;
 					}
 				}
@@ -241,8 +275,6 @@
 				if (node.type) out.type = node.type;
 			}
 		}
-
-		// 2) Handle array items
 		if (node.items) {
 			const pr = pruneSchema(node.items, re, q);
 			if (pr != null) {
@@ -251,8 +283,6 @@
 				matched = true;
 			}
 		}
-
-		// 3) Handle combiners: allOf, anyOf, oneOf
 		for (const comb of ['allOf', 'anyOf', 'oneOf']) {
 			if (Array.isArray(node[comb])) {
 				const arr: any[] = [];
@@ -266,8 +296,6 @@
 				if (arr.length > 0) out[comb] = arr;
 			}
 		}
-
-		// 4) additionalProperties (object schema)
 		if (node.additionalProperties && typeof node.additionalProperties === 'object') {
 			const pr = pruneSchema(node.additionalProperties, re, q);
 			if (pr != null) {
@@ -275,40 +303,20 @@
 				matched = true;
 			}
 		}
-
-		// 5) Inspect non-schema scalar fields (enum values, titles, formats, examples)
-		const scalarKeys = ['enum', 'title', 'format', 'pattern', 'const'];
+		// Only consider 'title' as a scalar-key match target by default (titles are descriptive labels)
+		const scalarKeys = includeEnum ? ['enum', 'title', 'format', 'pattern', 'const'] : ['title'];
 		for (const k of scalarKeys) {
-			if (k in node && node[k] !== undefined) {
-				const s = JSON.stringify(node[k]);
-				if (re ? re.test(s) : s.toLowerCase().includes(q.toLowerCase())) {
+			if (k in node && node[k] !== undefined && q) {
+				const s = String(node[k]);
+				const sNorm = s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_.\-]/g, ' ').toLowerCase();
+				if (sNorm.includes(q.toLowerCase())) {
 					out[k] = node[k];
 					matched = true;
 				}
 			}
 		}
-
-		// 6) If nothing matched in children, check the serialized node as a fallback
-		if (!matched) {
-			try {
-				const hay = JSON.stringify(node);
-				if (re ? re.test(hay) : hay.toLowerCase().includes(q.toLowerCase())) {
-					// return a stripped minimal node so the caller can decide how to show it
-					const minimal = stripDescriptions(node);
-					// avoid returning huge objects wholesale
-					if (minimal && minimal.properties && Object.keys(minimal.properties).length > 30)
-						return null;
-					return minimal;
-				}
-			} catch (e) {
-				// ignore
-			}
-			return null;
-		}
-
-		// Copy some metadata to out to preserve shape
+		if (!matched) return null;
 		copyMeta(node, out);
-
 		return out;
 	}
 
@@ -356,13 +364,27 @@
 	}
 
 	async function performSearch() {
-		results = [];
-		if (!release || !query) return;
-		loading = true;
+		const mySearchId = ++searchId;
+		// resolve release at time of search to avoid reactive timing issues
+		const rel = release || (releaseName ? releasesConfig.releases.find((r) => r.name === releaseName) || null : null);
+		// debug log to help diagnose why debounced searches may return early
+		if (typeof console !== 'undefined') console.debug('performSearch() start', { releaseName, resolvedRelease: rel && rel.name, query, mySearchId });
+		// If there's no release or no query, clear results only if this is still the latest search
+		if (!rel || !query) {
+			if (mySearchId === searchId) results = [];
+			return;
+		}
+		if (mySearchId === searchId) loading = true;
 		try {
-			const resp = await fetch(`/${release.folder}/manifest.json`);
-			if (!resp.ok) return;
-			const manifest = await resp.json();
+			let manifest: any;
+			if (manifestCache.has(rel.folder)) {
+				manifest = manifestCache.get(rel.folder);
+			} else {
+				const resp = await fetch(`/${rel.folder}/manifest.json`);
+				if (!resp.ok) return;
+				manifest = await resp.json();
+				manifestCache.set(rel.folder, manifest);
+			}
 			const q = String(query ?? '').trim();
 			let re: RegExp | null = null;
 			try {
@@ -370,7 +392,6 @@
 			} catch (e) {
 				re = null;
 			}
-
 			const promises = manifest.flatMap(async (res: any) => {
 				if (!res || !res.name) return [];
 				// Skip CRDs that are states
@@ -384,10 +405,16 @@
 				const matches: Array<any> = [];
 				for (const ver of candidateVersions) {
 					try {
-						const path = `/${release.folder}/${res.name}/${ver}.yaml`;
-						const r = await fetch(path);
-						if (!r.ok) continue;
-						const txt = await r.text();
+						const path = `/${rel.folder}/${res.name}/${ver}.yaml`;
+						let txt: string | undefined = undefined;
+						if (yamlCache.has(path)) {
+							txt = yamlCache.get(path);
+						} else {
+							const r = await fetch(path);
+							if (!r.ok) continue;
+							txt = await r.text();
+							yamlCache.set(path, txt);
+						}
 						const parsed = yaml.load(txt) as any;
 						const spec = parsed?.schema?.openAPIV3Schema?.properties?.spec;
 						const status = parsed?.schema?.openAPIV3Schema?.properties?.status;
@@ -433,29 +460,6 @@
 									version: ver,
 									type: 'spec'
 								});
-								// continue to next version; we still check status though for same version
-							} else {
-								try {
-									const hay = JSON.stringify(stripped);
-									if (re ? re.test(hay) : hay.toLowerCase().includes(q.toLowerCase())) {
-										let readySchema = spec;
-										try {
-											readySchema = restoreDescriptions(readySchema, spec, true);
-										} catch (e) {
-											/* ignore */
-										}
-										const ready = ensureRenderable(readySchema);
-										matches.push({
-											name: res.name,
-											kind: res.kind,
-											schema: ready,
-											version: ver,
-											type: 'spec'
-										});
-									}
-								} catch (e) {
-									/* ignore */
-								}
 							}
 						}
 
@@ -465,41 +469,9 @@
 							const prunedStatus = pruneSchema(strippedStatus, re, q);
 							if (prunedStatus) {
 								let readyStatus = prunedStatus;
-								try {
-									readyStatus = restoreDescriptions(readyStatus, status, true);
-								} catch (e) {
-									/* ignore */
-								}
+								try { readyStatus = restoreDescriptions(readyStatus, status, true); } catch (e) { /* ignore */ }
 								const ensured = ensureRenderable(readyStatus);
-								matches.push({
-									name: res.name,
-									kind: res.kind,
-									schema: ensured,
-									version: ver,
-									type: 'status'
-								});
-							} else {
-								try {
-									const hay = JSON.stringify(strippedStatus);
-									if (re ? re.test(hay) : hay.toLowerCase().includes(q.toLowerCase())) {
-										let readyStatus = status;
-										try {
-											readyStatus = restoreDescriptions(readyStatus, status, true);
-										} catch (e) {
-											/* ignore */
-										}
-										const ensured = ensureRenderable(readyStatus);
-										matches.push({
-											name: res.name,
-											kind: res.kind,
-											schema: ensured,
-											version: ver,
-											type: 'status'
-										});
-									}
-								} catch (e) {
-									/* ignore */
-								}
+								matches.push({ name: res.name, kind: res.kind, schema: ensured, version: ver, type: 'status' });
 							}
 						}
 					} catch (e) {
@@ -509,9 +481,15 @@
 				return matches;
 			});
 			const settled = await Promise.all(promises);
-			results = settled.flat().filter(Boolean) as any;
+			const newResults = settled.flat().filter(Boolean) as any;
+			// If another search started after we began, discard these results
+			if (mySearchId !== searchId) {
+				if (typeof console !== 'undefined') console.debug('performSearch() - discarding stale results', { mySearchId, latest: searchId });
+				return;
+			}
+			results = newResults;
 		} finally {
-			loading = false;
+			if (mySearchId === searchId) loading = false;
 		}
 	}
 </script>
@@ -530,7 +508,7 @@
 <!-- (PageCredits moved inside the scrolling container to render at the bottom) -->
 
 <div
-	class="relative flex flex-col overflow-y-auto pt-12 md:pt-14 lg:min-h-screen lg:overflow-hidden"
+	class="relative flex flex-col overflow-y-auto pt-12 md:pt-14 min-h-screen h-screen"
 >
 	<div class="relative z-10 flex flex-1 flex-col lg:flex-row">
 		<div class="flex-1 overflow-auto pb-16">
@@ -597,7 +575,7 @@
 				<!-- Independent Search Bar (clean, pro) like Bulk Diff (separate from result table) -->
 				<div class="mb-2">
 					<div class="flex items-center gap-3">
-						<div class="relative flex-1">
+							<div class="relative flex-1">
 							<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 								<svg
 									class="h-4 w-4 text-gray-400"
@@ -615,11 +593,9 @@
 							<input
 								id="spec-query"
 								bind:value={query}
-								on:input={() => {
-									/* no-op */
-								}}
+								on:input={() => { selectedTokens = new Set(query.split(/\s+/).filter(Boolean)); }}
 								on:keydown={(e) => e.key === 'Enter' && performSearch()}
-								placeholder="Search specs & status (regex)"
+								placeholder="Press Enter to search"
 								class="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 pl-9 text-sm text-gray-900 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
 							/>
 							{#if query}
@@ -631,29 +607,13 @@
 									}}
 									class="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-gray-100 p-1 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
 								>
-									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-										><path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M6 18L18 6M6 6l12 12"
-										/></svg
-									>
+									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+									</svg>
 								</button>
 							{/if}
 						</div>
 						<div class="flex items-center gap-3">
-							<button
-								on:click={performSearch}
-								class="rounded bg-purple-600 px-4 py-2 text-white"
-								disabled={!release || !query || loading}
-							>
-								{#if loading}
-									<span>Searching...</span>
-								{:else}
-									Search
-								{/if}
-							</button>
 							<!-- Filter dropdown removed; all results are shown -->
 							<button
 								on:click={() => {
@@ -672,6 +632,19 @@
 							{groupedResults.length} matches
 						</div>
 						<div class="ml-3 flex items-center gap-2">
+							<button
+								aria-pressed={includeEnum}
+								on:click={() => { includeEnum = !includeEnum; }}
+								class="{includeEnum ? 'bg-purple-600 text-white shadow-sm dark:bg-purple-500' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'} rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:shadow-md sm:px-4"
+								title="Include enum / constant / pattern values in search (toggle, press Enter to search)"
+								style="z-index:1"
+							>
+								{#if includeEnum}
+									<svg class="inline-block h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Enums On
+								{:else}
+									Include enums
+								{/if}
+							</button>
 							<span class="mr-2 text-sm font-medium text-gray-900 sm:text-base dark:text-gray-200"
 								>View:</span
 							>
@@ -739,7 +712,7 @@
 									>
 										<div class="overflow-x-auto">
 											<div
-												class="min-w-[640px] {g.spec && g.status
+												class="min-w-[960px] {g.spec && g.status
 													? 'grid grid-cols-2 gap-4'
 													: 'grid grid-cols-1'}"
 											>
@@ -866,7 +839,7 @@
 												class="pro-spec-preview relative isolate z-0 max-h-[40rem] overflow-hidden"
 											>
 												<div class="overflow-x-auto">
-													<div class="min-w-[640px] space-y-4">
+													<div class="min-w-[960px] space-y-4">
 														{#if g.spec}
 															<div>
 																<div
