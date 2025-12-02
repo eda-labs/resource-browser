@@ -1,11 +1,13 @@
 <script lang="ts">
     import yaml from 'js-yaml';
     import { onMount, onDestroy } from 'svelte';
+    import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
     // AnimatedBackground is dynamically imported/rendered by the layout; avoid importing here to keep it lazy
     import TopHeader from '$lib/components/TopHeader.svelte';
     import PageCredits from '$lib/components/PageCredits.svelte';
 
-    // Render not used - YANG-only view for auto search; keep import removed to avoid unused import
+    import Render from '$lib/components/Render.svelte';
     import YangView from '$lib/components/YangView.svelte';
     import { stripResourcePrefixFQDN } from '$lib/components/functions';
     // expandAll controls removed from this auto-search page (no UI button)
@@ -22,6 +24,89 @@
 
     let query = '';
     let selectedTokens = new Set<string>();
+    let resultsViewMode: 'tree' | 'yang' = 'yang';
+    let selectedResource: string | null = null;
+    let isModalOpen = false;
+    let modalData: { name: string; kind?: string; version?: string; spec?: any; status?: any; fullSpec?: any; fullStatus?: any; markedFull?: { spec?: any; status?: any } } | null = null;
+    let expandedPaths: string[] = [];
+    let modalExpandAll = false;
+
+    // Extract all property paths from a schema object to determine what should be expanded
+    function extractPaths(obj: any, prefix: string = '', paths: string[] = []): string[] {
+        if (!obj || typeof obj !== 'object') return paths;
+        
+        if (obj.properties) {
+            for (const key of Object.keys(obj.properties)) {
+                const path = prefix ? `${prefix}.${key}` : key;
+                paths.push(path);
+                extractPaths(obj.properties[key], path, paths);
+            }
+        }
+        
+        if (obj.items) {
+            extractPaths(obj.items, prefix, paths);
+        }
+        
+        return paths;
+    }
+
+    // Mark nodes in full schema that match the search by adding diff status
+    function markMatchingNodes(fullSchema: any, matchedPaths: Set<string>, currentPath: string = ''): any {
+        if (!fullSchema || typeof fullSchema !== 'object') return fullSchema;
+        
+        const result = { ...fullSchema };
+        
+        if (result.properties) {
+            const newProps: any = {};
+            for (const [key, value] of Object.entries(result.properties)) {
+                const path = currentPath ? `${currentPath}.${key}` : key;
+                const markedValue = markMatchingNodes(value, matchedPaths, path);
+                
+                // Mark as 'modified' (amber highlight) if this path matches search
+                if (matchedPaths.has(path)) {
+                    newProps[key] = { ...markedValue, __diffStatus: 'modified' };
+                } else {
+                    newProps[key] = markedValue;
+                }
+            }
+            result.properties = newProps;
+        }
+        
+        if (result.items) {
+            result.items = markMatchingNodes(result.items, matchedPaths, currentPath);
+        }
+        
+        return result;
+    }
+
+    // Initialize from URL parameters
+    $: {
+        const urlRelease = $page.url.searchParams.get('release');
+        const urlVersion = $page.url.searchParams.get('version');
+        const urlQuery = $page.url.searchParams.get('q');
+        
+        if (urlRelease && !releaseName) {
+            releaseName = urlRelease;
+            loadVersions();
+        }
+        if (urlVersion && !version) {
+            version = urlVersion;
+        }
+        if (urlQuery && !query) {
+            query = urlQuery;
+        }
+    }
+
+    // Update URL when parameters change
+    function updateURL() {
+        const params = new URLSearchParams();
+        if (releaseName) params.set('release', releaseName);
+        if (version) params.set('version', version);
+        if (query) params.set('q', query);
+        
+        const newUrl = params.toString() ? `?${params.toString()}` : '/spec-search-auto';
+        goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+    }
 
     $: selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -76,20 +161,26 @@
             .catch(() => { /* ignore prefetch errors */ });
     }
 
-    type GroupedResult = { name: string; kind?: string; version?: string; spec?: any; status?: any };
+    type GroupedResult = { name: string; kind?: string; version?: string; spec?: any; status?: any; fullSpec?: any; fullStatus?: any };
     let groupedResults: GroupedResult[] = [];
+    let fullSchemas = new Map<string, { spec?: any; status?: any }>();
+    
     $: groupedResults = (() => {
         const map = new Map<string, GroupedResult>();
         for (const r of displayedResults) {
             const key = `${r.name}::${r.version || ''}`;
-            if (!map.has(key))
+            if (!map.has(key)) {
+                const fullSchema = fullSchemas.get(key) || {};
                 map.set(key, {
                     name: r.name,
                     kind: r.kind,
                     version: r.version,
                     spec: undefined,
-                    status: undefined
+                    status: undefined,
+                    fullSpec: fullSchema.spec,
+                    fullStatus: fullSchema.status
                 });
+            }
             const entry = map.get(key)!;
             if (r.type === 'spec') entry.spec = entry.spec || r.schema;
             if (r.type === 'status') entry.status = entry.status || r.schema;
@@ -145,13 +236,21 @@
             }
 
             if (!versions.includes(version)) version = '';
+            updateURL();
         } catch (e) {
             versions = [];
             version = '';
+            updateURL();
         } finally {
             loadingVersions = false;
         }
     }
+    
+    // Update URL when version changes
+    $: if (version !== undefined && release) {
+        updateURL();
+    }
+    
     function stripDescriptions(obj: any): any {
         if (obj == null) return obj;
         if (Array.isArray(obj)) return obj.map(stripDescriptions);
@@ -383,6 +482,13 @@
                         const spec = parsed?.schema?.openAPIV3Schema?.properties?.spec;
                         const status = parsed?.schema?.openAPIV3Schema?.properties?.status;
 
+                        // Store full unfiltered schemas
+                        const resourceKey = `${res.name}::${ver}`;
+                        fullSchemas.set(resourceKey, {
+                            spec: spec ? ensureRenderable(spec) : undefined,
+                            status: status ? ensureRenderable(status) : undefined
+                        });
+
                         if (spec) {
                             const stripped = stripDescriptions(spec);
                             const pruned = pruneSchema(stripped, re, q);
@@ -446,12 +552,22 @@
     function scheduleSearch() {
         if (debounceTimer) clearTimeout(debounceTimer);
         
+        // Don't search without a release selected
+        if (!release || !releaseName) {
+            results = [];
+            loading = false;
+            return;
+        }
+        
         // If query is empty, clear results immediately
         if (!query || query.trim().length === 0) {
             results = [];
             loading = false;
             return;
         }
+        
+        // Update URL with current parameters
+        updateURL();
         
         // Clear old results immediately when query changes to avoid showing stale data
         results = [];
@@ -464,10 +580,13 @@
     }
 
     // Watch query changes reactively to trigger search on any change (typing, clear button, etc.)
+    let previousQuery = '';
     $: {
         // This reactive block re-runs whenever query changes
-        void query; // reference query to make it reactive
-        scheduleSearch();
+        if (query !== previousQuery) {
+            previousQuery = query;
+            scheduleSearch();
+        }
     }
 
     // Global listener for YangView pathclick document events.
@@ -558,10 +677,6 @@
                 <input
                     id="spec-query"
                     bind:value={query}
-                    on:input={() => {
-                        scheduleSearch();
-                        selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
-                    }}
                     on:keydown={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
@@ -577,8 +692,16 @@
                 />
                 {#if query}
                     <button 
+                        type="button"
                         aria-label="Clear search" 
-                        on:click={() => { query = ''; results = []; }} 
+                        on:click|preventDefault|stopPropagation={() => { 
+                            query = ''; 
+                            previousQuery = '';
+                            results = []; 
+                            selectedResource = null;
+                            selectedTokens = new Set();
+                            updateURL();
+                        }} 
                         class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-gray-300"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -618,6 +741,21 @@
                 {/if}
                 
                 {#if displayedResults.length > 0}
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-200">View:</span>
+                        <button
+                            on:click={() => (resultsViewMode = 'yang')}
+                            class="rounded-md px-3 py-1.5 text-sm font-semibold transition-colors {resultsViewMode === 'yang'
+                                ? 'bg-cyan-600 text-white shadow-sm'
+                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}"
+                        >YANG</button>
+                        <button
+                            on:click={() => (resultsViewMode = 'tree')}
+                            class="rounded-md px-3 py-1.5 text-sm font-semibold transition-colors {resultsViewMode === 'tree'
+                                ? 'bg-purple-600 text-white shadow-sm'
+                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}"
+                        >Tree</button>
+                    </div>
                     <div class="flex items-center gap-2">
                         <div class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 px-3 py-1.5 shadow-sm dark:from-purple-900/30 dark:to-pink-900/30">
                             <svg class="h-4 w-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -665,64 +803,151 @@
                         {/each}
                     </div>
                 {:else if displayedResults.length > 0}
-                    <div class="space-y-4 sm:hidden">
+                    <div class="space-y-3 sm:hidden">
                         {#each groupedResults as g}
-                            <div class="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-                                <a 
-                                    href="/{g.name}/{g.version}" 
-                                    class="block border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-4 py-3.5 transition-colors hover:from-gray-100 hover:to-gray-50 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800 dark:hover:from-gray-700 dark:hover:to-gray-700"
-                                >
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div class="min-w-0 flex-1">
-                                            <div class="mb-1 flex items-center gap-2">
-                                                <div class="break-words text-sm font-bold text-gray-900 dark:text-white">{g.kind}</div>
-                                                <svg class="h-4 w-4 shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </div>
-                                            <div class="break-words font-mono text-xs text-gray-600 dark:text-gray-400">{stripResourcePrefixFQDN(String(g.name))}</div>
+                            <button
+                                type="button"
+                                class="w-full text-left relative isolate z-0 overflow-hidden rounded-lg border border-gray-200 bg-white p-3 transition-all duration-200 hover:border-cyan-400 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-cyan-500"
+                                on:click|preventDefault|stopPropagation={(e) => {
+                                    e.preventDefault();
+                                    expandedPaths = [];
+                                    const matchedPaths = new Set<string>();
+                                    
+                                    if (g.spec) {
+                                        const specPaths = extractPaths(g.spec, 'spec');
+                                        expandedPaths.push(...specPaths);
+                                        specPaths.forEach(p => matchedPaths.add(p));
+                                    }
+                                    if (g.status) {
+                                        const statusPaths = extractPaths(g.status, 'status');
+                                        expandedPaths.push(...statusPaths);
+                                        statusPaths.forEach(p => matchedPaths.add(p));
+                                    }
+                                    
+                                    // Mark matching nodes in full schema for amber highlighting
+                                    const markedFull = {
+                                        spec: g.fullSpec ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec') : g.fullSpec,
+                                        status: g.fullStatus ? markMatchingNodes(g.fullStatus, matchedPaths, 'status') : g.fullStatus
+                                    };
+                                    
+                                    modalExpandAll = false;
+                                    modalData = { ...g, markedFull };
+                                    isModalOpen = true;
+                                }}
+                            >
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="mr-2 min-w-0">
+                                        <div class="text-sm font-semibold break-words text-gray-900 dark:text-white">
+                                            {g.kind}
                                         </div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-300">
+                                            {stripResourcePrefixFQDN(String(g.name))}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
                                         {#if g.version}
-                                            <div class="shrink-0 rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 px-3 py-1.5 shadow-sm">
-                                                <div class="font-mono text-xs font-semibold text-white">{g.version}</div>
+                                            <div
+                                                class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-200"
+                                            >
+                                                {g.version}
                                             </div>
                                         {/if}
                                     </div>
-                                </a>
-                                <div class="bg-gradient-to-br from-white to-gray-50 p-4 dark:from-gray-900 dark:to-gray-900/50">
-                                    <div class="overflow-x-auto">
-                                        <div class="min-w-[640px] {g.spec && g.status ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1'}">
-                                            {#if g.spec}
-                                                <div>
-                                                    <div class="mb-2 flex items-center gap-2">
-                                                        <div class="h-1.5 w-1.5 rounded-full bg-cyan-500"></div>
-                                                        <div class="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">Spec</div>
+                                </div>
+                                <div class="mt-3">
+                                    <div
+                                        class="text-xs break-words whitespace-normal text-gray-900 dark:text-gray-200"
+                                    >
+                                        <div class="overflow-x-auto">
+                                            <div
+                                                class="min-w-[960px] {g.spec && g.status
+                                                    ? 'grid grid-cols-2 gap-4'
+                                                    : 'grid grid-cols-1'}"
+                                            >
+                                                {#if g.spec}
+                                                    <div>
+                                                        <div
+                                                            class="mb-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400"
+                                                        >
+                                                            SPEC
+                                                        </div>
+                                                        {#if resultsViewMode === 'tree'}
+                                                            <div class="relative isolate overflow-hidden">
+                                                                <div class="overflow-x-hidden">
+                                                                    <Render
+                                                                        hash={`${g.name}.${g.version}.spec`}
+                                                                        source={release?.name || 'release'}
+                                                                        type={'spec'}
+                                                                        data={g.spec}
+                                                                        showType={false}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        {:else}
+                                                            <div class="relative isolate overflow-hidden">
+                                                                <YangView
+                                                                    hash={`${g.name}.${g.version}.spec`}
+                                                                    source={release?.name || 'release'}
+                                                                    type={'spec'}
+                                                                    data={g.spec}
+                                                                    resourceName={g.name}
+                                                                    resourceVersion={g.version}
+                                                                    {releaseName}
+                                                                    kind={g.kind}
+                                                                    clickToSearch={true}
+                                                                    on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }}
+                                                                />
+                                                            </div>
+                                                        {/if}
                                                     </div>
-                                                    <div class="relative isolate overflow-hidden rounded-lg border border-cyan-100 bg-white/50 p-2 dark:border-cyan-900/30 dark:bg-gray-800/50">
-                                                        <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }} />
+                                                {/if}
+                                                {#if g.status}
+                                                    <div>
+                                                        <div
+                                                            class="mb-1 text-xs font-semibold text-green-600 dark:text-green-400"
+                                                        >
+                                                            STATUS
+                                                        </div>
+                                                        {#if resultsViewMode === 'tree'}
+                                                            <div class="relative isolate overflow-hidden">
+                                                                <div class="overflow-x-hidden">
+                                                                    <Render
+                                                                        hash={`${g.name}.${g.version}.status`}
+                                                                        source={release?.name || 'release'}
+                                                                        type={'status'}
+                                                                        data={g.status}
+                                                                        showType={false}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        {:else}
+                                                            <div class="relative isolate overflow-hidden">
+                                                                <YangView
+                                                                    hash={`${g.name}.${g.version}.status`}
+                                                                    source={release?.name || 'release'}
+                                                                    type={'status'}
+                                                                    data={g.status}
+                                                                    resourceName={g.name}
+                                                                    resourceVersion={g.version}
+                                                                    {releaseName}
+                                                                    kind={g.kind}
+                                                                    clickToSearch={true}
+                                                                    on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }}
+                                                                />
+                                                            </div>
+                                                        {/if}
                                                     </div>
-                                                </div>
-                                            {/if}
-                                            {#if g.status}
-                                                <div>
-                                                    <div class="mb-2 flex items-center gap-2">
-                                                        <div class="h-1.5 w-1.5 rounded-full bg-green-500"></div>
-                                                        <div class="text-xs font-bold uppercase tracking-wide text-green-600 dark:text-green-400">Status</div>
+                                                {/if}
+                                                {#if !g.spec && !g.status}
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        No matching content
                                                     </div>
-                                                    <div class="relative isolate overflow-hidden rounded-lg border border-green-100 bg-white/50 p-2 dark:border-green-900/30 dark:bg-gray-800/50">
-                                                        <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }} />
-                                                    </div>
-                                                </div>
-                                            {/if}
-                                            {#if !g.spec && !g.status}
-                                                <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-8 text-center text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                                                    No matching content
-                                                </div>
-                                            {/if}
+                                                {/if}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </button>
                         {/each}
                     </div>
 
@@ -759,53 +984,94 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700/50 dark:bg-gray-800">
                                 {#each groupedResults as g}
-                                    <tr class="group transition-all hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-700/30">
-                                        <td class="relative isolate z-0 max-w-[35%] overflow-hidden px-5 py-4">
-                                            <a href="/{g.name}/{g.version}" class="flex items-center gap-2 transition-colors hover:text-cyan-600 dark:hover:text-cyan-400">
-                                                <div>
-                                                    <div class="font-bold text-gray-900 dark:text-white">{g.kind}</div>
-                                                    <div class="mt-0.5 break-words font-mono text-xs text-gray-600 dark:text-gray-400">{stripResourcePrefixFQDN(String(g.name))}</div>
+                                    <tr 
+                                        class="cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-blue-50/50 dark:hover:from-cyan-900/10 dark:hover:to-blue-900/10"
+                                        on:click|preventDefault|stopPropagation={(e) => {
+                                            e.preventDefault();
+                                            expandedPaths = [];
+                                            const matchedPaths = new Set<string>();
+                                            
+                                            if (g.spec) {
+                                                const specPaths = extractPaths(g.spec, 'spec');
+                                                expandedPaths.push(...specPaths);
+                                                specPaths.forEach(p => matchedPaths.add(p));
+                                            }
+                                            if (g.status) {
+                                                const statusPaths = extractPaths(g.status, 'status');
+                                                expandedPaths.push(...statusPaths);
+                                                statusPaths.forEach(p => matchedPaths.add(p));
+                                            }
+                                            
+                                            // Mark matching nodes in full schema for amber highlighting
+                                            const markedFull = {
+                                                spec: g.fullSpec ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec') : g.fullSpec,
+                                                status: g.fullStatus ? markMatchingNodes(g.fullStatus, matchedPaths, 'status') : g.fullStatus
+                                            };
+                                            
+                                            modalExpandAll = false;
+                                            modalData = { ...g, markedFull };
+                                            isModalOpen = true;
+                                        }}
+                                    >
+                                        <td class="relative isolate z-0 max-w-[40%] overflow-hidden px-3 py-3 font-medium break-words whitespace-pre-wrap text-gray-900 sm:px-6 sm:py-4 dark:text-white">
+                                            <div class="flex items-start gap-2">
+                                                <div class="min-w-0">
+                                                    <div class="font-semibold">{g.kind}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-300">{stripResourcePrefixFQDN(String(g.name))}</div>
                                                 </div>
-                                                <svg class="h-4 w-4 shrink-0 text-gray-400 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </a>
-                                        </td>
-                                        <td class="relative isolate z-0 max-w-[15%] overflow-hidden px-5 py-4">
-                                            <div class="inline-flex items-center rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 px-3 py-1.5 shadow-sm">
-                                                <span class="font-mono text-xs font-semibold text-white">{g.version}</span>
                                             </div>
                                         </td>
-                                        <td class="px-5 py-4">
-                                            <div class="relative isolate z-0 max-h-[40rem] overflow-hidden">
+                                        <td class="relative isolate z-0 max-w-[12%] overflow-hidden px-3 py-3 break-words whitespace-pre-wrap text-gray-600 sm:px-6 sm:py-4 dark:text-gray-300">{g.version}</td>
+                                        <td class="px-3 py-3 break-words whitespace-normal text-gray-900 sm:px-6 sm:py-4 dark:text-gray-200">
+                                            <div class="pro-spec-preview relative isolate z-0 max-h-[40rem] overflow-hidden">
                                                 <div class="overflow-x-auto">
                                                     <div class="min-w-[640px] space-y-4">
                                                         {#if g.spec}
                                                             <div>
-                                                                <div class="mb-2 flex items-center gap-2">
-                                                                    <div class="h-1.5 w-1.5 rounded-full bg-cyan-500"></div>
-                                                                    <div class="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">Spec</div>
-                                                                </div>
-                                                                <div class="relative isolate overflow-hidden rounded-lg border border-cyan-100 bg-gradient-to-br from-white to-cyan-50/30 p-3 dark:border-cyan-900/30 dark:from-gray-900 dark:to-cyan-900/10">
-                                                                    <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} />
-                                                                </div>
+                                                                <div class="mb-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400">SPEC</div>
+                                                                {#if resultsViewMode === 'tree'}
+                                                                    <div class="relative isolate overflow-hidden">
+                                                                        <div class="overflow-x-hidden">
+                                                                            <Render
+                                                                                hash={`${g.name}.${g.version}.spec`}
+                                                                                source={release?.name || 'release'}
+                                                                                type={'spec'}
+                                                                                data={g.spec}
+                                                                                showType={false}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                {:else}
+                                                                    <div class="relative isolate overflow-hidden">
+                                                                        <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} />
+                                                                    </div>
+                                                                {/if}
                                                             </div>
                                                         {/if}
                                                         {#if g.status}
                                                             <div>
-                                                                <div class="mb-2 flex items-center gap-2">
-                                                                    <div class="h-1.5 w-1.5 rounded-full bg-green-500"></div>
-                                                                    <div class="text-xs font-bold uppercase tracking-wide text-green-600 dark:text-green-400">Status</div>
-                                                                </div>
-                                                                <div class="relative isolate overflow-hidden rounded-lg border border-green-100 bg-gradient-to-br from-white to-green-50/30 p-3 dark:border-green-900/30 dark:from-gray-900 dark:to-green-900/10">
-                                                                    <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} />
-                                                                </div>
+                                                                <div class="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">STATUS</div>
+                                                                {#if resultsViewMode === 'tree'}
+                                                                    <div class="relative isolate overflow-hidden">
+                                                                        <div class="overflow-x-hidden">
+                                                                            <Render
+                                                                                hash={`${g.name}.${g.version}.status`}
+                                                                                source={release?.name || 'release'}
+                                                                                type={'status'}
+                                                                                data={g.status}
+                                                                                showType={false}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                {:else}
+                                                                    <div class="relative isolate overflow-hidden">
+                                                                        <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} />
+                                                                    </div>
+                                                                {/if}
                                                             </div>
                                                         {/if}
                                                         {#if !g.spec && !g.status}
-                                                            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-8 text-center text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                                                                No matching content
-                                                            </div>
+                                                            <div class="text-xs text-gray-500 dark:text-gray-400">No matching content</div>
                                                         {/if}
                                                     </div>
                                                 </div>
@@ -828,10 +1094,12 @@
                                 <div class="space-y-2">
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">No Results Found</h3>
                                     <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                                        {#if !query}
-                                            Select a release and start typing to search across CRD schemas.
+                                        {#if !release || !releaseName}
+                                            Please select a release to begin searching.
+                                        {:else if !query}
+                                            Start typing to search across CRD schemas.
                                         {:else}
-                                            No matches found for your query. Try different search terms or adjust filters.
+                                            No matches found for your query. Try different search terms.
                                         {/if}
                                     </p>
                                 </div>
@@ -855,6 +1123,154 @@
     </div>
 </div>
 
+<!-- Modal for Resource Details -->
+{#if isModalOpen && modalData}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        on:click|self={() => { isModalOpen = false; modalData = null; modalExpandAll = false; }}
+        style="animation: fadeIn 0.2s ease-out;"
+    >
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <div 
+            class="relative w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800"
+            on:click|stopPropagation
+            on:keydown={(e) => { if (e.key === 'Escape') { isModalOpen = false; modalData = null; modalExpandAll = false; } }}
+            role="dialog"
+            aria-modal="true"
+            tabindex="-1"
+            style="animation: slideUp 0.3s ease-out;"
+        >
+            <!-- Modal Header -->
+            <div class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-4 dark:border-gray-700 dark:from-slate-900 dark:to-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">{modalData.kind}</h2>
+                        <p class="text-sm text-cyan-300">{stripResourcePrefixFQDN(String(modalData.name))}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    {#if version}
+                        <span class="rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 px-3 py-1 text-sm font-mono font-semibold text-cyan-300">
+                            v{version}
+                        </span>
+                    {/if}
+                    <button
+                        on:click={() => { modalExpandAll = !modalExpandAll; }}
+                        class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:from-purple-700 hover:to-indigo-700 hover:shadow-lg"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {#if modalExpandAll}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                            {:else}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            {/if}
+                        </svg>
+                        {modalExpandAll ? 'Collapse All' : 'Expand All'}
+                    </button>
+                    <button
+                        on:click={() => { isModalOpen = false; modalData = null; modalExpandAll = false; }}
+                        class="rounded-lg p-2 text-gray-400 transition-all hover:bg-white/10 hover:text-white"
+                        aria-label="Close modal"
+                    >
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="overflow-y-auto bg-slate-50 p-6 dark:bg-slate-900" style="max-height: calc(90vh - 80px);">
+                <div class="space-y-6">
+                    {#if modalData.fullSpec}
+                        <div class="rounded-xl border-2 border-cyan-200 bg-white shadow-sm dark:border-cyan-800/50 dark:bg-slate-800">
+                            <div class="border-b border-cyan-100 bg-gradient-to-r from-cyan-50 to-blue-50 px-5 py-3 dark:border-cyan-900/50 dark:from-cyan-950/30 dark:to-blue-950/30">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600">
+                                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-bold text-cyan-900 dark:text-cyan-100">Spec Schema</h3>
+                                        <p class="text-xs text-cyan-700 dark:text-cyan-400">Resource specification and configuration</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                {#key modalExpandAll}
+                                    <Render
+                                        hash={expandedPaths.join('|')}
+                                        source={release?.name || 'release'}
+                                        type={'spec'}
+                                        data={modalData.markedFull?.spec || modalData.fullSpec}
+                                        showType={false}
+                                        showDiffIndicator={true}
+                                        forceExpandAll={modalExpandAll}
+                                    />
+                                {/key}
+                            </div>
+                        </div>
+                    {/if}
+                    {#if modalData.fullStatus}
+                        <div class="rounded-xl border-2 border-green-200 bg-white shadow-sm dark:border-green-800/50 dark:bg-slate-800">
+                            <div class="border-b border-green-100 bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-3 dark:border-green-900/50 dark:from-green-950/30 dark:to-emerald-950/30">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600">
+                                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-bold text-green-900 dark:text-green-100">Status Schema</h3>
+                                        <p class="text-xs text-green-700 dark:text-green-400">Observed state and runtime information</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                {#key modalExpandAll}
+                                    <Render
+                                        hash={expandedPaths.join('|')}
+                                        source={release?.name || 'release'}
+                                        type={'status'}
+                                        data={modalData.markedFull?.status || modalData.fullStatus}
+                                        showType={false}
+                                        showDiffIndicator={true}
+                                        forceExpandAll={modalExpandAll}
+                                    />
+                                {/key}
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/if}
+
 <style>
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
     .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; }
 </style>

@@ -29,6 +29,7 @@
 	export let borderColor: string;
 	export let compact: boolean = false;
 	export let onResourcePage: boolean = false;
+	export let forceExpandAll: boolean = false;
 	$: desc = getDescription(folder);
 	$: compactRowPadding = compact ? 'px-1 py-0.5' : 'px-2 py-2';
 
@@ -134,6 +135,7 @@
 	export let diffCurrentData: Schema | null = null;
 	// When true, render the node as a ghost: invisible but keeps layout space
 	export let ghost: boolean = false;
+	export let showDiffIndicator: boolean = false;
 
 	// reference exported prop so Svelte treats it as used (it's passed from parent/children)
 	$: {
@@ -192,6 +194,14 @@
 	}
 
 	function getNestedDiffStatus(): 'added' | 'removed' | 'modified' | 'unchanged' {
+		// Check for explicit diff status marker first (used for search highlighting)
+		if (folder && typeof folder === 'object' && '__diffStatus' in folder) {
+			const status = (folder as any).__diffStatus;
+			if (status === 'added' || status === 'removed' || status === 'modified') {
+				return status;
+			}
+		}
+
 		if (!diffMode) return 'unchanged';
 
 		// Check if this specific field exists in both versions
@@ -228,7 +238,7 @@
 	}
 
 	$: nestedDiffStatus = getNestedDiffStatus();
-	$: showDiffIndicator = diffMode && nestedDiffStatus !== 'unchanged';
+	$: showDiffIndicator = (diffMode && nestedDiffStatus !== 'unchanged') || (folder && typeof folder === 'object' && '__diffStatus' in folder);
 
 	// Helper to detect nested changes by comparing normalized representations
 	function hasNestedChanges(a: Schema | null, b: Schema | null): boolean {
@@ -660,12 +670,14 @@
 								folder={subfolder}
 								{requiredList}
 								parent={currentId}
-								expanded={hashExistDeep(hash, `${currentId}.${subkey}`)}
+								expanded={forceExpandAll || hashExistDeep(hash, `${currentId}.${subkey}`)}
 								{diffMode}
 								diffCompareData={subCompareData}
 								diffCurrentData={subCurrentData}
 								{diffSide}
 								{compact}
+								{forceExpandAll}
+								{showDiffIndicator}
 							/>
 						{:else}
 							<!-- Render ghost child to preserve spacing when this key exists only on the other side -->
@@ -684,6 +696,8 @@
 								{diffSide}
 								{compact}
 								ghost={true}
+								{forceExpandAll}
+								{showDiffIndicator}
 							/>
 						{/if}
 					{/each}

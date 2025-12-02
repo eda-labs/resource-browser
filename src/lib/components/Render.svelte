@@ -11,6 +11,8 @@
 	export let showType: boolean = true;
 	export let compact: boolean = false;
 	export let onResourcePage: boolean = false;
+	export let showDiffIndicator: boolean = false;
+	export let forceExpandAll: boolean = false;
 
 	const desc = getDescription(data);
 	const scope = getScope(data);
@@ -44,9 +46,11 @@
 						{requiredList}
 						{borderColor}
 						parent={type}
-						expanded={hashExistDeep(hash, `${type}.${key}`)}
+						expanded={forceExpandAll || hashExistDeep(hash, `${type}.${key}`)}
 						{compact}
 						{onResourcePage}
+						{showDiffIndicator}
+						{forceExpandAll}
 					/>
 				{/each}
 			</div>

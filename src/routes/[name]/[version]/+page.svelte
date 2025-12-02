@@ -427,34 +427,34 @@
 		subtitle={releaseLabel}
 	/>
 
-	<div class="relative flex min-h-screen flex-col overflow-hidden pt-16 md:pt-20">
+	<div class="relative flex min-h-screen flex-col overflow-hidden pt-14 md:pt-16">
 		<div class="relative flex-1">
-			<main class="flex-1 px-4 pt-4 pb-10 md:px-8 md:pt-6 lg:px-12">
+			<main class="flex-1 px-3 pt-3 pb-8 md:px-6 md:pt-4 lg:px-8">
 				<div class="mx-auto w-full max-w-7xl">
-					<!-- Unified Control Panel -->
+					<!-- Compact Control Panel -->
 					<div
-						class="mb-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg backdrop-blur-sm md:mb-8 md:rounded-xl dark:border-gray-700/60 dark:bg-gray-800/90 dark:shadow-2xl"
+						class="mb-4 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm md:mb-6 dark:border-gray-700 dark:bg-gray-800"
 					>
-						<!-- Control Bar - Responsive Layout -->
+						<!-- Control Bar - Compact Responsive Layout -->
 						<div
-							class="bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 md:px-6 md:py-4 dark:from-gray-800/50 dark:to-gray-900/50"
+							class="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-3 py-2.5 md:px-5 md:py-3 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800"
 						>
 							<div
-								class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-4"
+								class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
 							>
-								<!-- Left: View Mode Buttons - Stacked on mobile -->
+								<!-- Left: View Mode Buttons - Horizontal scroll on mobile -->
 								<div
-									class="inline-flex flex-wrap items-center gap-1 overflow-y-hidden rounded-lg border border-gray-200 bg-white p-1 shadow-inner md:gap-2 md:overflow-x-auto md:rounded-xl md:p-1.5 dark:border-gray-700 dark:bg-gray-900/50"
+									class="flex items-center gap-2 overflow-x-auto rounded-lg bg-gray-100 p-1 dark:bg-gray-900/50"
 								>
 									<button
 										on:click={() => (viewMode = 'schema')}
-										class="group relative inline-flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold whitespace-normal transition-all duration-300 md:flex-shrink-0 md:gap-2 md:px-5 md:py-2.5 md:text-sm md:whitespace-nowrap {viewMode ===
+										class="group inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all md:px-4 md:py-2 md:text-sm {viewMode ===
 										'schema'
-											? 'scale-105 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30'
-											: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
+											? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-sm'
+											: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
 									>
 										<svg
-											class="h-3.5 w-3.5 transition-transform group-hover:scale-110 md:h-4 md:w-4"
+											class="h-3.5 w-3.5 md:h-4 md:w-4"
 											fill="none"
 											stroke="currentColor"
 											viewBox="0 0 24 24"
@@ -466,22 +466,17 @@
 												d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
 											/>
 										</svg>
-										<span class="hidden sm:inline">Schema</span>
-										{#if viewMode === 'schema'}
-											<span
-												class="absolute -bottom-2 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 md:w-12"
-											></span>
-										{/if}
+										<span>Schema</span>
 									</button>
 									<button
 										on:click={() => (viewMode = 'compare')}
-										class="group relative inline-flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold whitespace-normal transition-all duration-300 md:flex-shrink-0 md:gap-2 md:px-5 md:py-2.5 md:text-sm md:whitespace-nowrap {viewMode ===
+										class="group inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all md:px-4 md:py-2 md:text-sm {viewMode ===
 										'compare'
-											? 'scale-105 bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg shadow-orange-500/30'
-											: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
+											? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-sm'
+											: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
 									>
 										<svg
-											class="h-3.5 w-3.5 transition-transform group-hover:scale-110 md:h-4 md:w-4"
+											class="h-3.5 w-3.5 md:h-4 md:w-4"
 											fill="none"
 											stroke="currentColor"
 											viewBox="0 0 24 24"
@@ -493,22 +488,17 @@
 												d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
 											/>
 										</svg>
-										<span class="hidden sm:inline">Compare</span>
-										{#if viewMode === 'compare'}
-											<span
-												class="absolute -bottom-2 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-orange-600 to-amber-600 md:w-12"
-											></span>
-										{/if}
+										<span>Compare</span>
 									</button>
 									<button
 										on:click={() => (viewMode = 'validate')}
-										class="group relative inline-flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold whitespace-normal transition-all duration-300 md:flex-shrink-0 md:gap-2 md:px-5 md:py-2.5 md:text-sm md:whitespace-nowrap {viewMode ===
+										class="group inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all md:px-4 md:py-2 md:text-sm {viewMode ===
 										'validate'
-											? 'scale-105 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30'
-											: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
+											? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
+											: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
 									>
 										<svg
-											class="h-3.5 w-3.5 transition-transform group-hover:scale-110 md:h-4 md:w-4"
+											class="h-3.5 w-3.5 md:h-4 md:w-4"
 											fill="none"
 											stroke="currentColor"
 											viewBox="0 0 24 24"
@@ -520,28 +510,22 @@
 												d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 											/>
 										</svg>
-										<span class="hidden sm:inline">Validate</span>
-										{#if viewMode === 'validate'}
-											<span
-												class="absolute -bottom-2 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 md:w-12"
-											></span>
-										{/if}
+										<span>Validate</span>
 									</button>
 								</div>
 
-								<!-- Right: Action Controls - Full width on mobile -->
-								<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+								<!-- Right: Action Controls - Compact on mobile -->
+								<div class="flex flex-wrap items-center gap-2">
 									<!-- Expand/Collapse Button -->
 									<button
-										class="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 px-3 py-2 text-xs font-semibold shadow-sm transition-all duration-300
-									       hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none sm:w-auto md:rounded-xl md:px-5 md:py-2.5 md:text-sm
+										class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold shadow-sm transition-all hover:bg-gray-50 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500/20 md:px-4 md:py-2 md:text-sm
 									       {$ulExpanded.length > 0
-											? 'border-gray-300 bg-gradient-to-br from-white to-gray-50 text-gray-700 hover:from-gray-50 hover:to-gray-100 dark:border-gray-600 dark:from-gray-800 dark:to-gray-900 dark:text-gray-300 dark:hover:from-gray-700 dark:hover:to-gray-800'
-											: 'border-blue-500 bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-blue-500/20 hover:from-blue-700 hover:to-blue-800 dark:shadow-blue-500/30'}"
+											? 'border-gray-300 text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300'
+											: 'border-blue-500 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600'}"
 										on:click={handleGlobalExpand}
 									>
 										<svg
-											class="h-3.5 w-3.5 transition-transform duration-300 md:h-4 md:w-4 {$ulExpanded.length >
+											class="h-3.5 w-3.5 transition-transform md:h-4 md:w-4 {$ulExpanded.length >
 											0
 												? 'rotate-0'
 												: 'rotate-90'}"
@@ -553,14 +537,14 @@
 												<path
 													stroke-linecap="round"
 													stroke-linejoin="round"
-													stroke-width="2.5"
+													stroke-width="2"
 													d="M5 15l7-7 7 7"
 												/>
 											{:else}
 												<path
 													stroke-linecap="round"
 													stroke-linejoin="round"
-													stroke-width="2.5"
+													stroke-width="2"
 													d="M19 9l-7 7-7-7"
 												/>
 											{/if}
@@ -577,52 +561,50 @@
 					<!-- Schema Section -->
 					{#if viewMode === 'schema'}
 						<div class="content-header mb-8 space-y-6 md:mb-10 md:space-y-8">
-							<!-- Specification Section -->
+						<!-- Specification Section -->
+						<div
+							class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+						>
 							<div
-								class="overflow-hidden rounded-lg border border-white/10 bg-black/30 shadow-sm backdrop-blur-lg md:rounded-xl"
+								class="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-blue-50 px-4 py-3 dark:border-gray-700 dark:from-cyan-900/20 dark:to-blue-900/20"
 							>
-								<div
-									class="content-header border-b border-white/10 bg-black/20 px-4 py-4 md:px-8 md:py-6"
-								>
-									<div class="flex items-center space-x-3 md:space-x-4">
-										<div
-											class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 text-white shadow-xl md:h-12 md:w-12 md:rounded-xl"
+								<div class="flex items-center gap-2.5">
+									<div
+										class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-md md:h-9 md:w-9"
+									>
+										<svg
+											class="h-4 w-4 md:h-5 md:w-5"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
 										>
-											<svg
-												class="h-5 w-5 md:h-6 md:w-6"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-												/>
-											</svg>
-										</div>
-										<div class="min-w-0">
-											<h2 class="text-lg font-semibold text-white md:text-2xl">Specification</h2>
-											<p class="mt-0.5 text-xs text-gray-300 md:text-sm">
-												Required configuration fields
-											</p>
-										</div>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+											/>
+										</svg>
+									</div>
+									<div>
+										<h2 class="text-sm font-bold text-gray-900 md:text-base dark:text-white">Specification</h2>
+										<p class="text-xs text-gray-600 dark:text-gray-400">
+											Required configuration
+										</p>
 									</div>
 								</div>
-								<div class="overflow-x-auto bg-black/10 p-4 md:p-8">
-									<Render
-										{hash}
-										source={'eda'}
-										type={'spec'}
-										data={spec}
-										showType={false}
-										onResourcePage={true}
-									/>
-								</div>
 							</div>
-
-							<!-- Status Section -->
+							<div class="overflow-x-auto p-3 md:p-5">
+								<Render
+									{hash}
+									source={'eda'}
+									type={'spec'}
+									data={spec}
+									showType={false}
+									onResourcePage={true}
+								/>
+							</div>
+						</div>							<!-- Status Section -->
 							<div
 								class="overflow-hidden rounded-lg border border-white/10 bg-black/30 shadow-sm backdrop-blur-lg md:rounded-xl"
 							>
