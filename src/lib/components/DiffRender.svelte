@@ -8,6 +8,8 @@
 		getFormat,
 		getMinimum,
 		getMaximum,
+		getMinItems,
+		getMaxItems,
 		getEnum
 	} from './functions';
 	import EnumDisplay from './EnumDisplay.svelte';
@@ -239,6 +241,30 @@
 									<code class="rounded px-1.5 py-0.5 text-transparent">&nbsp;</code>
 								</div>
 							{/if}
+
+							<!-- array size / placeholder -->
+							{#if folder && (getMinItems(folder) !== undefined || getMaxItems(folder) !== undefined)}
+								<div
+									class="font-fira rounded-md border-l-3 border-indigo-500 bg-gray-50 px-3 py-1.5 text-xs dark:border-indigo-600 dark:bg-gray-800/50"
+								>
+									<span class="font-semibold text-indigo-800 dark:text-indigo-400">array size:</span>
+									<code
+										class="rounded bg-white/50 px-1.5 py-0.5 text-indigo-900 dark:bg-black/20 dark:text-indigo-300"
+									>
+										{#if folder && getMinItems(folder) !== undefined}minItems: {getMinItems(folder)}{/if}
+										{#if folder && getMinItems(folder) !== undefined && getMaxItems(folder) !== undefined},
+										{/if}
+										{#if folder && getMaxItems(folder) !== undefined}maxItems: {getMaxItems(folder)}{/if}
+									</code>
+								</div>
+							{:else if fieldCompareData && (getMinItems(fieldCompareData) !== undefined || getMaxItems(fieldCompareData) !== undefined)}
+								<div
+									class="font-fira rounded-md border-l-3 border-indigo-500 px-3 py-1.5 text-xs dark:border-indigo-600"
+								>
+									<span class="font-semibold text-indigo-800 dark:text-indigo-400">array size:</span>
+									<code class="rounded px-1.5 py-0.5 text-transparent">&nbsp;</code>
+								</div>
+							{/if}
 						</div>
 					{/if}
 					<Tree
@@ -287,6 +313,13 @@
 										<code class="rounded px-1.5 py-0.5 text-transparent">&nbsp;</code>
 									</div>
 								{/if}
+								{#if getMinItems(fieldCompareData) !== undefined || getMaxItems(fieldCompareData) !== undefined}
+									<div
+										class="font-fira rounded-md border-l-3 border-indigo-500 bg-gray-50 px-3 py-1.5 text-xs dark:border-indigo-600 dark:bg-gray-800/50"
+									>
+										<code class="rounded px-1.5 py-0.5 text-transparent">&nbsp;</code>
+									</div>
+								{/if}
 							</div>
 						{/if}
 						{#if getEnum(fieldCompareData)}
@@ -324,6 +357,25 @@
 									{#if getMinimum(fieldCompareData) !== undefined && getMaximum(fieldCompareData) !== undefined},
 									{/if}
 									{#if getMaximum(fieldCompareData) !== undefined}max: {getMaximum(
+											fieldCompareData
+										)}{/if}
+								</code>
+							</div>
+						{/if}
+						{#if getMinItems(fieldCompareData) !== undefined || getMaxItems(fieldCompareData) !== undefined}
+							<div
+								class="font-fira rounded-md border-l-3 border-indigo-500 bg-gray-50 px-3 py-1.5 text-xs dark:border-indigo-600 dark:bg-gray-800/50"
+							>
+								<span class="font-semibold text-indigo-800 dark:text-indigo-400">array size:</span>
+								<code
+									class="rounded bg-white/50 px-1.5 py-0.5 text-indigo-900 dark:bg-black/20 dark:text-indigo-300"
+								>
+									{#if getMinItems(fieldCompareData) !== undefined}minItems: {getMinItems(
+											fieldCompareData
+										)}{/if}
+									{#if getMinItems(fieldCompareData) !== undefined && getMaxItems(fieldCompareData) !== undefined},
+									{/if}
+									{#if getMaxItems(fieldCompareData) !== undefined}maxItems: {getMaxItems(
 											fieldCompareData
 										)}{/if}
 								</code>

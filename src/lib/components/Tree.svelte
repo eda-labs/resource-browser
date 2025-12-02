@@ -10,7 +10,9 @@
 		getEnum,
 		getFormat,
 		getMinimum,
-		getMaximum
+		getMaximum,
+		getMinItems,
+		getMaxItems
 	} from './functions';
 	import EnumDisplay from './EnumDisplay.svelte';
 	import type { Schema } from '$lib/structure';
@@ -146,11 +148,15 @@
 	let formatVal: string = '';
 	let minVal: number | undefined = undefined;
 	let maxVal: number | undefined = undefined;
+	let minItemsVal: number | undefined = undefined;
+	let maxItemsVal: number | undefined = undefined;
 
 	$: defaultVal = getDefault(folder);
 	$: formatVal = getFormat(folder);
 	$: minVal = getMinimum(folder);
 	$: maxVal = getMaximum(folder);
+	$: minItemsVal = getMinItems(folder);
+	$: maxItemsVal = getMaxItems(folder);
 
 	// Diff helper functions
 	function normalizeForComparison(schema: Schema): any {
@@ -166,6 +172,8 @@
 		if ('format' in schema) normalized.format = schema.format;
 		if ('minimum' in schema) normalized.minimum = schema.minimum;
 		if ('maximum' in schema) normalized.maximum = schema.maximum;
+		if ('minItems' in schema) normalized.minItems = schema.minItems;
+		if ('maxItems' in schema) normalized.maxItems = schema.maxItems;
 		if ('required' in schema) normalized.required = schema.required;
 
 		// For objects and arrays, compare structure (including nested structure)
@@ -582,6 +590,27 @@
 			{:else if diffMode && diffCompareData && (getMinimum(diffCompareData) !== undefined || getMaximum(diffCompareData) !== undefined)}
 				<li
 					class="font-fira rounded-md border-l-3 border-green-500 bg-gray-50 px-3 py-1.5 text-xs dark:border-green-600 dark:bg-gray-800/50"
+				>
+					<code class="rounded px-1.5 py-0.5 text-transparent">&nbsp;</code>
+				</li>
+			{/if}
+			{#if minItemsVal !== undefined || maxItemsVal !== undefined}
+				<li
+					class="font-fira rounded-md border-l-3 border-indigo-500 bg-gray-50 px-3 py-1.5 text-xs dark:border-indigo-600 dark:bg-gray-800/50"
+				>
+					<span class="font-semibold text-indigo-800 dark:text-indigo-400">array size:</span>
+					<code
+						class="rounded bg-white/50 px-1.5 py-0.5 text-indigo-900 dark:bg-black/20 dark:text-indigo-300"
+					>
+						{#if minItemsVal !== undefined}minItems: {minItemsVal}{/if}
+						{#if minItemsVal !== undefined && maxItemsVal !== undefined},
+						{/if}
+						{#if maxItemsVal !== undefined}maxItems: {maxItemsVal}{/if}
+					</code>
+				</li>
+			{:else if diffMode && diffCompareData && (getMinItems(diffCompareData) !== undefined || getMaxItems(diffCompareData) !== undefined)}
+				<li
+					class="font-fira rounded-md border-l-3 border-indigo-500 bg-gray-50 px-3 py-1.5 text-xs dark:border-indigo-600 dark:bg-gray-800/50"
 				>
 					<code class="rounded px-1.5 py-0.5 text-transparent">&nbsp;</code>
 				</li>

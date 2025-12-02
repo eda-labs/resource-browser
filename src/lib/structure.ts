@@ -40,6 +40,8 @@ export interface ObjectSchema extends BaseSchema {
 export interface ArraySchema extends BaseSchema {
 	type: 'array';
 	items: Schema;
+	minItems?: number;
+	maxItems?: number;
 }
 
 export interface PrimitiveSchema extends BaseSchema {

@@ -72,12 +72,31 @@
 	// schedule debounced search when user types
 	function scheduleSearch() {
 		if (debounceTimer) clearTimeout(debounceTimer);
+		
+		// If query is empty, clear results immediately
+		if (!query || query.trim().length === 0) {
+			results = [];
+			loading = false;
+			return;
+		}
+		
+		// Clear old results immediately when query changes to avoid showing stale data
+		results = [];
+		loading = true;
+		
 		// quick debug/log to observe input-driven searches
 		if (typeof console !== 'undefined') console.debug('scheduleSearch() fired, query=', query, 'releaseName=', releaseName);
 		debounceTimer = setTimeout(() => {
 			debounceTimer = null;
 			performSearch();
-		}, 80);
+		}, 300);
+	}
+
+	// Watch query changes reactively to trigger search on any change (typing, clear button, etc.)
+	$: {
+		// This reactive block re-runs whenever query changes
+		void query; // reference query to make it reactive
+		scheduleSearch();
 	}
 
 	// simple in-memory caches to reduce repeated network fetches during fast typing
@@ -590,14 +609,25 @@
 									/></svg
 								>
 							</div>
-							<input
-								id="spec-query"
-								bind:value={query}
-								on:input={() => { selectedTokens = new Set(query.split(/\s+/).filter(Boolean)); }}
-								on:keydown={(e) => e.key === 'Enter' && performSearch()}
-								placeholder="Press Enter to search"
-								class="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 pl-9 text-sm text-gray-900 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-							/>
+						<input
+							id="spec-query"
+							bind:value={query}
+							on:input={() => {
+								selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
+							}}
+							on:keydown={(e) => {
+								if (e.key === 'Enter') {
+									e.preventDefault();
+									if (debounceTimer) {
+										clearTimeout(debounceTimer);
+										debounceTimer = null;
+									}
+									performSearch();
+								}
+							}}
+							placeholder="Search in real-time..."
+							class="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 pl-9 text-sm text-gray-900 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+						/>
 							{#if query}
 								<button
 									aria-label="Clear search"
@@ -632,13 +662,18 @@
 							{groupedResults.length} matches
 						</div>
 						<div class="ml-3 flex items-center gap-2">
-							<button
-								aria-pressed={includeEnum}
-								on:click={() => { includeEnum = !includeEnum; }}
-								class="{includeEnum ? 'bg-purple-600 text-white shadow-sm dark:bg-purple-500' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'} rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:shadow-md sm:px-4"
-								title="Include enum / constant / pattern values in search (toggle, press Enter to search)"
-								style="z-index:1"
-							>
+						<button
+							aria-pressed={includeEnum}
+							on:click={() => {
+								includeEnum = !includeEnum;
+								if (query && query.trim().length > 0) {
+									scheduleSearch();
+								}
+							}}
+							class="{includeEnum ? 'bg-purple-600 text-white shadow-sm dark:bg-purple-500' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'} rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:shadow-md sm:px-4"
+							title="Include enum / constant / pattern values in search"
+							style="z-index:1"
+						>
 								{#if includeEnum}
 									<svg class="inline-block h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Enums On
 								{:else}

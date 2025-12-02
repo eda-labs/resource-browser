@@ -445,10 +445,29 @@
     // schedule debounced search when user types
     function scheduleSearch() {
         if (debounceTimer) clearTimeout(debounceTimer);
+        
+        // If query is empty, clear results immediately
+        if (!query || query.trim().length === 0) {
+            results = [];
+            loading = false;
+            return;
+        }
+        
+        // Clear old results immediately when query changes to avoid showing stale data
+        results = [];
+        loading = true;
+        
         debounceTimer = setTimeout(() => {
             debounceTimer = null;
             performSearch();
-        }, 150);
+        }, 300);
+    }
+
+    // Watch query changes reactively to trigger search on any change (typing, clear button, etc.)
+    $: {
+        // This reactive block re-runs whenever query changes
+        void query; // reference query to make it reactive
+        scheduleSearch();
     }
 
     // Global listener for YangView pathclick document events.
@@ -528,7 +547,26 @@
                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" /></svg>
                             </div>
-                            <input id="spec-query" bind:value={query} on:input={() => { scheduleSearch(); selectedTokens = new Set(query.split(/\s+/).filter(Boolean)); }} on:keydown={(e) => e.key === 'Enter' && performSearch()} placeholder="Search specs & status (regex or tokens)" class="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 pl-9 text-sm text-gray-900 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
+                            <input
+                                id="spec-query"
+                                bind:value={query}
+                                on:input={() => {
+                                    scheduleSearch();
+                                    selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
+                                }}
+                                on:keydown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        if (debounceTimer) {
+                                            clearTimeout(debounceTimer);
+                                            debounceTimer = null;
+                                        }
+                                        performSearch();
+                                    }
+                                }}
+                                placeholder="Search in real-time (regex or tokens)..."
+                                class="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 pl-9 text-sm text-gray-900 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                            />
                             {#if query}
                                 <button aria-label="Clear search" on:click={() => { query = ''; results = []; }} class="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-gray-100 p-1 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>

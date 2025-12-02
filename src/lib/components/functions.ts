@@ -101,6 +101,22 @@ export function getMaximum(resource: Schema): number | undefined {
 	return undefined;
 }
 
+// Get minItems constraint value for arrays
+export function getMinItems(resource: Schema): number | undefined {
+	if (resource.type === 'array' && 'minItems' in resource && resource.minItems !== undefined) {
+		return resource.minItems;
+	}
+	return undefined;
+}
+
+// Get maxItems constraint value for arrays
+export function getMaxItems(resource: Schema): number | undefined {
+	if (resource.type === 'array' && 'maxItems' in resource && resource.maxItems !== undefined) {
+		return resource.maxItems;
+	}
+	return undefined;
+}
+
 export function hashExistDeep(hash: string, currentId: string) {
 	if (hash.indexOf(currentId) !== -1) {
 		return true;
