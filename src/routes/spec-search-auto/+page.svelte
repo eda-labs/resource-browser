@@ -460,7 +460,7 @@
         debounceTimer = setTimeout(() => {
             debounceTimer = null;
             performSearch();
-        }, 300);
+        }, 150); // Faster: reduced from 300ms to 150ms
     }
 
     // Watch query changes reactively to trigger search on any change (typing, clear button, etc.)
@@ -504,149 +504,312 @@
 </script>
 
 <svelte:head>
-    <title>EDA Resource Browser | Search CRD Specs (Auto)</title>
+    <title>EDA Resource Browser | Interactive Path Search</title>
     </svelte:head>
 
-<TopHeader title="Search CRD Specs & Status (Auto)" />
+<TopHeader title="Interactive Path Search" />
 
-<div class="mx-auto max-w-7xl px-4 py-2"></div>
-
-<div class="relative flex flex-col overflow-y-auto pt-12 md:pt-14 lg:min-h-screen lg:overflow-hidden">
-    <div class="relative z-10 flex flex-1 flex-col lg:flex-row">
-        <div class="flex-1 overflow-auto pb-16">
-            <div class="mx-auto max-w-7xl px-4 py-4">
-                <div class="mb-2 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center"></div>
-                <div class="space-y-2 sm:space-y-4">
-                    <div>
-                        <p class="mb-2 text-sm leading-relaxed text-white sm:text-base">Select a release and version (leave the version blank to search all versions), then search inside CRD spec and status schemas. Descriptions are ignored to focus matches on parameters and values.</p>
-                        <label for="spec-release" class="mb-1 block text-base font-semibold text-gray-900 sm:mb-2 sm:text-lg dark:text-white">Release & Version</label>
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
-                            <div class="relative">
-                                <select id="spec-release" aria-label="Select release" bind:value={releaseName} on:change={loadVersions} class="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-purple-500 focus:ring-2 focus:ring-purple-500 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white" style="z-index:1000;">
-                                    <option value="">Select release...</option>
-                                    {#each releasesConfig.releases as r}
-                                        <option value={r.name}>{r.label}</option>
-                                    {/each}
-                                </select>
-                            </div>
-                            <div class="relative">
-                                <select id="spec-version" aria-label="Select resource version" bind:value={version} class="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-purple-500 focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white" style="z-index:1000;" disabled={!release || versions.length === 0 || loadingVersions}>
-                                    <option value="">{loadingVersions ? 'Loading versions...' : 'All versions'}</option>
-                                    {#each versions as v}
-                                        <option value={v}>{v}</option>
-                                    {/each}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="relative pt-2"></div>
-                    </div>
+<div class="relative flex min-h-screen flex-col pt-12 md:pt-14">
+    <div class="mx-auto w-full max-w-7xl flex-1 px-4 py-6">
+        
+        <!-- Compact Filters at Top -->
+        <div class="mb-5 flex flex-wrap items-end gap-3">
+            <div class="flex-1 min-w-[200px]">
+                <label for="spec-release" class="mb-1.5 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                    Release
+                </label>
+                <select 
+                    id="spec-release" 
+                    bind:value={releaseName} 
+                    on:change={loadVersions} 
+                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-all hover:border-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:border-gray-500 dark:focus:border-cyan-400"
+                >
+                    <option value="">Select release...</option>
+                    {#each releasesConfig.releases as r}
+                        <option value={r.name}>{r.label}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="flex-1 min-w-[200px]">
+                <label for="spec-version" class="mb-1.5 block text-xs font-medium text-gray-600 dark:text-gray-400">
+                    Version
+                </label>
+                <select 
+                    id="spec-version" 
+                    bind:value={version} 
+                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-all hover:border-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:border-gray-500 dark:focus:border-cyan-400" 
+                    disabled={!release || versions.length === 0 || loadingVersions}
+                >
+                    <option value="">{loadingVersions ? 'Loading...' : 'All versions'}</option>
+                    {#each versions as v}
+                        <option value={v}>{v}</option>
+                    {/each}
+                </select>
+            </div>
+        </div>
+        <!-- Enhanced Search Input -->
+        <div class="mb-5 space-y-3">
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+                    </svg>
                 </div>
-                <div class="mb-2">
-                    <div class="flex items-center gap-3">
-                        <div class="relative flex-1">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" /></svg>
-                            </div>
-                            <input
-                                id="spec-query"
-                                bind:value={query}
-                                on:input={() => {
-                                    scheduleSearch();
-                                    selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
-                                }}
-                                on:keydown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        if (debounceTimer) {
-                                            clearTimeout(debounceTimer);
-                                            debounceTimer = null;
-                                        }
-                                        performSearch();
-                                    }
-                                }}
-                                placeholder="Search in real-time (regex or tokens)..."
-                                class="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 pl-9 text-sm text-gray-900 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                            />
-                            {#if query}
-                                <button aria-label="Clear search" on:click={() => { query = ''; results = []; }} class="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-gray-100 p-1 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                </button>
-                            {/if}
-                        </div>
-                        <!-- Expand All removed for auto-search page -->
-                        <div class="flex items-center gap-3"></div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">{groupedResults.length} matches</div>
-                        <div class="ml-3 flex items-center gap-2"> 
-                            <!-- View toggles intentionally removed; only YANG view is supported in this auto-search page -->
-                        </div>
-                    </div>
-                    <!-- Selected tokens / chips -->
-                    {#if query}
-                        <div class="mt-2 flex flex-wrap gap-2">
-                            {#each query.split(/\s+/).filter(Boolean) as token}
-                                <div class="inline-flex items-center gap-2 rounded bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-200">
-                                    <span class="font-mono">{token}</span>
-                                    <button class="ml-1 rounded px-1" on:click={() => { const toks = query.split(/\s+/).filter(Boolean); const newt = toks.filter(t => t !== token); query = newt.join(' '); if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }}>{'✕'}</button>
-                                </div>
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-                <div class="relative border-t border-gray-200 pt-4">{#if loading}<div class="pointer-events-none absolute -top-1 right-0 left-0 h-1"><div class="h-1 w-full bg-gray-200 dark:bg-gray-700"><div class="h-1 rounded-full bg-purple-600" style="width: 100%"></div></div></div>{/if}</div>
+                <input
+                    id="spec-query"
+                    bind:value={query}
+                    on:input={() => {
+                        scheduleSearch();
+                        selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
+                    }}
+                    on:keydown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (debounceTimer) {
+                                clearTimeout(debounceTimer);
+                                debounceTimer = null;
+                            }
+                            performSearch();
+                        }
+                    }}
+                    placeholder="Type to search paths, or click paths below to build your query..."
+                    class="w-full rounded-xl border border-gray-300 bg-white py-3.5 pl-11 pr-11 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:hover:border-gray-500 dark:focus:border-cyan-400"
+                />
+                {#if query}
+                    <button 
+                        aria-label="Clear search" 
+                        on:click={() => { query = ''; results = []; }} 
+                        class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-gray-300"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                {/if}
+            </div>
 
-                <!-- Results (the rest is identical to spec-search, but YangView uses clickToSearch and on:pathclick handlers) -->
+            <!-- Better Token/Path Display -->
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                {#if query}
+                    <div class="flex flex-wrap gap-2">
+                        {#each query.split(/\s+/).filter(Boolean) as token}
+                            <button
+                                class="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-50 to-blue-50 px-3 py-1.5 text-xs font-medium text-cyan-700 shadow-sm transition-all hover:from-cyan-100 hover:to-blue-100 hover:shadow dark:from-cyan-900/30 dark:to-blue-900/30 dark:text-cyan-300 dark:hover:from-cyan-900/50 dark:hover:to-blue-900/50"
+                                on:click={() => { 
+                                    const toks = query.split(/\s+/).filter(Boolean); 
+                                    query = toks.filter(t => t !== token).join(' '); 
+                                }}
+                            >
+                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                <span class="font-mono">{token}</span>
+                                <svg class="h-3.5 w-3.5 opacity-60 transition-opacity group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        {/each}
+                    </div>
+                {:else}
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <span class="hidden sm:inline">💡 Select a release and start typing, or click paths in results</span>
+                        <span class="sm:hidden">💡 Click paths to search</span>
+                    </div>
+                {/if}
+                
                 {#if displayedResults.length > 0}
-                    <div class="space-y-3 sm:hidden">
-                        {#each groupedResults as g}
-                            <div class="relative isolate z-0 overflow-hidden rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="mr-2 min-w-0">
-                                        <div class="text-sm font-semibold break-words text-gray-900 dark:text-white">{g.kind}</div>
-                                        <div class="text-xs text-gray-600 dark:text-gray-300">{stripResourcePrefixFQDN(String(g.name))}</div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 px-3 py-1.5 shadow-sm dark:from-purple-900/30 dark:to-pink-900/30">
+                            <svg class="h-4 w-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            <span class="text-sm font-semibold text-purple-700 dark:text-purple-300">
+                                {groupedResults.length} {groupedResults.length === 1 ? 'match' : 'matches'}
+                            </span>
+                        </div>
+                    </div>
+                {/if}
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        {#if loading}
+            <div class="mb-5">
+                <div class="flex items-center justify-center gap-3 rounded-xl border border-cyan-200 bg-gradient-to-r from-cyan-50 to-blue-50 px-4 py-3 dark:border-cyan-800 dark:from-cyan-900/20 dark:to-blue-900/20">
+                    <div class="h-5 w-5 animate-spin rounded-full border-2 border-cyan-200 border-t-cyan-600 dark:border-cyan-700 dark:border-t-cyan-400"></div>
+                    <span class="text-sm font-medium text-cyan-700 dark:text-cyan-300">Searching...</span>
+                </div>
+            </div>
+        {/if}
+
+                <!-- Results Section -->
+                {#if loading && query}
+                    <!-- Loading Skeleton -->
+                    <div class="space-y-4">
+                        {#each [1, 2, 3] as _}
+                            <div class="animate-pulse overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                                <div class="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-5 py-4 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div class="h-5 w-32 rounded bg-gray-200 dark:bg-gray-700"></div>
+                                        <div class="h-7 w-16 rounded-lg bg-gray-200 dark:bg-gray-700"></div>
                                     </div>
-                                    <div class="flex items-center gap-2">{#if g.version}<div class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-200">{g.version}</div>{/if}</div>
                                 </div>
-                                <div class="mt-3">
-                                    <div class="text-xs break-words whitespace-normal text-gray-900 dark:text-gray-200"><div class="overflow-x-auto"><div class="min-w-[640px] {g.spec && g.status ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1'}">
-                                        {#if g.spec}
-                                            <div>
-                                                <div class="mb-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400">SPEC</div>
-                                                    <div class="relative isolate overflow-hidden"><YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }} /></div>
+                                <div class="p-5">
+                                    <div class="space-y-2">
+                                        <div class="h-4 w-full rounded bg-gray-100 dark:bg-gray-700/50"></div>
+                                        <div class="h-4 w-5/6 rounded bg-gray-100 dark:bg-gray-700/50"></div>
+                                        <div class="h-4 w-4/6 rounded bg-gray-100 dark:bg-gray-700/50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {/each}
+                    </div>
+                {:else if displayedResults.length > 0}
+                    <div class="space-y-4 sm:hidden">
+                        {#each groupedResults as g}
+                            <div class="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+                                <a 
+                                    href="/{g.name}/{g.version}" 
+                                    class="block border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-4 py-3.5 transition-colors hover:from-gray-100 hover:to-gray-50 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800 dark:hover:from-gray-700 dark:hover:to-gray-700"
+                                >
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="min-w-0 flex-1">
+                                            <div class="mb-1 flex items-center gap-2">
+                                                <div class="break-words text-sm font-bold text-gray-900 dark:text-white">{g.kind}</div>
+                                                <svg class="h-4 w-4 shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </div>
+                                            <div class="break-words font-mono text-xs text-gray-600 dark:text-gray-400">{stripResourcePrefixFQDN(String(g.name))}</div>
+                                        </div>
+                                        {#if g.version}
+                                            <div class="shrink-0 rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 px-3 py-1.5 shadow-sm">
+                                                <div class="font-mono text-xs font-semibold text-white">{g.version}</div>
                                             </div>
                                         {/if}
-                                        {#if g.status}
-                                            <div>
-                                                <div class="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">STATUS</div>
-                                                    <div class="relative isolate overflow-hidden"><YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }} /></div>
-                                            </div>
-                                        {/if}
-                                        {#if !g.spec && !g.status}
-                                            <div class="text-xs text-gray-500 dark:text-gray-400">No matching content</div>
-                                        {/if}
-                                    </div></div></div>
+                                    </div>
+                                </a>
+                                <div class="bg-gradient-to-br from-white to-gray-50 p-4 dark:from-gray-900 dark:to-gray-900/50">
+                                    <div class="overflow-x-auto">
+                                        <div class="min-w-[640px] {g.spec && g.status ? 'grid grid-cols-2 gap-4' : 'grid grid-cols-1'}">
+                                            {#if g.spec}
+                                                <div>
+                                                    <div class="mb-2 flex items-center gap-2">
+                                                        <div class="h-1.5 w-1.5 rounded-full bg-cyan-500"></div>
+                                                        <div class="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">Spec</div>
+                                                    </div>
+                                                    <div class="relative isolate overflow-hidden rounded-lg border border-cyan-100 bg-white/50 p-2 dark:border-cyan-900/30 dark:bg-gray-800/50">
+                                                        <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }} />
+                                                    </div>
+                                                </div>
+                                            {/if}
+                                            {#if g.status}
+                                                <div>
+                                                    <div class="mb-2 flex items-center gap-2">
+                                                        <div class="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                                                        <div class="text-xs font-bold uppercase tracking-wide text-green-600 dark:text-green-400">Status</div>
+                                                    </div>
+                                                    <div class="relative isolate overflow-hidden rounded-lg border border-green-100 bg-white/50 p-2 dark:border-green-900/30 dark:bg-gray-800/50">
+                                                        <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; } performSearch(); }} />
+                                                    </div>
+                                                </div>
+                                            {/if}
+                                            {#if !g.spec && !g.status}
+                                                <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-8 text-center text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                                                    No matching content
+                                                </div>
+                                            {/if}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         {/each}
                     </div>
 
-                    <div class="hidden overflow-x-auto rounded-lg border border-gray-200 shadow-sm sm:block sm:rounded-xl dark:border-gray-700">
-                        <table class="w-full table-auto text-xs sm:text-sm">
-                            <thead class="bg-gray-50 dark:bg-gray-900"><tr><th class="px-3 py-3 text-left font-semibold text-gray-900 sm:px-6 sm:py-4 dark:text-white">Resource</th><th class="px-3 py-3 text-left font-semibold text-gray-900 sm:px-6 sm:py-4 dark:text-white">Version</th><th class="px-3 py-3 text-left font-semibold text-gray-900 sm:px-6 sm:py-4 dark:text-white">Match</th></tr></thead>
-                            <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                    <!-- Enhanced Desktop Table -->
+                    <div class="hidden overflow-hidden rounded-xl border border-gray-200 shadow-md sm:block dark:border-gray-700">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:border-gray-700 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800">
+                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                            </svg>
+                                            Resource
+                                        </div>
+                                    </th>
+                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Version
+                                        </div>
+                                    </th>
+                                    <th class="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                            </svg>
+                                            Schema
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white dark:divide-gray-700/50 dark:bg-gray-800">
                                 {#each groupedResults as g}
-                                    <tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                        <td class="relative isolate z-0 max-w-[40%] overflow-hidden px-3 py-3 font-medium break-words whitespace-pre-wrap text-gray-900 sm:px-6 sm:py-4 dark:text-white"><div class="font-semibold">{g.kind}</div><div class="text-xs text-gray-500 dark:text-gray-300">{stripResourcePrefixFQDN(String(g.name))}</div></td>
-                                        <td class="relative isolate z-0 max-w-[12%] overflow-hidden px-3 py-3 break-words whitespace-pre-wrap text-gray-600 sm:px-6 sm:py-4 dark:text-gray-300">{g.version}</td>
-                                        <td class="px-3 py-3 break-words whitespace-normal text-gray-900 sm:px-6 sm:py-4 dark:text-gray-200">
-                                            <div class="pro-spec-preview relative isolate z-0 max-h-[40rem] overflow-hidden"><div class="overflow-x-auto"><div class="min-w-[640px] space-y-4">
-                                                {#if g.spec}
-                                                    <div><div class="mb-1 text-xs font-semibold text-cyan-600 dark:text-cyan-400">SPEC</div><div class="relative isolate overflow-hidden"><YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} /></div></div>
-                                                {/if}
-                                                {#if g.status}
-                                                    <div><div class="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">STATUS</div><div class="relative isolate overflow-hidden"><YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} /></div></div>
-                                                {/if}
-                                                {#if !g.spec && !g.status}<div class="text-xs text-gray-500 dark:text-gray-400">No matching content</div>{/if}
-                                            </div></div></div>
+                                    <tr class="group transition-all hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-700/30">
+                                        <td class="relative isolate z-0 max-w-[35%] overflow-hidden px-5 py-4">
+                                            <a href="/{g.name}/{g.version}" class="flex items-center gap-2 transition-colors hover:text-cyan-600 dark:hover:text-cyan-400">
+                                                <div>
+                                                    <div class="font-bold text-gray-900 dark:text-white">{g.kind}</div>
+                                                    <div class="mt-0.5 break-words font-mono text-xs text-gray-600 dark:text-gray-400">{stripResourcePrefixFQDN(String(g.name))}</div>
+                                                </div>
+                                                <svg class="h-4 w-4 shrink-0 text-gray-400 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </a>
+                                        </td>
+                                        <td class="relative isolate z-0 max-w-[15%] overflow-hidden px-5 py-4">
+                                            <div class="inline-flex items-center rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 px-3 py-1.5 shadow-sm">
+                                                <span class="font-mono text-xs font-semibold text-white">{g.version}</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <div class="relative isolate z-0 max-h-[40rem] overflow-hidden">
+                                                <div class="overflow-x-auto">
+                                                    <div class="min-w-[640px] space-y-4">
+                                                        {#if g.spec}
+                                                            <div>
+                                                                <div class="mb-2 flex items-center gap-2">
+                                                                    <div class="h-1.5 w-1.5 rounded-full bg-cyan-500"></div>
+                                                                    <div class="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">Spec</div>
+                                                                </div>
+                                                                <div class="relative isolate overflow-hidden rounded-lg border border-cyan-100 bg-gradient-to-br from-white to-cyan-50/30 p-3 dark:border-cyan-900/30 dark:from-gray-900 dark:to-cyan-900/10">
+                                                                    <YangView hash={`${g.name}.${g.version}.spec`} source={release?.name || 'release'} type={'spec'} data={g.spec} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} />
+                                                                </div>
+                                                            </div>
+                                                        {/if}
+                                                        {#if g.status}
+                                                            <div>
+                                                                <div class="mb-2 flex items-center gap-2">
+                                                                    <div class="h-1.5 w-1.5 rounded-full bg-green-500"></div>
+                                                                    <div class="text-xs font-bold uppercase tracking-wide text-green-600 dark:text-green-400">Status</div>
+                                                                </div>
+                                                                <div class="relative isolate overflow-hidden rounded-lg border border-green-100 bg-gradient-to-br from-white to-green-50/30 p-3 dark:border-green-900/30 dark:from-gray-900 dark:to-green-900/10">
+                                                                    <YangView hash={`${g.name}.${g.version}.status`} source={release?.name || 'release'} type={'status'} data={g.status} resourceName={g.name} resourceVersion={g.version} {releaseName} kind={g.kind} clickToSearch={true} on:pathclick={(e) => { const token = e.detail.displayPath || e.detail.path; const toks = query.split(/\s+/).filter(Boolean); if (toks.includes(token)) query = toks.filter(t => t !== token).join(' '); else { toks.push(token); query = toks.join(' '); } scheduleSearch(); }} />
+                                                                </div>
+                                                            </div>
+                                                        {/if}
+                                                        {#if !g.spec && !g.status}
+                                                            <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-8 text-center text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                                                                No matching content
+                                                            </div>
+                                                        {/if}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 {/each}
@@ -654,15 +817,40 @@
                         </table>
                     </div>
                 {:else}
-                    <div class="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-8 text-center sm:rounded-xl sm:py-12 dark:border-gray-700 dark:bg-gray-900/50">
-                        <div class="flex flex-col items-center gap-3 sm:gap-4">
-                            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 sm:h-16 sm:w-16 dark:bg-gray-800"><svg class="h-7 w-7 text-gray-400 sm:h-8 sm:w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg></div>
-                            <div><h3 class="mb-1 text-base font-medium text-gray-900 sm:mb-2 sm:text-lg dark:text-white">No Results Found</h3><p class="text-xs text-gray-600 sm:text-sm dark:text-gray-300">No CRD spec/status matches the selected release/version (or all versions) and query. Try adjusting your query.</p></div>
+                    <div class="overflow-hidden rounded-2xl border-2 border-dashed border-gray-300 bg-gradient-to-br from-gray-50 via-white to-gray-50 shadow-sm dark:border-gray-700 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                        <div class="px-6 py-12 text-center sm:py-16">
+                            <div class="mx-auto flex max-w-md flex-col items-center gap-4">
+                                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-inner dark:from-gray-800 dark:to-gray-700">
+                                    <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+                                    </svg>
+                                </div>
+                                <div class="space-y-2">
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">No Results Found</h3>
+                                    <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                                        {#if !query}
+                                            Select a release and start typing to search across CRD schemas.
+                                        {:else}
+                                            No matches found for your query. Try different search terms or adjust filters.
+                                        {/if}
+                                    </p>
+                                </div>
+                                {#if query}
+                                    <button 
+                                        on:click={() => { query = ''; results = []; }}
+                                        class="mt-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:from-cyan-600 hover:to-blue-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                                    >
+                                        Clear Search
+                                    </button>
+                                {/if}
+                            </div>
                         </div>
                     </div>
                 {/if}
-                <div class="mx-auto max-w-7xl px-4 py-6"><div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"><PageCredits /></div></div>
-            </div>
+
+        <!-- Footer Credits -->
+        <div class="mt-8">
+            <PageCredits />
         </div>
     </div>
 </div>
