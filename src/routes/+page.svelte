@@ -474,7 +474,7 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 </svelte:head>
 
 <div
-	class="relative flex flex-col overflow-y-auto pt-16 md:pt-20 lg:min-h-screen lg:overflow-hidden"
+	class="relative flex flex-col overflow-y-auto pt-14 md:pt-16 lg:min-h-screen lg:overflow-hidden"
 >
 	<div class="relative z-10 flex flex-1 flex-col lg:flex-row">
 		{#if selectedResource}

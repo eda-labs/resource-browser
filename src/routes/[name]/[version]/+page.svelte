@@ -431,196 +431,145 @@
 		<div class="relative flex-1">
 			<main class="flex-1 px-3 pt-3 pb-8 md:px-6 md:pt-4 lg:px-8">
 				<div class="mx-auto w-full max-w-7xl">
-					<!-- Compact Control Panel -->
+					<!-- Ultra-Compact Control Panel -->
 					<div
-						class="mb-4 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm md:mb-6 dark:border-gray-700 dark:bg-gray-800"
+						class="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm dark:border-gray-700 dark:bg-gray-800"
 					>
-						<!-- Control Bar - Compact Responsive Layout -->
-						<div
-							class="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-3 py-2.5 md:px-5 md:py-3 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800"
-						>
-							<div
-								class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+						<!-- View Mode Tabs -->
+						<div class="flex items-center gap-1.5 rounded-md bg-gray-100 p-1 dark:bg-gray-900/50">
+							<button
+								on:click={() => (viewMode = 'schema')}
+								class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all {viewMode ===
+								'schema'
+									? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-sm'
+									: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'}"
 							>
-								<!-- Left: View Mode Buttons - Horizontal scroll on mobile -->
-								<div
-									class="flex items-center gap-2 overflow-x-auto rounded-lg bg-gray-100 p-1 dark:bg-gray-900/50"
-								>
-									<button
-										on:click={() => (viewMode = 'schema')}
-										class="group inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all md:px-4 md:py-2 md:text-sm {viewMode ===
-										'schema'
-											? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-sm'
-											: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
-									>
-										<svg
-											class="h-3.5 w-3.5 md:h-4 md:w-4"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-											/>
-										</svg>
-										<span>Schema</span>
-									</button>
-									<button
-										on:click={() => (viewMode = 'compare')}
-										class="group inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all md:px-4 md:py-2 md:text-sm {viewMode ===
-										'compare'
-											? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-sm'
-											: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
-									>
-										<svg
-											class="h-3.5 w-3.5 md:h-4 md:w-4"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-											/>
-										</svg>
-										<span>Compare</span>
-									</button>
-									<button
-										on:click={() => (viewMode = 'validate')}
-										class="group inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all md:px-4 md:py-2 md:text-sm {viewMode ===
-										'validate'
-											? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
-											: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'}"
-									>
-										<svg
-											class="h-3.5 w-3.5 md:h-4 md:w-4"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-											/>
-										</svg>
-										<span>Validate</span>
-									</button>
-								</div>
-
-								<!-- Right: Action Controls - Compact on mobile -->
-								<div class="flex flex-wrap items-center gap-2">
-									<!-- Expand/Collapse Button -->
-									<button
-										class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold shadow-sm transition-all hover:bg-gray-50 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500/20 md:px-4 md:py-2 md:text-sm
-									       {$ulExpanded.length > 0
-											? 'border-gray-300 text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300'
-											: 'border-blue-500 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600'}"
-										on:click={handleGlobalExpand}
-									>
-										<svg
-											class="h-3.5 w-3.5 transition-transform md:h-4 md:w-4 {$ulExpanded.length >
-											0
-												? 'rotate-0'
-												: 'rotate-90'}"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											{#if $ulExpanded.length > 0}
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M5 15l7-7 7 7"
-												/>
-											{:else}
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M19 9l-7 7-7-7"
-												/>
-											{/if}
-										</svg>
-										<span class="text-xs md:text-sm"
-											>{$ulExpanded.length > 0 ? 'Collapse' : 'Expand'} All</span
-										>
-									</button>
-								</div>
-							</div>
+								<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+									/>
+								</svg>
+								<span>Schema</span>
+							</button>
+							<button
+								on:click={() => (viewMode = 'compare')}
+								class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all {viewMode ===
+								'compare'
+									? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-sm'
+									: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'}"
+							>
+								<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+									/>
+								</svg>
+								<span>Compare</span>
+							</button>
+							<button
+								on:click={() => (viewMode = 'validate')}
+								class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all {viewMode ===
+								'validate'
+									? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
+									: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'}"
+							>
+								<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+									/>
+								</svg>
+								<span>Validate</span>
+							</button>
 						</div>
+
+						<!-- Expand/Collapse Button -->
+						<button
+							class="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-all hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/20 {$ulExpanded.length >
+							0
+								? 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300'
+								: 'border-cyan-500 bg-cyan-600 text-white hover:bg-cyan-700 dark:bg-cyan-600'}"
+							on:click={handleGlobalExpand}
+						>
+							<svg
+								class="h-3.5 w-3.5 transition-transform {$ulExpanded.length > 0
+									? 'rotate-180'
+									: 'rotate-0'}"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+							<span>{$ulExpanded.length > 0 ? 'Collapse' : 'Expand'} All</span>
+						</button>
 					</div>
 
 					<!-- Schema Section -->
 					{#if viewMode === 'schema'}
-						<div class="content-header mb-8 space-y-6 md:mb-10 md:space-y-8">
-						<!-- Specification Section -->
-						<div
-							class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
-						>
+						<div class="space-y-4">
+							<!-- Specification Section -->
 							<div
-								class="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-blue-50 px-4 py-3 dark:border-gray-700 dark:from-cyan-900/20 dark:to-blue-900/20"
-							>
-								<div class="flex items-center gap-2.5">
-									<div
-										class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-md md:h-9 md:w-9"
-									>
-										<svg
-											class="h-4 w-4 md:h-5 md:w-5"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-											/>
-										</svg>
-									</div>
-									<div>
-										<h2 class="text-sm font-bold text-gray-900 md:text-base dark:text-white">Specification</h2>
-										<p class="text-xs text-gray-600 dark:text-gray-400">
-											Required configuration
-										</p>
-									</div>
-								</div>
-							</div>
-							<div class="overflow-x-auto p-3 md:p-5">
-								<Render
-									{hash}
-									source={'eda'}
-									type={'spec'}
-									data={spec}
-									showType={false}
-									onResourcePage={true}
-								/>
-							</div>
-						</div>							<!-- Status Section -->
-							<div
-								class="overflow-hidden rounded-lg border border-white/10 bg-black/30 shadow-sm backdrop-blur-lg md:rounded-xl"
+								class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
 							>
 								<div
-									class="content-header border-b border-white/10 bg-black/20 px-4 py-4 md:px-8 md:py-6"
+									class="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-blue-50 px-4 py-2.5 dark:border-gray-700 dark:from-cyan-900/20 dark:to-blue-900/20"
 								>
-									<div class="flex items-center space-x-3 md:space-x-4">
+									<div class="flex items-center gap-2">
 										<div
-											class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-xl md:h-12 md:w-12 md:rounded-xl"
+											class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-sm"
 										>
-											<svg
-												class="h-5 w-5 md:h-6 md:w-6"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+												/>
+											</svg>
+										</div>
+										<div>
+											<h2 class="text-sm font-bold text-gray-900 dark:text-white">Specification</h2>
+											<p class="text-xs text-gray-600 dark:text-gray-400">Required configuration</p>
+										</div>
+									</div>
+								</div>
+								<div class="overflow-x-auto p-4">
+									<Render
+										{hash}
+										source={'eda'}
+										type={'spec'}
+										data={spec}
+										showType={false}
+										onResourcePage={true}
+									/>
+								</div>
+							</div>
+
+							<!-- Status Section -->
+							<div
+								class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+							>
+								<div
+									class="border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-2.5 dark:border-gray-700 dark:from-green-900/20 dark:to-emerald-900/20"
+								>
+									<div class="flex items-center gap-2">
+										<div
+											class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-sm"
+										>
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path
 													stroke-linecap="round"
 													stroke-linejoin="round"
@@ -629,13 +578,13 @@
 												/>
 											</svg>
 										</div>
-										<div class="min-w-0">
-											<h2 class="text-lg font-semibold text-white md:text-2xl">Status</h2>
-											<p class="mt-0.5 text-xs text-gray-300 md:text-sm">Runtime status fields</p>
+										<div>
+											<h2 class="text-sm font-bold text-gray-900 dark:text-white">Status</h2>
+											<p class="text-xs text-gray-600 dark:text-gray-400">Runtime status fields</p>
 										</div>
 									</div>
 								</div>
-								<div class="overflow-x-auto bg-black/10 p-4 md:p-8">
+								<div class="overflow-x-auto p-4">
 									<Render
 										{hash}
 										source={'eda'}

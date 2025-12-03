@@ -83,14 +83,14 @@
 </div>
 
 {#if $isDetailPage}
-	<div class="has-header-img flex h-screen pt-16 md:pt-20">
+	<div class="has-header-img flex h-screen pt-14 md:pt-16">
 		<Sidebar />
-		<div class="flex-1 overflow-auto pb-16">
+		<div class="flex-1 overflow-auto px-3 pb-16 md:px-4">
 			{@render children()}
 		</div>
 	</div>
 {:else}
-	<div class="has-header-img pt-16 pb-16 md:pt-20">
+	<div class="has-header-img px-3 pt-14 pb-16 md:px-4 md:pt-16">
 		{@render children()}
 	</div>
 {/if}
