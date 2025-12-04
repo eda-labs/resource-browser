@@ -1678,17 +1678,7 @@
 									</div>
 								{/if}
 
-								<!-- Action Buttons -->
-								<div
-									class="mt-8 flex flex-col items-stretch justify-between gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:gap-4 dark:border-gray-700"
-								>
-									<button
-										on:click={() => (bulkDiffReport = null)}
-										class="rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-purple-700 sm:px-6 sm:py-3 sm:text-base"
-										>Generate New Report</button
-									>
-									<!--< Close button removed per request -->
-								</div>
+
 							</div>
 						</div>
 					{/if}
