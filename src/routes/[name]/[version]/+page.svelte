@@ -249,61 +249,162 @@
 				allErrors: true,
 				verbose: true,
 				strict: false,
-				validateFormats: false
+				validateFormats: false,
+				coerceTypes: false
 			});
 
 			let valid = true;
 			const errors: ErrorObject[] = [];
+			const warnings: string[] = [];
 
 			parsedDocs.forEach((parsedYaml, index) => {
-				const docPrefix = parsedDocs.length > 1 ? `[Document ${index + 1}] ` : '';
+				const docPrefix = parsedDocs.length > 1 ? `[Doc ${index + 1}] ` : '';
 
+				// Nokia EDA CRD-specific validations
+				// 1. Check apiVersion
+				if (!parsedYaml.apiVersion) {
+					errors.push({
+						message: `${docPrefix}Missing required 'apiVersion' field`,
+						instancePath: '/apiVersion',
+						schemaPath: '#/required',
+						keyword: 'required',
+						params: { missingProperty: 'apiVersion' }
+					} as ErrorObject);
+					valid = false;
+				} else if (parsedYaml.apiVersion !== `${group}/${versionOnFocus}`) {
+					errors.push({
+						message: `${docPrefix}apiVersion mismatch: expected '${group}/${versionOnFocus}', got '${parsedYaml.apiVersion}'`,
+						instancePath: '/apiVersion',
+						schemaPath: '#/properties/apiVersion/const',
+						keyword: 'const',
+						params: { allowedValue: `${group}/${versionOnFocus}` }
+					} as ErrorObject);
+					valid = false;
+				}
+
+				// 2. Check kind
+				if (!parsedYaml.kind) {
+					errors.push({
+						message: `${docPrefix}Missing required 'kind' field`,
+						instancePath: '/kind',
+						schemaPath: '#/required',
+						keyword: 'required',
+						params: { missingProperty: 'kind' }
+					} as ErrorObject);
+					valid = false;
+				} else if (parsedYaml.kind !== kind) {
+					errors.push({
+						message: `${docPrefix}kind mismatch: expected '${kind}', got '${parsedYaml.kind}'`,
+						instancePath: '/kind',
+						schemaPath: '#/properties/kind/const',
+						keyword: 'const',
+						params: { allowedValue: kind }
+					} as ErrorObject);
+					valid = false;
+				}
+
+				// 3. Check metadata
+				if (!parsedYaml.metadata) {
+					errors.push({
+						message: `${docPrefix}Missing required 'metadata' field`,
+						instancePath: '/metadata',
+						schemaPath: '#/required',
+						keyword: 'required',
+						params: { missingProperty: 'metadata' }
+					} as ErrorObject);
+					valid = false;
+				} else {
+					if (!parsedYaml.metadata.name) {
+						errors.push({
+							message: `${docPrefix}Missing required 'metadata.name' field`,
+							instancePath: '/metadata/name',
+							schemaPath: '#/properties/metadata/required',
+							keyword: 'required',
+							params: { missingProperty: 'name' }
+						} as ErrorObject);
+						valid = false;
+					}
+					// Validate metadata.name format (DNS subdomain)
+					if (parsedYaml.metadata.name && !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/.test(parsedYaml.metadata.name)) {
+						errors.push({
+							message: `${docPrefix}metadata.name must be a valid DNS subdomain (lowercase alphanumeric, hyphens, dots)`,
+							instancePath: '/metadata/name',
+							schemaPath: '#/properties/metadata/properties/name/pattern',
+							keyword: 'pattern',
+							params: { pattern: 'DNS subdomain' }
+						} as ErrorObject);
+						valid = false;
+					}
+				}
+
+				// 4. Validate spec field against schema
 				if (parsedYaml.spec && spec.properties.spec) {
 					const specValidator = ajv.compile(spec.properties.spec);
 					if (!specValidator(parsedYaml.spec)) {
 						valid = false;
 						const docErrors = (specValidator.errors || []).map((err) => ({
 							...err,
-							message: `${docPrefix}${err.message}`
+							message: `${docPrefix}spec${err.instancePath}: ${err.message}`,
+							instancePath: `/spec${err.instancePath}`
 						}));
 						errors.push(...docErrors);
 					}
 				} else if (!parsedYaml.spec && spec.properties.spec) {
 					errors.push({
 						message: `${docPrefix}Missing required 'spec' field`,
-						instancePath: '',
-						schemaPath: '',
+						instancePath: '/spec',
+						schemaPath: '#/required',
 						keyword: 'required',
 						params: { missingProperty: 'spec' }
 					} as ErrorObject);
 					valid = false;
 				}
 
+				// 5. Validate status field if present (optional for create, but validate structure if provided)
 				if (parsedYaml.status && status && status.properties) {
 					const statusValidator = ajv.compile(status);
 					if (!statusValidator(parsedYaml.status)) {
-						valid = false;
-						const docErrors = (statusValidator.errors || []).map((err) => ({
-							...err,
-							message: `${docPrefix}${err.message}`
-						}));
-						errors.push(...docErrors);
+						// Status validation failures are warnings, not errors (status is often managed by controller)
+						const statusErrors = (statusValidator.errors || []).map((err) => 
+							`${docPrefix}status${err.instancePath}: ${err.message}`
+						);
+						warnings.push(...statusErrors);
 					}
+				}
+
+				// 6. Check for unexpected top-level fields
+				const allowedTopLevel = ['apiVersion', 'kind', 'metadata', 'spec', 'status'];
+				const unexpectedFields = Object.keys(parsedYaml).filter(k => !allowedTopLevel.includes(k));
+				if (unexpectedFields.length > 0) {
+					warnings.push(`${docPrefix}Unexpected top-level fields: ${unexpectedFields.join(', ')}`);
 				}
 			});
 
 			if (valid) {
 				validationResult = 'valid';
-				if (parsedDocs.length > 1) {
-					validationErrors = [
-						{
-							message: `✓ Successfully validated ${parsedDocs.length} YAML documents`,
+				const successMsg = parsedDocs.length > 1 
+					? `✓ Successfully validated ${parsedDocs.length} Nokia EDA CRD documents`
+					: '✓ Valid Nokia EDA CRD configuration';
+				validationErrors = [
+					{
+						message: successMsg,
+						instancePath: '',
+						schemaPath: '',
+						keyword: 'success',
+						params: { warnings: warnings.length }
+					} as ErrorObject
+				];
+				// Add warnings if any
+				if (warnings.length > 0) {
+					warnings.forEach(w => {
+						validationErrors.push({
+							message: `⚠ ${w}`,
 							instancePath: '',
 							schemaPath: '',
-							keyword: 'success',
+							keyword: 'warning',
 							params: {}
-						} as ErrorObject
-					];
+						} as ErrorObject);
+					});
 				}
 			} else {
 				validationErrors = errors;
@@ -996,46 +1097,38 @@
 							</div>
 							<div class="bg-white p-4 md:p-8 dark:bg-gray-800">
 								<div class="space-y-4 md:space-y-6">
-									<!-- Instructions -->
-									<div
-										class="rounded-lg border border-blue-200 bg-blue-50 p-3 md:p-4 dark:border-blue-800 dark:bg-blue-900/20"
-									>
-										<div class="flex items-start space-x-2 md:space-x-3">
-											<svg
-												class="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600 md:h-5 md:w-5 dark:text-blue-400"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-												/>
-											</svg>
-											<div class="text-xs text-blue-800 md:text-sm dark:text-blue-200">
-												<p class="mb-1 font-medium">How to use:</p>
-												<ul
-													class="list-inside list-disc space-y-0.5 text-blue-700 dark:text-blue-300"
-												>
-													<li>Paste your complete YAML manifest</li>
-													<li>
-														Or paste just the <code
-															class="rounded bg-blue-100 px-1 text-xs dark:bg-blue-800">spec</code
-														> section
-													</li>
-													<li>
-														Supports multiple documents separated by <code
-															class="rounded bg-blue-100 px-1 text-xs dark:bg-blue-800">---</code
-														>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-
-									<!-- YAML Input -->
+					<!-- Instructions -->
+					<div
+						class="rounded-lg border border-cyan-200 bg-gradient-to-br from-cyan-50 to-blue-50 p-3 md:p-4 dark:border-cyan-800 dark:from-cyan-900/20 dark:to-blue-900/20"
+					>
+						<div class="flex items-start space-x-2 md:space-x-3">
+							<svg
+								class="mt-0.5 h-4 w-4 flex-shrink-0 text-cyan-600 md:h-5 md:w-5 dark:text-cyan-400"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+							<div class="text-xs text-cyan-900 md:text-sm dark:text-cyan-100">
+								<p class="mb-1.5 font-semibold">Nokia EDA CRD Validation</p>
+								<ul
+									class="list-inside list-disc space-y-0.5 text-cyan-800 dark:text-cyan-200"
+								>
+									<li>Complete YAML with apiVersion, kind, metadata, and spec</li>
+									<li>Validates schema, required fields, and data types</li>
+									<li>Checks metadata.name format (DNS subdomain)</li>
+									<li>Multiple documents supported (separated by <code
+											class="rounded bg-cyan-100 px-1 text-xs dark:bg-cyan-800">---</code>)</li>
+								</ul>
+							</div>
+						</div>
+					</div>									<!-- YAML Input -->
 									<div>
 										<label
 											for="yaml-input"
@@ -1145,11 +1238,11 @@
 									{#if validationErrors.length > 0}
 										{#if validationResult === 'valid'}
 											<div
-												class="rounded-lg border border-green-200 bg-green-50 p-3 md:p-4 dark:border-green-800 dark:bg-green-900/20"
+												class="space-y-3 rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-3 md:p-4 dark:border-green-800 dark:from-green-900/20 dark:to-emerald-900/20"
 											>
 												<div class="flex items-start gap-2 md:gap-3">
 													<svg
-														class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600 md:h-5 md:w-5 dark:text-green-400"
+														class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600 md:h-6 md:w-6 dark:text-green-400"
 														fill="none"
 														stroke="currentColor"
 														viewBox="0 0 24 24"
@@ -1161,20 +1254,49 @@
 															d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 														/>
 													</svg>
-													<p
-														class="text-xs font-medium text-green-800 md:text-sm dark:text-green-200"
-													>
-														{validationErrors[0].message}
-													</p>
+													<div class="flex-1">
+														<p
+															class="text-sm font-semibold text-green-900 md:text-base dark:text-green-100"
+														>
+															{validationErrors[0].message}
+														</p>
+														{#if validationErrors.length > 1}
+															<div class="mt-3 space-y-2">
+																<p class="text-xs font-medium text-yellow-800 dark:text-yellow-300">
+																	Warnings:
+																</p>
+																{#each validationErrors.slice(1) as error}
+																	<div class="flex items-start gap-2 rounded-md bg-yellow-50/50 p-2 dark:bg-yellow-900/10">
+																		<svg
+																			class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-yellow-600 dark:text-yellow-400"
+																			fill="none"
+																			stroke="currentColor"
+																			viewBox="0 0 24 24"
+																		>
+																			<path
+																				stroke-linecap="round"
+																				stroke-linejoin="round"
+																				stroke-width="2"
+																				d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+																			/>
+																		</svg>
+																		<p class="text-xs text-yellow-800 dark:text-yellow-200">
+																			{error.message}
+																		</p>
+																	</div>
+																{/each}
+															</div>
+														{/if}
+													</div>
 												</div>
 											</div>
 										{:else}
 											<div
-												class="rounded-lg border border-red-200 bg-red-50 p-3 md:p-4 dark:border-red-800 dark:bg-red-900/20"
+												class="rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-rose-50 p-3 md:p-4 dark:border-red-800 dark:from-red-900/20 dark:to-rose-900/20"
 											>
 												<div class="flex items-start gap-2 md:gap-3">
 													<svg
-														class="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 md:h-5 md:w-5 dark:text-red-400"
+														class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600 md:h-6 md:w-6 dark:text-red-400"
 														fill="none"
 														stroke="currentColor"
 														viewBox="0 0 24 24"
@@ -1188,23 +1310,33 @@
 													</svg>
 													<div class="min-w-0 flex-1">
 														<h4
-															class="mb-2 text-xs font-medium text-red-800 md:text-sm dark:text-red-200"
+															class="mb-2 text-sm font-semibold text-red-900 md:text-base dark:text-red-100"
 														>
-															Errors ({validationErrors.length})
+															Validation Failed ({validationErrors.length} error{validationErrors.length > 1 ? 's' : ''})
 														</h4>
-														<ul class="space-y-1.5">
+														<ul class="space-y-2">
 															{#each validationErrors as error}
-																<li class="text-xs text-red-700 md:text-sm dark:text-red-300">
-																	<div
-																		class="overflow-x-auto rounded bg-red-100 p-2 font-mono text-xs dark:bg-red-900/30"
+																<li class="flex items-start gap-2 rounded-md bg-white/50 p-2 text-xs dark:bg-black/20">
+																	<svg
+																		class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-red-500"
+																		fill="currentColor"
+																		viewBox="0 0 20 20"
 																	>
+																		<path
+																			fill-rule="evenodd"
+																			d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+																			clip-rule="evenodd"
+																		/>
+																	</svg>
+																	<div class="flex-1">
+																		<p class="font-medium text-red-900 dark:text-red-100">
+																			{error.message}
+																		</p>
 																		{#if (error as any).instancePath || (error as any).dataPath}
-																			<span class="font-semibold"
-																				>{(error as any).instancePath ||
-																					(error as any).dataPath}</span
-																			>:
+																			<p class="mt-0.5 font-mono text-[10px] text-red-700 dark:text-red-300">
+																				Path: {(error as any).instancePath || (error as any).dataPath}
+																			</p>
 																		{/if}
-																		{error.message}
 																	</div>
 																</li>
 															{/each}
