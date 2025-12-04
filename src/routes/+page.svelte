@@ -866,6 +866,42 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 											</div>
 										</div>
 									</button>
+
+									<!-- YAML Validation Quick Tool -->
+									<button
+										on:click={() => goto('/validate-yaml')}
+										class="group shadow-pro rounded-xl border-2 border-white/10 bg-white/5 p-6 text-left transition-all duration-200 hover:border-green-500 hover:shadow-lg dark:border-white/10 dark:bg-gray-900/70 dark:hover:border-green-400"
+									>
+										<div class="flex items-start space-x-4">
+											<div
+												class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 transition-colors group-hover:bg-green-200 dark:bg-green-900/30 dark:group-hover:bg-green-900/50"
+											>
+												<svg
+													class="h-6 w-6 text-green-600 dark:text-green-400"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+													/>
+												</svg>
+											</div>
+											<div class="flex-1">
+												<h3
+													class="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-green-600 sm:text-lg dark:text-white dark:group-hover:text-green-400"
+												>
+													YAML Validation
+												</h3>
+												<p class="text-xs text-gray-600 sm:text-sm dark:text-gray-300">
+													Validate YAML configurations against Nokia EDA CRD schemas
+												</p>
+											</div>
+										</div>
+									</button>
 								</div>
 							</div>
 						</div>

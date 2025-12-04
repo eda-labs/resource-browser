@@ -995,7 +995,7 @@
                                                                         
                                                                         <!-- Hover tooltip with all metadata grouped -->
                                                                         {#if typeof pathInfo === 'object' && (pathInfo.enum || pathInfo.default !== undefined || pathInfo.constraints)}
-                                                                            <div class="pointer-events-none absolute left-0 top-full z-[100] mt-1 hidden group-hover:block">
+                                                                            <div class="pointer-events-none absolute left-0 top-full z-[100] mt-2 hidden group-hover:block">
                                                                                 <div class="w-max max-w-md rounded-lg border border-gray-300 bg-white p-2.5 shadow-xl dark:border-gray-600 dark:bg-gray-800">
                                                                                     <div class="space-y-2">
                                                                                         {#if pathInfo.enum}
@@ -1074,7 +1074,7 @@
                                                                         
                                                                         <!-- Hover tooltip with all metadata grouped -->
                                                                         {#if typeof pathInfo === 'object' && (pathInfo.enum || pathInfo.default !== undefined || pathInfo.constraints)}
-                                                                            <div class="pointer-events-none absolute left-0 top-full z-[100] mt-1 hidden group-hover:block">
+                                                                            <div class="pointer-events-none absolute left-0 top-full z-[100] mt-2 hidden group-hover:block">
                                                                                 <div class="w-max max-w-md rounded-lg border border-gray-300 bg-white p-2.5 shadow-xl dark:border-gray-600 dark:bg-gray-800">
                                                                                     <div class="space-y-2">
                                                                                         {#if pathInfo.enum}
