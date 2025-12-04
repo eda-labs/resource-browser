@@ -84,22 +84,22 @@
 </svelte:head>
 
 <nav
-	class="fixed top-0 z-20 w-screen border-b border-gray-300 py-4 pr-4 pl-6 text-black backdrop-blur-lg backdrop-filter dark:border-gray-700 dark:text-white"
+	class="fixed top-0 z-20 w-screen border-b border-gray-700 py-4 pr-4 pl-6 text-white backdrop-blur-lg backdrop-filter dark:border-gray-700 dark:text-white"
 >
 	<div class="flex items-center justify-between">
 		<div class="scroll-thin flex items-center space-x-2 overflow-x-auto">
 			<a href="/"><img class="min-w-8" src="/images/eda.svg" width="35" alt="Logo" /></a>
 			<div class="flex flex-col">
-				<p class="font-nokia-headline text-sm font-light text-white">Resource Browser</p>
-				<p class="font-nokia-headline">Uploads</p>
+				<p class="font-nokia-headline text-sm font-light text-blue-400">Resource Browser</p>
+				<p class="font-nokia-headline text-white">Uploads</p>
 			</div>
 		</div>
 	</div>
 </nav>
-<div class="space-y-4 px-6 pt-[100px] pb-6">
+<div class="h-full space-y-4 overflow-y-auto px-6 pt-[100px] pb-6">
 	<div class="grid gap-2 md:grid-cols-2">
 		<div>
-			<label for="crdText" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+			<label for="crdText" class="mb-2 block text-sm font-medium text-white dark:text-white"
 				>CRD YAML</label
 			>
 			<textarea
@@ -111,7 +111,7 @@
 			></textarea>
 		</div>
 		<div>
-			<label for="dropzone" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+			<label for="dropzone" class="mb-2 block text-sm font-medium text-white dark:text-white"
 				>File Upload</label
 			>
 			<input
@@ -158,8 +158,8 @@
 
 	{#if kind !== ''}
 		<div class="flex flex-col pt-2">
-			<p class="font-nokia-headline text-gray-800 dark:text-gray-200">{kind}</p>
-			<div class="font-fira flex items-center text-sm text-[12px] text-gray-500 dark:text-gray-300">
+			<p class="font-nokia-headline text-white dark:text-gray-200">{kind}</p>
+			<div class="font-fira flex items-center text-sm text-[12px] text-gray-300 dark:text-gray-300">
 				<span>{group}</span>
 				<span class="mx-0.5">/</span>
 				{#if validVersions.length > 1}

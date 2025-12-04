@@ -128,9 +128,8 @@
 	}
 
 	:global(body) {
-		@apply text-white antialiased;
+		@apply text-gray-900 dark:text-white antialiased bg-white dark:bg-[#0f172a];
 		font-family: var(--font-nokia), 'Nunito', sans-serif;
-		background-color: #0f172a;
 		min-height: 100vh;
 		/* Hide the document scrollbar so child containers manage scrolling */
 		overflow: hidden;
@@ -231,8 +230,7 @@
 	.has-header-img {
 		position: relative;
 		z-index: 1;
-		/* Gradient overlay only; the hero background image is now an explicitly positioned <img>
-       in the layout to allow better control over LCP and preload behavior. */
+		/* Always apply gradient overlay and white text since background is always dark */
 		background-image:
 			linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
 			linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
@@ -247,6 +245,14 @@
 		color: rgba(255, 255, 255, 0.95);
 	}
 
+	/* Dark Mode: Apply gradient overlay and white text */
+	:global(.dark) .has-header-img {
+		/* Same styles as default, kept for specificity if needed */
+		background-image:
+			linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
+			linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
+	}
+
 	/* Positioned hero image element (inline) that contributes to LCP; it sits behind .has-header-img.
      The actual image is inserted in the layout as an <img> with fetchpriority="high". */
 	.header-bg-container {
@@ -259,6 +265,11 @@
 		overflow: hidden;
 		pointer-events: none;
 		user-select: none;
+		/* Always show */
+		display: block;
+	}
+	:global(.dark) .header-bg-container {
+		display: block;
 	}
 	.header-bg-img {
 		position: absolute;
@@ -274,7 +285,7 @@
 
 	/* Mobile - use lighter background image and scroll attachment to reduce performance cost */
 	@media (max-width: 768px) {
-		.has-header-img {
+		:global(.dark) .has-header-img {
 			/* For mobile devices, avoid loading the large background image to improve LCP.
          Use the gradient overlay instead — this provides a visually similar look while
          saving network bytes. If you prefer to use a mobile-optimized image, add

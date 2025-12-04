@@ -7,6 +7,7 @@
 	// AnimatedBackground is provided by the layout and imported dynamically there to improve LCP
 	import PageCredits from '$lib/components/PageCredits.svelte';
 	import Render from '$lib/components/Render.svelte';
+	import Theme from '$lib/components/Theme.svelte';
 	// Avoid importing DiffRender on the home page — it is only useful on detail pages and is lazily loaded there
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
 	import type { CrdVersionsMap } from '$lib/structure';
@@ -474,7 +475,7 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 </svelte:head>
 
 <div
-	class="relative flex flex-col overflow-y-auto pt-14 md:pt-16 lg:min-h-screen lg:overflow-hidden"
+	class="relative flex flex-col pt-14 md:pt-16 lg:h-screen lg:overflow-hidden"
 >
 	<div class="relative z-10 flex flex-1 flex-col lg:flex-row">
 		{#if selectedResource}
@@ -630,278 +631,160 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 
 					<!-- Main Content -->
 					<div class="relative">
+						<!-- Theme Toggle (Absolute Top Right) -->
+						<div class="absolute top-4 right-4 z-50">
+							<Theme />
+						</div>
+
 						<div
-							class="mx-auto min-h-[220px] max-w-7xl px-4 pt-20 sm:min-h-[340px] sm:px-6 sm:py-12 md:min-h-[420px] lg:px-8"
+							class="mx-auto min-h-[220px] max-w-7xl px-4 pt-12 sm:min-h-[340px] sm:px-6 sm:py-12 md:min-h-[420px] lg:px-8"
 						>
-							<!-- YANG-style Releases + Info two-column hero -->
-							<div class="mb-8">
-								<div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-2">
-									<!-- Left: grouped releases -->
-									<div class="space-y-6">
-										<div class="ml-0 flex flex-nowrap items-center justify-start gap-4 sm:ml-0">
-											<img
-												src="/images/bird-logo.svg"
-												alt="Nokia"
-												class="h-14 w-14 sm:h-24 sm:w-24"
-												loading="eager"
-												fetchpriority="high"
-												width="96"
-												height="96"
-											/>
+							<div class="grid grid-cols-1 gap-12 lg:grid-cols-12">
+								<!-- Left Column: Releases -->
+								<div class="lg:col-span-5 space-y-6">
+									{#each groupedReleases as group}
+										<div class="flex items-start gap-4">
+											<h3 class="text-xl font-bold text-white/90 w-12 shrink-0 pt-1.5">{group.label}</h3>
+											<div class="flex flex-wrap gap-2 items-center">
+												{#each group.releases.slice(0, 3) as release}
+													<button
+														on:click={async () => {
+															selectedRelease.set(release);
+															const manifest = await loadCrdsForRelease(release);
+															const firstResource =
+																manifest && manifest.length ? manifest[0] : undefined;
+															if (firstResource) {
+																const firstVersion = firstResource.versions?.[0]?.name;
+																if (firstVersion) {
+																	goto(
+																		`/${firstResource.name}/${firstVersion}?release=${release.name}`
+																	);
+																}
+															}
+															mobileReleasesOpen = false;
+														}}
+														class="group relative rounded-md border border-gray-200 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 transition-all hover:bg-white hover:text-blue-600 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+													>
+														{release.name}
+													</button>
+												{/each}
+												{#if group.releases.length > 3}
+													<div class="relative inline-block">
+														<button
+															on:click={() => toggleGroupShow(group.label)}
+															class="rounded-md border border-gray-200 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-500 transition-all hover:bg-white hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+														>
+															More
+														</button>
+														{#if group.showMore}
+															<div
+																class="absolute left-0 z-50 mt-2 w-48 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
+															>
+																{#each group.releases.slice(3) as r}
+																	<button
+																		on:click={async () => {
+																			selectedRelease.set(r);
+																			const manifest = await loadCrdsForRelease(r);
+																			const firstResource =
+																				manifest && manifest.length ? manifest[0] : undefined;
+																			if (firstResource) {
+																				const firstVersion =
+																					firstResource.versions?.[0]?.name;
+																				if (firstVersion) {
+																					goto(
+																						`/${firstResource.name}/${firstVersion}?release=${r.name}`
+																					);
+																				}
+																			}
+																			mobileReleasesOpen = false;
+																			setGroupShow(group.label, false);
+																		}}
+																		class="block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+																	>
+																		{r.name}
+																	</button>
+																{/each}
+															</div>
+														{/if}
+													</div>
+												{/if}
+											</div>
+										</div>
+									{/each}
+								</div>
+
+								<!-- Right Column: Info & Tools -->
+								<div class="lg:col-span-7">
+									<div class="mb-10">
+										<div class="mb-6 flex items-center gap-4">
 											<img
 												src="/images/eda.svg"
 												alt="EDA"
-												class="h-12 w-12 sm:h-20 sm:w-20"
+												class="h-16 w-16 drop-shadow-lg"
 												loading="eager"
 												fetchpriority="high"
-												width="80"
-												height="80"
 											/>
+											<div>
+												<h1 class="text-4xl font-bold text-blue-400 tracking-tight">
+													Nokia EDA
+												</h1>
+												<p class="text-xl font-light text-gray-300">
+													Resource Browser
+												</p>
+											</div>
 										</div>
-										<div>
-											<h1
-												class="font-nokia-headline text-left text-3xl leading-tight font-extrabold text-yellow-400 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-5xl md:text-6xl lg:text-7xl"
-											>
-												Nokia EDA
-											</h1>
-											<p
-												class="font-nokia-headline mt-1 text-left text-base font-light tracking-tight text-white sm:text-xl md:text-2xl"
-											>
-												Resource Browser
+										
+										<div class="prose prose-lg max-w-none text-gray-300">
+											<p class="leading-relaxed">
+												Nokia EDA makes extensive use of structured data models. Each application has a CRD model that defines its configuration and state.
+											</p>
+											<p class="leading-relaxed mt-4 text-gray-400">
+												A central role that is given to CRDs in Nokia EDA demands a convenient interface to browse, search through and process these data models. To answer these demands this portal provides:
 											</p>
 										</div>
-										<p class="mt-4 text-sm text-gray-300 sm:text-base">
-											Browse released EDA Custom Resource Definitions grouped by major version
-										</p>
-										<div class="mt-4 space-y-6">
-											{#each groupedReleases as group}
-												<div class="flex items-center gap-4">
-													<div class="mt-1 w-14 text-sm font-semibold text-white sm:text-base">
-														{group.label}
-													</div>
-													<div class="flex-1">
-														<div class="flex flex-wrap gap-2">
-															{#each group.releases.slice(0, 3) as release}
-																<button
-																	on:click={async () => {
-																		selectedRelease.set(release);
-																		const manifest = await loadCrdsForRelease(release);
-																		const firstResource =
-																			manifest && manifest.length ? manifest[0] : undefined;
-																		if (firstResource) {
-																			const firstVersion = firstResource.versions?.[0]?.name;
-																			if (firstVersion) {
-																				goto(
-																					`/${firstResource.name}/${firstVersion}?release=${release.name}`
-																				);
-																			}
-																		}
-																		mobileReleasesOpen = false;
-																	}}
-																	class="shadow-pro rounded-xl border-2 border-slate-700/30 bg-gray-800/60 px-4 py-3 text-sm font-medium text-white transition-all duration-200 hover:border-amber-500 hover:bg-gray-800/80 dark:hover:border-amber-400"
-																	>{release.name}</button
-																>
-															{/each}
-															{#if group.releases.length > 3}
-																<div class="relative inline-block">
-																	<button
-																		on:click={() => toggleGroupShow(group.label)}
-																		on:keydown={(e) => {
-																			if (e.key === 'Enter' || e.key === ' ') {
-																				e.preventDefault();
-																				toggleGroupShow(group.label);
-																			}
-																			if (e.key === 'ArrowDown') {
-																				e.preventDefault();
-																				setGroupShow(group.label, true);
-																				setTimeout(() => {
-																					const menu = e.currentTarget
-																						.nextElementSibling as HTMLElement;
-																					if (menu) {
-																						const first =
-																							menu.querySelector<HTMLElement>(
-																								'button[tabindex="0"]'
-																							);
-																						if (first) first.focus();
-																					}
-																				}, 0);
-																			}
-																		}}
-																		tabindex="0"
-																		class="release-more-btn shadow-pro rounded-xl border-2 border-slate-700/30 bg-gray-800/60 px-4 py-3 text-sm font-medium text-white transition-all duration-200 hover:border-amber-500 hover:bg-gray-800/80 dark:hover:border-amber-400"
-																		>More ▾</button
-																	>
-																	{#if group.showMore}
-																		<div
-																			class="shadow-pro absolute z-40 mt-2 max-h-60 min-w-32 overflow-y-auto rounded-xl border-2 border-gray-700 bg-gray-800 p-2 dark:bg-gray-900"
-																		>
-																			{#each group.releases.slice(3) as r}
-																				<button
-																					tabindex="0"
-																					on:click={async () => {
-																						selectedRelease.set(r);
-																						const manifest = await loadCrdsForRelease(r);
-																						const firstResource =
-																							manifest && manifest.length ? manifest[0] : undefined;
-																						if (firstResource) {
-																							const firstVersion =
-																								firstResource.versions?.[0]?.name;
-																							if (firstVersion) {
-																								goto(
-																									`/${firstResource.name}/${firstVersion}?release=${r.name}`
-																								);
-																							}
-																						}
-																						mobileReleasesOpen = false;
-																						setGroupShow(group.label, false);
-																					}}
-																					class="block w-full rounded-lg px-4 py-3 text-left text-sm text-white transition-colors hover:bg-gray-700 hover:text-white"
-																					>{r.name}</button
-																				>
-																			{/each}
-																		</div>
-																	{/if}
-																</div>
-															{/if}
-														</div>
-													</div>
-												</div>
-											{/each}
-										</div>
 									</div>
-									<!-- Right: info panel -->
-									<div class="flex items-center">
-										<div
-											class="shadow-pro w-full rounded-xl border border-white/10 bg-transparent p-5 sm:p-6 dark:border-white/10 dark:bg-black/20"
+
+									<!-- Feature List / Quick Tools -->
+									<div class="grid grid-cols-1 gap-4">
+										<button
+											on:click={() => goto('/comparison')}
+											class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
 										>
-											<h3 class="mb-3 text-lg font-semibold text-yellow-400 sm:text-xl">
-												About Nokia EDA
-											</h3>
-											<div
-												class="text-base leading-relaxed text-gray-200 sm:text-lg dark:text-gray-200"
-											>
-												{@html nokiaEdaDescription
-													.split('\n\n')
-													.map((p) => `<p class="mb-2">${p}</p>`)
-													.join('')}
+											<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors dark:bg-purple-500/20 dark:text-purple-300 dark:group-hover:bg-purple-500">
+												<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
 											</div>
-										</div>
+											<div class="text-left">
+												<h3 class="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors dark:text-white dark:group-hover:text-purple-300">Release Comparison</h3>
+												<p class="text-sm text-gray-500 dark:text-gray-400">Compare CRDs across different EDA releases and generate diff reports</p>
+											</div>
+										</button>
+
+										<button
+											on:click={() => goto('/spec-search')}
+											class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+										>
+											<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors dark:bg-blue-500/20 dark:text-blue-300 dark:group-hover:bg-blue-500">
+												<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" /></svg>
+											</div>
+											<div class="text-left">
+												<h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-300">Spec Search</h3>
+												<p class="text-sm text-gray-500 dark:text-gray-400">Fast search through thousands of available CRD paths and properties</p>
+											</div>
+										</button>
+
+										<button
+											on:click={() => goto('/validate-yaml')}
+											class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+										>
+											<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors dark:bg-green-500/20 dark:text-green-300 dark:group-hover:bg-green-500">
+												<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+											</div>
+											<div class="text-left">
+												<h3 class="font-semibold text-gray-900 group-hover:text-green-600 transition-colors dark:text-white dark:group-hover:text-green-300">YAML Validation</h3>
+												<p class="text-sm text-gray-500 dark:text-gray-400">Validate your configuration against official Nokia EDA schemas</p>
+											</div>
+										</button>
 									</div>
-								</div>
-							</div>
-
-							<!-- Quick Tools -->
-							<div class="mt-12">
-								<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-									<button
-										on:click={() => goto('/comparison')}
-										class="group shadow-pro rounded-xl border-2 border-white/10 bg-white/5 p-6 text-left transition-all duration-200 hover:border-purple-500 hover:shadow-lg dark:border-white/10 dark:bg-gray-900/70 dark:hover:border-purple-400"
-									>
-										<div class="flex items-start space-x-4">
-											<div
-												class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 transition-colors group-hover:bg-purple-200 dark:bg-purple-900/30 dark:group-hover:bg-purple-900/50"
-											>
-												<svg
-													class="h-6 w-6 text-purple-600 dark:text-purple-400"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-													/>
-												</svg>
-											</div>
-											<div class="flex-1">
-												<h3
-													class="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-purple-600 sm:text-lg dark:text-white dark:group-hover:text-purple-400"
-												>
-													Release Comparison
-												</h3>
-												<p class="text-xs text-gray-600 sm:text-sm dark:text-gray-300">
-													Compare CRDs across different EDA releases and generate detailed diff
-													reports
-												</p>
-											</div>
-										</div>
-									</button>
-
-									<!-- Spec Search Quick Tool -->
-									<button
-										on:click={() => {
-											goto('/spec-search');
-										}}
-										class="group shadow-pro rounded-xl border-2 border-white/10 bg-white/5 p-6 text-left transition-all duration-200 hover:border-blue-500 hover:shadow-lg dark:border-white/10 dark:bg-gray-900/70 dark:hover:border-blue-400"
-									>
-										<div class="flex items-start space-x-4">
-											<div
-												class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 transition-colors group-hover:bg-blue-200 dark:bg-blue-900/30 dark:group-hover:bg-blue-900/50"
-											>
-												<svg
-													class="h-6 w-6 text-blue-600 dark:text-blue-400"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"
-													/>
-												</svg>
-											</div>
-											<div class="flex-1">
-												<h3
-													class="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-blue-600 sm:text-lg dark:text-white dark:group-hover:text-blue-400"
-												>
-													Spec Search
-												</h3>
-												<p class="text-xs text-gray-600 sm:text-sm dark:text-gray-300">
-													Quickly search and find specific CRD schema properties and elements
-												</p>
-											</div>
-										</div>
-									</button>
-
-									<!-- YAML Validation Quick Tool -->
-									<button
-										on:click={() => goto('/validate-yaml')}
-										class="group shadow-pro rounded-xl border-2 border-white/10 bg-white/5 p-6 text-left transition-all duration-200 hover:border-green-500 hover:shadow-lg dark:border-white/10 dark:bg-gray-900/70 dark:hover:border-green-400"
-									>
-										<div class="flex items-start space-x-4">
-											<div
-												class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 transition-colors group-hover:bg-green-200 dark:bg-green-900/30 dark:group-hover:bg-green-900/50"
-											>
-												<svg
-													class="h-6 w-6 text-green-600 dark:text-green-400"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-													/>
-												</svg>
-											</div>
-											<div class="flex-1">
-												<h3
-													class="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-green-600 sm:text-lg dark:text-white dark:group-hover:text-green-400"
-												>
-													YAML Validation
-												</h3>
-												<p class="text-xs text-gray-600 sm:text-sm dark:text-gray-300">
-													Validate YAML configurations against Nokia EDA CRD schemas
-												</p>
-											</div>
-										</div>
-									</button>
 								</div>
 							</div>
 						</div>

@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { sidebarOpen } from '$lib/store';
+	import Theme from '$lib/components/Theme.svelte';
 
 	export let name: string;
 	export let versionOnFocus: string;
@@ -65,12 +66,12 @@
 				{#if showPageTitle}
 					<div class="min-w-0">
 						<h2
-							class="font-nokia-headline truncate text-xl leading-tight font-bold text-slate-900 sm:text-3xl dark:text-slate-100"
+							class="font-nokia-headline truncate text-xl leading-tight font-bold text-white sm:text-3xl dark:text-slate-100"
 						>
 							{kind || shortName}
 						</h2>
 						<p
-							class="mt-0 flex -translate-y-0.5 items-center gap-2 truncate text-sm font-medium text-gray-500 sm:text-base dark:text-gray-300"
+							class="mt-0 flex -translate-y-0.5 items-center gap-2 truncate text-sm font-medium text-gray-300 sm:text-base dark:text-gray-300"
 						>
 							<span class="truncate">{groupPath || name}</span>
 							<span class="text-gray-400">/</span>
@@ -78,7 +79,7 @@
 							<span class="flex items-center">
 								{#if validVersions.length > 1}
 									<select
-										class="select-pro font-nokia-text bg-transparent text-xs font-bold text-blue-700 sm:text-sm dark:text-blue-300"
+										class="select-pro font-nokia-text bg-transparent text-xs font-bold text-blue-400 sm:text-sm dark:text-blue-300"
 										bind:value={versionOnFocus}
 										on:change={handleVersionChange}
 									>
@@ -88,7 +89,7 @@
 									</select>
 								{:else}
 									<span
-										class="font-nokia-text text-xs font-bold text-blue-700 sm:text-sm dark:text-blue-300"
+										class="font-nokia-text text-xs font-bold text-blue-400 sm:text-sm dark:text-blue-300"
 										>{validVersions[0]}</span
 									>
 								{/if}
@@ -121,6 +122,11 @@
 						>
 					</div>
 				{/if}
+			</div>
+			
+			<!-- Right Side: Theme Toggle -->
+			<div class="flex-shrink-0">
+				<Theme />
 			</div>
 		</div>
 	</div>

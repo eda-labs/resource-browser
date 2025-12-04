@@ -27,7 +27,7 @@
 {#if showType}
 	<p class="mb-0 py-1 text-sm text-gray-900 dark:text-gray-200">{type.toUpperCase()}</p>
 {/if}
-<div class="relative isolate overflow-y-auto overflow-x-hidden">
+<div class="relative isolate overflow-x-hidden">
 	<ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
 		<li
 			class="px-1 pt-1.5 text-sm leading-relaxed font-light whitespace-normal text-gray-600 dark:text-gray-300"

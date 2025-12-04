@@ -711,9 +711,7 @@
 <div class="mx-auto max-w-7xl px-3 py-2 sm:px-4">
 	<div class="mx-auto w-full max-w-7xl px-3 sm:px-4 lg:px-6"></div>
 </div>
-<div
-	class="relative flex flex-col overflow-y-auto pt-12 md:pt-14 lg:min-h-screen lg:overflow-hidden"
->
+<div class="relative flex h-full flex-col overflow-y-auto pt-12 md:pt-14 lg:overflow-hidden">
 	<div class="relative z-10 flex flex-1 flex-col lg:flex-row">
 		<div class="flex-1 overflow-auto pb-16">
 			<div class="mx-auto max-w-7xl px-3 py-3 sm:px-4 sm:py-4">
@@ -726,157 +724,179 @@
 				<!-- Top banner with about/export removed per request; export controls remain in the report header -->
 
 				<!-- Main Panel: release selection + report -->
-				<div class="space-y-2 sm:space-y-4">
-					<div>
-						<p class="mb-2 text-sm leading-relaxed text-white sm:text-base">
-							Compare CRDs across two release versions to understand additions, removals, and
-							modifications. Use version selectors and filters below to narrow down results and
-							generate the comparison report.
-						</p>
-						<label
-							for="bulk-source-release"
-							class="mb-1 block text-base font-semibold text-gray-900 sm:mb-2 sm:text-lg dark:text-white"
-							>Source Release & Version</label
-						>
-						<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
-							<div class="relative">
-								<select
-									id="bulk-source-release"
-									bind:value={bulkDiffSourceReleaseName}
-									on:change={() => {
-										bulkDiffSourceRelease = bulkDiffSourceReleaseName
-											? releasesConfig.releases.find((r) => r.name === bulkDiffSourceReleaseName) ||
-												null
-											: null;
-									}}
-									on:mousedown={handleSelectOpen}
-									on:focus={handleSelectOpen}
-									on:blur={handleSelectClose}
-									class="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-purple-500 focus:ring-2 focus:ring-purple-500 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-									style="z-index:1000;"
+				<div class="space-y-6">
+					<!-- Selection Card -->
+					<div
+						class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 dark:border-gray-700 dark:bg-gray-800"
+					>
+<div class="mb-6">
+	<h2 class="text-xl font-bold text-blue-400 dark:text-blue-400">Compare Releases</h2>
+	<p class="mt-1 text-sm text-gray-300 dark:text-gray-400">
+		Select two release versions to analyze changes in Custom Resource Definitions.
+	</p>
+</div>						<div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+							<!-- Source -->
+							<div class="relative rounded-xl bg-gray-50 p-5 dark:bg-gray-900/50">
+								<div
+									class="absolute -top-3 left-4 bg-blue-100 px-2 py-0.5 text-xs font-bold tracking-wide text-blue-800 uppercase rounded dark:bg-blue-900 dark:text-blue-200"
 								>
-									<option value="">Select release...</option>
-									{#each releasesConfig.releases as r}
-										<option value={r.name}>{r.label}</option>
-									{/each}
-								</select>
-							</div>
-							<div class="relative">
-								<select
-									id="bulk-source-version"
-									bind:value={bulkDiffSourceVersion}
-									on:mousedown={handleSelectOpen}
-									on:focus={handleSelectOpen}
-									on:blur={handleSelectClose}
-									class="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-purple-500 focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-									style="z-index:1000;"
-									disabled={!bulkDiffSourceRelease ||
-										bulkDiffSourceVersions.length === 0 ||
-										bulkDiffSourceVersionsLoading}
-								>
-									<option value=""
-										>{bulkDiffSourceVersionsLoading
-											? 'Loading versions...'
-											: 'Select version...'}</option
-									>
-									{#each bulkDiffSourceVersions as version}
-										<option value={version}>{version}</option>
-									{/each}
-								</select>
-							</div>
-						</div>
-					</div>
-
-					<div>
-						<label
-							for="bulk-target-release"
-							class="mb-1 block text-base font-semibold text-gray-900 sm:mb-2 sm:text-lg dark:text-white"
-							>Target Release & Version</label
-						>
-						<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
-							<div class="relative">
-								<select
-									id="bulk-target-release"
-									bind:value={bulkDiffTargetReleaseName}
-									on:change={() => {
-										bulkDiffTargetRelease = bulkDiffTargetReleaseName
-											? releasesConfig.releases.find((r) => r.name === bulkDiffTargetReleaseName) ||
-												null
-											: null;
-									}}
-									on:mousedown={handleSelectOpen}
-									on:focus={handleSelectOpen}
-									on:blur={handleSelectClose}
-									class="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-purple-500 focus:ring-2 focus:ring-purple-500 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-									style="z-index:1000;"
-								>
-									<option value="">Select release...</option>
-									{#each releasesConfig.releases as r}
-										<option value={r.name}>{r.label}</option>
-									{/each}
-								</select>
-							</div>
-							<div class="relative">
-								<select
-									id="bulk-target-version"
-									bind:value={bulkDiffTargetVersion}
-									on:mousedown={handleSelectOpen}
-									on:focus={handleSelectOpen}
-									on:blur={handleSelectClose}
-									class="w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-purple-500 focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-3 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-									style="z-index:1000;"
-									disabled={!bulkDiffTargetRelease ||
-										bulkDiffTargetVersions.length === 0 ||
-										bulkDiffTargetVersionsLoading}
-								>
-									<option value=""
-										>{bulkDiffTargetVersionsLoading
-											? 'Loading versions...'
-											: 'Select version...'}</option
-									>
-									{#each bulkDiffTargetVersions as version}
-										<option value={version}>{version}</option>
-									{/each}
-								</select>
-							</div>
-						</div>
-					</div>
-
-					<div class="relative border-t border-gray-200 pt-4">
-						{#if bulkDiffGenerating}
-							<div class="pointer-events-none absolute -top-1 right-0 left-0 h-1">
-								<div class="h-1 w-full bg-gray-200 dark:bg-gray-700">
-									<div
-										class="h-1 rounded-full bg-purple-600 transition-all duration-300"
-										style={`width: ${bulkDiffProgress}%`}
-									></div>
+									Source
+								</div>
+								<div class="space-y-4">
+									<div>
+										<label
+											for="bulk-source-release"
+											class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
+											>Release</label
+										>
+										<select
+											id="bulk-source-release"
+											bind:value={bulkDiffSourceReleaseName}
+											on:change={() => {
+												bulkDiffSourceRelease = bulkDiffSourceReleaseName
+													? releasesConfig.releases.find((r) => r.name === bulkDiffSourceReleaseName) ||
+														null
+													: null;
+											}}
+											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+										>
+											<option value="">Select release...</option>
+											{#each releasesConfig.releases as r}
+												<option value={r.name}>{r.label}</option>
+											{/each}
+										</select>
+									</div>
+									<div>
+										<label
+											for="bulk-source-version"
+											class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
+											>Version</label
+										>
+										<select
+											id="bulk-source-version"
+											bind:value={bulkDiffSourceVersion}
+											disabled={!bulkDiffSourceRelease ||
+												bulkDiffSourceVersions.length === 0 ||
+												bulkDiffSourceVersionsLoading}
+											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
+										>
+											<option value=""
+												>{bulkDiffSourceVersionsLoading
+													? 'Loading versions...'
+													: 'Select version...'}</option
+											>
+											{#each bulkDiffSourceVersions as version}
+												<option value={version}>{version}</option>
+											{/each}
+										</select>
+									</div>
 								</div>
 							</div>
-						{/if}
-						<div class="flex items-center justify-between gap-3">
-							<div class="flex items-center gap-2">
-								<!-- left status removed: percent shown in Compare button -->
-							</div>
-							<div>
-								<button
-									on:click={generateBulkDiffReport}
-									disabled={bulkDiffGenerating ||
-										!bulkDiffSourceRelease ||
-										!bulkDiffTargetRelease ||
-										!bulkDiffSourceVersion ||
-										!bulkDiffTargetVersion}
-									class="rounded bg-purple-600 px-4 py-2 text-white"
+
+							<!-- Target -->
+							<div class="relative rounded-xl bg-gray-50 p-5 dark:bg-gray-900/50">
+								<div
+									class="absolute -top-3 left-4 bg-purple-100 px-2 py-0.5 text-xs font-bold tracking-wide text-purple-800 uppercase rounded dark:bg-purple-900 dark:text-purple-200"
 								>
-									{#if bulkDiffGenerating}
-										<span class="flex items-center gap-2"
-											>Compare <span class="ml-1 font-mono text-sm">{bulkDiffProgress}%</span></span
+									Target
+								</div>
+								<div class="space-y-4">
+									<div>
+										<label
+											for="bulk-target-release"
+											class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
+											>Release</label
 										>
-									{:else}
-										Compare
-									{/if}
-								</button>
+										<select
+											id="bulk-target-release"
+											bind:value={bulkDiffTargetReleaseName}
+											on:change={() => {
+												bulkDiffTargetRelease = bulkDiffTargetReleaseName
+													? releasesConfig.releases.find((r) => r.name === bulkDiffTargetReleaseName) ||
+														null
+													: null;
+											}}
+											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+										>
+											<option value="">Select release...</option>
+											{#each releasesConfig.releases as r}
+												<option value={r.name}>{r.label}</option>
+											{/each}
+										</select>
+									</div>
+									<div>
+										<label
+											for="bulk-target-version"
+											class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
+											>Version</label
+										>
+										<select
+											id="bulk-target-version"
+											bind:value={bulkDiffTargetVersion}
+											disabled={!bulkDiffTargetRelease ||
+												bulkDiffTargetVersions.length === 0 ||
+												bulkDiffTargetVersionsLoading}
+											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
+										>
+											<option value=""
+												>{bulkDiffTargetVersionsLoading
+													? 'Loading versions...'
+													: 'Select version...'}</option
+											>
+											{#each bulkDiffTargetVersions as version}
+												<option value={version}>{version}</option>
+											{/each}
+										</select>
+									</div>
+								</div>
 							</div>
 						</div>
+
+						<div class="mt-8 flex justify-end border-t border-gray-100 pt-6 dark:border-gray-700">
+							<button
+								on:click={generateBulkDiffReport}
+								disabled={bulkDiffGenerating ||
+									!bulkDiffSourceRelease ||
+									!bulkDiffTargetRelease ||
+									!bulkDiffSourceVersion ||
+									!bulkDiffTargetVersion}
+								class="relative inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-gray-900"
+							>
+								{#if bulkDiffGenerating}
+									<svg
+										class="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+									>
+										<circle
+											class="opacity-25"
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											stroke-width="4"
+										></circle>
+										<path
+											class="opacity-75"
+											fill="currentColor"
+											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+										></path>
+									</svg>
+									Generating Report ({bulkDiffProgress}%)
+								{:else}
+									Compare Releases
+								{/if}
+							</button>
+						</div>
+						{#if bulkDiffGenerating}
+							<div class="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+								<div
+									class="h-full rounded-full bg-blue-600 transition-all duration-300 ease-out"
+									style="width: {bulkDiffProgress}%"
+								></div>
+							</div>
+						{/if}
 					</div>
 
 					{#if bulkDiffReport}
@@ -1374,21 +1394,21 @@
 
 									<!-- Desktop table -->
 									<div
-										class="hidden overflow-x-auto rounded-lg border border-gray-200 shadow-sm sm:block sm:rounded-xl dark:border-gray-700"
+										class="hidden overflow-hidden rounded-xl border border-gray-200 shadow-sm sm:block dark:border-gray-700"
 									>
-										<table class="w-full table-auto text-xs sm:text-sm">
-											<thead class="bg-gray-50 dark:bg-gray-900">
+										<table class="w-full table-auto text-sm">
+											<thead class="bg-gray-50 dark:bg-gray-900/50">
 												<tr>
 													<th
-														class="px-3 py-3 text-left font-semibold text-gray-900 sm:px-6 sm:py-4 dark:text-white"
+														class="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
 														>Resource</th
 													>
 													<th
-														class="px-3 py-3 text-left font-semibold text-gray-900 sm:px-6 sm:py-4 dark:text-white"
+														class="px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
 														>Status</th
 													>
 													<th
-														class="px-3 py-3 text-left font-semibold text-gray-900 sm:px-6 sm:py-4 dark:text-white"
+														class="px-6 py-4 text-right text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
 														>Actions</th
 													>
 												</tr>
@@ -1397,93 +1417,70 @@
 												class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800"
 											>
 												{#each filteredBulkDiffCrds as crd}
-													<tr class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50">
-														<td
-															class="max-w-[40%] px-3 py-3 font-medium break-words whitespace-pre-wrap text-gray-900 sm:px-6 sm:py-4 dark:text-white"
-															><div class="font-semibold">{crd.kind}</div>
-															<div class="text-xs text-gray-500 dark:text-gray-300">
+													<tr
+														class="group transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30"
+													>
+														<td class="max-w-[40%] px-6 py-4">
+															<div class="font-medium text-gray-900 dark:text-white">
+																{crd.kind}
+															</div>
+															<div
+																class="mt-0.5 text-xs text-gray-500 break-all dark:text-gray-400"
+															>
 																{@html highlightMatches(
 																	stripResourcePrefixFQDN(crd.name),
 																	debouncedBulkDiffSearch,
 																	bulkDiffSearchRegex
 																)}
-															</div></td
-														>
-														<td class="px-3 py-3 sm:px-6 sm:py-4">
+															</div>
+														</td>
+														<td class="px-6 py-4">
 															<span
-																class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium sm:px-3 {crd.status ===
+																class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {crd.status ===
 																'added'
 																	? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
 																	: crd.status === 'removed'
 																		? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
 																		: crd.status === 'unchanged'
 																			? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-																			: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'} break-words whitespace-nowrap"
+																			: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'}"
 															>
 																{#if crd.status === 'added'}
 																	<svg
-																		class="mr-1 h-3 w-3"
-																		fill="none"
-																		stroke="currentColor"
-																		viewBox="0 0 24 24"
-																		><path
-																			stroke-linecap="round"
-																			stroke-linejoin="round"
-																			stroke-width="2"
-																			d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-																		/></svg
+																		class="-ml-0.5 mr-1.5 h-2 w-2"
+																		fill="currentColor"
+																		viewBox="0 0 8 8"
 																	>
+																		<circle cx="4" cy="4" r="3" />
+																	</svg>
 																{:else if crd.status === 'removed'}
 																	<svg
-																		class="mr-1 h-3 w-3"
-																		fill="none"
-																		stroke="currentColor"
-																		viewBox="0 0 24 24"
-																		><path
-																			stroke-linecap="round"
-																			stroke-linejoin="round"
-																			stroke-width="2"
-																			d="M20 12H4"
-																		/></svg
+																		class="-ml-0.5 mr-1.5 h-2 w-2"
+																		fill="currentColor"
+																		viewBox="0 0 8 8"
 																	>
+																		<circle cx="4" cy="4" r="3" />
+																	</svg>
 																{:else if crd.status === 'modified'}
 																	<svg
-																		class="mr-1 h-3 w-3"
-																		fill="none"
-																		stroke="currentColor"
-																		viewBox="0 0 24 24"
-																		><path
-																			stroke-linecap="round"
-																			stroke-linejoin="round"
-																			stroke-width="2"
-																			d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-																		/></svg
+																		class="-ml-0.5 mr-1.5 h-2 w-2"
+																		fill="currentColor"
+																		viewBox="0 0 8 8"
 																	>
-																{:else}
-																	<svg
-																		class="mr-1 h-3 w-3"
-																		fill="none"
-																		stroke="currentColor"
-																		viewBox="0 0 24 24"
-																		><path
-																			stroke-linecap="round"
-																			stroke-linejoin="round"
-																			stroke-width="2"
-																			d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-																		/></svg
-																	>
+																		<circle cx="4" cy="4" r="3" />
+																	</svg>
 																{/if}
-																{crd.status}
+																{crd.status.charAt(0).toUpperCase() + crd.status.slice(1)}
 															</span>
 														</td>
-														<td class="max-w-[20%] px-3 py-3 sm:px-6 sm:py-4">
+														<td class="px-6 py-4 text-right">
 															<button
-																aria-expanded={expandedCrdNames.includes(crd.name)}
-																aria-controls={`details-${crd.name}`}
 																on:click={() => toggleCrdExpand(crd.name)}
-																class="rounded-lg bg-gray-100 px-2 py-1.5 text-xs font-medium whitespace-nowrap text-gray-700 transition-colors hover:bg-gray-200 sm:px-4 sm:py-2 sm:text-sm dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+																class="rounded-md px-3 py-1.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
 															>
-																{expandedCrdNames.includes(crd.name) ? 'Hide' : 'Show'}
+																{expandedCrdNames.includes(crd.name)
+																	? 'Hide Details'
+																	: 'View Details'}
 															</button>
 														</td>
 													</tr>

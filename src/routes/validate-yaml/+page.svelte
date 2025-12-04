@@ -23,30 +23,6 @@
 	// Simple in-memory cache for manifests
 	const manifestCache: Map<string, any> = new Map();
 
-	// Helper function to recursively remove null values from objects
-	// EDA accepts null values and just ignores them at runtime
-	function removeNullValues(obj: any): any {
-		if (obj === null || obj === undefined) {
-			return undefined;
-		}
-		if (Array.isArray(obj)) {
-			return obj.map(removeNullValues).filter(v => v !== undefined);
-		}
-		if (typeof obj === 'object') {
-			const result: any = {};
-			for (const [key, value] of Object.entries(obj)) {
-				if (value !== null) {
-					const cleaned = removeNullValues(value);
-					if (cleaned !== undefined) {
-						result[key] = cleaned;
-					}
-				}
-			}
-			return result;
-		}
-		return obj;
-	}
-
 	async function validateYaml() {
 		const [{ default: Ajv }] = await Promise.all([import('ajv')]);
 		const yamlLib = (await import('js-yaml')).default;
@@ -278,10 +254,9 @@
 
 				// 4. Validate spec field against schema
 				if (parsedYaml.spec && spec) {
-					// Remove null values before validation (EDA ignores them)
-					const specWithoutNulls = removeNullValues(parsedYaml.spec);
+					// Validate spec directly (including null checks if schema requires values)
 					const specValidator = ajv.compile(spec);
-					if (!specValidator(specWithoutNulls)) {
+					if (!specValidator(parsedYaml.spec)) {
 						valid = false;
 						const docErrors = (specValidator.errors || []).map((err: any) => {
 							// Enhanced error message for missing required properties
@@ -393,7 +368,7 @@
 
 <TopHeader title="YAML Validation" />
 
-<div class="relative flex min-h-screen flex-col pt-12 md:pt-14">
+<div class="relative flex h-full flex-col overflow-y-auto pt-12 md:pt-14">
 	<div class="mx-auto w-full max-w-7xl flex-1 px-4 py-4 md:py-6">
 		<!-- Release Selection -->
 		<div class="mb-4 flex flex-wrap items-center gap-2">

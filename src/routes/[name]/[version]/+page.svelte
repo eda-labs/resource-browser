@@ -2,6 +2,8 @@
 	import { page } from '$app/stores';
 	import { derived, writable } from 'svelte/store';
 	import { onMount, onDestroy } from 'svelte';
+	// Ajv and js-yaml are used only by validation flow; load dynamically to reduce initial bundle
+	import type { ErrorObject } from 'ajv';
 
 	import PageCredits from '$lib/components/PageCredits.svelte';
 	import TopHeader from '$lib/components/TopHeader.svelte';
@@ -118,7 +120,12 @@
 	}
 
 	// View mode state - start with schema view showing both spec and status
-	let viewMode: 'schema' | 'compare' = 'schema';
+	let viewMode: 'schema' | 'compare' | 'validate' = 'schema';
+
+	let yamlInput = '';
+	let validationErrors: ErrorObject[] = [];
+	let isValidating = false;
+	let validationResult: 'valid' | 'invalid' | null = null;
 
 	// Comparison state
 	let compareVersion: string | null = null;
@@ -172,6 +179,151 @@
 		} else {
 			expandAll.set(true);
 		}
+	}
+
+	async function validateYaml() {
+		const [{ default: Ajv }] = await Promise.all([import('ajv')]);
+		const yamlLib = (await import('js-yaml')).default;
+		if (!yamlInput.trim()) {
+			validationErrors = [];
+			validationResult = null;
+			return;
+		}
+
+		isValidating = true;
+		validationErrors = [];
+		validationResult = null;
+
+		try {
+			const yamlDocs = yamlInput.split(/^---$/m).filter((doc) => doc.trim());
+			const parsedDocs: any[] = [];
+
+			for (const doc of yamlDocs) {
+				try {
+					const parsed = yamlLib.load(doc.trim());
+					if (parsed) {
+						parsedDocs.push(parsed);
+					}
+				} catch (e) {
+					const allDocs = yamlLib.loadAll(doc.trim());
+					parsedDocs.push(...allDocs.filter((d) => d !== null && d !== undefined));
+				}
+			}
+
+			if (parsedDocs.length === 0) {
+				const allDocs = yamlLib.loadAll(yamlInput);
+				parsedDocs.push(...allDocs.filter((d) => d !== null && d !== undefined));
+			}
+
+			if (parsedDocs.length === 0) {
+				validationErrors = [
+					{
+						message: 'No valid YAML documents found',
+						instancePath: '',
+						schemaPath: '',
+						keyword: 'format',
+						params: {}
+					} as ErrorObject
+				];
+				validationResult = 'invalid';
+				isValidating = false;
+				return;
+			}
+
+			if (!spec || !spec.properties) {
+				validationErrors = [
+					{
+						message: 'No schema found in CRD for validation',
+						instancePath: '',
+						schemaPath: '',
+						keyword: 'schema',
+						params: {}
+					} as ErrorObject
+				];
+				validationResult = 'invalid';
+				isValidating = false;
+				return;
+			}
+
+			const ajv = new Ajv({
+				allErrors: true,
+				verbose: true,
+				strict: false,
+				validateFormats: false
+			});
+
+			let valid = true;
+			const errors: ErrorObject[] = [];
+
+			parsedDocs.forEach((parsedYaml, index) => {
+				const docPrefix = parsedDocs.length > 1 ? `[Document ${index + 1}] ` : '';
+
+				if (parsedYaml.spec && spec.properties.spec) {
+					const specValidator = ajv.compile(spec.properties.spec);
+					if (!specValidator(parsedYaml.spec)) {
+						valid = false;
+						const docErrors = (specValidator.errors || []).map((err) => ({
+							...err,
+							message: `${docPrefix}${err.message}`
+						}));
+						errors.push(...docErrors);
+					}
+				} else if (!parsedYaml.spec && spec.properties.spec) {
+					errors.push({
+						message: `${docPrefix}Missing required 'spec' field`,
+						instancePath: '',
+						schemaPath: '',
+						keyword: 'required',
+						params: { missingProperty: 'spec' }
+					} as ErrorObject);
+					valid = false;
+				}
+
+				if (parsedYaml.status && status && status.properties) {
+					const statusValidator = ajv.compile(status);
+					if (!statusValidator(parsedYaml.status)) {
+						valid = false;
+						const docErrors = (statusValidator.errors || []).map((err) => ({
+							...err,
+							message: `${docPrefix}${err.message}`
+						}));
+						errors.push(...docErrors);
+					}
+				}
+			});
+
+			if (valid) {
+				validationResult = 'valid';
+				if (parsedDocs.length > 1) {
+					validationErrors = [
+						{
+							message: `✓ Successfully validated ${parsedDocs.length} YAML documents`,
+							instancePath: '',
+							schemaPath: '',
+							keyword: 'success',
+							params: {}
+						} as ErrorObject
+					];
+				}
+			} else {
+				validationErrors = errors;
+				validationResult = 'invalid';
+			}
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			validationErrors = [
+				{
+					message: `YAML parsing error: ${errorMessage}`,
+					instancePath: '',
+					schemaPath: '',
+					keyword: 'format',
+					params: {}
+				} as ErrorObject
+			];
+			validationResult = 'invalid';
+		}
+
+		isValidating = false;
 	}
 
 	async function handleVersionChange() {
@@ -254,6 +406,9 @@
 		compareRelease = null;
 		comparisonResult = null;
 		viewMode = 'schema';
+		yamlInput = '';
+		validationResult = null;
+		validationErrors = [];
 	}
 </script>
 
@@ -272,9 +427,9 @@
 		subtitle={releaseLabel}
 	/>
 
-	<div class="relative flex min-h-screen flex-col overflow-hidden pt-14 md:pt-16">
+	<div class="relative flex flex-col">
 		<div class="relative flex-1">
-			<main class="flex-1 px-3 pt-3 pb-8 md:px-6 md:pt-4 lg:px-8">
+			<main class="px-3 pt-3 pb-8 md:px-6 md:pt-4 lg:px-8">
 				<div class="mx-auto w-full max-w-7xl">
 					<!-- Ultra-Compact Control Panel -->
 					<div
@@ -299,24 +454,43 @@
 								</svg>
 								<span>Schema</span>
 							</button>
-						<button
-							on:click={() => (viewMode = 'compare')}
-							class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all {viewMode ===
-							'compare'
-								? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-sm'
-								: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'}"
-						>
-							<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-								/>
-							</svg>
-							<span>Compare</span>
-						</button>
-					</div>						<!-- Expand/Collapse Button -->
+							<button
+								on:click={() => (viewMode = 'compare')}
+								class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all {viewMode ===
+								'compare'
+									? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-sm'
+									: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'}"
+							>
+								<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+									/>
+								</svg>
+								<span>Compare</span>
+							</button>
+							<button
+								on:click={() => (viewMode = 'validate')}
+								class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all {viewMode ===
+								'validate'
+									? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
+									: 'text-gray-600 hover:bg-white hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'}"
+							>
+								<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+									/>
+								</svg>
+								<span>Validate</span>
+							</button>
+						</div>
+
+						<!-- Expand/Collapse Button -->
 						<button
 							class="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-all hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/20 {$ulExpanded.length >
 							0
@@ -780,6 +954,267 @@
 										</div>
 									</div>
 								{/if}
+							</div>
+						</div>
+					{/if}
+
+					<!-- Validation Section -->
+					{#if viewMode === 'validate'}
+						<div
+							class="mt-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm md:mt-10 md:rounded-xl dark:border-gray-700/60 dark:bg-gray-800/90 dark:shadow-xl"
+						>
+							<div
+								class="border-b border-gray-200 bg-gray-50 px-4 py-4 md:px-8 md:py-6 dark:border-gray-700 dark:bg-gray-800"
+							>
+								<div class="flex items-center space-x-3 md:space-x-4">
+									<div
+										class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-xl md:h-12 md:w-12 md:rounded-xl"
+									>
+										<svg
+											class="h-5 w-5 md:h-6 md:w-6"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+											/>
+										</svg>
+									</div>
+									<div class="min-w-0">
+										<h2 class="text-lg font-semibold text-gray-900 md:text-2xl dark:text-white">
+											YAML Validation
+										</h2>
+										<p class="mt-0.5 text-xs text-gray-600 md:text-sm dark:text-gray-300">
+											Validate YAML against CRD schema
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="bg-white p-4 md:p-8 dark:bg-gray-800">
+								<div class="space-y-4 md:space-y-6">
+									<!-- Instructions -->
+									<div
+										class="rounded-lg border border-blue-200 bg-blue-50 p-3 md:p-4 dark:border-blue-800 dark:bg-blue-900/20"
+									>
+										<div class="flex items-start space-x-2 md:space-x-3">
+											<svg
+												class="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600 md:h-5 md:w-5 dark:text-blue-400"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+												/>
+											</svg>
+											<div class="text-xs text-blue-800 md:text-sm dark:text-blue-200">
+												<p class="mb-1 font-medium">How to use:</p>
+												<ul
+													class="list-inside list-disc space-y-0.5 text-blue-700 dark:text-blue-300"
+												>
+													<li>Paste your complete YAML manifest</li>
+													<li>
+														Or paste just the <code
+															class="rounded bg-blue-100 px-1 text-xs dark:bg-blue-800">spec</code
+														> section
+													</li>
+													<li>
+														Supports multiple documents separated by <code
+															class="rounded bg-blue-100 px-1 text-xs dark:bg-blue-800">---</code
+														>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+
+									<!-- YAML Input -->
+									<div>
+										<label
+											for="yaml-input"
+											class="mb-2 block text-xs font-medium text-gray-700 md:text-sm dark:text-gray-300"
+										>
+											YAML Configuration
+										</label>
+										<textarea
+											id="yaml-input"
+											bind:value={yamlInput}
+											placeholder={`apiVersion: ${group}/${versionOnFocus}\nkind: ${kind}\nmetadata:\n  name: example\nspec:`}
+											rows="12"
+											class="w-full resize-y rounded-lg border border-gray-300 bg-white px-3 py-2 font-mono text-xs text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none md:px-4 md:py-3 md:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+										></textarea>
+									</div>
+
+									<!-- Validate Button -->
+									<div
+										class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4"
+									>
+										<button
+											on:click={validateYaml}
+											disabled={isValidating}
+											class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-indigo-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:rounded-xl md:px-6 md:py-3 md:text-sm"
+										>
+											{#if isValidating}
+												<svg
+													class="h-3.5 w-3.5 animate-spin md:h-4 md:w-4"
+													fill="none"
+													viewBox="0 0 24 24"
+												>
+													<circle
+														class="opacity-25"
+														cx="12"
+														cy="12"
+														r="10"
+														stroke="currentColor"
+														stroke-width="4"
+													></circle>
+													<path
+														class="opacity-75"
+														fill="currentColor"
+														d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+													></path>
+												</svg>
+												<span>Validating...</span>
+											{:else}
+												<svg
+													class="h-3.5 w-3.5 md:h-4 md:w-4"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+													/>
+												</svg>
+												<span>Validate</span>
+											{/if}
+										</button>
+
+										{#if validationResult}
+											<div class="flex items-center justify-center gap-2">
+												{#if validationResult === 'valid'}
+													<div class="flex items-center gap-2 text-green-600 dark:text-green-400">
+														<svg
+															class="h-4 w-4"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+															/>
+														</svg>
+														<span class="text-xs font-medium md:text-sm">Valid</span>
+													</div>
+												{:else}
+													<div class="flex items-center gap-2 text-red-600 dark:text-red-400">
+														<svg
+															class="h-4 w-4"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+														>
+															<path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+															/>
+														</svg>
+														<span class="text-xs font-medium md:text-sm">Invalid</span>
+													</div>
+												{/if}
+											</div>
+										{/if}
+									</div>
+
+									<!-- Validation Results -->
+									{#if validationErrors.length > 0}
+										{#if validationResult === 'valid'}
+											<div
+												class="rounded-lg border border-green-200 bg-green-50 p-3 md:p-4 dark:border-green-800 dark:bg-green-900/20"
+											>
+												<div class="flex items-start gap-2 md:gap-3">
+													<svg
+														class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600 md:h-5 md:w-5 dark:text-green-400"
+														fill="none"
+														stroke="currentColor"
+														viewBox="0 0 24 24"
+													>
+														<path
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															stroke-width="2"
+															d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+														/>
+													</svg>
+													<p
+														class="text-xs font-medium text-green-800 md:text-sm dark:text-green-200"
+													>
+														{validationErrors[0].message}
+													</p>
+												</div>
+											</div>
+										{:else}
+											<div
+												class="rounded-lg border border-red-200 bg-red-50 p-3 md:p-4 dark:border-red-800 dark:bg-red-900/20"
+											>
+												<div class="flex items-start gap-2 md:gap-3">
+													<svg
+														class="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600 md:h-5 md:w-5 dark:text-red-400"
+														fill="none"
+														stroke="currentColor"
+														viewBox="0 0 24 24"
+													>
+														<path
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															stroke-width="2"
+															d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+														/>
+													</svg>
+													<div class="min-w-0 flex-1">
+														<h4
+															class="mb-2 text-xs font-medium text-red-800 md:text-sm dark:text-red-200"
+														>
+															Errors ({validationErrors.length})
+														</h4>
+														<ul class="space-y-1.5">
+															{#each validationErrors as error}
+																<li class="text-xs text-red-700 md:text-sm dark:text-red-300">
+																	<div
+																		class="overflow-x-auto rounded bg-red-100 p-2 font-mono text-xs dark:bg-red-900/30"
+																	>
+																		{#if (error as any).instancePath || (error as any).dataPath}
+																			<span class="font-semibold"
+																				>{(error as any).instancePath ||
+																					(error as any).dataPath}</span
+																			>:
+																		{/if}
+																		{error.message}
+																	</div>
+																</li>
+															{/each}
+														</ul>
+													</div>
+												</div>
+											</div>
+										{/if}
+									{/if}
+								</div>
 							</div>
 						</div>
 					{/if}
