@@ -66,14 +66,14 @@
 				{#if showPageTitle}
 					<div class="min-w-0">
 						<h2
-							class="font-nokia-headline truncate text-xl leading-tight font-bold text-white sm:text-3xl dark:text-slate-100"
+							class="font-nokia-headline truncate text-xl leading-tight font-bold text-blue-600 sm:text-3xl dark:text-slate-100"
 						>
 							{kind || shortName}
 						</h2>
 						<p
 							class="mt-0 flex -translate-y-0.5 items-center gap-2 truncate text-sm font-medium text-gray-300 sm:text-base dark:text-gray-300"
 						>
-							<span class="truncate">{groupPath || name}</span>
+							<span class="truncate text-amber-500 dark:text-blue-300">{groupPath || name}</span>
 							<span class="text-gray-400">/</span>
 							<!-- Version selector inline -->
 							<span class="flex items-center">

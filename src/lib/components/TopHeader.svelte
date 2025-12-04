@@ -58,7 +58,7 @@
 			/>
 			<div class="hidden leading-tight xl:block">
 				<div class="text-sm font-semibold text-blue-400 dark:text-blue-400">Nokia EDA</div>
-				<div class="text-xs text-gray-300 dark:text-gray-300">Resource Browser</div>
+				<div class="text-xs text-amber-500 dark:text-gray-300">Resource Browser</div>
 			</div>
 		</a>
 	</div>
@@ -93,7 +93,7 @@
 				<div class="mb-1 block w-full lg:hidden">
 					<a
 						href="/"
-						class="inline-flex items-center gap-2 text-white no-underline dark:text-white"
+						class="inline-flex items-center gap-2 text-gray-900 no-underline dark:text-white"
 					>
 						<img
 							src="/images/eda.svg"
@@ -106,13 +106,13 @@
 						/>
 						<div class="text-left leading-tight">
 							<div class="text-[11px] font-semibold text-blue-400">Nokia EDA</div>
-							<div class="text-[9px] text-white/80">Resource Browser</div>
+							<div class="text-[9px] text-amber-500 dark:text-white/80">Resource Browser</div>
 						</div>
 					</a>
 				</div>
 				{#if title}
 					<div
-						class="w-full text-center text-sm font-extrabold text-white sm:text-base lg:w-auto lg:text-left lg:text-lg dark:text-white"
+						class="w-full text-center text-sm font-extrabold text-blue-600 sm:text-base lg:w-auto lg:text-left lg:text-lg dark:text-white"
 					>
 						{title}
 					</div>
@@ -127,14 +127,14 @@
 					<div class="flex items-center justify-center gap-2 lg:justify-start">
 						<div class="min-w-0 text-center lg:text-left">
 							<h1
-								class="truncate text-sm font-extrabold leading-tight text-white sm:text-base lg:text-lg dark:text-white"
+								class="truncate text-sm font-extrabold leading-tight text-blue-600 sm:text-base lg:text-lg dark:text-white"
 							>
 								{kind || shortName}
 							</h1>
 							<p
 								class="mt-0.5 flex items-center justify-center gap-1.5 truncate text-[10px] text-gray-300 sm:text-xs lg:justify-start dark:text-gray-300"
 							>
-								<span class="truncate">{groupPath || name}</span>
+								<span class="truncate text-amber-500 dark:text-gray-300">{groupPath || name}</span>
 								<span class="text-gray-400">/</span>
 								<span class="flex items-center">
 									{#if validVersions && validVersions.length > 1}

@@ -261,7 +261,7 @@
 		   below when the page content scrolls. */
 		position: fixed;
 		inset: 0;
-		z-index: 0;
+		z-index: -1; /* place behind page content */
 		overflow: hidden;
 		pointer-events: none;
 		user-select: none;
@@ -282,6 +282,46 @@
 		min-width: 100%;
 		display: block;
 	}
+
+/* Light-mode: make the hero image appear as a lighter background
+   We apply a subtle brightening / desaturation so foreground dark text is readable. */
+:global(:not(.dark)) .header-bg-img {
+	filter: brightness(1.06) saturate(1.02) contrast(1.02);
+	opacity: 0.98;
+	transition: filter 260ms ease, opacity 260ms ease;
+}
+
+/* Dark-mode: darker and slightly more saturated image to match dark overlay */
+:global(.dark) .header-bg-img {
+	filter: brightness(0.5) saturate(0.9) contrast(0.95);
+	transition: filter 260ms ease;
+}
+
+/* For the content container that uses .has-header-img, use a lighter gradient overlay in light mode
+   so the image reads as a soft, light background and text is dark. */
+:global(:not(.dark)) .has-header-img {
+	background-image:
+		linear-gradient(120deg, rgba(255,255,255,0.32), rgba(250,250,250,0.22)),
+		linear-gradient(60deg, rgba(255,255,255,0.16), rgba(236, 253, 255, 0.12));
+	background-size: cover;
+	background-position: center;
+	color: rgba(2,6,23,0.95); /* dark foreground on light bg */
+}
+
+/* Ensure page titles are visible and dark in light mode (overrides some `text-white` usages) */
+:global(:not(.dark)) h1,
+:global(:not(.dark)) h2,
+:global(:not(.dark)) h3,
+:global(:not(.dark)) .font-extrabold {
+	color: #f59e0b !important; /* amber-500 to match site accents in light mode */
+}
+
+/* Ensure dark-mode retains the darker overlay defined earlier */
+:global(.dark) .has-header-img {
+	background-image:
+		linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
+		linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
+}
 
 	/* Mobile - use lighter background image and scroll attachment to reduce performance cost */
 	@media (max-width: 768px) {
@@ -325,6 +365,43 @@
 	/* Dropdown hover effect */
 	.dropdown:hover .dropdown-content {
 		display: block;
+	}
+
+	/* Light-mode dropdowns and select controls: ensure background is light and text is dark for readability */
+	:global(:not(.dark)) .dropdown-content,
+	:global(:not(.dark)) .dropdown,
+	:global(:not(.dark)) .select-pro,
+	:global(:not(.dark)) select,
+	:global(:not(.dark)) .dropdown-item,
+	:global(:not(.dark)) .menu,
+	:global(:not(.dark)) .dropdown .content {
+		background: #ffffff !important;
+		color: rgba(2,6,23,0.96) !important;
+		border-color: rgba(2,6,23,0.06) !important;
+	}
+
+	:global(:not(.dark)) .dropdown-content a,
+	:global(:not(.dark)) .dropdown-content button,
+	:global(:not(.dark)) .dropdown-content span {
+		color: rgba(2,6,23,0.96) !important;
+	}
+
+	/* Make sure custom select component uses dark text on light mode */
+	:global(:not(.dark)) .select-pro {
+		@apply bg-white text-gray-900; /* Tailwind will process */
+	}
+
+	/* Ensure dropdown options use dark text and white background in light mode (dropdown menu in native selects) */
+	:global(:not(.dark)) select option,
+	:global(:not(.dark)) .select-pro option {
+		color: rgba(2,6,23,0.96) !important;
+		background: #ffffff !important;
+	}
+
+	/* Header (top nav) overrides for light mode: ensure any hard-coded white text becomes dark for readability */
+	:global(:not(.dark)) nav.fixed,
+	:global(:not(.dark)) nav.fixed * {
+		color: rgba(2,6,23,0.95) !important;
 	}
 
 	/* Custom border width for diff indicators */
@@ -382,6 +459,18 @@
 		border: 1px solid rgba(245, 158, 11, 0.2);
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 	}
+}
+
+/* Additional light-mode dropdown/popover containers used by various components */
+:global(:not(.dark)) .dropdown-menu,
+:global(:not(.dark)) .popover,
+:global(:not(.dark)) .popover-content,
+:global(:not(.dark)) .popup,
+:global(:not(.dark)) .choices__list,
+:global(:not(.dark)) .react-select__menu {
+	background: #ffffff !important;
+	color: rgba(2,6,23,0.96) !important;
+	border-color: rgba(2,6,23,0.06) !important;
 }
 
 /* ============================================
@@ -502,6 +591,11 @@
 		backdrop-filter: none !important;
 		-webkit-backdrop-filter: none !important;
 	}
+}
+/* Ensure content sits above the header image */
+:global(.has-header-img) {
+	position: relative;
+	z-index: 1;
 }
 
 /* Theme toggle pill (matching reference style) */

@@ -522,7 +522,7 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 							>
 								Nokia EDA
 							</h1>
-							<p class="font-nokia-headline mt-1 text-sm font-light text-white md:text-base">
+							<p class="font-nokia-headline mt-1 text-sm font-light text-amber-500 md:text-base dark:text-white">
 								Resource Browser
 							</p>
 						</div>
@@ -728,7 +728,7 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 												<h1 class="text-4xl font-bold text-blue-400 tracking-tight">
 													Nokia EDA
 												</h1>
-												<p class="text-xl font-light text-gray-300">
+												<p class="text-xl font-light text-amber-500 dark:text-gray-300">
 													Resource Browser
 												</p>
 											</div>

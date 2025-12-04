@@ -758,7 +758,7 @@
 														null
 													: null;
 											}}
-											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+											class="w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
 										>
 											<option value="">Select release...</option>
 											{#each releasesConfig.releases as r}
@@ -778,7 +778,7 @@
 											disabled={!bulkDiffSourceRelease ||
 												bulkDiffSourceVersions.length === 0 ||
 												bulkDiffSourceVersionsLoading}
-											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
+											class="w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
 										>
 											<option value=""
 												>{bulkDiffSourceVersionsLoading
@@ -816,7 +816,7 @@
 														null
 													: null;
 											}}
-											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+											class="w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
 										>
 											<option value="">Select release...</option>
 											{#each releasesConfig.releases as r}
@@ -836,7 +836,7 @@
 											disabled={!bulkDiffTargetRelease ||
 												bulkDiffTargetVersions.length === 0 ||
 												bulkDiffTargetVersionsLoading}
-											class="w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
+											class="w-full rounded-lg border-gray-300 bg-white text-sm text-gray-900 shadow-sm focus:border-purple-500 focus:ring-purple-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:disabled:bg-gray-800 dark:disabled:text-gray-500"
 										>
 											<option value=""
 												>{bulkDiffTargetVersionsLoading
