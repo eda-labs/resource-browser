@@ -1,7 +1,4 @@
 additionalPrinterColumns:
-  - jsonPath: .status.id
-    name: ID
-    type: integer
   - jsonPath: .status.result
     name: Result
     type: string
@@ -31,7 +28,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: Generate technical support packages for a node or set of nodes.
+        description: Generate technical support packages for a node or set of nodes - should only do this if explicitly requested by the user.
         properties:
           nodeSelectors:
             description: |-
@@ -51,9 +48,13 @@ schema:
       status:
         description: Result of the technical support package generation.
         properties:
-          id:
-            description: Id
-            type: integer
+          failedNodes:
+            description: |-
+              List of nodes failed to produce tech-support, it is populated in case of PartialSuccess
+              Items in the list should be the names of the nodes, where tech-support failed
+            items:
+              type: string
+            type: array
           result:
             description: Result
             type: string

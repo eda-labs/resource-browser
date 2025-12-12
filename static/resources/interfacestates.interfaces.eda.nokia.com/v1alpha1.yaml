@@ -23,7 +23,7 @@ schema:
       spec:
         properties:
           enabled:
-            description: Enable or disable the interface.
+            description: Enable or disabinterface.
             type: boolean
           lag:
             properties:

@@ -75,6 +75,9 @@ schema:
           clusterID:
             description: Enables route reflect client and sets the cluster ID.
             type: string
+          configuredName:
+            description: Configures the group name on the device.
+            type: string
           description:
             description: Sets the description on the BGP group.
             type: string

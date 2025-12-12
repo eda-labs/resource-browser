@@ -43,6 +43,31 @@ schema:
             items:
               type: string
             type: array
+          ospfInstances:
+            description: List of OSPFInstances created by the VNET
+            items:
+              properties:
+                areas:
+                  items:
+                    properties:
+                      id:
+                        type: string
+                      interfaces:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                      - id
+                    type: object
+                  type: array
+                name:
+                  type: string
+                version:
+                  type: string
+              required:
+                - name
+              type: object
+            type: array
           routedInterfaces:
             description: List of RoutedInterface created by the VNET
             items:

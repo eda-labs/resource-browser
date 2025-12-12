@@ -1,7 +1,4 @@
 additionalPrinterColumns:
-  - jsonPath: .status.id
-    name: ID
-    type: integer
   - jsonPath: .status.result
     name: Result
     type: string
@@ -53,9 +50,6 @@ schema:
       status:
         description: EdgePingStatus defines the observed state of EdgePing
         properties:
-          id:
-            description: Id
-            type: integer
           result:
             description: Aggregate result of the Flow
             type: string

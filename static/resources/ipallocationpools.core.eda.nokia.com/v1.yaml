@@ -46,6 +46,9 @@ schema:
                       name:
                         description: Name of this allocation.
                         type: string
+                      poolInstance:
+                        description: Pool instance, if empty applies to all instances.
+                        type: string
                       value:
                         description: Allocation to reserve.
                         type: string

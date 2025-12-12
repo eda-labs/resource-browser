@@ -41,6 +41,9 @@ schema:
                       name:
                         description: Name of this allocation.
                         type: string
+                      poolInstance:
+                        description: Pool instance, if empty applies to all instances.
+                        type: string
                       value:
                         description: Allocation to reserve.
                         type: string
@@ -70,6 +73,8 @@ schema:
                 subnetLength:
                   description: The size of the subnets to be allocated from within the parent subnet, e.g. 29 (which could allocate 10.1.0.8/29, for example).
                   format: int32
+                  maximum: 4294967295
+                  minimum: 0
                   type: integer
               required:
                 - subnet

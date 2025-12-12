@@ -23,6 +23,9 @@ schema:
       spec:
         description: AlarmSpec defines the desired state of Alarm
         properties:
+          additionalText:
+            description: AdditionalText adds extra context related to alarm
+            type: string
           clusterSpecific:
             description: Specifies if the alarm is within cluster, such as pod issue, or external issue, such as with BGP session on node
             type: boolean
@@ -36,7 +39,9 @@ schema:
             type: string
           jsPath:
             description: Provide a JSON path to the resource or object that the alarm is associated with, for example .node{.name=='leaf-1-1'}.srl{.version=='24.7.1'}.interface{.name=='ethernet-1-11'
-            type: string
+            items:
+              type: string
+            type: array
           kind:
             description: The kind of the resource the alarm is associated with, for example TopoNode
             minLength: 1
@@ -47,7 +52,9 @@ schema:
             type: string
           parentAlarm:
             description: ParentAlarm is the name of the parent alarm, if any, for example LinecardDown-leaf-1-1-Linecard1
-            type: string
+            items:
+              type: string
+            type: array
           probableCause:
             description: ProbableCause is the probable cause of the alarm
             type: string
@@ -78,6 +85,13 @@ schema:
             description: The resource that raised the alarm, for example
             minLength: 1
             type: string
+          targetsAffected:
+            items:
+              properties:
+                name:
+                  type: string
+              type: object
+            type: array
           type:
             description: Type of the alarm, for example InterfaceDown
             minLength: 1

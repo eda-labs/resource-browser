@@ -136,8 +136,6 @@ schema:
                 where:
                   description: Condition for filtering the metric (e.g., 'oper-state = down').
                   type: string
-              required:
-                - path
               type: object
             type: array
         required:

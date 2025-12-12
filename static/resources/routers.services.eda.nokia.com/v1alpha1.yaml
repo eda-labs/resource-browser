@@ -80,7 +80,7 @@ schema:
                       description: The nexthop IP address to track for the IP alias.
                       type: string
                     preferredActiveNode:
-                      description: When not set the ES is used in an all active mode. This references the ToppNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.
+                      description: When not set the ES is used in an all active mode. This references the TopoNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.
                       type: string
                   required:
                     - nextHop

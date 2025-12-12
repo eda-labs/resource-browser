@@ -1,0 +1,74 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Alarm is the Schema for the alarms API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: AlarmDefinitionSpec defines the desired state of Alarm
+        properties:
+          clusterSpecific:
+            default: false
+            description: Specifies if the alarm is within the EDA cluster, such as a pod issue
+            type: boolean
+          description:
+            description: Description of the alarm
+            minLength: 1
+            type: string
+          group:
+            description: |-
+              The group of the resouce the alarm is associated with, for example core.eda.nokia.com
+              If unset, the alarm may be associated to multiple resource definitions
+            minLength: 1
+            type: string
+          kind:
+            description: |-
+              The kind of the resource the alarm is associated with, for example TopoNode
+              If unset, the alarm may be associated to multiple resource definitions
+            minLength: 1
+            type: string
+          severity:
+            description: Default alarm severity. If unset, severity is variable.
+            enum:
+              - warning
+              - minor
+              - major
+              - critical
+            type: string
+          sourceGroup:
+            description: The group of the resource that raises the alarm, for example core.eda.nokia.com
+            minLength: 1
+            type: string
+          type:
+            description: Type of the alarm, for example InterfaceDown
+            minLength: 1
+            type: string
+        required:
+          - description
+          - sourceGroup
+          - type
+        type: object
+      status:
+        description: AlarmDefinitionStatus defines the observed state of Alarm
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

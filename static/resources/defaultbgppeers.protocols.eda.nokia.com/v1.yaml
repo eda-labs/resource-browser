@@ -320,6 +320,16 @@ schema:
               - DEFAULTINTERFACE
               - SYSTEMINTERFACE
             type: string
+          rtc:
+            description: Parameters relating to the RTC SAFI.
+            properties:
+              advertiseDefaultRoute:
+                description: Enables advertisement of a Default RTC Route to the BGP peers to receive all VPN routes.
+                type: boolean
+              enabled:
+                description: Enables the Route Target Constraints SAFI.
+                type: boolean
+            type: object
           sendCommunityLarge:
             description: When false, all large (12 byte) BGP communities from all outbound routes advertised to the peer are stripped.
             type: boolean

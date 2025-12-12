@@ -228,11 +228,11 @@ schema:
                         description: The maximum threshold parameter for a RED-managed queue in percent. When the average queue length exceeds the max value, all packets are dropped (or marked if ECN is enabled). Mutually exclusive with min-threshold and max-threshold.
                         type: integer
                       minThreshold:
-                        description: The mininum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.
+                        description: The minimum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.
                         format: int64
                         type: integer
                       minThresholdPercent:
-                        description: The mininum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.
+                        description: The minimum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.
                         type: integer
                       trafficType:
                         default: All

@@ -59,6 +59,55 @@ schema:
           ethernet:
             description: Ethernet configuration options.
             properties:
+              crcMonitor:
+                description: Configuration of CRC monitoring on the interface.
+                properties:
+                  enabled:
+                    description: Enables CRC monitoring on the interface.
+                    type: boolean
+                  signalDegrade:
+                    description: |-
+                      Signal degrade threshold configuration.
+                      eda:ui:title="Signal Degrade"
+                    properties:
+                      exponent:
+                        description: Threshold exponent for the signal degrade condition.
+                        maximum: 9
+                        minimum: 1
+                        type: integer
+                      multiplier:
+                        description: Threshold multiplier for the signal degrade condition.
+                        maximum: 9
+                        minimum: 1
+                        type: integer
+                    required:
+                      - exponent
+                      - multiplier
+                    type: object
+                  signalFailure:
+                    description: |-
+                      Signal failure threshold configuration.
+                      eda:ui:title="Signal Failure"
+                    properties:
+                      exponent:
+                        description: Threshold exponent for the signal failure condition.
+                        maximum: 9
+                        minimum: 1
+                        type: integer
+                      multiplier:
+                        description: Threshold multiplier for the signal failure condition.
+                        maximum: 9
+                        minimum: 1
+                        type: integer
+                    required:
+                      - exponent
+                      - multiplier
+                    type: object
+                  windowSizeSec:
+                    description: Sliding window size over which CRC errors are measured, in number of seconds.
+                    minimum: 1
+                    type: integer
+                type: object
               fec:
                 description: Sets the Forward Error Correction (FEC) on the members of the interface.
                 enum:
@@ -80,6 +129,13 @@ schema:
                 maximum: 86400000
                 minimum: 100
                 type: integer
+              loopbackMode:
+                description: Enable dataplane loopback on the interface.
+                enum:
+                  - none
+                  - facility
+                  - terminal
+                type: string
               reloadDelayTimer:
                 description: After the system boots, the reload-delay timer in seconds keeps an interface shut down with the laser off for a configured amount of time until connectivity with the rest of network is established.
                 maximum: 86400

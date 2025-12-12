@@ -36,12 +36,12 @@ schema:
           authSecretRef:
             description: |-
               AuthSecretRef is the authentication secret reference, used for authentication.
-              Must be in the same namespace as the catalog.
+              Must be in the same namespace as the registry.
             type: string
           mirror:
             description: |-
               Mirror registry of the original remote registry.
-              App store will use the mirror instead of the original registry that is referenced by a catalog.
+              App store will use the mirror instead of the original registry that is referenced by a registry.
             type: string
           remoteURL:
             description: |-
@@ -53,7 +53,7 @@ schema:
             description: Skip TLS Verification on connection
             type: boolean
           title:
-            description: Title is an UI-friendly name for the catalog.
+            description: Title is an UI-friendly name for the registry.
             maxLength: 50
             type: string
         required:

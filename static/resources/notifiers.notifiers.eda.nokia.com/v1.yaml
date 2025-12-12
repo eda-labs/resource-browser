@@ -43,7 +43,7 @@ schema:
                 properties:
                   exclude:
                     description: |-
-                      A list of alarm excludes for this Notifier, matching the 'kind' field within alarms.
+                      A list of alarm excludes for this Notifier, matching the 'type' field within alarms.
                       If a source matches both the 'sources' and 'excludes' lists, it will be excluded.
                       For example, 'InterfaceMemberDown'.
                     items:
@@ -51,7 +51,7 @@ schema:
                     type: array
                   include:
                     description: |-
-                      A list of alarms that this Notifier will listen to, matching the 'kind' field within alarms.
+                      A list of alarms that this Notifier will listen to, matching the 'type' field within alarms.
                       Including all alarms is indicated using the '*' wildcard.
                       For example, 'InterfaceDown'.
                     items:

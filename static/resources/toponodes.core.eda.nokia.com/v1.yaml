@@ -110,11 +110,14 @@ schema:
                   "emulate"
                      indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation
                      still occurs.  If no IP address is present, we also run in emulate mode.
+                  "monitor"
+                     indicates that state will be collectd but config will not be pushed to a endpoint. NPP validation still occurs.
                 enum:
                   - normal
                   - maintenance
                   - "null"
                   - emulate
+                  - monitor
                 type: string
             type: object
           onBoarded:

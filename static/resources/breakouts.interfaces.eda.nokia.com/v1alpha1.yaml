@@ -39,7 +39,7 @@ schema:
               type: string
             type: array
           nodeSelector:
-            description: TopoNode where the parent interfaces are to be broken out.
+            description: Label selector to select nodes on which to configure the breakout interfaces. Either Nodes or NodeSelector must have at least one value set.
             items:
               type: string
             type: array
@@ -57,7 +57,6 @@ schema:
             type: string
         required:
           - channels
-          - node
           - speed
         type: object
       status:

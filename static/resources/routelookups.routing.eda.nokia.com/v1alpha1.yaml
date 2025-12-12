@@ -93,6 +93,9 @@ schema:
                       interfaces:
                         items:
                           properties:
+                            localAddress:
+                              description: Local IP address of the egress interface
+                              type: string
                             name:
                               description: Name of the egress interface.
                               type: string

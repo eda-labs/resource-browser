@@ -73,7 +73,7 @@ schema:
                 minimum: 10000
                 type: integer
               ttl:
-                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
                 maximum: 255
                 minimum: 2
                 type: integer
@@ -96,6 +96,49 @@ schema:
                 items:
                   type: string
                 type: array
+            type: object
+          hostRoutePopulate:
+            description: Configures host route population based on ARP/ND entries.
+            properties:
+              dynamic:
+                description: Create host routes out of dynamic ARP/ND entries.
+                properties:
+                  datapathProgramming:
+                    description: Enable datapath programming for host routes.
+                    type: boolean
+                  populate:
+                    default: false
+                    description: Enable population of host routes based on ARP/ND entries.
+                    type: boolean
+                required:
+                  - populate
+                type: object
+              evpn:
+                description: Create host routes out of EVPN learned ARP/ND entries.
+                properties:
+                  datapathProgramming:
+                    description: Enable datapath programming for host routes.
+                    type: boolean
+                  populate:
+                    default: false
+                    description: Enable population of host routes based on ARP/ND entries.
+                    type: boolean
+                required:
+                  - populate
+                type: object
+              static:
+                description: Create host routes out of static ARP/ND entries.
+                properties:
+                  datapathProgramming:
+                    description: Enable datapath programming for host routes.
+                    type: boolean
+                  populate:
+                    default: false
+                    description: Enable population of host routes based on ARP/ND entries.
+                    type: boolean
+                required:
+                  - populate
+                type: object
             type: object
           ingress:
             description: Manages actions on traffic at Ingress.
@@ -155,6 +198,7 @@ schema:
               type: object
             type: array
           ipv6RouterAdvertisement:
+            description: Manages IPV6 Router Advertisement parameters.
             properties:
               currentHopLimit:
                 default: 64

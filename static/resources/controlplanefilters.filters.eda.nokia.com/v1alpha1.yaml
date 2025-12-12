@@ -228,6 +228,15 @@ schema:
                     destinationPrefix:
                       description: Destination prefix to match.
                       type: string
+                    dscp:
+                      description: Match DSCP values.
+                      items:
+                        maximum: 63
+                        minimum: 0
+                        type: integer
+                      maxItems: 64
+                      minItems: 0
+                      type: array
                     firstFragment:
                       description: Match the first fragment only.
                       type: boolean

@@ -101,7 +101,7 @@ schema:
             description: The Uplink between your access breakout switch and your leaf switch.
             properties:
               egress:
-                description: Manages actions on traffic at Egress of the Local enpoint of the Uplink.
+                description: Manages actions on traffic at Egress of the Local endpoint of the Uplink.
                 properties:
                   filters:
                     description: List of Filter references to use at egress.
@@ -115,7 +115,7 @@ schema:
                     type: array
                 type: object
               ingress:
-                description: Manages actions on traffic at Ingress of the Local enpoint of the Uplink.
+                description: Manages actions on traffic at Ingress of the Local endpoint of the Uplink.
                 properties:
                   filters:
                     description: List of Filter references to use at ingress.

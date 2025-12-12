@@ -12,10 +12,10 @@ additionalPrinterColumns:
     name: Last Change
     type: date
   - jsonPath: .status.serialNumber
-    name: Part Number
+    name: Serial Number
     type: string
   - jsonPath: .status.partNumber
-    name: Serial Number
+    name: Part Number
     type: string
   - jsonPath: .metadata.creationTimestamp
     name: Age

@@ -26,6 +26,8 @@ schema:
           bridgeDomain:
             description: Node BridgeDomain name
             type: string
+          bridgeDomainConfiguredName:
+            type: string
           subInterfaces:
             items:
               properties:
@@ -65,6 +67,7 @@ schema:
             type: string
         required:
           - bridgeDomain
+          - bridgeDomainConfiguredName
           - subInterfaces
           - vlanID
         type: object

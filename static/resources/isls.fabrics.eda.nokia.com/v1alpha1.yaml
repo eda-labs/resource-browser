@@ -62,7 +62,7 @@ schema:
                 minimum: 10000
                 type: integer
               ttl:
-                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
                 maximum: 255
                 minimum: 2
                 type: integer
@@ -122,6 +122,61 @@ schema:
           localInterface:
             description: Reference to an Interface.
             type: string
+          ospf:
+            description: Enable or disable OSPF on the ISL.
+            properties:
+              enabled:
+                description: |-
+                  Enable or disable OSPF between the two endpoints of the ISL.
+                  kubebuilder:validation:Boolean
+                type: boolean
+              ospfv2:
+                description: OSPFv2 Parameters.
+                properties:
+                  localIPV4Area:
+                    description: Reference to a IPV4 DefaultOSPFArea on the local interface.
+                    type: string
+                  localIPV4Instance:
+                    description: Reference to a IPV4 DefaultOSPFInstance on the local interface.
+                    type: string
+                  remoteIPV4Area:
+                    description: Reference to a IPV4 DefaultOSPFArea on the remote interface.
+                    type: string
+                  remoteIPV4Instance:
+                    description: Reference to a IPV4 DefaultOSPFInstance on the remote interface
+                    type: string
+                type: object
+              ospfv3:
+                description: OSPFv3 Parameters.
+                properties:
+                  localIPV4Area:
+                    description: Reference to a IPV4 DefaultOSPFArea on the local interface.
+                    type: string
+                  localIPV4Instance:
+                    description: Reference to a IPV4 DefaultOSPFInstance on the local interface
+                    type: string
+                  localIPV6Area:
+                    description: Reference to a IPV6 DefaultOSPFArea on the local interface.
+                    type: string
+                  localIPV6Instance:
+                    description: Reference to a IPV6 DefaultOSPFInstance on the local interface.
+                    type: string
+                  remoteIPV4Area:
+                    description: Reference to a IPV4 DefaultOSPFArea on the remote interface.
+                    type: string
+                  remoteIPV4Instance:
+                    description: Reference to a IPV4 DefaultOSPFInstance on the remote interface
+                    type: string
+                  remoteIPV6Area:
+                    description: Reference to a IPV6 DefaultOSPFArea on the remote interface.
+                    type: string
+                  remoteIPV6Instance:
+                    description: Reference to a IPV6 DefaultOSPFInstance on the remote interface.
+                    type: string
+                type: object
+            required:
+              - enabled
+            type: object
           poolIPV4:
             description: Reference to an IPv4 allocation pool to use for ISL subnet allocations.
             type: string
@@ -179,7 +234,7 @@ schema:
                 description: Local Interface IPv4 address
                 type: string
               defaultInterface:
-                description: Reference to the DefaulInterface assocaited with the local interface
+                description: Reference to the DefaulInterface associated with the local interface
                 type: string
               node:
                 description: Reference to the TopoNode on which the local interface is configured
@@ -198,7 +253,7 @@ schema:
                 description: Remote Interface IPv6 address
                 type: string
               defaultInterface:
-                description: Reference to the DefaulInterface assocaited with the remote interface
+                description: Reference to the DefaulInterface associated with the remote interface
                 type: string
               node:
                 description: Reference to the TopoNode on which the remote interface is configured

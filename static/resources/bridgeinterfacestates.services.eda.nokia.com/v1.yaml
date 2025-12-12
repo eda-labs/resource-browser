@@ -26,6 +26,8 @@ schema:
           bridgeDomain:
             description: Node BridgeDomain name
             type: string
+          bridgeDomainConfiguredName:
+            type: string
           subInterfaces:
             items:
               properties:
@@ -62,6 +64,7 @@ schema:
             type: array
         required:
           - bridgeDomain
+          - bridgeDomainConfiguredName
           - subInterfaces
         type: object
       status:

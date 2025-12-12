@@ -23,6 +23,9 @@ schema:
       spec:
         description: Policy defines a set of rules and actions to manage network traffic or routing behavior, with statements that include matching conditions and actions, such as accepting or rejecting routes, or modifying route attributes like BGP parameters.
         properties:
+          configuredName:
+            description: The name of the policy to configure on the device.
+            type: string
           defaultAction:
             description: The default action to apply if no other actions are defined.
             properties:
@@ -110,6 +113,13 @@ schema:
                   - NextPolicy
                   - NextStatement
                 type: string
+              tags:
+                description: Manipulate internal route tags associated with the route.
+                properties:
+                  tagSet:
+                    description: Add tags to the route from the referenced Tag Set.
+                    type: string
+                type: object
             type: object
           statement:
             description: List of policy statements.
@@ -202,6 +212,13 @@ schema:
                         - NextPolicy
                         - NextStatement
                       type: string
+                    tags:
+                      description: Manipulate internal route tags associated with the route.
+                      properties:
+                        tagSet:
+                          description: Add tags to the route from the referenced Tag Set.
+                          type: string
+                      type: object
                   type: object
                 match:
                   description: Match conditions of the policy statement.
@@ -250,6 +267,8 @@ schema:
                         - ARP_ND
                         - BGP
                         - BGP_EVPN
+                        - BGP_EVPN_IFF
+                        - BGP_EVPN_IFL_HOST
                         - DHCP
                         - GRIBI
                         - HOST
@@ -262,6 +281,13 @@ schema:
                         - OSPFV3
                         - STATIC
                       type: string
+                    tags:
+                      description: Match based on the internal route tags associated with the route.
+                      properties:
+                        tagSet:
+                          description: Reference to a TagSet resource.
+                          type: string
+                      type: object
                   type: object
                 name:
                   description: Name of the policy statement.
