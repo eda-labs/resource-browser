@@ -1,0 +1,104 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Alarm is the Schema for the alarms API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: AlarmSpec defines the desired state of Alarm
+        properties:
+          clusterSpecific:
+            description: Specifies if the alarm is within cluster, such as pod issue, or external issue, such as with BGP session on node
+            type: boolean
+          description:
+            description: Description of the alarm
+            minLength: 1
+            type: string
+          group:
+            description: The group of the resouce the alarm is associated with, for example core.eda.nokia.com
+            minLength: 1
+            type: string
+          jsPath:
+            description: Provide a JSON path to the resource or object that the alarm is associated with, for example .node{.name=='leaf-1-1'}.srl{.version=='24.7.1'}.interface{.name=='ethernet-1-11'
+            type: string
+          kind:
+            description: The kind of the resource the alarm is associated with, for example TopoNode
+            minLength: 1
+            type: string
+          name:
+            description: Name of the alarm, this is typically the alarm Kind followed by a unique identifier such as InterfaceDown-leaf-1-1-ethernet-1-11
+            minLength: 1
+            type: string
+          parentAlarm:
+            description: ParentAlarm is the name of the parent alarm, if any, for example LinecardDown-leaf-1-1-Linecard1
+            type: string
+          probableCause:
+            description: ProbableCause is the probable cause of the alarm
+            type: string
+          remedialAction:
+            description: RemedialAction is the proposed remedial action for the alarm
+            type: string
+          resource:
+            description: The name of the resouce the alarm is associated with, for example leaf-1-1
+            minLength: 1
+            type: string
+          severity:
+            description: Severity for this alarm
+            enum:
+              - warning
+              - minor
+              - major
+              - critical
+            type: string
+          sourceGroup:
+            description: The group of the resource that raise the alarm, for example core.eda.nokia.com
+            minLength: 1
+            type: string
+          sourceKind:
+            description: The kind of the resource that raised the alarm, for example InterfaceState
+            minLength: 1
+            type: string
+          sourceResource:
+            description: The resource that raised the alarm, for example
+            minLength: 1
+            type: string
+          type:
+            description: Type of the alarm, for example InterfaceDown
+            minLength: 1
+            type: string
+        required:
+          - description
+          - group
+          - kind
+          - name
+          - resource
+          - severity
+          - sourceGroup
+          - sourceKind
+          - sourceResource
+          - type
+        type: object
+      status:
+        description: AlarmStatus defines the observed state of Alarm
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

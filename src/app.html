@@ -1,28 +1,74 @@
 <!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/images/eda.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta
+			name="description"
+			content="Nokia EDA Resource Browser - browse and compare Nokia EDA Custom Resource Definitions (CRDs) across releases."
+		/>
 
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" href="%sveltekit.assets%/images/eda.svg" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<!-- Load Google Fonts non-blocking to avoid render-blocking CSS -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap"
+			rel="stylesheet"
+			media="print"
+			onload="this.media='all'"
+		/>
+		<noscript>
+			<link
+				href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap"
+				rel="stylesheet"
+			/>
+		</noscript>
+		<!-- Preload critical LCP images -->
+		<link rel="preload" as="image" href="%sveltekit.assets%/images/bird-logo.svg" />
+		<link rel="preload" as="image" href="%sveltekit.assets%/images/eda.svg" />
+		<!-- Preload background image (LCP) only for larger viewports; mobile uses a CSS gradient to
+          avoid downloading a large image and improve LCP. If you add a mobile-optimized image,
+          you can preload it here with a media attribute for (max-width:768px). -->
+		<!-- Preload only the desktop hero image (larger screens) so the browser can prioritize it for LCP. -->
+		<link
+			rel="preload"
+			as="image"
+			href="%sveltekit.assets%/images/background-1920.webp"
+			media="(min-width: 1200px)"
+		/>
+		<!-- Preload the smaller mobile fallback for narrow viewports; reduces LCP on mobile devices. -->
+		<link
+			rel="preload"
+			as="image"
+			href="%sveltekit.assets%/images/background-small.webp"
+			media="(max-width: 768px)"
+		/>
+		<!-- Preload only the critical headline and body weights (prefer woff2 for smaller payloads); browsers will fall back
+          to TTF if woff2 isn't available. Ensure WOFF2 fonts are generated in /static/fonts for best performance. -->
+		<link
+			rel="preload"
+			as="font"
+			href="%sveltekit.assets%/fonts/NokiaPureText_Rg.woff2"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			as="font"
+			href="%sveltekit.assets%/fonts/NokiaPureHeadline_XBd.woff2"
+			type="font/woff2"
+			crossorigin
+		/>
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito:wght@200;400&display=swap">
-	%sveltekit.head%
+		%sveltekit.head%
+		<script>
+			// Only dark mode
+			document.documentElement.classList.add('dark');
+		</script>
+	</head>
 
-	<script>
-		if (localStorage.getItem("theme") === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-			document.documentElement.classList.add("dark")
-		} else {
-			document.documentElement.classList.remove("dark")
-		}
-	</script>
-</head>
-
-<body class="dark:bg-gray-800 scroll-thin" data-sveltekit-preload-data="hover">
-	<div style="display: contents">%sveltekit.body%</div>
-</body>
-
+	<body class="scroll-thin antialiased dark:bg-gray-800" data-sveltekit-preload-data="hover">
+		<div id="app-root">%sveltekit.body%</div>
+	</body>
 </html>

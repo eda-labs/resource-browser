@@ -1,0 +1,78 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.image
+    name: Image
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+name: v1
+schema:
+  openAPIV3Schema:
+    description: WorkflowDefinition is the Schema for the workflowdefinitions API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: WorkflowDefinitionSpec defines the desired state of FlowDefinition
+        properties:
+          flowDefinitionResource:
+            description: the resource type to be used for this flow, can only be set if Schema is not set
+            properties:
+              group:
+                type: string
+              kind:
+                type: string
+              version:
+                type: string
+            required:
+              - kind
+              - version
+            type: object
+          flowDefinitionSchema:
+            description: the schema for the flow, can only be set if Resource is not set
+            properties:
+              jsonSchemaSpec:
+                description: A string containing the JSON schema the workflow accepts as input.
+                type: string
+              jsonSchemaStatus:
+                description: A string containing the JSON schema the workflow will populate as output.
+                type: string
+            type: object
+          image:
+            description: Container image containing the flow. For example "ghcr.io/nokia-eda/apps/operatingsystem:v1.0.0".
+            type: string
+          imagePullSecrets:
+            description: Secrets to use to pull the image for this workflow.
+            items:
+              type: string
+            type: array
+          namespaced:
+            default: true
+            description: If set, resources of this CRD are namespace scoped
+            type: boolean
+        required:
+          - image
+        type: object
+      status:
+        description: WorkflowDefinitionStatus defines the observed state of FlowDefinition
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

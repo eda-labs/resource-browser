@@ -1,0 +1,332 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Topology is the Schema for the topology API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: TopologySpec defines the desired state of Topology
+        properties:
+          breakouts:
+            description: Describe the set of TopoBreakout resources in the Topology
+            items:
+              description: TopoBreakout is the Schema for the topobreakouts API
+              properties:
+                apiVersion:
+                  description: |-
+                    APIVersion defines the versioned schema of this representation of an object.
+                    Servers should convert recognized schemas to the latest internal value, and
+                    may reject unrecognized values.
+                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+                  type: string
+                kind:
+                  description: |-
+                    Kind is a string value representing the REST resource this object represents.
+                    Servers may infer this from the endpoint the client submits requests to.
+                    Cannot be updated.
+                    In CamelCase.
+                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+                  type: string
+                metadata:
+                  type: object
+                spec:
+                  description: TopoBreakoutSpec defines the desired state of TopoBreakout
+                  properties:
+                    channels:
+                      description: The number of breakout channels to create
+                      maximum: 8
+                      minimum: 1
+                      type: integer
+                    interface:
+                      description: A list of normalized parent interface/port
+                      items:
+                        type: string
+                      type: array
+                    node:
+                      description: Reference to a list of TopoNodes where the parent interfaces are to be broken out
+                      items:
+                        type: string
+                      type: array
+                    speed:
+                      description: The speed of each breakout channel
+                      enum:
+                        - 800G
+                        - 400G
+                        - 200G
+                        - 100G
+                        - 50G
+                        - 40G
+                        - 25G
+                        - 10G
+                      type: string
+                  required:
+                    - channels
+                    - node
+                    - speed
+                  type: object
+                status:
+                  description: TopoBreakoutStatus defines the observed state of TopoBreakout
+                  type: object
+              type: object
+            type: array
+          links:
+            description: Describe the set of TopoLink resources in the Topology
+            items:
+              properties:
+                encapType:
+                  default: "null"
+                  description: Enable or disable VLAN tagging on Interfaces created by the TopoLink
+                  enum:
+                    - "null"
+                    - dot1q
+                  type: string
+                labels:
+                  additionalProperties:
+                    type: string
+                  description: Labels to assign to the TopoLink
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                name:
+                  description: The name of the TopoLink
+                  type: string
+                spec:
+                  description: Specification of the TopoLink
+                  properties:
+                    links:
+                      description: Define the set of physical links making up this TopoLink.
+                      items:
+                        properties:
+                          local:
+                            description: Local, or "A" endpoint of the link.
+                            properties:
+                              interface:
+                                description: Normalized name of the interface/port, e.g. ethernet-1-1.
+                                type: string
+                              interfaceResource:
+                                description: Reference to a Interface.
+                                type: string
+                              node:
+                                description: Reference to a TopoNode.
+                                type: string
+                            required:
+                              - interfaceResource
+                              - node
+                            type: object
+                          remote:
+                            description: Remote, or "B" endpoint of the link.
+                            properties:
+                              interface:
+                                description: Normalized name of the interface/port, e.g. ethernet-1-1.
+                                type: string
+                              interfaceResource:
+                                description: Reference to a Interface.
+                                type: string
+                              node:
+                                description: Reference to a TopoNode.
+                                type: string
+                            required:
+                              - interfaceResource
+                              - node
+                            type: object
+                          speed:
+                            description: Speed of the link.
+                            enum:
+                              - 800G
+                              - 400G
+                              - 200G
+                              - 100G
+                              - 50G
+                              - 40G
+                              - 25G
+                              - 10G
+                              - 2.5G
+                              - 1G
+                              - 100M
+                            type: string
+                          type:
+                            description: |-
+                              Specify the type of link.
+                              If type is set to edge, topology information for the remote device can be set; when doing so the Remote Node can be set as the hostname of the remote device and Remote Interface as the remote interface name in the device specific format, e.g. eth0.
+                            enum:
+                              - edge
+                              - interSwitch
+                              - loopback
+                            type: string
+                        required:
+                          - local
+                          - type
+                        type: object
+                      minItems: 1
+                      type: array
+                  required:
+                    - links
+                  type: object
+              required:
+                - encapType
+                - name
+                - spec
+              type: object
+            type: array
+          nodes:
+            description: Describe the set of TopoNode resources in the Topology
+            items:
+              properties:
+                labels:
+                  additionalProperties:
+                    type: string
+                  description: Labels to assign to the TopoNode
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                name:
+                  description: The name of the TopoNode
+                  type: string
+                spec:
+                  description: Specification of the TopoNode
+                  properties:
+                    component:
+                      description: |-
+                        List of components within the TopoNode.
+                        Used to define the type and location of linecards, fabrics (SFM), media adapter cards (MDA) and control cards (CPM).
+                      items:
+                        properties:
+                          kind:
+                            description: The kind of Component, e.g. lineCard.
+                            enum:
+                              - lineCard
+                              - fabric
+                              - mda
+                              - connector
+                              - xiom
+                              - powerShelf
+                              - powerModule
+                            type: string
+                          slot:
+                            description: |-
+                              The slot this Component resides in, unset for Components that do not have a slot or ID.
+                              e.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.
+                            type: string
+                          type:
+                            description: Denotes the type of hardware being provisioned, e.g. xcm-x20.
+                            type: string
+                        required:
+                          - kind
+                          - type
+                        type: object
+                      type: array
+                    license:
+                      description: Reference to a ConfigMap containing a license for the TopoNode. Overrides the license set in the referenced NodeProfile, if present.
+                      type: string
+                    macAddress:
+                      description: |-
+                        MAC address to associate with this TopoNode.
+                        Typically the chassis MAC address, optionally sent by a node in DHCP requests.
+                        Not required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.
+                      type: string
+                    nodeProfile:
+                      description: Reference to a NodeProfile to use with this TopoNode.
+                      type: string
+                    npp:
+                      description: Options relating to NPP interactions with the node.
+                      properties:
+                        mode:
+                          default: normal
+                          description: |-
+                            The mode in which this TopoNode is functioning.
+                            "normal" (the default)
+                               indicates that NPP is expecting an endpoint to exist, and will accept and confirm changes only if the endpoint
+                               accepts them.
+                            "maintenance"
+                               indicates that no changes will be accepted for the TopoNode, irrespective if the endpoint is up and reachable.
+                               The exception is if an upgrade is occuring, in which case changes will be accepted.
+                            "null"
+                            	  indicates that changes will be accepted from CRs and no NPP will be spun up. NPP validation will not occur.
+                               This may be useful in playground mode to avoid spinning up of 1000s of NPPs.
+                            "emulate"
+                               indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation
+                               still occurs.  If no IP address is present, we also run in emulate mode.
+                          enum:
+                            - normal
+                            - maintenance
+                            - "null"
+                            - emulate
+                          type: string
+                      type: object
+                    onBoarded:
+                      default: false
+                      description: |-
+                        Indicates if this TopoNode has been bootstrapped or is reachable via configured credentials. Set by BootstrapServer when it completes onboarding functions for a given TopoNode.
+                        Most applications ignore TopoNodes that have not been onboarded yet.
+                      type: boolean
+                    operatingSystem:
+                      default: srl
+                      description: Operating system running on this TopoNode, e.g. srl.
+                      enum:
+                        - srl
+                        - sros
+                        - nxos
+                      type: string
+                    platform:
+                      description: Platform type of this TopoNode, e.g. 7220 IXR-D3L.
+                      type: string
+                    productionAddress:
+                      description: |-
+                        Production address of this TopoNode - this is the address the real, production instance of this TopoNode uses.
+                        If left blank, an address will be allocated from the management IP pool specified in the referenced NodeProfile.
+                        If this TopoNode is not bootstrapped by EDA this field must be provided.
+                      properties:
+                        ipv4:
+                          description: The IPv4 production address
+                          type: string
+                        ipv6:
+                          description: The IPv6 production address
+                          type: string
+                      type: object
+                    serialNumber:
+                      description: |-
+                        Serial number of this TopoNode, optionally sent by a node in DHCP requests.
+                        Not required when a TopoNode is not being bootstrapped by EDA, or is simulated through CX.
+                      type: string
+                    systemInterface:
+                      description: Name of the Interface resource representing the primary loopback on the TopoNode.
+                      type: string
+                    version:
+                      description: Sets the software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).
+                      type: string
+                  required:
+                    - nodeProfile
+                    - operatingSystem
+                    - platform
+                    - version
+                  type: object
+              required:
+                - name
+                - spec
+              type: object
+            type: array
+        required:
+          - nodes
+        type: object
+      status:
+        description: TopologyStatus defines the observed state of Topology
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

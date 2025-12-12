@@ -1,8 +1,7 @@
 <script lang="ts">
 	import yaml from 'js-yaml';
 
-	import Footer from '$lib/components/Footer.svelte';
-	import Theme from '$lib/components/Theme.svelte';
+	import PageCredits from '$lib/components/PageCredits.svelte';
 	import Render from '$lib/components/Render.svelte';
 
 	import type { OpenAPISchema, Schema, VersionSchema } from '$lib/structure';
@@ -26,7 +25,7 @@
 
 	function processYaml() {
 		try {
-			const crd = yaml.load(plaintextCrd);
+			const crd = yaml.load(plaintextCrd) as any;
 			group = crd.spec.group;
 			kind = crd.spec.names.kind;
 
@@ -85,20 +84,19 @@
 </svelte:head>
 
 <nav
-	class="fixed top-0 z-20 w-screen border-b border-gray-300 py-4 pr-4 pl-6 text-black backdrop-blur-lg backdrop-filter dark:border-gray-700 dark:text-white"
+	class="fixed top-0 z-20 w-screen border-b border-gray-700 py-4 pr-4 pl-6 text-gray-900 backdrop-blur-lg backdrop-filter dark:border-gray-700 dark:text-white"
 >
 	<div class="flex items-center justify-between">
 		<div class="scroll-thin flex items-center space-x-2 overflow-x-auto">
 			<a href="/"><img class="min-w-8" src="/images/eda.svg" width="35" alt="Logo" /></a>
 			<div class="flex flex-col">
-				<p class="text-sm font-nokia-headline font-light">Resource Browser</p>
-				<p class="font-nokia-headline">Uploads</p>
+				<p class="font-nokia-headline text-sm font-light text-amber-500 dark:text-white">Resource Browser</p>
+				<p class="font-nokia-headline text-gray-900 dark:text-white">Uploads</p>
 			</div>
 		</div>
-		<Theme />
 	</div>
 </nav>
-<div class="space-y-4 px-6 pt-[100px] pb-6">
+<div class="h-full space-y-4 overflow-y-auto px-6 pt-[100px] pb-6">
 	<div class="grid gap-2 md:grid-cols-2">
 		<div>
 			<label for="crdText" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
@@ -126,7 +124,7 @@
 			/>
 			<label
 				for="dropzone"
-				class="flex h-36 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-100 px-4 py-3 text-gray-500 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+				class="flex h-36 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-100 px-4 py-3 text-gray-500 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
 			>
 				<div class="flex items-center space-x-2 pr-2">
 					<svg
@@ -160,13 +158,13 @@
 
 	{#if kind !== ''}
 		<div class="flex flex-col pt-2">
-			<p class="text-gray-800 dark:text-gray-200 font-nokia-headline">{kind}</p>
-			<div class="font-fira flex items-center text-sm text-[12px] text-gray-500 dark:text-gray-400">
+			<p class="font-nokia-headline text-gray-900 dark:text-gray-200">{kind}</p>
+			<div class="font-fira flex items-center text-sm text-[12px] text-gray-300 dark:text-gray-300">
 				<span>{group}</span>
 				<span class="mx-0.5">/</span>
 				{#if validVersions.length > 1}
 					<select
-						class="rounded-lg border border-gray-300 bg-gray-50 p-[1px] text-xs text-gray-900 focus:ring-0 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+						class="select-pro rounded-lg border-gray-300 bg-gray-50 p-[1px] text-xs text-gray-900 dark:bg-gray-700 dark:text-gray-200"
 						bind:value={versionOnFocus}
 						on:change={handleVersionChange}
 					>
@@ -196,10 +194,12 @@
 				{$ulExpanded.length > 0 ? 'Collapse' : 'Expand'} All
 			</button>
 		</div>
-		<Render source={'uploaded'} type={'spec'} data={spec} />
+		<Render source={'uploaded'} type={'spec'} data={spec} showType={false} />
 		<div class="my-10"></div>
-		<Render source={'uploaded'} type={'status'} data={status} />
+		<Render source={'uploaded'} type={'status'} data={status} showType={false} />
 	{/if}
 </div>
 
-<Footer home={false} />
+<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+	<PageCredits />
+</div>

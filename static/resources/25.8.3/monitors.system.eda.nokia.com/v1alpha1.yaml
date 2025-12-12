@@ -1,0 +1,182 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: Monitor is the Schema for the monitors API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: MonitorSpec defines the desired state of Monitor
+        properties:
+          cpu:
+            description: CPU monitoring for targets matching this Monitor.
+            properties:
+              enabled:
+                default: true
+                description: Enable or disable CPU monitoring.
+                type: boolean
+              utilization:
+                description: Parameters relating to CPU utilization monitoring.
+                properties:
+                  criticalThreshold:
+                    default: 95
+                    description: |-
+                      The minimum average utilization over the last 1 minute to trigger a critical alarm.
+                      This value must be greater than the majorThreshold.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                  fallingDelta:
+                    default: 5
+                    description: |-
+                      The delta in which a triggered threshold must drop below to clear an alarm.
+                      For example, with a criticalThreshold of 90 and a fallingDelta of 5, the critical alarm will clear when the utilization drops below 85.
+                    maximum: 25
+                    minimum: 1
+                    type: integer
+                  majorThreshold:
+                    default: 90
+                    description: |-
+                      The minimum average utilization over the last 1 minute to trigger a major alarm.
+                      This value must be greater than the minorThreshold.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                  minorThreshold:
+                    default: 80
+                    description: The minimum average utilization over the last 1 minute to trigger a minor alarm.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                type: object
+            required:
+              - enabled
+            type: object
+          disk:
+            description: Disk monitoring for targets matching this Monitor.
+            properties:
+              enabled:
+                default: true
+                description: Enable or disable disk monitoring.
+                type: boolean
+              utilization:
+                description: Parameters relating to disk utilization monitoring.
+                properties:
+                  criticalThreshold:
+                    default: 95
+                    description: |-
+                      The minimum average utilization over the last 1 minute to trigger a critical alarm.
+                      This value must be greater than the majorThreshold.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                  fallingDelta:
+                    default: 5
+                    description: |-
+                      The delta in which a triggered threshold must drop below to clear an alarm.
+                      For example, with a criticalThreshold of 90 and a fallingDelta of 5, the critical alarm will clear when the utilization drops below 85.
+                    maximum: 25
+                    minimum: 1
+                    type: integer
+                  majorThreshold:
+                    default: 90
+                    description: |-
+                      The minimum average utilization over the last 1 minute to trigger a major alarm.
+                      This value must be greater than the minorThreshold.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                  minorThreshold:
+                    default: 80
+                    description: The minimum average utilization over the last 1 minute to trigger a minor alarm.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                type: object
+            required:
+              - enabled
+            type: object
+          memory:
+            description: Memory monitoring for targets matching this Monitor.
+            properties:
+              enabled:
+                default: true
+                description: Enable or disable memory monitoring.
+                type: boolean
+              utilization:
+                description: Parameters relating to memory utilization monitoring.
+                properties:
+                  criticalThreshold:
+                    default: 95
+                    description: |-
+                      The minimum average utilization over the last 1 minute to trigger a critical alarm.
+                      This value must be greater than the majorThreshold.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                  fallingDelta:
+                    default: 5
+                    description: |-
+                      The delta in which a triggered threshold must drop below to clear an alarm.
+                      For example, with a criticalThreshold of 90 and a fallingDelta of 5, the critical alarm will clear when the utilization drops below 85.
+                    maximum: 25
+                    minimum: 1
+                    type: integer
+                  majorThreshold:
+                    default: 90
+                    description: |-
+                      The minimum average utilization over the last 1 minute to trigger a major alarm.
+                      This value must be greater than the minorThreshold.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                  minorThreshold:
+                    default: 80
+                    description: The minimum average utilization over the last 1 minute to trigger a minor alarm.
+                    maximum: 100
+                    minimum: 1
+                    type: integer
+                type: object
+            required:
+              - enabled
+            type: object
+          nodeSelector:
+            description: Selector to use when including TopoNodes to monitor.
+            items:
+              type: string
+            type: array
+          nodes:
+            description: References to TopoNodes to monitor.
+            items:
+              type: string
+            type: array
+        type: object
+      status:
+        description: MonitorStatus defines the observed state of Monitor
+        properties:
+          nodes:
+            description: TopoNodes being monitored.
+            items:
+              type: string
+            type: array
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

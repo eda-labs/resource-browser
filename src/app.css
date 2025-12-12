@@ -2,164 +2,668 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ============================================
+   FONT FACES
+   ============================================ */
 @font-face {
-  font-family: "NokiaPureText";
-  src: url("/fonts/NokiaPureText_Rg.ttf");
-  font-style: normal;
-  font-weight: normal;
-  font-display: swap;
+	font-family: 'NokiaPureText';
+	src:
+		url('/fonts/NokiaPureText_Lt.woff2') format('woff2'),
+		url('/fonts/NokiaPureText_Lt.ttf') format('truetype');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureText";
-  src: url("/fonts/NokiaPureText_Lt.ttf");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureText';
+	src:
+		url('/fonts/NokiaPureText_Rg.woff2') format('woff2'),
+		url('/fonts/NokiaPureText_Rg.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureText";
-  src: url("/fonts/NokiaPureText_Rg.ttf");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureText';
+	src:
+		url('/fonts/NokiaPureText_Md.woff2') format('woff2'),
+		url('/fonts/NokiaPureText_Md.ttf') format('truetype');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureText";
-  src: url("/fonts/NokiaPureText_Md.ttf");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureText';
+	src:
+		url('/fonts/NokiaPureText_Bd.woff2') format('woff2'),
+		url('/fonts/NokiaPureText_Bd.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureText";
-  src: url("/fonts/NokiaPureText_Bd.ttf");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureHeadline';
+	src:
+		url('/fonts/NokiaPureHeadline_ULt.woff2') format('woff2'),
+		url('/fonts/NokiaPureHeadline_ULt.ttf') format('truetype');
+	font-weight: 200;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_Rg.ttf");
-  font-style: normal;
-  font-weight: normal;
-  font-display: swap;
+	font-family: 'NokiaPureHeadline';
+	src:
+		url('/fonts/NokiaPureHeadline_Lt.woff2') format('woff2'),
+		url('/fonts/NokiaPureHeadline_Lt.ttf') format('truetype');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_ULt.ttf");
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureHeadline';
+	src:
+		url('/fonts/NokiaPureHeadline_Rg.woff2') format('woff2'),
+		url('/fonts/NokiaPureHeadline_Rg.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_Lt.ttf");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureHeadline';
+	src:
+		url('/fonts/NokiaPureHeadline_Bd.woff2') format('woff2'),
+		url('/fonts/NokiaPureHeadline_Bd.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_Rg.ttf");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'NokiaPureHeadline';
+	src:
+		url('/fonts/NokiaPureHeadline_XBd.woff2') format('woff2'),
+		url('/fonts/NokiaPureHeadline_XBd..ttf') format('truetype');
+	font-weight: 800;
+	font-style: normal;
+	font-display: swap;
 }
 
-@font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_Bd.ttf");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NokiaPureHeadline";
-  src: url("/fonts/NokiaPureHeadline_XBd.ttf");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* ============================================
+   THEME VARIABLES
+   ============================================ */
 @theme {
-  --font-nunito: 'Nunito', sans-serif;
-  --font-fira: 'Fira Code', monospace;
-  --font-nokia: 'NokiaPureText', sans-serif;
-  --font-nokia-headline: 'NokiaPureHeadline', sans-serif;
-  --default-font-family: 'NokiaPureText', sans-serif;
+	--font-nunito: 'Nunito', sans-serif;
+	--font-fira: 'Fira Code', monospace;
+	--font-nokia: 'NokiaPureText', sans-serif;
+	--font-nokia-headline: 'NokiaPureHeadline', sans-serif;
+	--default-font-family: 'NokiaPureText', sans-serif;
 }
 
+/* ============================================
+   BASE STYLES
+   ============================================ */
 @layer base {
-  :global(html) {
-    scroll-behavior: smooth;
-  }
+	/* Modern CSS reset */
+	:global(*),
+	:global(*::before),
+	:global(*::after) {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+
+	:global(html) {
+		scroll-behavior: smooth;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		/* Prevent the browser (document) from showing a scrollbar; child containers handle scrolling */
+		overflow: hidden;
+	}
+
+	:global(body) {
+		@apply text-gray-900 dark:text-white antialiased bg-white dark:bg-[#0f172a];
+		font-family: var(--font-nokia), 'Nunito', sans-serif;
+		min-height: 100vh;
+		/* Hide the document scrollbar so child containers manage scrolling */
+		overflow: hidden;
+	}
+
+	/* Reduce CLS by stabilizing headline and hero typography metrics across font swap.
+     `font-size-adjust` helps keep x-height consistent across fallback and web fonts. */
+	:global(h1),
+	:global(.font-nokia-headline) {
+		font-size-adjust: 0.5; /* conservative default for Nokia headline to reduce size shift */
+		line-height: 1.02; /* stabilize line height for large titles */
+	}
+
+	/* Headings and display text should use the Nokia headline family */
+	:global(h1),
+	:global(h2),
+	:global(h3),
+	:global(h4) {
+		font-family:
+			var(--font-nokia-headline),
+			var(--font-nokia),
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			Roboto,
+			'Helvetica Neue',
+			Arial;
+		letter-spacing: -0.01em;
+		line-height: 1.05;
+	}
+
+	/* Small UI copy / pills use medium weight for clarity */
+	:global(.pill),
+	:global(.badge) {
+		font-family:
+			var(--font-nokia),
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			Roboto,
+			'Helvetica Neue',
+			Arial;
+		font-weight: 600;
+		letter-spacing: 0.01em;
+	}
+
+	/* Ensure images and media are responsive by default */
+	:global(img),
+	:global(picture),
+	:global(video),
+	:global(canvas),
+	:global(svg) {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+
+	/* Remove default button styles */
+	:global(button) {
+		background: none;
+		border: none;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	/* Smooth transitions for interactive elements */
+	:global(button),
+	:global(a),
+	:global(input),
+	:global(select),
+	:global(textarea) {
+		@apply transition-colors duration-200;
+	}
+
+	/* Modern focus styles */
+	:global(*:focus-visible) {
+		@apply outline-2 outline-offset-2 outline-blue-500;
+	}
+
+	/* Remove default list styles */
+	:global(ul),
+	:global(ol) {
+		list-style: none;
+	}
 }
 
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
 @layer utilities {
-  .has-header-img {
-    background: url(/images/background.webp) center center;
-    background-size: cover;
-  }
+	/* Prevent root scrolling (for modals/overlays) */
+	.no-root-scroll {
+		overflow: hidden !important;
+		height: 100% !important;
+	}
 
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
+	/* Background with header image */
+	.has-header-img {
+		position: relative;
+		z-index: 1;
+		/* Always apply gradient overlay and white text since background is always dark */
+		background-image:
+			linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
+			linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		/* Avoid 'fixed' attachment as it can cause heavy repaints and delay LCP; use 'scroll' for better performance */
+		background-attachment: scroll;
+		/* Use overlay to keep the blue tones visible while providing a darkened foreground for contrast */
+		background-blend-mode: overlay, screen, normal;
+		/* Use a light foreground text color when over the header image to better contrast with darker background */
+		color: rgba(255, 255, 255, 0.95);
+	}
+
+	/* Dark Mode: Apply gradient overlay and white text */
+	:global(.dark) .has-header-img {
+		/* Same styles as default, kept for specificity if needed */
+		background-image:
+			linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
+			linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
+	}
+
+	/* Positioned hero image element (inline) that contributes to LCP; it sits behind .has-header-img.
+     The actual image is inserted in the layout as an <img> with fetchpriority="high". */
+	.header-bg-container {
+		/* Keep the hero background anchored to the viewport so it always
+		   covers the visible area and doesn't reveal the animated bg
+		   below when the page content scrolls. */
+		position: fixed;
+		inset: 0;
+		z-index: -1; /* place behind page content */
+		overflow: hidden;
+		pointer-events: none;
+		user-select: none;
+		/* Always show */
+		display: block;
+	}
+	:global(.dark) .header-bg-container {
+		display: block;
+	}
+	.header-bg-img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100vh; /* ensure the image always covers the viewport height */
+		object-fit: cover;
+		object-position: center;
+		min-height: 100vh;
+		min-width: 100%;
+		display: block;
+	}
+
+/* Light-mode: make the hero image appear as a lighter background
+   We apply a subtle brightening / desaturation so foreground dark text is readable. */
+:global(:not(.dark)) .header-bg-img {
+	filter: brightness(1.06) saturate(1.02) contrast(1.02);
+	opacity: 0.98;
+	transition: filter 260ms ease, opacity 260ms ease;
 }
 
+/* Dark-mode: darker and slightly more saturated image to match dark overlay */
+:global(.dark) .header-bg-img {
+	filter: brightness(0.5) saturate(0.9) contrast(0.95);
+	transition: filter 260ms ease;
+}
+
+/* For the content container that uses .has-header-img, use a lighter gradient overlay in light mode
+   so the image reads as a soft, light background and text is dark. */
+:global(:not(.dark)) .has-header-img {
+	background-image:
+		linear-gradient(120deg, rgba(255,255,255,0.32), rgba(250,250,250,0.22)),
+		linear-gradient(60deg, rgba(255,255,255,0.16), rgba(236, 253, 255, 0.12));
+	background-size: cover;
+	background-position: center;
+	color: rgba(2,6,23,0.95); /* dark foreground on light bg */
+}
+
+/* Ensure page titles are visible and dark in light mode (overrides some `text-white` usages) */
+:global(:not(.dark)) h1,
+:global(:not(.dark)) h2,
+:global(:not(.dark)) h3,
+:global(:not(.dark)) .font-extrabold {
+	color: #f59e0b !important; /* amber-500 to match site accents in light mode */
+}
+
+/* Ensure dark-mode retains the darker overlay defined earlier */
+:global(.dark) .has-header-img {
+	background-image:
+		linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
+		linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
+}
+
+	/* Mobile - use lighter background image and scroll attachment to reduce performance cost */
+	@media (max-width: 768px) {
+		:global(.dark) .has-header-img {
+			/* For mobile devices, avoid loading the large background image to improve LCP.
+         Use the gradient overlay instead — this provides a visually similar look while
+         saving network bytes. If you prefer to use a mobile-optimized image, add
+         a reduced-size asset in /static/images and swap this out. */
+			background-image:
+				linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
+				linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
+			background-attachment: scroll; /* Fixed is heavy on mobile */
+			background-position: center center;
+		}
+	}
+
+	/* Avoid layout shifts for short action buttons by sizing them in CSS. */
+	:global(.release-more-btn) {
+		min-width: 84px; /* ensures min width for 'More' button to avoid width change when fonts load */
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* Subtle grid pattern background (dark) */
+	.bg-pattern {
+		background-image:
+			linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+		background-size: 40px 40px;
+	}
+
+	/* Grid pattern for light backgrounds */
+	.bg-grid-pattern {
+		background-image:
+			linear-gradient(to right, rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+		background-size: 32px 32px;
+	}
+
+	/* Dropdown hover effect */
+	.dropdown:hover .dropdown-content {
+		display: block;
+	}
+
+	/* Light-mode dropdowns and select controls: ensure background is light and text is dark for readability */
+	:global(:not(.dark)) .dropdown-content,
+	:global(:not(.dark)) .dropdown,
+	:global(:not(.dark)) .select-pro,
+	:global(:not(.dark)) select,
+	:global(:not(.dark)) .dropdown-item,
+	:global(:not(.dark)) .menu,
+	:global(:not(.dark)) .dropdown .content {
+		background: #ffffff !important;
+		color: rgba(2,6,23,0.96) !important;
+		border-color: rgba(2,6,23,0.06) !important;
+	}
+
+	:global(:not(.dark)) .dropdown-content a,
+	:global(:not(.dark)) .dropdown-content button,
+	:global(:not(.dark)) .dropdown-content span {
+		color: rgba(2,6,23,0.96) !important;
+	}
+
+	/* Make sure custom select component uses dark text on light mode */
+	:global(:not(.dark)) .select-pro {
+		@apply bg-white text-gray-900; /* Tailwind will process */
+	}
+
+	/* Ensure dropdown options use dark text and white background in light mode (dropdown menu in native selects) */
+	:global(:not(.dark)) select option,
+	:global(:not(.dark)) .select-pro option {
+		color: rgba(2,6,23,0.96) !important;
+		background: #ffffff !important;
+	}
+
+	/* Header (top nav) overrides for light mode: ensure any hard-coded white text becomes dark for readability */
+	:global(:not(.dark)) nav.fixed,
+	:global(:not(.dark)) nav.fixed * {
+		color: rgba(2,6,23,0.95) !important;
+	}
+
+	/* Custom border width for diff indicators */
+	.border-l-3 {
+		border-left-width: 3px;
+	}
+
+	/* Smooth fade-in animation */
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.animate-fade-in {
+		animation: fadeIn 0.3s ease-out;
+	}
+
+	/* Pulse animation for interactive elements */
+	@keyframes pulse-subtle {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.8;
+		}
+	}
+
+	.animate-pulse-subtle {
+		animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	/* Professional glow effect for amber elements */
+	.glow-amber {
+		box-shadow:
+			0 0 20px rgba(245, 158, 11, 0.3),
+			0 0 40px rgba(245, 158, 11, 0.1);
+	}
+
+	/* Enhanced shadow for cards */
+	.shadow-pro {
+		box-shadow:
+			0 10px 25px -5px rgba(0, 0, 0, 0.3),
+			0 10px 10px -5px rgba(0, 0, 0, 0.1);
+	}
+
+	/* Subtle border glow */
+	.border-glow {
+		border: 1px solid rgba(245, 158, 11, 0.2);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+}
+
+/* Additional light-mode dropdown/popover containers used by various components */
+:global(:not(.dark)) .dropdown-menu,
+:global(:not(.dark)) .popover,
+:global(:not(.dark)) .popover-content,
+:global(:not(.dark)) .popup,
+:global(:not(.dark)) .choices__list,
+:global(:not(.dark)) .react-select__menu {
+	background: #ffffff !important;
+	color: rgba(2,6,23,0.96) !important;
+	border-color: rgba(2,6,23,0.06) !important;
+}
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
 @layer components {
-  .scroll-thin {
-    /* Firefox support */
-    scrollbar-width: thin;
-    scrollbar-color: #bec4c4 #f1f1f1;
+	/* Custom scrollbar styling */
+	.scroll-thin {
+		/* Firefox support */
+		scrollbar-width: thin;
+		scrollbar-color: rgb(109, 109, 109) rgb(55 65 81);
 
-    /* Scrollbar size */
-    &::-webkit-scrollbar {
-      width: 2px;
-      height: 2px;
-    }
+		/* Webkit scrollbar */
+		&::-webkit-scrollbar {
+			width: 6px;
+			height: 6px;
+		}
 
-    /* Light mode track and thumb */
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #bec4c4;
-    }
+		&::-webkit-scrollbar-track {
+			background: rgb(55 65 81);
+		}
 
-    /* Light mode hover */
-    @variant hover {
-      &::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-    }
+		&::-webkit-scrollbar-thumb {
+			background: rgb(109, 109, 109);
+			border-radius: 3px;
+		}
 
-    /* Dark mode overrides */
-    @variant dark {
-      /* Firefox support */
-      scrollbar-color: rgb(109, 109, 109) rgb(55 65 81);
+		&::-webkit-scrollbar-thumb:hover {
+			background: rgb(156, 163, 175);
+		}
+	}
 
-      &::-webkit-scrollbar-track {
-        background: rgb(55 65 81);
-      }
-      &::-webkit-scrollbar-thumb {
-        background: rgb(109, 109, 109);
-      }
+	/* Sidebar scroll thumb - a small visible indicator suitable for mobile and desktop */
+	.sidebar-scroll-thumb {
+		position: absolute;
+		right: 6px;
+		top: 0;
+		width: 4px;
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.12);
+		transition:
+			transform 120ms linear,
+			opacity 200ms ease-in-out;
+		will-change: transform, opacity;
+		opacity: 0;
+		pointer-events: none; /* don't block clicks */
+	}
 
-      /* Dark mode hover */
-      @variant hover {
-        &::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-      }
-    }
-  }
+	/* When a header image is active, remove any border/backgrounds for top elements so the image shows through */
+	:global(.has-header-img) .sidebar-header,
+	:global(.has-header-img) .content-header {
+		background: transparent !important;
+		border-color: transparent !important;
+		box-shadow: none !important;
+		--tw-bg-opacity: 0 !important;
+	}
+
+	/* Sidebar footer (compact) - shown above the sidebar on resource pages */
+	.sidebar-footer {
+		position: fixed;
+		left: 0;
+		top: 4rem; /* below the header (mobile/default) */
+		width: 20rem; /* match w-80 on small screens & default */
+		padding: 0.5rem 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 50;
+		pointer-events: auto;
+		background: rgba(255, 255, 255, 0.03);
+		color: rgba(255, 255, 255, 0.95);
+		border-right: 1px solid rgba(255, 255, 255, 0.04);
+		font-size: 0.75rem; /* text-xs */
+		font-style: italic;
+	}
+	/* Ensure footer clears the larger header padding on medium+ screens */
+	@media (min-width: 768px) {
+		.sidebar-footer {
+			top: 5rem; /* matches md:pt-20 in layouts */
+		}
+	}
+	@media (min-width: 1024px) {
+		.sidebar-footer {
+			width: 16rem; /* match lg:w-64 */
+		}
+	}
+
+	/* slightly more visible on hover or when user is actively interacting*/
+	.scroll-thin:hover + .sidebar-scroll-thumb,
+	.sidebar-scroll-thumb:hover {
+		background: rgba(255, 255, 255, 0.18);
+		opacity: 1;
+	}
+
+	/* Ensure side-scroll thumb is more visible on mobile devices */
+	@media (max-width: 1024px) {
+		.sidebar-scroll-thumb {
+			right: 10px;
+			width: 6px;
+			background: rgba(255, 255, 255, 0.22);
+			box-shadow: 0 0 6px rgba(0, 0, 0, 0.25) inset;
+		}
+	}
+
+	/* Pro select styling used for release dropdowns and tool selects */
+	.select-pro {
+		@apply rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-sm text-gray-900 transition-colors dark:border-white/10 dark:bg-black/30 dark:text-gray-200;
+	}
+
+	.select-pro:focus {
+		@apply ring-2 ring-cyan-400 outline-none;
+	}
+
+	/* Utility to suppress blur/backdrop blur on UI elements (use for buttons that must remain sharp) */
+	.no-blur {
+		filter: none !important;
+		-webkit-filter: none !important;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+}
+/* Ensure content sits above the header image */
+:global(.has-header-img) {
+	position: relative;
+	z-index: 1;
+}
+
+/* Theme toggle pill (matching reference style) */
+.theme-toggle {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px;
+	background: transparent;
+	border-radius: 9999px;
+	cursor: pointer;
+}
+.theme-track {
+	display: block;
+	width: 48px;
+	height: 28px;
+	border-radius: 9999px;
+	background: linear-gradient(180deg, #f3f4f6, #e5e7eb);
+	border: 1px solid rgba(15, 23, 42, 0.06);
+	position: relative;
+	transition: background 200ms ease, border-color 200ms ease;
+}
+.theme-thumb {
+	width: 22px;
+	height: 22px;
+	border-radius: 9999px;
+	background: white;
+	box-shadow: 0 6px 12px rgba(16,24,40,0.12);
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: #f59e0b; /* amber for sun */
+	transition: transform 200ms cubic-bezier(.2,.9,.2,1), background 200ms ease, color 200ms ease;
+}
+.theme-thumb.is-dark {
+	transform: translateX(20px);
+	background: #0b1220; /* dark thumb */
+	color: #fef3c7; /* soft yellow moon color */
+	box-shadow: 0 6px 14px rgba(2,6,23,0.6);
+}
+
+/* Dark track styling when dark mode is active on root */
+:global(.dark) .theme-track {
+	background: linear-gradient(180deg, #0f172a, #0b1220);
+	border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Focus state */
+.theme-toggle:focus .theme-track,
+.theme-toggle:focus-visible .theme-track {
+	outline: none;
+	box-shadow: 0 0 0 4px rgba(59,130,246,0.14);
+}
+
+/* Make icons slightly smaller on small screens */
+@media (max-width: 640px) {
+	.theme-track {
+		width: 44px;
+		height: 26px;
+	}
+	.theme-thumb {
+		width: 20px;
+		height: 20px;
+		left: 3px;
+	}
+	.theme-thumb.is-dark {
+		transform: translateX(18px);
+	}
 }

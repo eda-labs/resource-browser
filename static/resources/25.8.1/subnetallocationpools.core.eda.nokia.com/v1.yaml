@@ -1,0 +1,90 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: SubnetAllocationPool is the Schema for the subnetallocationpools API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          SubnetAllocationPool is a generic subnet allocation pool supporting allocation of IPv4 and/or IPv6 child subnets from a list of parent subnet segments.
+          It allocates a subnet of the configured length from the provided parent subnet.
+          For example a pool could return 10.1.0.8/29 when a segment is defined as subnet 10.1.0.0/16 with subnet length 29.
+          Consult application documentation to know which pool type to use for a given use case.
+        properties:
+          publishAllocations:
+            description: If true, allocations in segments will be published to EDB, available to query via EQL and trigger state applications off of.
+            type: boolean
+          segments:
+            description: List of segments containing subnets to allocate.
+            items:
+              properties:
+                allocations:
+                  description: List of reservations to exclude from allocations from this segment.
+                  items:
+                    properties:
+                      name:
+                        description: Name of this allocation.
+                        type: string
+                      value:
+                        description: Allocation to reserve.
+                        type: string
+                    required:
+                      - name
+                      - value
+                    type: object
+                  type: array
+                reservations:
+                  description: List of ranges to exclude from allocations from this segment.
+                  items:
+                    properties:
+                      end:
+                        description: Value to reserve to.
+                        type: string
+                      start:
+                        description: Value to start reserving.
+                        type: string
+                    required:
+                      - end
+                      - start
+                    type: object
+                  type: array
+                subnet:
+                  description: IPv4 or IPv6 subnet to allocate subnets from, e.g. 10.1.0.0/16.
+                  type: string
+                subnetLength:
+                  description: The size of the subnets to be allocated from within the parent subnet, e.g. 29 (which could allocate 10.1.0.8/29, for example).
+                  format: int32
+                  type: integer
+              required:
+                - subnet
+                - subnetLength
+              type: object
+            minItems: 1
+            type: array
+        required:
+          - segments
+        type: object
+      status:
+        description: SubnetAllocationPoolStatus defines the observed state of SubnetAllocationPool
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

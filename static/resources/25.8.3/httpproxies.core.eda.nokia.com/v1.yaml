@@ -1,0 +1,53 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.rootUrl
+    name: Root URL
+    type: string
+name: v1
+schema:
+  openAPIV3Schema:
+    description: HttpProxy is the Schema for the proxy API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: HttpProxySpec defines the desired state of HttpProxy
+        properties:
+          authType:
+            description: |-
+              Determines where authentication happens.
+              If "atDestination", then no authentication happens in API server and any auth tokens are forwarded as is.
+              If "inApiServer", then authentication happens within the API server and auth tokens are stripped prior to forwarding.
+            enum:
+              - atDestination
+              - inApiServer
+            type: string
+          rootUrl:
+            description: The proxy destination, including the protocol.
+            type: string
+        required:
+          - authType
+          - rootUrl
+        type: object
+      status:
+        description: HttpProxyStatus defines the observed state of HttpProxy
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

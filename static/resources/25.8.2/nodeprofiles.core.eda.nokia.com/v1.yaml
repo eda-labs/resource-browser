@@ -1,0 +1,366 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.operatingSystem
+    name: OS
+    type: string
+  - jsonPath: .spec.version
+    name: Version
+    type: string
+  - jsonPath: .spec.nodeUser
+    name: Node User
+    type: string
+  - jsonPath: .spec.transport
+    name: Transport
+    type: string
+  - jsonPath: .spec.port
+    name: Port
+    type: string
+name: v1
+schema:
+  openAPIV3Schema:
+    description: NodeProfile is the Schema for the toponodes API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: NodeProfileSpec defines the desired state of NodeProfile
+        properties:
+          annotate:
+            default: false
+            description: Indicates if NPP should annotate sent configuration.
+            type: boolean
+          containerImage:
+            description: Container image to use when simulating TopoNodes referencing this NodeProfile, e.g. ghcr.io/nokia/srlinux:24.7.1.
+            type: string
+          dhcp:
+            description: DHCP options to use when onboarding the TopoNode. Optional if not bootstrapping using EDA.
+            properties:
+              dhcp4Options:
+                description: DHCPv4 options to return to TopoNodes referencing this NodeProfile.
+                items:
+                  properties:
+                    option:
+                      description: DHCPv4 option to return to the TopoNode.
+                      enum:
+                        - 1-SubnetMask
+                        - 2-TimeOffset
+                        - 3-Router
+                        - 4-TimeServer
+                        - 5-NameServer
+                        - 6-DomainNameServer
+                        - 7-LogServer
+                        - 8-QuoteServer
+                        - 9-LPRServer
+                        - 10-ImpressServer
+                        - 11-ResourceLocationServer
+                        - 12-HostName
+                        - 13-BootFileSize
+                        - 14-MeritDumpFile
+                        - 15-DomainName
+                        - 16-SwapServer
+                        - 17-RootPath
+                        - 18-ExtensionsPath
+                        - 19-IPForwarding
+                        - 20-NonLocalSourceRouting
+                        - 21-PolicyFilter
+                        - 22-MaximumDatagramAssemblySize
+                        - 23-DefaultIPTTL
+                        - 24-PathMTUAgingTimeout
+                        - 25-PathMTUPlateauTable
+                        - 26-InterfaceMTU
+                        - 27-AllSubnetsAreLocal
+                        - 28-BroadcastAddress
+                        - 29-PerformMaskDiscovery
+                        - 30-MaskSupplier
+                        - 31-PerformRouterDiscovery
+                        - 32-RouterSolicitationAddress
+                        - 33-StaticRoutingTable
+                        - 34-TrailerEncapsulation
+                        - 35-ArpCacheTimeout
+                        - 36-EthernetEncapsulation
+                        - 37-DefaulTCPTTL
+                        - 38-TCPKeepaliveInterval
+                        - 39-TCPKeepaliveGarbage
+                        - 40-NetworkInformationServiceDomain
+                        - 41-NetworkInformationServers
+                        - 42-NTPServers
+                        - 43-VendorSpecificInformation
+                        - 44-NetBIOSOverTCPIPNameServer
+                        - 45-NetBIOSOverTCPIPDatagramDistributionServer
+                        - 46-NetBIOSOverTCPIPNodeType
+                        - 47-NetBIOSOverTCPIPScope
+                        - 48-XWindowSystemFontServer
+                        - 49-XWindowSystemDisplayManager
+                        - 50-RequestedIPAddress
+                        - 51-IPAddressLeaseTime
+                        - 52-OptionOverload
+                        - 53-DHCPMessageType
+                        - 54-ServerIdentifier
+                        - 55-ParameterRequestList
+                        - 56-Message
+                        - 57-MaximumDHCPMessageSize
+                        - 58-RenewTimeValue
+                        - 59-RebindingTimeValue
+                        - 60-ClassIdentifier
+                        - 61-ClientIdentifier
+                        - 62-NetWareIPDomainName
+                        - 63-NetWareIPInformation
+                        - 64-NetworkInformationServicePlusDomain
+                        - 65-NetworkInformationServicePlusServers
+                        - 66-TFTPServerName
+                        - 67-BootfileName
+                        - 68-MobileIPHomeAgent
+                        - 69-SimpleMailTransportProtocolServer
+                        - 70-PostOfficeProtocolServer
+                        - 71-NetworkNewsTransportProtocolServer
+                        - 72-DefaultWorldWideWebServer
+                        - 73-DefaultFingerServer
+                        - 74-DefaultInternetRelayChatServer
+                        - 75-StreetTalkServer
+                        - 76-StreetTalkDirectoryAssistanceServer
+                        - 77-UserClassInformation
+                        - 78-SLPDirectoryAgent
+                        - 79-SLPServiceScope
+                        - 80-RapidCommit
+                        - 81-FQDN
+                        - 82-RelayAgentInformation
+                        - 83-InternetStorageNameService
+                        - 85-NDSServers
+                        - 86-NDSTreeName
+                        - 87-NDSContext
+                        - 88-BCMCSControllerDomainNameList
+                        - 89-BCMCSControllerIPv4AddressList
+                        - 90-Authentication
+                        - 91-ClientLastTransactionTime
+                        - 92-AssociatedIP
+                        - 93-ClientSystemArchitectureType
+                        - 94-ClientNetworkInterfaceIdentifier
+                        - 95-LDAP
+                        - 97-ClientMachineIdentifier
+                        - 98-OpenGroupUserAuthentication
+                        - 99-GeoConfCivic
+                        - 100-IEEE10031TZString
+                        - 101-ReferenceToTZDatabase
+                        - 112-NetInfoParentServerAddress
+                        - 113-NetInfoParentServerTag
+                        - 114-URL
+                        - 116-AutoConfigure
+                        - 117-NameServiceSearch
+                        - 118-SubnetSelection
+                        - 119-DNSDomainSearchList
+                        - 120-SIPServers
+                        - 121-ClasslessStaticRoute
+                        - 122-CCC
+                        - 123-GeoConf
+                        - 124-VendorIdentifyingVendorClass
+                        - 125-VendorIdentifyingVendorSpecific
+                        - 128-TFTPServerIPAddress
+                        - 129-CallServerIPAddress
+                        - 130-DiscriminationString
+                        - 131-RemoteStatisticsServerIPAddress
+                        - 132-8021PVLANID
+                        - 133-8021QL2Priority
+                        - 134-DiffservCodePoint
+                        - 135-HTTPProxyForPhoneSpecificApplications
+                        - 136-PANAAuthenticationAgent
+                        - 137-LoSTServer
+                        - 138-CAPWAPAccessControllerAddresses
+                        - 139-OPTIONIPv4AddressMoS
+                        - 140-OPTIONIPv4FQDNMoS
+                        - 141-SIPUAConfigurationServiceDomains
+                        - 142-OPTIONIPv4AddressANDSF
+                        - 143-OPTIONIPv6AddressANDSF
+                        - 150-TFTPServerAddress
+                        - 151-StatusCode
+                        - 152-BaseTime
+                        - 153-StartTimeOfState
+                        - 154-QueryStartTime
+                        - 155-QueryEndTime
+                        - 156-DHCPState
+                        - 157-DataSource
+                        - 175-Etherboot
+                        - 176-IPTelephone
+                        - 177-EtherbootPacketCableAndCableHome
+                        - 208-PXELinuxMagicString
+                        - 209-PXELinuxConfigFile
+                        - 210-PXELinuxPathPrefix
+                        - 211-PXELinuxRebootTime
+                        - 212-OPTION6RD
+                        - 213-OPTIONv4AccessDomain
+                        - 220-SubnetAllocation
+                        - 221-VirtualSubnetAllocation
+                        - 224-Reserved
+                        - 225-Reserved
+                        - 226-Reserved
+                        - 227-Reserved
+                        - 228-Reserved
+                        - 229-Reserved
+                        - 230-Reserved
+                        - 231-Reserved
+                        - 232-Reserved
+                        - 233-Reserved
+                        - 234-Reserved
+                        - 235-Reserved
+                        - 236-Reserved
+                        - 237-Reserved
+                        - 238-Reserved
+                        - 239-Reserved
+                        - 240-Reserved
+                        - 241-Reserved
+                        - 242-Reserved
+                        - 243-Reserved
+                        - 244-Reserved
+                        - 245-Reserved
+                        - 246-Reserved
+                        - 247-Reserved
+                        - 248-Reserved
+                        - 249-Reserved
+                        - 250-Reserved
+                        - 251-Reserved
+                        - 252-Reserved
+                        - 253-Reserved
+                        - 254-Reserved
+                        - 255-End
+                      type: string
+                    value:
+                      description: Value to return to the TopoNode for the specified option.
+                      items:
+                        type: string
+                      minItems: 1
+                      type: array
+                  required:
+                    - option
+                    - value
+                  type: object
+                type: array
+              dhcp6Options:
+                description: DHCPv6 options to return to TopoNodes referencing this NodeProfile.
+                items:
+                  properties:
+                    option:
+                      description: DHCPv6 option to return to the TopoNode.
+                      enum:
+                        - 59-BootfileUrl
+                      type: string
+                    value:
+                      description: Value to return to the TopoNode for the specified option.
+                      items:
+                        type: string
+                      minItems: 1
+                      type: array
+                  required:
+                    - option
+                    - value
+                  type: object
+                type: array
+              managementPoolv4:
+                description: IPInSubnetAllocationPool to use for IPv4 allocations of the management address for TopoNodes referencing this NodeProfile.
+                type: string
+              managementPoolv6:
+                description: IPInSubnetAllocationPool to use for IPv6 allocations of the management address for TopoNodes referencing this NodeProfile.
+                type: string
+              preferredAddressFamily:
+                description: Preferred IP address family
+                enum:
+                  - IPv4
+                  - IPv6
+                type: string
+            type: object
+          imagePullSecret:
+            description: Secret used to authenticate to the container registry where the container image is hosted.
+            type: string
+          images:
+            description: URLs hosting software images for bootstrapping TopoNodes referencing this NodeProfile.
+            items:
+              properties:
+                image:
+                  description: URL hosting the software image, e.g. srlimages/srlinux-24.7.1.bin.
+                  type: string
+                imageMd5:
+                  description: URL hosting the software image md5 hash. e.g. srlimages/srlinux-24.7.1.bin.md5.
+                  type: string
+              required:
+                - image
+              type: object
+            type: array
+          license:
+            description: ConfigMap containing a license for TopoNodes referencing this NodeProfile.
+            type: string
+          llmDb:
+            description: URL containing LLDB  to use when interacting with LLM-DB and OpenAI for query autocompletion, e.g. http://eda-asvr/llmdb/ce-llm-db-srlinux-24.7.1.tar.gz.
+            type: string
+          nodeUser:
+            description: Reference to a NodeUser to use for authentication to TopoNodes referencing this NodeProfile.
+            type: string
+          onboardingPassword:
+            default: NokiaSrl1!
+            description: The password to use when onboarding TopoNodes referencing this NodeProfile, e.g. admin.
+            type: string
+          onboardingUsername:
+            default: admin
+            description: The username to use when onboarding TopoNodes referencing this NodeProfile, e.g. admin.
+            type: string
+          operatingSystem:
+            description: Sets the operating system of this NodeProfile, e.g. srl.
+            enum:
+              - srl
+              - sros
+              - eos
+              - sonic
+              - ios-xr
+              - nxos
+              - linux
+            type: string
+          platformPath:
+            description: JSPath to use for retrieving the version string from TopoNodes referencing this NodeProfile, e.g. .platform.chassis.type.
+            type: string
+          port:
+            default: 57400
+            description: Port used to establish a connection to the TopoNode, e.g. 57400.
+            maximum: 65535
+            minimum: 1
+            type: integer
+          serialNumberPath:
+            description: JSPath to use for retrieving the serial number string from TopoNodes referencing this NodeProfile, e.g. .platform.chassis.serial-number.
+            type: string
+          version:
+            description: Sets the software version of this NodeProfile, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).
+            type: string
+          versionMatch:
+            description: Regular expression to match the node-retrieved version string to TopoNode version, e.g. v0\.0\.0.*.
+            type: string
+          versionPath:
+            description: JSPath to use for retrieving the version string from TopoNodes referencing this NodeProfile, e.g. .system.information.version.
+            type: string
+          yang:
+            description: URL containing YANG modules and schema profile to use when interacting with TopoNodes referencing this NodeProfile, e.g. http://eda-asvr/schemaprofiles/srlinux-24.7.1.zip.
+            type: string
+        required:
+          - nodeUser
+          - onboardingPassword
+          - onboardingUsername
+          - operatingSystem
+          - version
+          - yang
+        type: object
+      status:
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

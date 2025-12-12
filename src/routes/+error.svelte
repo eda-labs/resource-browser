@@ -8,7 +8,7 @@
 			<div class="flex items-center rounded-t bg-red-500 px-5 py-3 text-white">
 				<a href="/" class="mr-4 flex"><img src="/images/eda.svg" alt="Logo" width="25" /></a>
 				<div>
-					<p class="text-xs">Resource Browser</p>
+					<p class="text-xs text-white">Resource Browser</p>
 					<p>Error {$page.status}</p>
 				</div>
 			</div>

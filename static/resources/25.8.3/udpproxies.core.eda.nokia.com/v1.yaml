@@ -1,0 +1,76 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.proxyPort
+    name: Proxy Port
+    type: integer
+  - jsonPath: .spec.destHost
+    name: Dest Host
+    type: string
+  - jsonPath: .spec.destPort
+    name: Dest Port
+    type: integer
+name: v1
+schema:
+  openAPIV3Schema:
+    description: UdpProxy is the Schema for the UDP proxy API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: UdpProxySpec defines the desired state of UdpProxy
+        properties:
+          bufferSize:
+            description: |-
+              The proxy will use a buffer of this size for all datagrams it receives and this must be sized
+              to accommodate the largest datagrams expected
+            maximum: 65535
+            minimum: 64
+            type: integer
+          destHost:
+            description: The destination hostname or IP address to forward the datagrams to
+            type: string
+          destPort:
+            description: The destination UDP port to forward the datagrams to
+            maximum: 65535
+            minimum: 1
+            type: integer
+          idleTimeout:
+            description: |-
+              The proxy will listen for responses from the destination and forward it back to the source
+              of the datagram until there is no traffic at all for at least the idle timeout in seconds
+            minimum: 1
+            type: integer
+          proxyPort:
+            description: The UDP port on which to listen for datagrams and then proxy to the destination
+            maximum: 65535
+            minimum: 1
+            type: integer
+        required:
+          - bufferSize
+          - destHost
+          - destPort
+          - idleTimeout
+          - proxyPort
+        type: object
+      status:
+        description: UdpProxyStatus defines the observed state of UdpProxy
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

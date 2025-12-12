@@ -1,7 +1,7 @@
 {
 	"name": "resource-browser",
 	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --host 0.0.0.0",
@@ -15,6 +15,9 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test"
+	},
+	"dependencies": {
+		"ajv": "^8.17.1"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

@@ -8,6 +8,11 @@
 	export let source: string;
 	export let type: string;
 	export let data: Schema;
+	export let showType: boolean = true;
+	export let compact: boolean = false;
+	export let onResourcePage: boolean = false;
+	export let showDiffIndicator: boolean = false;
+	export let forceExpandAll: boolean = false;
 
 	const desc = getDescription(data);
 	const scope = getScope(data);
@@ -19,26 +24,36 @@
 			: 'border-gray-300 dark:border-gray-600';
 </script>
 
-<p class="mb-0 py-1 text-sm text-gray-800 dark:text-gray-200">{type.toUpperCase()}</p>
-<ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
-	<li class="px-1 pt-1.5 text-sm font-light text-gray-400 dark:text-gray-500">
-		{desc}
-	</li>
-	{#if 'properties' in scope}
-		<div class="font-fira text-[12.5px]">
-			{#each Object.entries(scope.properties) as [key, folder]}
-				{@const requiredList = 'required' in scope ? scope.required : []}
-				<Tree
-					{hash}
-					{source}
-					{key}
-					{folder}
-					{requiredList}
-					{borderColor}
-					parent={type}
-					expanded={hashExistDeep(hash, `${type}.${key}`)}
-				/>
-			{/each}
-		</div>
-	{/if}
-</ul>
+{#if showType}
+	<p class="mb-0 py-1 text-sm text-gray-900 dark:text-gray-200">{type.toUpperCase()}</p>
+{/if}
+<div class="relative isolate overflow-x-hidden">
+	<ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
+		<li
+			class="px-1 pt-1.5 text-sm leading-relaxed font-light whitespace-normal text-gray-600 dark:text-gray-300"
+		>
+			{desc}
+		</li>
+		{#if 'properties' in scope}
+			<div class="font-fira text-sm">
+				{#each Object.entries(scope.properties) as [key, folder]}
+					{@const requiredList = 'required' in scope ? scope.required : []}
+					<Tree
+						{hash}
+						{source}
+						{key}
+						{folder}
+						{requiredList}
+						{borderColor}
+						parent={type}
+						expanded={forceExpandAll || hashExistDeep(hash, `${type}.${key}`)}
+						{compact}
+						{onResourcePage}
+						{showDiffIndicator}
+						{forceExpandAll}
+					/>
+				{/each}
+			</div>
+		{/if}
+	</ul>
+</div>
