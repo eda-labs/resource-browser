@@ -75,7 +75,7 @@ schema:
                 minimum: 10000
                 type: integer
               ttl:
-                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
                 maximum: 255
                 minimum: 2
                 type: integer

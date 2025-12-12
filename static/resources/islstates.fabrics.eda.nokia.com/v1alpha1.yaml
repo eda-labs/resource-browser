@@ -37,6 +37,23 @@ schema:
               IPv6Address:
                 description: Local Interface IPv4 address
                 type: string
+              OSPFV2:
+                description: Reference to the OSPV2 State of the local interface
+                properties:
+                  OSPFInterfaceIPV4:
+                    description: Reference to the IPV4 OSPF Interface
+                    type: string
+                type: object
+              OSPFV3:
+                description: Reference to the OSPV3 State of the local interface
+                properties:
+                  OSPFInterfaceIPV4:
+                    description: Reference to the IPV4 OSPF Interface
+                    type: string
+                  OSPFInterfaceIPV6:
+                    description: Reference to the IPV6 OSPF Interface
+                    type: string
+                type: object
               defaultInterface:
                 description: Reference to the DefaultInterface configured on the local node
                 type: string
@@ -74,6 +91,23 @@ schema:
               IPv6Address:
                 description: Remote Interface IPv4 address
                 type: string
+              OSPFV2:
+                description: Reference to the OSPV2 State of the remote interface
+                properties:
+                  OSPFInterfaceIPV4:
+                    description: Reference to the IPV4 OSPF Interface
+                    type: string
+                type: object
+              OSPFV3:
+                description: Reference to the OSPV3 State of the remote interface
+                properties:
+                  OSPFInterfaceIPV4:
+                    description: Reference to the IPV4 OSPF Interface
+                    type: string
+                  OSPFInterfaceIPV6:
+                    description: Reference to the IPV6 OSPF Interface
+                    type: string
+                type: object
               defaultInterface:
                 description: Reference to the DefaultInterface configured on the remote node
                 type: string

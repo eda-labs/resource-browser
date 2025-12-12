@@ -23,6 +23,9 @@ schema:
       spec:
         description: BGPGroupStateSpec defines the desired state of BGPGroupState
         properties:
+          configuredName:
+            description: Configured group name on the device
+            type: string
           defaultBGPGroup:
             description: Denotes if the group is a DefaultBGPGroup or BGPGroup
             type: boolean

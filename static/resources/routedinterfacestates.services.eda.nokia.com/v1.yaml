@@ -88,9 +88,12 @@ schema:
           router:
             description: Router the RoutedInterface is attached to
             type: string
+          routerConfiguredName:
+            type: string
         required:
           - interfaces
           - router
+          - routerConfiguredName
         type: object
       status:
         description: RoutedInterfaceStateStatus defines the observed state of RoutedInterfaceState

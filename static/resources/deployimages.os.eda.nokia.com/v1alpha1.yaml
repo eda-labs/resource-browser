@@ -108,6 +108,10 @@ schema:
                 - AfterPostChecks
               type: string
             type: array
+          reconnectionTimeoutSeconds:
+            default: 600
+            description: Seconds to wait for node to come back online after reboot.
+            type: integer
           tranches:
             description: |-
               List of tranches to use for imaging.

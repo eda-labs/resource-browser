@@ -42,10 +42,14 @@ schema:
             default: 1m
             description: Interval between NetBox instance status checks.
             type: string
+          disableWebhook:
+            default: false
+            description: If true, the instance will not reconcile the related allocations based on received NetBox webhooks.
+            type: boolean
           signatureKey:
             description: |-
               Reference to a Kubernetes secret containing NetBox
-              webhook signature secret.
+              webhook signature secret. Required if webhook is enabled.
               Secret must define the key `signatureKey`.
             type: string
           sync:

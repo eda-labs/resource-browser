@@ -26,6 +26,8 @@ schema:
           bridgeDomain:
             description: Router the IRBInterface is attached to
             type: string
+          bridgeDomainConfiguredName:
+            type: string
           interfaces:
             items:
               properties:
@@ -74,9 +76,13 @@ schema:
           router:
             description: Router the IRBInterface is attached to
             type: string
+          routerConfiguredName:
+            type: string
         required:
           - bridgeDomain
+          - bridgeDomainConfiguredName
           - router
+          - routerConfiguredName
         type: object
       status:
         description: IRBInterfaceStateStatus defines the observed state of IRBInterfaceState

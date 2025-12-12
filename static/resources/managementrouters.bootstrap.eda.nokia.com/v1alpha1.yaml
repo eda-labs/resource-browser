@@ -33,6 +33,18 @@ schema:
             items:
               type: string
             type: array
+          staticRoutes:
+            description: Optional list of static routes to add to the management network instance as part of the initial configuration.
+            items:
+              properties:
+                nextHop:
+                  description: Static route next hop.
+                  type: string
+                prefix:
+                  description: Static route prefix.
+                  type: string
+              type: object
+            type: array
         type: object
       status:
         description: ManagementRouterStatus defines the observed state of ManagementRouter

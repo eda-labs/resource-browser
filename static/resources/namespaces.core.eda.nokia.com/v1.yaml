@@ -25,6 +25,13 @@ schema:
           A Namespace is a logical partition within the cluster that provides a mechanism for isolating resources.
           Namespaces allow for resource segmentation, enabling multiple teams or applications to share the same cluster without conflict.
         properties:
+          bootstrap:
+            description: Bootstrap configuration for the namespace - if empty no bootstrapping is performed and namespace will be empty.
+            properties:
+              fromNamespace:
+                description: The namespace from which to bootstrap resources.  If empty, bootstrap resources are taken from the installed applications' specifications.
+                type: string
+            type: object
           description:
             description: An optional description of the use of the namespace.
             type: string

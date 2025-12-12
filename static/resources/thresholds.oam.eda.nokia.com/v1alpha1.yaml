@@ -43,33 +43,37 @@ schema:
             description: Enable or disable this threshold.
             type: boolean
           field:
-            description: Field to monitor for this threshold, for example `utilization`.
+            description: |-
+              Field to monitor for this threshold, for example `utilization`. Only a single field may be monitored per threshold. This field must be present in the table specified by the path.
+              The field specified should be an integer field that can be compared to the specified thresholds. Nested fields are supported, for example `utilization.value` would monitor the value field inside of the nested object with key `utilization`.
             type: string
           generateOverlay:
             default: false
-            description: Enable or disable generation of a topology overlay for this threshold.
+            description: |-
+              Enable or disable generation of a topology overlay for this threshold.
+              This functionality is only supported for paths in the .namespace.node table.
             type: boolean
           name:
             description: The name of this threshold. This name will be used to generate the alarm name, so should follow CamelCase conventions, e.g. VolumeUtilization.
             type: string
           path:
             description: |-
-              Path to monitor for this threshold. This should be the full EDB path to the table containing the field you wish to trigger a threshold on.
+              Path to monitor for this threshold. This should be the full EDB path (without keys) to the table containing the field you wish to trigger a threshold on.
               For example, to monitor the utilization field of the component volume table, you would use `.namespace.node.normal.components_eda_nokia_com.v1.controlmodule.volume`, and set field to `utilization`.
             type: string
           resource:
             description: |-
-              Which resource to associate with this threshold. This overrides the destination resource in alarms raised as a result of threshold breaches.
-              By default a resource will attempt to be derived based on the monitored path.
+              Manually assign a resource to associate with this threshold. This overrides the destination resource in alarms raised as a result of threshold breaches.
+              By default a resource will be raised against the threshold resource itself.
             properties:
               group:
-                description: The group of the resource to monitor.
+                description: The group of the resource raise alarms against, should any thresholds be breached.
                 type: string
               kind:
-                description: The kind of resource to monitor.
+                description: The kind of resource to raise alarms against, should any thresholds be breached.
                 type: string
               name:
-                description: The name of the resource to monitor.
+                description: The name of the resource to raise alarms against, should any thresholds be breached.
                 type: string
             required:
               - group

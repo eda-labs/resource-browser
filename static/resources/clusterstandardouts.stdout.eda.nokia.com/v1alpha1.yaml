@@ -1,0 +1,71 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: ClusterStandardOut is the Schema for the clusterstandardouts API.
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: ClusterStandardOutSpec defines the desired state of ClusterStandardOut.
+        properties:
+          exports:
+            description: Exports is the list of EDB paths to be exported and mode for each.
+            items:
+              description: Export defines an object to be exported
+              properties:
+                fields:
+                  description: List of fields to be exported from the EDB table, defaults to all if omitted.
+                  items:
+                    type: string
+                  type: array
+                mode:
+                  default: on-change
+                  description: Export Mode
+                  enum:
+                    - on-change
+                    - periodic
+                    - periodic-on-change
+                  type: string
+                path:
+                  description: |-
+                    The EDB path to the table being exported, formatted as '.namespace.node.srl.interface'.
+                    StandardOut exports are restricted to its own namespace.
+                    ClusterStandardOut exports can export data from multiple namespaces as well as cluster tables.
+                  type: string
+                period:
+                  default: 10s
+                  description: Export period, in the format 10s , 1m30s , 1h30m etc.
+                  type: string
+                where:
+                  description: A where clause to use for the query, e.g. oper-state = down . Enclosing parentheses can be omitted.
+                  type: string
+              required:
+                - path
+              type: object
+            type: array
+        required:
+          - exports
+        type: object
+      status:
+        description: ClusterStandardOutStatus defines the observed state of ClusterStandardOut.
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

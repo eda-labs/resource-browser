@@ -23,6 +23,9 @@ schema:
       spec:
         description: DefaultStaticRoute enables the configuration of static routes within a DefaultRouter. It allows specifying destination prefixes, route preference, and a nexthop group. This resource facilitates precise control over routing behavior, including options for BFD, route resolution, and blackholing traffic.
         properties:
+          configuredName:
+            description: The name of the static route to configure on the device.
+            type: string
           defaultRouter:
             description: Reference to a DefaultRouter on which to configure the static routes.
             type: string

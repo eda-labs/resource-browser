@@ -85,6 +85,16 @@ schema:
             maximum: 65535
             minimum: 1
             type: integer
+          productionAddress:
+            description: Sets production address for the node
+            properties:
+              ipv4:
+                description: The IPv4 production address
+                type: string
+              ipv6:
+                description: The IPv6 production address
+                type: string
+            type: object
           serialNumberPath:
             description: JSPath to use for retrieving the serial number string from nodes matching this NodeProfile
             type: string

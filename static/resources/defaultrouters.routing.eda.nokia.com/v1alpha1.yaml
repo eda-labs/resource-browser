@@ -172,6 +172,11 @@ schema:
           description:
             description: Sets the description on the Default router.
             type: string
+          ecmp:
+            description: Set the maximum number of ECMP paths for the DefaultRouter. This is supported only by some platforms, and will be ignored for others.
+            maximum: 256
+            minimum: 1
+            type: integer
           exportPolicy:
             description: Reference to a Policy resource to use when evaluating route exports from the DefaultRouter.
             items:

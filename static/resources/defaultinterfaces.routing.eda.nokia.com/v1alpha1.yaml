@@ -62,7 +62,7 @@ schema:
                 minimum: 10000
                 type: integer
               ttl:
-                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
                 maximum: 255
                 minimum: 2
                 type: integer
@@ -115,6 +115,9 @@ schema:
                 - ipPrefix
               type: object
             type: array
+          subinterfaceIndex:
+            description: Subinterface index to use with this DefaultInterface. Ignored for platforms that do not support subinterface index
+            type: integer
           unnumbered:
             description: Enables the use of unnumbered interfaces on the ISL. For IPv6, no IP address are configured on the sub-interface and only the link local address will be used. If any allocation pool is specified for IPv6 that will take precedence and IPs will be assigned to the interfaces.  When using eBGP for an underlay protocol, the DefaultInterfaces which are a part of the ISL will be added to the BGP dynamic neighbor list.
             enum:

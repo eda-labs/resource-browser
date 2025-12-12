@@ -47,6 +47,9 @@ schema:
       spec:
         description: The BridgeDomain enables the configuration and management of Layer 2 virtual networks. It includes settings for VNI, EVI, route targets for import and export, and tunnel index allocation. Additionally, the specification allows for advanced features such as MAC address table limits, aging, Proxy ARP and detection of MAC and IP duplication.
         properties:
+          configuredName:
+            description: The name of the BridgeDomain to configure on the device.
+            type: string
           description:
             description: The description of the BridgeDomain.
             type: string

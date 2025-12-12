@@ -1,7 +1,7 @@
 name: v1alpha1
 schema:
   openAPIV3Schema:
-    description: MonitorAggregateState is the Schema for the monitoraggregatestates API
+    description: SSHServerState is the Schema for the sshserverstates API
     properties:
       apiVersion:
         description: |-
@@ -21,16 +21,34 @@ schema:
       metadata:
         type: object
       spec:
-        description: MonitorAggregateStateSpec defines the desired state of MonitorAggregateState
+        description: SSHServerStateSpec defines the desired state of SSHServerState
         properties:
-          nodes:
-            description: List of TopoNodes monitored by this instance
+          enabled:
+            type: boolean
+          routerKind:
+            type: string
+          servers:
             items:
-              type: string
+              properties:
+                nodes:
+                  items:
+                    properties:
+                      nodeName:
+                        type: string
+                      operatingSystem:
+                        type: string
+                    type: object
+                  type: array
+                router:
+                  type: string
+              type: object
             type: array
+        required:
+          - enabled
+          - routerKind
         type: object
       status:
-        description: MonitorAggregateStateStatus defines the observed state of MonitorAggregateState
+        description: SSHServerStateStatus defines the observed state of SSHServerState
         type: object
     type: object
 served: true

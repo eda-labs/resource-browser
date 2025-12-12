@@ -60,12 +60,22 @@ schema:
                 default: false
                 description: Enable or disable BGP.
                 type: boolean
+              exportPolicy:
+                description: Reference to a Policy CR that will be used to filter routes advertised to peers.
+                items:
+                  type: string
+                type: array
               ibgpPreference:
                 default: 170
                 description: Preference to be set for iBGP [default=170].
                 maximum: 255
                 minimum: 1
                 type: integer
+              importPolicy:
+                description: Reference to a Policy CR that will be used to filter routes received from peers.
+                items:
+                  type: string
+                type: array
               ipAliasNexthops:
                 description: IP aliasing configuration.
                 items:
@@ -78,7 +88,7 @@ schema:
                       description: The nexthop IP address to track for the IP alias.
                       type: string
                     preferredActiveNode:
-                      description: When not set the ES is used in an all active mode. This references the ToppNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.
+                      description: When not set the ES is used in an all active mode. This references the TopoNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.
                       type: string
                   required:
                     - nextHop
@@ -160,9 +170,17 @@ schema:
                 description: Wait for FIB installation before advertising routes.
                 type: boolean
             type: object
+          configuredName:
+            description: The name of the Router to configure on the device.
+            type: string
           description:
             description: The description of the Router.
             type: string
+          ecmp:
+            description: Set the maximum number of ECMP paths for the Router. This is supported only by some platforms, and will be ignored for others.
+            maximum: 256
+            minimum: 1
+            type: integer
           evi:
             description: EVI for the Router; leave blank for auto-allocation from EVI pool.
             maximum: 65535
@@ -181,7 +199,7 @@ schema:
             pattern: ^target.*$
             type: string
           ipLoadBalancing:
-            description: IPv4 or IPv6 prefix. Active routes in the FIB that exactly match this prefix or that are longer matches of this prefix are provided with resilient-hash programming.
+            description: Resilient Hashing configuration.
             properties:
               prefix:
                 description: IPv4 or IPv6 prefix. Active routes in the FIB that exactly match this prefix or that are longer matches of this prefix are provided with resilient-hash programming.
@@ -290,6 +308,31 @@ schema:
           operationalState:
             description: Operational state of the Router.
             type: string
+          ospfInstances:
+            description: List of OSPFInstances configured on the router.
+            items:
+              properties:
+                areas:
+                  items:
+                    properties:
+                      id:
+                        type: string
+                      interfaces:
+                        items:
+                          type: string
+                        type: array
+                    required:
+                      - id
+                    type: object
+                  type: array
+                name:
+                  type: string
+                version:
+                  type: string
+              required:
+                - name
+              type: object
+            type: array
           routedInterfaces:
             description: List of RoutedInterfaces attached to the router.
             items:

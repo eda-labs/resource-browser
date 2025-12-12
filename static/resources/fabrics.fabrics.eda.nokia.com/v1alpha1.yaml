@@ -41,7 +41,7 @@ schema:
                   type: string
                 type: array
               routeLeaking:
-                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specifided under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
+                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
                 properties:
                   exportPolicy:
                     description: Reference to a Policy resource to use when evaluating route exports from the DefaultRouter.
@@ -112,7 +112,7 @@ schema:
                   type: string
                 type: array
               routeLeaking:
-                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specifided under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
+                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
                 properties:
                   exportPolicy:
                     description: Reference to a Policy resource to use when evaluating route exports from the DefaultRouter.
@@ -166,7 +166,7 @@ schema:
                     minimum: 10000
                     type: integer
                   ttl:
-                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
                     maximum: 255
                     minimum: 2
                     type: integer
@@ -244,7 +244,7 @@ schema:
               - protocol
             type: object
           routeLeaking:
-            description: Route leaking controlled by routing policies in and out of the DefaulRouters on each node.  If specifided under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
+            description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
             properties:
               exportPolicy:
                 description: Reference to a Policy resource to use when evaluating route exports from the DefaultRouter.
@@ -262,7 +262,7 @@ schema:
                 description: Reference to an IndexAllocationPool pool to use for Autonomous System Number allocations.  Used when eBGP is configured as an underlay protocol. This reference will take precedence over the spec.underlayProtocol.asnPool.
                 type: string
               routeLeaking:
-                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specifided under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
+                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
                 properties:
                   exportPolicy:
                     description: Reference to a Policy resource to use when evaluating route exports from the DefaultRouter.
@@ -292,7 +292,7 @@ schema:
                 description: Reference to an IndexAllocationPool pool to use for Autonomous System Number allocations.  Used when eBGP is configured as an underlay protocol. This reference will take precedence over the spec.underlayProtocol.asnPool.
                 type: string
               routeLeaking:
-                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specifided under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
+                description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
                 properties:
                   exportPolicy:
                     description: Reference to a Policy resource to use when evaluating route exports from the DefaultRouter.
@@ -357,7 +357,7 @@ schema:
                     minimum: 10000
                     type: integer
                   ttl:
-                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.
+                    description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
                     maximum: 255
                     minimum: 2
                     type: integer
@@ -406,15 +406,28 @@ schema:
                         type: integer
                     type: object
                 type: object
+              ospf:
+                description: OSPF underlay properties.
+                properties:
+                  addressFamily:
+                    description: Selects enabled address families for OSPFv3. If not specified, both address families will be enabled by default when OSPFv3 underlay is configured.
+                    items:
+                      enum:
+                        - IPV4-UNICAST
+                        - IPV6-UNICAST
+                      type: string
+                    type: array
+                type: object
               protocol:
                 description: List of routing protocols to used between peers of an ISL.  Multiple protocols may be listed, if so multiple protocols will be used.
                 items:
                   enum:
                     - EBGP
+                    - OSPFv2
+                    - OSPFv3
                   type: string
                 type: array
             required:
-              - bgp
               - protocol
             type: object
         type: object
@@ -441,7 +454,7 @@ schema:
               type: object
             type: array
           health:
-            description: Indicates the health score of the Fabric.  The health score of the Fabric is determined by the aggregate health score of the resources emited by the Fabric such as ISL, DefaultRouteReflectors etc.
+            description: Indicates the health score of the Fabric.  The health score of the Fabric is determined by the aggregate health score of the resources emitted by the Fabric such as ISL, DefaultRouteReflectors etc.
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

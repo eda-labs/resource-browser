@@ -1,0 +1,90 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: NSXPluginInstance is the Schema for the nsxplugininstances API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: NSXPluginInstanceSpec defines the desired state of NSXPluginInstance
+        properties:
+          authSecretRef:
+            description: AuthSecretRef is the name of a secret containing 'username' and 'password' keys to authenticate to vSphere.
+            type: string
+          externalId:
+            description: ExternalID is the external ID of the plugin.
+            type: string
+          heartbeatInterval:
+            default: 10
+            description: HeartbeatInterval is the time interval in seconds between successive heartbeats.
+            type: integer
+          name:
+            description: Name is the name of the plugin.
+            type: string
+          nsxCertificate:
+            description: NSXCertificate is the certificate for the server to verify.
+            type: string
+          nsxManagementIP:
+            description: NSXManagementIP is the URL to the NSX manager.
+            type: string
+          nsxPollInterval:
+            default: 2
+            description: NSXPollInterval determines how often the plugin polls NSX for state changes. Unit is seconds.
+            type: integer
+          nsxTlsVerify:
+            default: true
+            description: NSXTLSVerify defines whether the client verifies the server's certificate.
+            type: boolean
+          pluginNamespace:
+            description: PluginNamespace is the namespace for the custom resources.
+            type: string
+          vCenters:
+            description: |-
+              VCenters is the list of vCenters managed by the NSX plugin. All vCenters managed by the
+              NSX plugin need to be managed by a VMware plugin.
+            items:
+              properties:
+                vCenterFQDN:
+                  description: VCenterFQDN must equal the given vCenter IP address or FQDN of the NSX compute manager.
+                  type: string
+                vmwarePluginID:
+                  description: VMWarePluginID is the ID of the VMware plugin managing the vCenter.
+                  type: string
+              required:
+                - vCenterFQDN
+                - vmwarePluginID
+              type: object
+            type: array
+        required:
+          - authSecretRef
+          - externalId
+          - heartbeatInterval
+          - name
+          - nsxManagementIP
+          - nsxPollInterval
+          - nsxTlsVerify
+          - vCenters
+        type: object
+      status:
+        description: NSXPluginInstanceStatus defines the observed state of NSXPluginInstance
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}
