@@ -44,7 +44,7 @@ export interface PrimitiveSchema extends BaseSchema {
   type: Exclude<JSONType, "object" | "array">;
 }
 
-export type Schema = ObjectSchema | ArraySchema | PrimitiveSchema | Record<string, any>;
+export type Schema = ObjectSchema | ArraySchema | PrimitiveSchema;
 
 export interface OpenAPISchema {
   name: string;
