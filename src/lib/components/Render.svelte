@@ -24,7 +24,7 @@
 	<li class="px-1 pt-1.5 text-sm font-light text-gray-400 dark:text-gray-500">
 		{desc}
 	</li>
-	{#if 'properties' in scope}
+	{#if scope && 'properties' in scope}
 		<div class="font-fira text-[12.5px]">
 			{#each Object.entries(scope.properties) as [key, folder]}
 				{@const requiredList = 'required' in scope ? scope.required : []}
@@ -32,7 +32,7 @@
 					{hash}
 					{source}
 					{key}
-					{folder}
+					folder={folder as Schema}
 					{requiredList}
 					{borderColor}
 					parent={type}

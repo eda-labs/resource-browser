@@ -44,25 +44,25 @@ export interface PrimitiveSchema extends BaseSchema {
   type: Exclude<JSONType, "object" | "array">;
 }
 
-export type Schema = ObjectSchema | ArraySchema | PrimitiveSchema;
+export type Schema = ObjectSchema | ArraySchema | PrimitiveSchema | Record<string, any>;
 
-export interface OpenAPISchema { 
+export interface OpenAPISchema {
   name: string;
   deprecated: boolean;
-  schema: { 
-    openAPIV3Schema: { 
-      properties: { 
-        spec: Schema; 
-        status: Schema 
-      } 
-    } 
-  } 
+  schema: {
+    openAPIV3Schema: {
+      properties: {
+        spec: Schema;
+        status: Schema
+      }
+    }
+  }
 }
 
 export interface VersionSchema {
   [key: string]: {
-    spec: Schema; 
+    spec: Schema;
     status: Schema;
-    deprecated: boolean; 
+    deprecated: boolean;
   }
 }

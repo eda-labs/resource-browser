@@ -1,15 +1,18 @@
 import type { Schema } from "$lib/structure"
 
 export function getScope(resource: Schema) {
-  return resource.type === "array" ? resource.items : resource
+  return resource?.type === "array" ? resource.items : resource
 }
 
 export function getDescription(resource: Schema) {
-  return resource?.description || (resource.type === "array" ? resource.items.type : "")
+  if (!resource) return ""
+  return resource.description || (resource.type === "array" && resource.items ? resource.items.type : "")
 }
 
 // Get the default value of a resource field.
 export function getDefault(resource: Schema) {
+  if (!resource) return ''
+
   // prefer explicit default on the resource, otherwise for arrays check items
   const d = (resource && 'default' in resource && resource.default !== undefined)
     ? resource.default
@@ -25,6 +28,8 @@ export function getDefault(resource: Schema) {
 
 // Helper to safely get enum array from resource or its items
 function getEnumArray(resource: Schema): string[] | undefined {
+  if (!resource) return undefined
+
   if ('enum' in resource && Array.isArray(resource.enum)) {
     return resource.enum;
   }
