@@ -5,6 +5,9 @@ additionalPrinterColumns:
   - jsonPath: .spec.remoteType
     name: Type
     type: string
+  - jsonPath: .spec.enabled
+    name: Enabled
+    type: string
   - jsonPath: .status.operational
     name: Operational
     type: string
@@ -42,6 +45,10 @@ schema:
             description: Description is an optional short description of the catalog.
             maxLength: 70
             type: string
+          enabled:
+            default: true
+            description: Enable or disable the catalog in EDA Store
+            type: boolean
           refreshInterval:
             default: 180
             description: |-

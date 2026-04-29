@@ -1,3 +1,5 @@
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
@@ -26,6 +28,19 @@ schema:
           It accepts a list of fabrics, ISLs, or selectors for both to match ISLs,
           and returns the results of the pings, including the status of each ISL.
         properties:
+          addressFamily:
+            default: DualStack
+            description: |-
+              AddressFamily is the address family to use for the ping.
+              It can be one of the following values:
+              - "Ipv4": Use Ipv4 addresses for the ping.
+              - "Ipv6": Use Ipv6 addresses for the ping.
+              - "DualStack": Use both Ipv4 and Ipv6 addresses for the ping.
+            enum:
+              - Ipv4
+              - Ipv6
+              - DualStack
+            type: string
           count:
             default: 1
             description: Count is the number of pings to send.
@@ -117,6 +132,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

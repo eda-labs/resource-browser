@@ -9,10 +9,15 @@ output_dir="${SCRIPT_DIR}/resources"
 # it drives the menu on the home page.
 src_lib_dir="${SCRIPT_DIR}/../src/lib"
 
-# Cleanup existing directory
-if [ -d "$output_dir" ]; then
-  echo "Cleaning up existing '$output_dir/' directory..."
-  rm -rf "$output_dir"
+# Preserve historical per-version YAML on disk unless explicitly wiping.
+# Set FORCE_CLEAN_RESOURCES=1 to delete and recreate the resources directory.
+if [ "${FORCE_CLEAN_RESOURCES:-0}" = "1" ]; then
+  if [ -d "$output_dir" ]; then
+    echo "FORCE_CLEAN_RESOURCES=1: removing '$output_dir/' ..."
+    rm -rf "$output_dir"
+  fi
+else
+  echo "Preserving existing files under '$output_dir/' (unset FORCE_CLEAN_RESOURCES or use FORCE_CLEAN_RESOURCES=0)."
 fi
 
 mkdir -p "$output_dir"

@@ -1,0 +1,186 @@
+additionalPrinterColumns:
+  - jsonPath: .status.phase
+    name: Phase
+    type: string
+  - jsonPath: .status.conditions[?(@.type=="Ready")].status
+    name: Ready
+    type: string
+  - jsonPath: .status.namespace
+    name: Namespace
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+name: v1
+schema:
+  openAPIV3Schema:
+    description: VirtualCluster is the Schema for the VirtualClusters API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: VirtualClusterSpec defines the desired state of VirtualCluster
+        properties:
+          targetBranch:
+            description: |-
+              TargetBranch selects the cluster where the vcluster workload (namespace, etcd, vcluster deployment) will be created.
+              If nil or not set, the vcluster is created on the same cluster where the cluster-manager runs (host cluster).
+              The referenced K8sCluster must exist and contain a valid kubeconfig secret.
+            properties:
+              kubeconfigSecret:
+                description: KubeconfigSecret is the name of the secret containing the kubeconfig for this branch
+                type: string
+            required:
+              - kubeconfigSecret
+            type: object
+        type: object
+      status:
+        properties:
+          conditions:
+            description: Conditions represent the latest available observations
+            items:
+              description: Condition contains details for one aspect of the current state of this API Resource.
+              properties:
+                lastTransitionTime:
+                  description: |-
+                    lastTransitionTime is the last time the condition transitioned from one status to another.
+                    This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                  format: date-time
+                  type: string
+                message:
+                  description: |-
+                    message is a human readable message indicating details about the transition.
+                    This may be an empty string.
+                  maxLength: 32768
+                  type: string
+                observedGeneration:
+                  description: |-
+                    observedGeneration represents the .metadata.generation that the condition was set based upon.
+                    For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                    with respect to the current state of the instance.
+                  format: int64
+                  minimum: 0
+                  type: integer
+                reason:
+                  description: |-
+                    reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                    Producers of specific condition types may define expected values and meanings for this field,
+                    and whether the values are considered a guaranteed API.
+                    The value should be a CamelCase string.
+                    This field may not be empty.
+                  maxLength: 1024
+                  minLength: 1
+                  pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                  type: string
+                status:
+                  description: status of the condition, one of True, False, Unknown.
+                  enum:
+                    - "True"
+                    - "False"
+                    - Unknown
+                  type: string
+                type:
+                  description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                  maxLength: 316
+                  pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                  type: string
+              required:
+                - lastTransitionTime
+                - message
+                - reason
+                - status
+                - type
+              type: object
+            type: array
+          failureCount:
+            description: FailureCount tracks consecutive reconciliation failures
+            format: int32
+            type: integer
+          healthCheckTime:
+            description: HealthCheckTime is the last time health check succeeded
+            format: date-time
+            type: string
+          kubeconfigSecret:
+            description: KubeconfigSecret is the name of the secret containing kubeconfig
+            type: string
+          lastReconcileTime:
+            description: LastReconcileTime is the last time reconciliation occurred
+            format: date-time
+            type: string
+          message:
+            description: Message provides additional information about the current state
+            type: string
+          namespace:
+            description: Namespace is the namespace where vcluster resources are deployed
+            type: string
+          observedGeneration:
+            description: ObservedGeneration is the generation observed by the controller
+            format: int64
+            type: integer
+          phase:
+            description: Phase is the current lifecycle phase
+            type: string
+          resources:
+            description: Resources tracks created resources for cleanup
+            properties:
+              clusterRoleBindings:
+                description: ClusterRoleBindings lists created cluster role bindings
+                items:
+                  type: string
+                type: array
+              clusterRoles:
+                description: ClusterRoles lists created cluster roles
+                items:
+                  type: string
+                type: array
+              deployments:
+                description: Deployments lists created deployments
+                items:
+                  type: string
+                type: array
+              serviceAccounts:
+                description: ServiceAccounts lists created service accounts
+                items:
+                  type: string
+                type: array
+              services:
+                description: Services lists created services
+                items:
+                  type: string
+                type: array
+              statefulSets:
+                description: StatefulSets lists created statefulsets
+                items:
+                  type: string
+                type: array
+            type: object
+          serviceUrl:
+            description: ServiceURL is the URL to access the vcluster API server
+            type: string
+          targetClusterNamespace:
+            description: TargetClusterNamespace is the namespace of the K8sCluster resource when cluster is namespaced.
+            type: string
+          vclusterClientReady:
+            description: VClusterClient indicates if the vcluster client is initialized
+            type: boolean
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

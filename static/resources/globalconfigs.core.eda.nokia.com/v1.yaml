@@ -42,6 +42,16 @@ schema:
               ipv6Address:
                 description: The external IPv6 address of the cluster
                 type: string
+              proxyMode:
+                default: None
+                description: |-
+                  The proxy forwarding header mode to be utilized by the API server (i.e. the type of reverse proxy in front of the API server)
+                  When relaxDomainNameEnforcement is true, only controls the proxy headers accepted by Keycloak.
+                enum:
+                  - None
+                  - Forward
+                  - XForward
+                type: string
               relaxDomainNameEnforcement:
                 default: false
                 description: Relax enforcement of client origins from configured cluster.external.domainName

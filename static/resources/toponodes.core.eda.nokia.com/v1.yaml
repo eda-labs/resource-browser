@@ -136,7 +136,6 @@ schema:
               - sonic
               - ios-xr
               - nxos
-              - linux
             type: string
           platform:
             description: Platform type of this TopoNode, e.g. 7220 IXR-D3L.
@@ -154,6 +153,148 @@ schema:
                 description: The IPv6 production address
                 type: string
             type: object
+          satelliteNodes:
+            description: |-
+              List of satellite nodes associated with this TopoNode.
+              Used to define the type and configuration of satellite nodes.
+            items:
+              properties:
+                components:
+                  description: Components for the satellite node.
+                  items:
+                    properties:
+                      kind:
+                        description: The kind of Component, e.g. lineCard.
+                        enum:
+                          - controlCard
+                          - lineCard
+                          - fabric
+                          - mda
+                          - connector
+                          - xiom
+                          - powerShelf
+                          - powerModule
+                        type: string
+                      slot:
+                        description: |-
+                          The slot this Component resides in, unset for Components that do not have a slot or ID.
+                          e.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.
+                        type: string
+                      type:
+                        description: Denotes the type of hardware being provisioned, e.g. xcm-x20.
+                        type: string
+                    required:
+                      - kind
+                      - type
+                    type: object
+                  type: array
+                id:
+                  description: ID of the satellite node.
+                  type: string
+                license:
+                  description: ConfigMap containing a license for this satellite node.
+                  type: string
+                macAddress:
+                  description: ' MAC Address of the satellite node.'
+                  type: string
+                operatingSystem:
+                  description: Operating system for this satellite node.
+                  enum:
+                    - srl
+                    - sros
+                    - eos
+                    - sonic
+                    - ios-xr
+                    - nxos
+                  type: string
+                platform:
+                  description: Platform of the satellite node.
+                  type: string
+                portTemplate:
+                  description: Port template to be used for the satellite node.
+                  properties:
+                    connectors:
+                      description: |-
+                        List of connector components within the SatellitePortTemplate.
+                        Used to define the type and location of connectors.
+                      items:
+                        properties:
+                          kind:
+                            description: The kind of Component, e.g. lineCard.
+                            enum:
+                              - controlCard
+                              - lineCard
+                              - fabric
+                              - mda
+                              - connector
+                              - xiom
+                              - powerShelf
+                              - powerModule
+                            type: string
+                          slot:
+                            description: |-
+                              The slot this Component resides in, unset for Components that do not have a slot or ID.
+                              e.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.
+                            type: string
+                          type:
+                            description: Denotes the type of hardware being provisioned, e.g. xcm-x20.
+                            type: string
+                        required:
+                          - kind
+                          - type
+                        type: object
+                      type: array
+                    name:
+                      description: The name of the SatellitePortTemplate.
+                      type: string
+                    uplinks:
+                      description: Uplinks for the SatellitePortTemplate.
+                      items:
+                        properties:
+                          downlinks:
+                            description: Downlinks for the SatelliteUplink.
+                            items:
+                              type: string
+                            type: array
+                          name:
+                            description: The name of the SatelliteUplink.
+                            type: string
+                        required:
+                          - name
+                        type: object
+                      type: array
+                  required:
+                    - name
+                  type: object
+                satelliteProfile:
+                  description: Satellite node profile to be used for the satellite node.
+                  type: string
+                type:
+                  description: Type of the satellite node.
+                  type: string
+                uplinkInterfaces:
+                  description: Uplink interfaces to be created for the satellite node.
+                  items:
+                    properties:
+                      hostPort:
+                        description: HostPort interface of the satellite uplink.
+                        type: string
+                      satellite:
+                        description: Satellite interface of the satellite uplink.
+                        type: string
+                    required:
+                      - hostPort
+                      - satellite
+                    type: object
+                  type: array
+                version:
+                  description: Software version for this satellite node.
+                  type: string
+              required:
+                - id
+                - type
+              type: object
+            type: array
           serialNumber:
             description: |-
               Serial number of this TopoNode, optionally sent by a node in DHCP requests.
@@ -163,7 +304,7 @@ schema:
             description: 'Deprecated: Name of the Interface resource representing the primary loopback on the TopoNode, this field will be removed in the future version.'
             type: string
           version:
-            description: Sets the software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).
+            description: Software version of this TopoNode, e.g. 24.7.1 (for srl), or 24.7.r1 (for sros).
             type: string
         required:
           - nodeProfile
@@ -185,7 +326,7 @@ schema:
               "WaitingForInitialCfg"
                  NPP is connected to the node but waiting for intial config to push
               "Committing"
-              	  NPP is in progress of commiting
+              	  NPP is in progress of committing
               "RetryingCommit"
                  NPP lost sync to node and is re-pushing current config
               "Synced"
@@ -193,7 +334,7 @@ schema:
               "Standby"
                  NPP is running in standby mode. This state is only used on standby clusters with georedundancy.
               "NoIpAddress"
-                 NPP is running but there is no IP address for node. This only happen in sim setups when
+                 NPP is running but there is no IP address for node. This only happens in sim setups when
                  CX has not created the simulated node, or the simulated pod failed to launch due to image error.
             type: string
           npp-details:
@@ -207,6 +348,13 @@ schema:
             type: string
           operatingSystem:
             description: Operational operating system running on this TopoNode, e.g. srl, sros.
+            enum:
+              - srl
+              - sros
+              - eos
+              - sonic
+              - ios-xr
+              - nxos
             type: string
           platform:
             description: Operational platform type of this TopoNode, e.g. 7220 IXR-D3L.

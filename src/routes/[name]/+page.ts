@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit'
 
+import { newestApiVersion } from '$lib/apiVersion'
 import type { CrdVersionsMap } from '$lib/structure'
 
 import yaml from 'js-yaml'
@@ -17,6 +18,6 @@ export async function load({ params }) {
     throw error(404, "Invalid resource name")
   }
 
-  const version = crdMeta[0].versions[0].name
+  const version = newestApiVersion(crdMeta[0].versions.map((v) => v.name))
   throw redirect(307, `/${name}/${version}`);
 }

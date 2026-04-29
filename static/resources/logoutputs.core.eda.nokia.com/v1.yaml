@@ -1,0 +1,130 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: LogOutput is the schema for the EDA platform log outputs
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        properties:
+          forward:
+            description: Fluentd Forward protocol output
+            properties:
+              host:
+                description: Target host where Fluentbit or Fluentd are listening for Forward messages.
+                type: string
+              match:
+                default: '*'
+                description: |-
+                  A pattern to match against the tags of incoming records.
+                  It's case sensitive and support the star (*) character as a wildcard.
+                type: string
+              port:
+                description: TCP Port of the target service.
+                format: int32
+                maximum: 65535
+                minimum: 1
+                type: integer
+            type: object
+          syslog:
+            description: Syslog output
+            properties:
+              host:
+                description: Host domain or IP address of the remote Syslog server.
+                type: string
+              match:
+                default: '*'
+                description: |-
+                  A pattern to match against the tags of incoming records.
+                  It's case sensitive and support the star (*) character as a wildcard.
+                type: string
+              mode:
+                default: udp
+                description: Transport protocol.
+                enum:
+                  - tcp
+                  - udp
+                type: string
+              port:
+                default: 514
+                description: TCP or UDP port of the remote Syslog server.
+                format: int32
+                maximum: 65535
+                minimum: 1
+                type: integer
+              syslogAppnameKey:
+                default: kube_pod_name
+                description: Key name from the original record that contains the application name that generated the message.
+                type: string
+              syslogFacilityKey:
+                description: Key from the original record that contains the Syslog facility number.
+                type: string
+              syslogFormat:
+                default: rfc5424
+                description: Syslog protocol format.
+                enum:
+                  - rfc3164
+                  - rfc5424
+                type: string
+              syslogHostnameKey:
+                default: kube_host
+                description: Key name from the original record that contains the hostname that generated the message.
+                type: string
+              syslogMaxsize:
+                description: Maximum size allowed per message, in bytes.
+                format: int32
+                type: integer
+              syslogMessageKey:
+                default: log
+                description: Key name that contains the message to deliver.
+                type: string
+              syslogMsgidKey:
+                description: Key name from the original record that contains the Message ID associated to the message.
+                type: string
+              syslogProcidKey:
+                description: Key name from the original record that contains the Process ID that generated the message.
+                type: string
+              syslogSdKey:
+                description: Key name from the original record that contains the Structured Data (SD) content.
+                type: string
+              syslogSeverityKey:
+                description: Key from the original record that contains the Syslog severity number.
+                type: string
+              tls:
+                description: Syslog TLS
+                properties:
+                  clientCert:
+                    default: false
+                    description: Enable client certificate for mTLS
+                    type: boolean
+                  skipVerify:
+                    default: false
+                    description: Skip TLS verification
+                    type: boolean
+                type: object
+            required:
+              - host
+            type: object
+        type: object
+      status:
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

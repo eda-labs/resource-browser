@@ -1,3 +1,5 @@
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -62,6 +64,40 @@ schema:
                 - nodeInterface
               type: object
             type: array
+          uplinks:
+            items:
+              properties:
+                interface:
+                  description: Normalized interface name
+                  type: string
+                interfaceResource:
+                  description: Eda interface resource
+                  type: string
+                node:
+                  description: Reference to Node object
+                  type: string
+                nodeInterface:
+                  description: Node specific interface name
+                  type: string
+                nodeSubInterface:
+                  description: Node specific subinterface name
+                  type: string
+                operatingSystem:
+                  description: Operating System of the Node
+                  type: string
+                subInterfaceIndex:
+                  description: Index allocated to the subinterface on the associated interface for the given VLAN
+                  type: integer
+                vlanID:
+                  description: vlan assigned to this subinterface
+                  type: string
+              required:
+                - interface
+                - interfaceResource
+                - node
+                - nodeInterface
+              type: object
+            type: array
         required:
           - bridgeDomain
           - bridgeDomainConfiguredName
@@ -71,6 +107,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

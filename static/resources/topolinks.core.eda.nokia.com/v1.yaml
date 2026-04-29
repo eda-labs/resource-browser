@@ -1,3 +1,10 @@
+additionalPrinterColumns:
+  - jsonPath: .status.operationalState
+    name: Operational State
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
 name: v1
 schema:
   openAPIV3Schema:

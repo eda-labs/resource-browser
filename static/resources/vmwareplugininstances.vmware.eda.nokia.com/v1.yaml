@@ -1,3 +1,5 @@
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -21,7 +23,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: VmwarePluginInstanceSpec defines the config variables for a VMware plugin.
+        description: VmwarePluginInstanceSpec defines the desired state of VmwarePluginInstance
         properties:
           authSecretRef:
             description: AuthSecretRef is the name of a secret containing 'username' and 'password' keys to authenticate to vSphere.
@@ -35,6 +37,14 @@ schema:
             type: integer
           name:
             description: Name is the name of the plugin.
+            type: string
+          operationalMode:
+            default: Unrestricted
+            description: Option to restrict the plugin to either Connect or EDA managed networking.
+            enum:
+              - ConnectManagedOnly
+              - EDAManagedOnly
+              - Unrestricted
             type: string
           pluginNamespace:
             description: PluginNamespace is the namespace for the custom resources.
@@ -54,6 +64,7 @@ schema:
           - externalId
           - heartbeatInterval
           - name
+          - operationalMode
           - vcsaHost
           - vcsaTlsVerify
         type: object
@@ -62,6 +73,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

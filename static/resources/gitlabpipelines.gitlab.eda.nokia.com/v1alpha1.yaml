@@ -37,15 +37,20 @@ schema:
                   description: Parameter value
                   properties:
                     dynamicValue:
+                      description: Dynamic value.
                       properties:
                         field:
+                          description: Field to watch.
                           type: string
                         path:
+                          description: Path to the value.
                           type: string
                         where:
+                          description: Where clause to filter the results.
                           type: string
                       type: object
                     staticValue:
+                      description: Static value.
                       type: string
                   type: object
               type: object
@@ -63,6 +68,7 @@ schema:
             description: Trigger conditions to run the pipeline.
             properties:
               alarm:
+                description: Alarm trigger.
                 properties:
                   exclude:
                     description: Excluded alarm types that don't trigger the workflow
@@ -76,6 +82,7 @@ schema:
                     type: array
                 type: object
               query:
+                description: Query trigger.
                 properties:
                   fields:
                     description: List of fields to watch

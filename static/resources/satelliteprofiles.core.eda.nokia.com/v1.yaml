@@ -1,0 +1,82 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        properties:
+          containerImage:
+            description: Container image to use when simulating Satellite Nodes referencing this SatelliteProfile, e.g. ghcr.io/nokia/sros:24.7.r1.
+            type: string
+          imagePullSecret:
+            description: Secret used to authenticate to the container registry where the container image is hosted.
+            type: string
+          images:
+            description: URLs hosting software images for bootstrapping Satellite Nodes referencing this SatelliteProfile.
+            items:
+              properties:
+                image:
+                  description: URL hosting the software image, e.g. srlimages/srlinux-24.7.1.bin.
+                  type: string
+                imageMd5:
+                  description: URL hosting the software image md5 hash. e.g. srlimages/srlinux-24.7.1.bin.md5.
+                  type: string
+              required:
+                - image
+              type: object
+            type: array
+          license:
+            description: ConfigMap containing a license for Satellite Nodes referencing this SatelliteProfile.
+            type: string
+          operatingSystem:
+            description: Sets the operating system of this SatelliteProfile, e.g. sros.
+            enum:
+              - srl
+              - sros
+              - eos
+              - sonic
+              - ios-xr
+              - nxos
+            type: string
+          platformPath:
+            description: JSPath to use for retrieving the version string from Satellite Nodes referencing this SatelliteProfile, e.g. .platform.chassis.type.
+            type: string
+          serialNumberPath:
+            description: JSPath to use for retrieving the serial number string from Satellite Nodes referencing this SatelliteProfile, e.g. .platform.chassis.serial-number.
+            type: string
+          version:
+            description: Sets the software version of this SatelliteProfile, e.g. 24.7.r1 (for sros).
+            type: string
+          versionMatch:
+            description: Regular expression to match the node-retrieved version string to Satellite Node version, e.g. v0\.0\.0.*.
+            type: string
+          versionPath:
+            description: JSPath to use for retrieving the version string from Satellite Nodes referencing this SatelliteProfile, e.g. .system.information.version.
+            type: string
+        required:
+          - operatingSystem
+          - version
+        type: object
+      status:
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

@@ -255,6 +255,7 @@ schema:
                       description: DHCPv6 option to return to the TopoNode.
                       enum:
                         - 59-BootfileUrl
+                        - 56-NTPServers
                       type: string
                     value:
                       description: Value to return to the TopoNode for the specified option.
@@ -323,7 +324,6 @@ schema:
               - sonic
               - ios-xr
               - nxos
-              - linux
             type: string
           platformPath:
             description: JSPath to use for retrieving the version string from TopoNodes referencing this NodeProfile, e.g. .platform.chassis.type.

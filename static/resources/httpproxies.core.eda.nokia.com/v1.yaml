@@ -39,6 +39,26 @@ schema:
           rootUrl:
             description: The proxy destination, including the protocol.
             type: string
+          signatureHeaderVerification:
+            description: SignatureHeaderVerification, when set, requires incoming requests to include a valid HMAC in the given header.
+            properties:
+              algorithm:
+                description: Algorithm is the HMAC algorithm used to verify the signature.
+                enum:
+                  - HMAC-SHA256
+                  - HMAC-SHA1
+                type: string
+              header:
+                description: Header is the HTTP header name that must carry the HMAC value (e.g. X-Webhook-Signature).
+                type: string
+              keySecret:
+                description: KeySecret is the name of the Kubernetes secret (in the pod namespace) whose "key" data entry holds the HMAC key.
+                type: string
+            required:
+              - algorithm
+              - header
+              - keySecret
+            type: object
         required:
           - authType
           - rootUrl

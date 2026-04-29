@@ -1,0 +1,76 @@
+name: v2
+schema:
+  openAPIV3Schema:
+    description: VmwarePluginInstance is the Schema for the vmwareplugininstances API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: VmwarePluginInstanceSpec defines the desired state of VmwarePluginInstance
+        properties:
+          authSecretRef:
+            description: The name of a secret containing 'username' and 'password' keys to authenticate to vSphere.
+            type: string
+          externalId:
+            description: The external ID of the plugin, used to identify the ConnectPlugin instance created when starting this Plugin Instance.
+            type: string
+          heartbeatIntervalSeconds:
+            default: 10
+            description: The time interval in seconds between successive heartbeats.
+            type: integer
+          name:
+            description: The name of the plugin.
+            type: string
+          operationalMode:
+            default: Unrestricted
+            description: Restricts the plugin to Connect-managed, EDA-managed, or unrestricted networking.
+            enum:
+              - ConnectManagedOnly
+              - EDAManagedOnly
+              - Unrestricted
+            type: string
+          pluginNamespace:
+            description: The namespace for the Plugin resources.
+            type: string
+          vcsaCertificate:
+            description: Optional certificate string to use to verify the server identity.
+            type: string
+          vcsaHost:
+            description: The URL to the VCSA, without scheme.
+            type: string
+          vcsaTlsVerify:
+            default: true
+            description: Whether the client will verify the server's certificate.
+            type: boolean
+        required:
+          - authSecretRef
+          - externalId
+          - heartbeatIntervalSeconds
+          - name
+          - operationalMode
+          - vcsaHost
+          - vcsaTlsVerify
+        type: object
+      status:
+        description: VmwarePluginInstanceStatus defines the observed state of VmwarePluginInstance
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

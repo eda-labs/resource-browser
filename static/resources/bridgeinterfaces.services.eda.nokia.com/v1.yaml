@@ -5,6 +5,8 @@ additionalPrinterColumns:
   - jsonPath: .status.lastChange
     name: LastChange
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -190,9 +192,50 @@ schema:
                 - nodeInterface
               type: object
             type: array
+          uplinks:
+            description: Uplinks status within the BridgeInterface.
+            items:
+              properties:
+                enabled:
+                  description: The administrative status of the SubInterface.
+                  type: boolean
+                interface:
+                  description: Normalized interface name.
+                  type: string
+                interfaceResource:
+                  description: Eda interface resource.
+                  type: string
+                lastChange:
+                  description: Indicates when this SubInterface last changed state.
+                  type: string
+                node:
+                  description: Reference to Node object.
+                  type: string
+                nodeInterface:
+                  description: Node specific interface name.
+                  type: string
+                operatingSystem:
+                  description: Operating System of the Node.
+                  type: string
+                operationalState:
+                  description: Indicates the current operational state of the SubInterface.
+                  type: string
+                subInterfaceIndex:
+                  description: Index allocated to the subinterface on the associated interface for the given VLAN.
+                  type: integer
+                vlanID:
+                  description: vlan assigned to this subinterface.
+                  type: string
+              required:
+                - interface
+                - interfaceResource
+                - node
+                - nodeInterface
+              type: object
+            type: array
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

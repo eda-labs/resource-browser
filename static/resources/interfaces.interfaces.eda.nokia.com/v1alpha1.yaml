@@ -14,6 +14,8 @@ additionalPrinterColumns:
   - jsonPath: .metadata.creationTimestamp
     name: Age
     type: date
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
@@ -205,6 +207,7 @@ schema:
             description: LAG configuration options.
             properties:
               lacp:
+                description: LACP properties. This section is only applicable if the LAG type is set to LACP.
                 properties:
                   adminKey:
                     description: Configure the LACP admin-key to be advertised by the local system.
@@ -258,6 +261,7 @@ schema:
                 minimum: 1
                 type: integer
               multihoming:
+                description: Multi-homing properties.
                 properties:
                   esi:
                     default: auto
@@ -275,7 +279,7 @@ schema:
                       - port-active
                     type: string
                   preferredActiveNode:
-                    description: To be used in single-active or port-active modes.  This references the Node object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value.  All other Nodes have a lower value configured.
+                    description: When configured with a reference to the Node object and the Highest-Preference DF election algorightm is used, the selected Node is set with a higher preference value.  All other Nodes have a lower value configured.
                     type: string
                   reloadDelayTimer:
                     default: 100
@@ -285,7 +289,7 @@ schema:
                     type: integer
                   revertive:
                     default: false
-                    description: To be used in single-active or port-active modes.  When true, if there is a switch of active interface in the LAG and the original interface comes back up, the LAG will switch back to using the original interface as active. [default=false]
+                    description: Enables revertive DF election behavior with Preference-Based Election mode. [default=false]
                     type: boolean
                 type: object
               type:
@@ -357,8 +361,10 @@ schema:
           lag:
             properties:
               adminKey:
+                description: LACP Admin Key.
                 type: integer
               systemIdMac:
+                description: LACP System ID MAC address.
                 type: string
             type: object
           lastChange:
@@ -414,6 +420,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

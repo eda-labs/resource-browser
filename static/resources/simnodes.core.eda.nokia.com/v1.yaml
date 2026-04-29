@@ -64,14 +64,35 @@ schema:
                   - IPv6
                 type: string
             type: object
+          gatewayAddress:
+            description: Gateway address for the node, used for routing traffic to and from the node
+            properties:
+              ipv4:
+                description: The IPv4 production address
+                type: string
+              ipv6:
+                description: The IPv6 production address
+                type: string
+            type: object
           imagePullSecret:
             description: Secret used to authenticate to the container registry where the container image is hosted
             type: string
           license:
-            description: Reference to a URL path hosting the license for the TopoNode.
+            description: ConfigMap containing a license for the SimNode.
             type: string
           operatingSystem:
-            description: Operational operating system running on this TopoNode, e.g. srl, sros, nxos, eos
+            description: Operational operating system running on this SimNode, e.g. srl, sros, nxos, eos
+            enum:
+              - srl
+              - sros
+              - eos
+              - sonic
+              - ios-xr
+              - nxos
+              - testman
+              - siren
+              - linux
+              - srltest
             type: string
           platform:
             description: Operational platform type of this TopoNode, e.g. 7220 IXR-D3L
@@ -95,6 +116,155 @@ schema:
                 description: The IPv6 production address
                 type: string
             type: object
+          satelliteNodes:
+            description: |-
+              List of satellite nodes associated with this SimNode.
+              Used to define the type and configuration of satellite nodes.
+            items:
+              description: SimSatelliteNode is a SatelliteNode with simulation-only fields.
+              properties:
+                components:
+                  description: Components for the satellite node.
+                  items:
+                    properties:
+                      kind:
+                        description: The kind of Component, e.g. lineCard.
+                        enum:
+                          - controlCard
+                          - lineCard
+                          - fabric
+                          - mda
+                          - connector
+                          - xiom
+                          - powerShelf
+                          - powerModule
+                        type: string
+                      slot:
+                        description: |-
+                          The slot this Component resides in, unset for Components that do not have a slot or ID.
+                          e.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.
+                        type: string
+                      type:
+                        description: Denotes the type of hardware being provisioned, e.g. xcm-x20.
+                        type: string
+                    required:
+                      - kind
+                      - type
+                    type: object
+                  type: array
+                containerImage:
+                  description: Reference URL to the container image for this simulated satellite.
+                  type: string
+                id:
+                  description: ID of the satellite node.
+                  type: string
+                imagePullSecret:
+                  description: Secret used to authenticate to the container registry where the container image is hosted.
+                  type: string
+                license:
+                  description: ConfigMap containing a license for this satellite node.
+                  type: string
+                macAddress:
+                  description: ' MAC Address of the satellite node.'
+                  type: string
+                operatingSystem:
+                  description: Operating system for this satellite node.
+                  enum:
+                    - srl
+                    - sros
+                    - eos
+                    - sonic
+                    - ios-xr
+                    - nxos
+                  type: string
+                platform:
+                  description: Platform of the satellite node.
+                  type: string
+                portTemplate:
+                  description: Port template to be used for the satellite node.
+                  properties:
+                    connectors:
+                      description: |-
+                        List of connector components within the SatellitePortTemplate.
+                        Used to define the type and location of connectors.
+                      items:
+                        properties:
+                          kind:
+                            description: The kind of Component, e.g. lineCard.
+                            enum:
+                              - controlCard
+                              - lineCard
+                              - fabric
+                              - mda
+                              - connector
+                              - xiom
+                              - powerShelf
+                              - powerModule
+                            type: string
+                          slot:
+                            description: |-
+                              The slot this Component resides in, unset for Components that do not have a slot or ID.
+                              e.g. 1 would denote the linecard slot 1, 1/1 would denote linecard slot 1 mda slot 1.
+                            type: string
+                          type:
+                            description: Denotes the type of hardware being provisioned, e.g. xcm-x20.
+                            type: string
+                        required:
+                          - kind
+                          - type
+                        type: object
+                      type: array
+                    name:
+                      description: The name of the SatellitePortTemplate.
+                      type: string
+                    uplinks:
+                      description: Uplinks for the SatellitePortTemplate.
+                      items:
+                        properties:
+                          downlinks:
+                            description: Downlinks for the SatelliteUplink.
+                            items:
+                              type: string
+                            type: array
+                          name:
+                            description: The name of the SatelliteUplink.
+                            type: string
+                        required:
+                          - name
+                        type: object
+                      type: array
+                  required:
+                    - name
+                  type: object
+                satelliteProfile:
+                  description: Satellite node profile to be used for the satellite node.
+                  type: string
+                type:
+                  description: Type of the satellite node.
+                  type: string
+                uplinkInterfaces:
+                  description: Uplink interfaces to be created for the satellite node.
+                  items:
+                    properties:
+                      hostPort:
+                        description: HostPort interface of the satellite uplink.
+                        type: string
+                      satellite:
+                        description: Satellite interface of the satellite uplink.
+                        type: string
+                    required:
+                      - hostPort
+                      - satellite
+                    type: object
+                  type: array
+                version:
+                  description: Software version for this satellite node.
+                  type: string
+              required:
+                - id
+                - type
+              type: object
+            type: array
           serialNumberPath:
             description: JSPath to use for retrieving the serial number string from nodes matching this NodeProfile
             type: string
