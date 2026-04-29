@@ -1,0 +1,138 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Provider defines a provider for LLM models
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: ProviderSpec defines the desired state of Provider
+        properties:
+          endpoint:
+            description: The provider endpoint
+            properties:
+              apiKey:
+                description: The provider API key
+                type: string
+              description:
+                description: The endpoint description
+                type: string
+              headers:
+                description: Additional headers to be included in the request
+                items:
+                  properties:
+                    name:
+                      description: Header name
+                      type: string
+                    value:
+                      description: Header value
+                      type: string
+                  type: object
+                type: array
+              url:
+                description: The endpoint URL
+                type: string
+            required:
+              - apiKey
+            type: object
+          models:
+            description: The models supported by the provider
+            items:
+              properties:
+                description:
+                  description: Model description
+                  type: string
+                name:
+                  description: Model name
+                  type: string
+                priority:
+                  description: |-
+                    Priority sets the request scheduling priority.
+                    Valid for OpenAI models only. Maps to the service_tier API field (lowercased).
+                  enum:
+                    - Auto
+                    - Default
+                    - Flex
+                    - Priority
+                  type: string
+                reasoningLevel:
+                  description: Model reasoning level
+                  items:
+                    type: string
+                  type: array
+                supportNestedResponses:
+                  default: false
+                  description: SupportNestedResponses controls whether the model's output supports nested responses
+                  type: boolean
+                temperature:
+                  description: Temperature controls how random vs deterministic the model's output is
+                  type: string
+                type:
+                  default: Responses
+                  description: API type
+                  enum:
+                    - Embeddings
+                    - Responses
+                    - Chat/Completions
+                  type: string
+                usage:
+                  description: Model intended use
+                  items:
+                    type: string
+                  type: array
+              required:
+                - name
+                - type
+              type: object
+            type: array
+          title:
+            description: A human friendly title for the provider
+            type: string
+        required:
+          - endpoint
+          - models
+        type: object
+      status:
+        description: ProviderStatus defines the observed state of Provider
+        properties:
+          connected:
+            description: Whether the provider is connected
+            type: boolean
+          error:
+            description: Error message if the provider is not connected
+            type: string
+          lastChecked:
+            description: Last checked time
+            format: date-time
+            type: string
+          supportedModels:
+            description: Supported models
+            items:
+              type: string
+            type: array
+        required:
+          - connected
+          - error
+          - lastChecked
+          - supportedModels
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

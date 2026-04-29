@@ -1,7 +1,9 @@
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
-    description: ConnectPluginHeartbeat is the Schema for the connectpluginheartbeats API.
+    description: ConnectPluginHeartbeat is the Schema for the connectpluginheartbeats API
     properties:
       apiVersion:
         description: |-
@@ -21,7 +23,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: ConnectPluginHeartbeatSpec defines the desired state of ConnectPluginHeartbeat.
+        description: ConnectPluginHeartbeatSpec defines the desired state of ConnectPluginHeartbeat
         properties:
           lastHeartbeat:
             description: LastHeartbeat tracks when the last heartbeat was received for the plugin referenced by PluginID
@@ -31,7 +33,7 @@ schema:
           - lastHeartbeat
         type: object
       status:
-        description: ConnectPluginHeartbeatStatus defines the observed state of ConnectPluginHeartbeat.
+        description: ConnectPluginHeartbeatStatus defines the observed state of ConnectPluginHeartbeat
         properties:
           pendingActionables:
             description: PendingActionables is a list of actionables that still need to be processed by the plugin.
@@ -42,7 +44,7 @@ schema:
                 pluginUuid:
                   type: string
                 spec:
-                  description: ConnectPluginActionableSpec defines the desired state of ConnectPluginActionable.
+                  description: ConnectPluginActionableSpec defines the desired state of ConnectPluginActionable
                   properties:
                     attributes:
                       additionalProperties:
@@ -60,6 +62,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

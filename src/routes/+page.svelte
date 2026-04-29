@@ -3,6 +3,7 @@
 
 	import Footer from '$lib/components/Footer.svelte';
 
+	import { newestApiVersion } from '$lib/apiVersion';
 	import type { CrdVersionsMap } from '$lib/structure';
 
 	import yaml from 'js-yaml';
@@ -69,7 +70,9 @@
 					<ul>
 						{#each $resourceSearchFilter as resource, i}
 							{@const resDef = $crdMetaStore.filter((x) => x.name == resource)[0]}
-							{@const targetVersion = resDef.versions.map((x) => x.name)[0]}
+							{@const targetVersion = newestApiVersion(
+								resDef.versions.map((x) => x.name)
+							)}
 							<li
 								class="text-gray-900 hover:bg-gray-200 {i > 0
 									? 'border-t border-gray-300 dark:border-gray-600'

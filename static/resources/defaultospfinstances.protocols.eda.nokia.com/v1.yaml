@@ -5,6 +5,8 @@ additionalPrinterColumns:
   - jsonPath: .status.operationalState
     name: Operational State
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -65,6 +67,7 @@ schema:
             description: Configures OSPF timers.
             properties:
               lsaTimers:
+                description: LSA Timers configuration.
                 properties:
                   accumulateMs:
                     description: Delay (in milliseconds) to gather LSAs before advertising to neighbors
@@ -88,6 +91,7 @@ schema:
                     type: integer
                 type: object
               spfTimers:
+                description: SPF Timers configuration.
                 properties:
                   holdIntervalMs:
                     description: Hold interval for subsequent SPF calculations.
@@ -135,6 +139,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

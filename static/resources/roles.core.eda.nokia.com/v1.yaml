@@ -46,6 +46,7 @@ schema:
                   enum:
                     - none
                     - read
+                    - readPropose
                     - readWrite
                   type: string
                 resources:

@@ -1,0 +1,115 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: MCPToolDefinition defines Tool definitions for MCP
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: MCPToolDefinitionSpec defines the desired state of ToolDefinition
+        properties:
+          description:
+            description: A brief description of the resource
+            type: string
+          inputSchema:
+            description: Input schema for the tool (JSONSchema)
+            type: string
+          outputSchema:
+            description: Output schema for the tool (JSONSchema)
+            type: string
+          provider:
+            description: The resource provider configuration
+            properties:
+              http:
+                description: HTTP provider configuration
+                properties:
+                  headers:
+                    description: HTTP headers
+                    items:
+                      properties:
+                        name:
+                          description: Header name
+                          type: string
+                        value:
+                          description: Header value
+                          type: string
+                      type: object
+                    type: array
+                  includeEDAAuth:
+                    description: |-
+                      Indicates if the EDA authorization token should be passed along with this http request.
+                      Should be set to true for requests to EDA API server.
+                    type: boolean
+                  method:
+                    default: GET
+                    description: HTTP method
+                    enum:
+                      - GET
+                      - POST
+                      - PUT
+                      - DELETE
+                      - PATCH
+                      - OPTIONS
+                      - HEAD
+                    type: string
+                  timeoutSeconds:
+                    default: 30
+                    description: |-
+                      HTTP request timeout in seconds
+                      Default 30 seconds
+                    type: integer
+                  trustBundle:
+                    description: |-
+                      TrustBundle for TLS authentication, a reference to a ConfigMap.
+                      If not specified, the system default trust bundle will be used.
+                    type: string
+                  url:
+                    description: |-
+                      HTTP endpoint URL.
+                      Includes scheme, host, port and path.
+                    type: string
+                type: object
+              query:
+                description: Query provider configuration
+                properties:
+                  expression:
+                    description: EQL expression string
+                    type: string
+                type: object
+              workflowRef:
+                description: WorkflowDefinition name to use for the tool
+                type: string
+            type: object
+            x-kubernetes-validations:
+              - message: exactly one of the fields in [workflowRef query http] must be set
+                rule: '[has(self.workflowRef),has(self.query),has(self.http)].filter(x,x==true).size() == 1'
+          title:
+            description: A human friendly title for the tool
+            type: string
+        required:
+          - provider
+          - title
+        type: object
+      status:
+        description: MCPToolDefinitionStatus defines the observed state of ToolDefinition
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

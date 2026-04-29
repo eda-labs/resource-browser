@@ -1,7 +1,16 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.connectPluginName
+    name: Plugin
+    type: string
+  - jsonPath: .spec.finished
+    name: Finished
+    type: boolean
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
-    description: ConnectAudit is the Schema for the connectaudits API.
+    description: ConnectAudit is the Schema for the connectaudits API
     properties:
       apiVersion:
         description: |-
@@ -21,7 +30,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: ConnectAuditSpec defines the desired state of ConnectAudit.
+        description: ConnectAuditSpec defines the desired state of ConnectAudit
         properties:
           connectPluginName:
             description: ConnectPluginName refers to the ConnectPlugin being audited.
@@ -33,6 +42,8 @@ schema:
             description: |-
               Scope indicates the scope of the ConnectAudit.
               Currently supported scopes: PLUGIN
+            enum:
+              - PLUGIN
             type: string
         required:
           - connectPluginName
@@ -40,7 +51,7 @@ schema:
           - scope
         type: object
       status:
-        description: ConnectAuditStatus defines the observed state of ConnectAudit.
+        description: ConnectAuditStatus defines the observed state of ConnectAudit
         properties:
           endTime:
             description: EndTime is when the ConnectAudit reaches a completed State.
@@ -134,6 +145,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

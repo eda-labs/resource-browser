@@ -5,6 +5,7 @@
 	import Theme from '$lib/components/Theme.svelte';
 	import Render from '$lib/components/Render.svelte';
 
+	import { sortApiVersionsNewestFirst } from '$lib/apiVersion';
 	import type { OpenAPISchema, Schema, VersionSchema } from '$lib/structure';
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
 
@@ -38,7 +39,7 @@
 				};
 			});
 
-			validVersions = Object.keys(versions);
+			validVersions = sortApiVersionsNewestFirst(Object.keys(versions));
 			versionOnFocus = validVersions[0];
 			spec = versions[versionOnFocus].spec;
 			status = versions[versionOnFocus].status;

@@ -5,6 +5,8 @@ additionalPrinterColumns:
   - jsonPath: .status.operationalState
     name: Operational State
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
@@ -50,6 +52,7 @@ schema:
                 description: Remote destination IP address.  When a remote destination is used for the mirror, the destinationIP is mandatory.
                 type: string
               encapsulation:
+                description: Encapsulation to use when sending mirrored traffic to a remote destination.
                 enum:
                   - L2OGRE
                   - L3OGRE
@@ -72,6 +75,7 @@ schema:
                   - IngressEgress
                 type: string
               filters:
+                description: IP Filters to select specific traffic to be mirrored.  Traffic matching any of the specified filters will be mirrored.
                 items:
                   properties:
                     filter:
@@ -85,6 +89,7 @@ schema:
                                 description: Description of the FilterEntry.
                                 type: string
                               ipEntry:
+                                description: IP Entry criteria and actions.
                                 properties:
                                   action:
                                     description: An action to take, either 'Accept','Drop', or 'RateLimit'.
@@ -659,6 +664,7 @@ schema:
                     type: array
                 type: object
               subinterfaces:
+                description: Subinterfaces (VLANs, BridgeInterfaces, or Interface subinterfaces) to be mirrored. Traffic from all specified subinterfaces will be mirrored.
                 properties:
                   bridgeInterfaces:
                     description: List of BridgeInterfaces, all traffic from all BridgeInterfaces in the list will be used as sources to be mirrored. A combination of VLANs, BridgeInterfaces and subinterfaces can be configured as sources together.
@@ -763,6 +769,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

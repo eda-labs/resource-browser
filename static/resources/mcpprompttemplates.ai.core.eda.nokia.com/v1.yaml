@@ -1,0 +1,87 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: MCPPromptTemplate is the resource to define prompt templates for MCP
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: MCPPromptTemplateSpec defines the desired state of PromptTemplate
+        properties:
+          arguments:
+            description: List of arguments for the prompt
+            items:
+              properties:
+                description:
+                  description: A brief description of the argument
+                  type: string
+                name:
+                  description: Argument name to be used in the prompt template
+                  type: string
+                required:
+                  description: Whether the argument is required
+                  type: boolean
+                title:
+                  description: A human friendly title for the argument
+                  type: string
+              type: object
+            type: array
+          content:
+            description: The prompt template with placeholders for arguments in {{argName}} format.
+            items:
+              properties:
+                resource:
+                  description: Resource content
+                  properties:
+                    uri:
+                      description: The resource URI
+                      type: string
+                  type: object
+                text:
+                  description: Text content
+                  properties:
+                    template:
+                      description: The text content template
+                      type: string
+                  type: object
+                type:
+                  description: The content type
+                  enum:
+                    - text
+                    - resource
+                  type: string
+              type: object
+            type: array
+          description:
+            description: A brief description of the prompt
+            type: string
+          title:
+            description: A human friendly title for the prompt
+            type: string
+        required:
+          - content
+          - title
+        type: object
+      status:
+        description: MCPPromptTemplateStatus defines the observed state of PromptTemplate
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

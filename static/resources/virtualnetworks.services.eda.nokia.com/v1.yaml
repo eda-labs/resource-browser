@@ -5,6 +5,8 @@ additionalPrinterColumns:
   - jsonPath: .status.lastChange
     name: LastChange
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -458,16 +460,17 @@ schema:
                           type: array
                       type: object
                     ipAddresses:
+                      description: Configures IP addresses on the IRBInterface.
                       items:
                         properties:
                           ipv4Address:
                             description: IPv4 address in IP/mask form, e.g., 192.168.0.1/24.
                             properties:
                               ipPrefix:
-                                description: Address and mask to use
+                                description: IP Address and prefix length in CIDR notation.
                                 type: string
                               primary:
-                                description: Indicates which address to use as primary for broadcast
+                                description: Indicates which address to use as primary.
                                 type: boolean
                             required:
                               - ipPrefix
@@ -476,10 +479,10 @@ schema:
                             description: IPv6 address in IP/mask form, e.g., fc00::1/120.
                             properties:
                               ipPrefix:
-                                description: Address and mask to use
+                                description: IP Address and prefix length in CIDR notation.
                                 type: string
                               primary:
-                                description: Indicates which address to use as primary for broadcast
+                                description: Indicates which address to use as primary.
                                 type: boolean
                             required:
                               - ipPrefix
@@ -1424,6 +1427,7 @@ schema:
                           description: Configures OSPF timers.
                           properties:
                             lsaTimers:
+                              description: LSA Timers configuration.
                               properties:
                                 accumulateMs:
                                   description: Delay (in milliseconds) to gather LSAs before advertising to neighbors
@@ -1447,6 +1451,7 @@ schema:
                                   type: integer
                               type: object
                             spfTimers:
+                              description: SPF Timers configuration.
                               properties:
                                 holdIntervalMs:
                                   description: Hold interval for subsequent SPF calculations.
@@ -1508,10 +1513,20 @@ schema:
                                   properties:
                                     asPathPrepend:
                                       description: AS number to prepend to the AS Path attributes.
-                                      format: int32
-                                      maximum: 4294967295
-                                      minimum: 1
-                                      type: integer
+                                      properties:
+                                        asn:
+                                          description: AS number to prepend to the AS Path attributes. Can be an integer value or the keyword `Auto`.
+                                          pattern: ^Auto$|^\d+$
+                                          type: string
+                                        count:
+                                          description: Number of times to prepend the AS number.
+                                          format: int32
+                                          maximum: 50
+                                          minimum: 1
+                                          type: integer
+                                      required:
+                                        - asn
+                                      type: object
                                     asPathRemove:
                                       description: Clear the AS path to make it empty.
                                       type: boolean
@@ -1521,34 +1536,28 @@ schema:
                                         format: int32
                                         type: integer
                                       type: array
-                                    communitySet:
+                                    communities:
                                       description: Modify BGP communities associated with the route using hybrid Community Sets.
                                       properties:
-                                        add:
+                                        addSets:
                                           description: List of community sets to add to the route.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
-                                        remove:
+                                        removeSets:
                                           description: List of community sets to remove from the route.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
-                                        replace:
+                                        replaceSets:
                                           description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
                                       type: object
-                                    localPreference:
-                                      description: Set a new LOCAL_PREF value for matching BGP routes.
-                                      format: int32
-                                      maximum: 4294967295
-                                      minimum: 0
-                                      type: integer
                                     med:
                                       description: Set a new MED value.
                                       properties:
@@ -1571,6 +1580,26 @@ schema:
                                             - IGP
                                           type: string
                                       type: object
+                                    nextHop:
+                                      description: Override the BGP next-hop attribute.
+                                      properties:
+                                        address:
+                                          description: IP Address of the next hop. Only valid when NextHopType is set to FixedIP.
+                                          type: string
+                                        type:
+                                          description: Set next-hop to either a fixed IP address or to a local IP address of the device using a `Self` or `PeerIP` keyword.
+                                          enum:
+                                            - FixedIP
+                                            - Self
+                                            - PeerIP
+                                          type: string
+                                      type: object
+                                    setLocalPreference:
+                                      description: Set a new LOCAL_PREF value for matching BGP routes.
+                                      format: int32
+                                      maximum: 4294967295
+                                      minimum: 0
+                                      type: integer
                                     setOrigin:
                                       description: Set a new ORIGIN attribute for matching BGP routes.
                                       enum:
@@ -1582,20 +1611,20 @@ schema:
                                 policyResult:
                                   description: Final disposition for the route.
                                   enum:
-                                    - accept
-                                    - reject
+                                    - Accept
+                                    - Reject
                                     - NextPolicy
                                     - NextStatement
                                   type: string
                                 tags:
                                   description: Manipulate internal route tags associated with the route.
                                   properties:
-                                    tagSet:
+                                    applyTagSet:
                                       description: Add tags to the route from the referenced Tag Set.
                                       type: string
                                   type: object
                               type: object
-                            statement:
+                            statements:
                               description: List of policy statements.
                               items:
                                 properties:
@@ -1607,10 +1636,20 @@ schema:
                                         properties:
                                           asPathPrepend:
                                             description: AS number to prepend to the AS Path attributes.
-                                            format: int32
-                                            maximum: 4294967295
-                                            minimum: 1
-                                            type: integer
+                                            properties:
+                                              asn:
+                                                description: AS number to prepend to the AS Path attributes. Can be an integer value or the keyword `Auto`.
+                                                pattern: ^Auto$|^\d+$
+                                                type: string
+                                              count:
+                                                description: Number of times to prepend the AS number.
+                                                format: int32
+                                                maximum: 50
+                                                minimum: 1
+                                                type: integer
+                                            required:
+                                              - asn
+                                            type: object
                                           asPathRemove:
                                             description: Clear the AS path to make it empty.
                                             type: boolean
@@ -1620,34 +1659,28 @@ schema:
                                               format: int32
                                               type: integer
                                             type: array
-                                          communitySet:
+                                          communities:
                                             description: Modify BGP communities associated with the route using hybrid Community Sets.
                                             properties:
-                                              add:
+                                              addSets:
                                                 description: List of community sets to add to the route.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
-                                              remove:
+                                              removeSets:
                                                 description: List of community sets to remove from the route.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
-                                              replace:
+                                              replaceSets:
                                                 description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
                                             type: object
-                                          localPreference:
-                                            description: Set a new LOCAL_PREF value for matching BGP routes.
-                                            format: int32
-                                            maximum: 4294967295
-                                            minimum: 0
-                                            type: integer
                                           med:
                                             description: Set a new MED value.
                                             properties:
@@ -1670,6 +1703,26 @@ schema:
                                                   - IGP
                                                 type: string
                                             type: object
+                                          nextHop:
+                                            description: Override the BGP next-hop attribute.
+                                            properties:
+                                              address:
+                                                description: IP Address of the next hop. Only valid when NextHopType is set to FixedIP.
+                                                type: string
+                                              type:
+                                                description: Set next-hop to either a fixed IP address or to a local IP address of the device using a `Self` or `PeerIP` keyword.
+                                                enum:
+                                                  - FixedIP
+                                                  - Self
+                                                  - PeerIP
+                                                type: string
+                                            type: object
+                                          setLocalPreference:
+                                            description: Set a new LOCAL_PREF value for matching BGP routes.
+                                            format: int32
+                                            maximum: 4294967295
+                                            minimum: 0
+                                            type: integer
                                           setOrigin:
                                             description: Set a new ORIGIN attribute for matching BGP routes.
                                             enum:
@@ -1681,15 +1734,15 @@ schema:
                                       policyResult:
                                         description: Final disposition for the route.
                                         enum:
-                                          - accept
-                                          - reject
+                                          - Accept
+                                          - Reject
                                           - NextPolicy
                                           - NextStatement
                                         type: string
                                       tags:
                                         description: Manipulate internal route tags associated with the route.
                                         properties:
-                                          tagSet:
+                                          applyTagSet:
                                             description: Add tags to the route from the referenced Tag Set.
                                             type: string
                                         type: object
@@ -1720,15 +1773,20 @@ schema:
                                           communitySet:
                                             description: Match conditions for BGP communities.
                                             type: string
-                                          evpnRouteType:
+                                          evpnRouteTypes:
                                             description: Match conditions for EVPN route types.
                                             items:
                                               type: integer
                                             type: array
                                         type: object
-                                      family:
+                                      families:
                                         description: Address families that the route belongs to.
                                         items:
+                                          enum:
+                                            - IPv4
+                                            - IPv6
+                                            - EVPN
+                                            - RTC
                                           type: string
                                         type: array
                                       prefixSet:
@@ -1737,23 +1795,21 @@ schema:
                                       protocol:
                                         description: The route protocol type to match.
                                         enum:
-                                          - AGGREGATE
+                                          - Aggregate
                                           - ARP_ND
                                           - BGP
                                           - BGP_EVPN
+                                          - BGP_IPVPN
+                                          - BGP_VPN
                                           - BGP_EVPN_IFF
-                                          - BGP_EVPN_IFL_HOST
+                                          - BGP_EVPN_IFL_Host
                                           - DHCP
-                                          - GRIBI
-                                          - HOST
+                                          - Host
                                           - ISIS
-                                          - LOCAL
-                                          - LINUX
-                                          - NDK1
-                                          - NDK2
-                                          - OSPFV2
-                                          - OSPFV3
-                                          - STATIC
+                                          - Local
+                                          - OSPFv2
+                                          - OSPFv3
+                                          - Static
                                         type: string
                                       tags:
                                         description: Match based on the internal route tags associated with the route.
@@ -1791,7 +1847,7 @@ schema:
                             configuredName:
                               description: The name of the prefixset to configure on the device.
                               type: string
-                            prefix:
+                            prefixes:
                               description: List of IPv4 or IPv6 prefixes in CIDR notation.
                               items:
                                 properties:
@@ -1816,7 +1872,7 @@ schema:
                                 type: object
                               type: array
                           required:
-                            - prefix
+                            - prefixes
                           type: object
                       required:
                         - name
@@ -2068,16 +2124,17 @@ schema:
                       items:
                         properties:
                           ipPrefix:
-                            description: Address and mask to use
+                            description: IP Address and prefix length in CIDR notation.
                             type: string
                           primary:
-                            description: Indicates which address to use as primary for broadcast
+                            description: Indicates which address to use as primary.
                             type: boolean
                         required:
                           - ipPrefix
                         type: object
                       type: array
                     ipv4Parameters:
+                      description: Configures parameters specific to IPv4 address family on the interface.
                       properties:
                         directedBroadcast:
                           description: Allow receiving and forwarding of directed broadcast packets. Enabled when set to true.
@@ -2088,10 +2145,10 @@ schema:
                       items:
                         properties:
                           ipPrefix:
-                            description: Address and mask to use
+                            description: IP Address and prefix length in CIDR notation.
                             type: string
                           primary:
-                            description: Indicates which address to use as primary for broadcast
+                            description: Indicates which address to use as primary.
                             type: boolean
                         required:
                           - ipPrefix
@@ -2403,7 +2460,7 @@ schema:
                       minimum: 1
                       type: integer
                     evi:
-                      description: EVI for the Router; leave blank for auto-allocation from EVI pool.
+                      description: EVI for the Router; leave blank for auto-allocation from EVI pool. Optional for IPVPN (can be used to auto-derive RTs), required for EVPN.
                       maximum: 65535
                       minimum: 1
                       type: integer
@@ -2468,23 +2525,23 @@ schema:
                       type: string
                     tunnelIndexPool:
                       default: tunnel-index-pool
-                      description: Reference to tunnel index allocation pool.
+                      description: Reference to tunnel index allocation pool. Only applicable to VXLAN encapsulation.
                       type: string
                     type:
                       default: EVPNVXLAN
-                      description: Select the type of Router.  Simple doesn't include any overlay control plane or dataplane properties (EVPN/VXLAN). EVPNVXLAN includes the properties needed to provision this Router over an IP Fabric.
+                      description: Select the type of Router. Simple doesn't include any overlay control plane or dataplane properties (such as EVPN/VXLAN). EVPNVXLAN includes the properties needed to provision this Router over an IP Fabric.
                       enum:
                         - SIMPLE
                         - EVPNVXLAN
                       type: string
                     vni:
-                      description: VNI for the Router; leave blank for auto-allocation from VNI pool.
+                      description: VNI for the Router; leave blank for auto-allocation from VNI pool. Only applicable to VXLAN encapsulation.
                       maximum: 16777215
                       minimum: 1
                       type: integer
                     vniPool:
                       default: vni-pool
-                      description: Reference to VNI pool for auto-allocation.
+                      description: Reference to VNI pool for auto-allocation. Only applicable to VXLAN encapsulation.
                       type: string
                   type: object
               required:
@@ -2682,6 +2739,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

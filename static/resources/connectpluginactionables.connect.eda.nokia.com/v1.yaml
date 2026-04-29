@@ -1,7 +1,16 @@
+additionalPrinterColumns:
+  - jsonPath: .spec.verb
+    name: Verb
+    type: string
+  - jsonPath: .metadata.labels.connect\.eda\.nokia\.com/plugin-name
+    name: Plugin
+    type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
-    description: ConnectPluginActionable is the Schema for the connectpluginactionables API.
+    description: ConnectPluginActionable is the Schema for the connectpluginactionables API
     properties:
       apiVersion:
         description: |-
@@ -21,7 +30,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: ConnectPluginActionableSpec defines the desired state of ConnectPluginActionable.
+        description: ConnectPluginActionableSpec defines the desired state of ConnectPluginActionable
         properties:
           attributes:
             additionalProperties:
@@ -35,10 +44,10 @@ schema:
           - verb
         type: object
       status:
-        description: ConnectPluginActionableStatus defines the observed state of ConnectPluginActionable.
+        description: ConnectPluginActionableStatus defines the observed state of ConnectPluginActionable
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

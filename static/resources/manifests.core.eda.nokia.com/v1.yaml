@@ -193,6 +193,9 @@ schema:
                         category:
                           description: Category in which to present this resource, these groups exist in the UI navigation menu
                           type: string
+                        icon:
+                          description: Icon to use with this resource
+                          type: string
                         name:
                           description: Name to use within the category to present this resource
                           type: string
@@ -226,6 +229,15 @@ schema:
                   required:
                     - schema
                     - table
+                  type: object
+                i18n:
+                  description: Definition of i18n provided in this component
+                  properties:
+                    path:
+                      description: Relative path in the local application repository
+                      type: string
+                  required:
+                    - path
                   type: object
                 panel:
                   description: Definition of a UI panel provided in this component
@@ -276,6 +288,9 @@ schema:
                       properties:
                         category:
                           description: Category in which to present this resource, these groups exist in the UI navigation menu
+                          type: string
+                        icon:
+                          description: Icon to use with this resource
                           type: string
                         name:
                           description: Name to use within the category to present this resource

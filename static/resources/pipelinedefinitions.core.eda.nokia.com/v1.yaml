@@ -1,0 +1,362 @@
+additionalPrinterColumns:
+  - description: Whether the pipeline definition is valid or not
+    jsonPath: .status.valid
+    name: Status
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+name: v1
+schema:
+  openAPIV3Schema:
+    description: |-
+      PipelineDefinition is the Schema for the pipelines API
+      It represents a CI/CD workflow with jobs, steps, and triggers
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          PipelineDefinitionSpec defines the trigger conditions, env variables, jobs, and target (main or digital-twin) where the PipelineDefinition is
+          applicable for.
+        properties:
+          env:
+            additionalProperties:
+              type: string
+            description: |-
+              Env is a map of environment variables available to all jobs, unless overridden at job or step level
+              Variables in the env map cannot be defined in terms of other variables in the map.
+            type: object
+          jobs:
+            additionalProperties:
+              description: |-
+                JobSpec represents a job in the pipeline, this could be a set of steps to run in a pod, or a reference to a reusable workflow defined elsewhere
+                or could provide a spec to eda-workflow to run.
+              properties:
+                compareWith:
+                  description: CompareWith specifies a previous job key with same WorkflowGVK, to compare results with.
+                  type: string
+                container:
+                  description: |-
+                    Container specifies a custom container for the job.
+                    Mutually exclusive with RunsIn.
+                  properties:
+                    credentials:
+                      description: Credentials for private container registry
+                      properties:
+                        password:
+                          description: Password for registry authentication
+                          type: string
+                        username:
+                          description: Username for registry authentication
+                          type: string
+                      required:
+                        - password
+                        - username
+                      type: object
+                    env:
+                      additionalProperties:
+                        type: string
+                      description: Env defines container-level environment variables
+                      type: object
+                    image:
+                      description: Image is the container image to use
+                      type: string
+                    options:
+                      description: Options for additional container configuration
+                      type: string
+                    ports:
+                      description: Ports to expose from the container
+                      items:
+                        type: integer
+                      type: array
+                    volumes:
+                      description: Volumes to mount in the container
+                      items:
+                        type: string
+                      type: array
+                  required:
+                    - image
+                  type: object
+                env:
+                  additionalProperties:
+                    type: string
+                  description: Env defines job-level environment variables
+                  type: object
+                if:
+                  description: |-
+                    If is a conditional expression
+                    Job only runs if this evaluates to true
+                  type: string
+                name:
+                  description: Name of the job, defaults to job key
+                  type: string
+                needs:
+                  description: Needs specifies job dependencies
+                  items:
+                    type: string
+                  type: array
+                outputs:
+                  additionalProperties:
+                    type: string
+                  description: 'Outputs defines job outputs (name: expression)'
+                  type: object
+                runsIn:
+                  description: |-
+                    RunsIn specifies the image to run the job's steps in.
+                    Mutually exclusive with Container.
+                  enum:
+                    - eda-toolbox
+                    - eda-testman
+                  type: string
+                steps:
+                  description: Steps defines the steps to run in this job
+                  items:
+                    description: StepSpec represents a step in a job
+                    properties:
+                      continueOnError:
+                        description: ContinueOnError allows workflow to continue if step fails
+                        type: boolean
+                      env:
+                        additionalProperties:
+                          type: string
+                        description: Env defines step-level environment variables
+                        type: object
+                      id:
+                        description: |-
+                          ID is a unique identifier for the step, this is must if the step produces outputs and those
+                          outputs are referenced later in other jobs/steps
+                        type: string
+                      if:
+                        description: |-
+                          If is a conditional expression
+                          Step only runs if this evaluates to true
+                        type: string
+                      name:
+                        description: Name of the step (for display)
+                        type: string
+                      run:
+                        description: Run contains the command to execute
+                        type: string
+                      timeoutMinutes:
+                        description: TimeoutMinutes sets the step timeout
+                        minimum: 1
+                        type: integer
+                      uses:
+                        description: |-
+                          Uses references a reusable workflow or pipeline
+                          Format: owner/repo@version
+                        type: string
+                      with:
+                        additionalProperties:
+                          x-kubernetes-preserve-unknown-fields: true
+                        description: With provides inputs to the action
+                        type: object
+                    type: object
+                  type: array
+                timeoutMinutes:
+                  description: TimeoutMinutes sets the job timeout
+                  minimum: 1
+                  type: integer
+                uses:
+                  description: |-
+                    Uses references a reusable workflow
+                    Format: path/to/workflow.yaml
+                  type: string
+                with:
+                  additionalProperties:
+                    x-kubernetes-preserve-unknown-fields: true
+                  description: With provides inputs to a reusable workflow or for workflow GVK job provides the spec for the workflow
+                  type: object
+                workflow:
+                  description: Job runs a eda workflow of the specified GVK, spec for the workflow is defined in the 'with' section
+                  properties:
+                    group:
+                      type: string
+                    kind:
+                      type: string
+                    version:
+                      type: string
+                  type: object
+              type: object
+            description: |-
+              Jobs is a map of jobs to run as part of the pipeline
+              Jobs run in parallel by default, use 'needs' for dependencies
+            type: object
+          name:
+            description: Description of the pipeline, displayed in the UI.
+            type: string
+          target:
+            description: |-
+              Target specifies which cluster(s) to run the pipeline on
+              Defaults to "main" if not specified
+            items:
+              description: TargetCluster represents a target cluster
+              enum:
+                - Main
+                - DigitalTwin
+              type: string
+            type: array
+          triggers:
+            description: |-
+              On defines the events that triggers the pipeline, like a commit for a resource, or on another pipeline call (workflow_dispatch),
+              or manual trigger (workflow_call)
+            properties:
+              events:
+                description: |-
+                  TriggerEvents defines the events that trigger the pipeline
+                  Examples: Create, Update, Delete
+                properties:
+                  resourceTrigger:
+                    description: |-
+                      ResourceTrigger filters events by resource GVK or fields
+                      Only events affecting these groups and fields in them will trigger the pipeline
+                    items:
+                      description: |-
+                        ResourceTrigger; when multiple fields are specified then it will match a resource when any one of the fields is modified.
+                        if mulitple lables are specified then it will match a resource when all of the labels match.
+                        if both labels and fields are specified then it will match a resource only when both of them matches in a
+                        resource.
+                      properties:
+                        fields:
+                          description: |-
+                            fields in above GVK that trigger the pipeline when they are
+                            modified, e.g., "spec.version", etc.
+                          items:
+                            type: string
+                          type: array
+                        gvk:
+                          properties:
+                            group:
+                              type: string
+                            kind:
+                              type: string
+                            version:
+                              type: string
+                          type: object
+                        labels:
+                          description: |-
+                            Labels filters events by labels
+                            Only events with these labels will trigger the pipeline
+                          items:
+                            type: string
+                          type: array
+                        type:
+                          description: Type of event (Create, Update, Delete, *)
+                          items:
+                            description: OnEventType defines the type of event that triggers the pipeline
+                            enum:
+                              - Create
+                              - Update
+                              - Delete
+                              - '*'
+                            type: string
+                          type: array
+                      required:
+                        - type
+                      type: object
+                    type: array
+                type: object
+              workflowCall:
+                description: |-
+                  WorkflowCall defines this as a reusable workflow
+                  Specifies inputs, outputs, and secrets
+                properties:
+                  inputs:
+                    additionalProperties:
+                      description: WorkflowInput defines an input parameter for reusable workflows
+                      properties:
+                        default:
+                          description: Default value if caller does not provide one
+                          x-kubernetes-preserve-unknown-fields: true
+                        description:
+                          description: Description of the input parameter
+                          type: string
+                        inputType:
+                          description: Type of the input (String, Number, Boolean)
+                          enum:
+                            - String
+                            - Number
+                            - Boolean
+                          type: string
+                        required:
+                          description: Required indicates if this input is mandatory
+                          type: boolean
+                      required:
+                        - inputType
+                      type: object
+                    description: Inputs defines input parameters for the workflow
+                    type: object
+                  outputs:
+                    additionalProperties:
+                      description: WorkflowOutput defines an output from a reusable workflow
+                      properties:
+                        description:
+                          description: Description of the output
+                          type: string
+                        outputType:
+                          description: Type of the output (String, Number, Boolean)
+                          enum:
+                            - String
+                            - Number
+                            - Boolean
+                          type: string
+                        outputValue:
+                          description: Value is an expression like ${{ jobs.*.outputs.* }}
+                          type: string
+                      required:
+                        - outputType
+                        - outputValue
+                      type: object
+                    description: Outputs defines outputs from the workflow
+                    type: object
+                  secrets:
+                    additionalProperties:
+                      description: WorkflowSecret defines a secret for reusable workflows
+                      properties:
+                        description:
+                          description: Description of the secret
+                          type: string
+                        required:
+                          description: Required indicates if this secret is mandatory
+                          type: boolean
+                      type: object
+                    description: Secrets defines required secrets for the workflow
+                    type: object
+                type: object
+            type: object
+        required:
+          - jobs
+          - triggers
+        type: object
+      status:
+        properties:
+          valid:
+            description: |-
+              A pipeline definition is valid if it has all required fields and passes validation checks
+              (e.g., no circular dependencies, valid workflow references, valid dependencies among jobs, etc.)
+            type: boolean
+          validationError:
+            description: If the definition is not valid, this field contains a message describing the validation error
+            type: string
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

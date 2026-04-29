@@ -264,6 +264,7 @@ schema:
                       description: DHCPv6 option to return to the TopoNode.
                       enum:
                         - 59-BootfileUrl
+                        - 56-NTPServers
                       type: string
                     value:
                       description: Value to return to the TopoNode for the specified option.
@@ -327,6 +328,9 @@ schema:
             description: Bootstrap status of the Target
             enum:
               - Init
+              - CertInstall
+              - TCPWait
+              - Connecting
               - Ready
               - Failed
             type: string
@@ -342,6 +346,9 @@ schema:
           tlsStatus:
             description: TLS status of the Target
             properties:
+              certSecretName:
+                description: Name of the CA certificate secret from the issuerRef
+                type: string
               nodeSecurityProfile:
                 description: NodeSecurity Profile Used
                 type: string

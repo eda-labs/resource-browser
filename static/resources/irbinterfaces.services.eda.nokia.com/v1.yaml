@@ -8,6 +8,8 @@ additionalPrinterColumns:
   - jsonPath: .status.lastChange
     name: LastChange
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -154,16 +156,17 @@ schema:
                 type: array
             type: object
           ipAddresses:
+            description: Configures IP addresses on the IRBInterface.
             items:
               properties:
                 ipv4Address:
                   description: IPv4 address in IP/mask form, e.g., 192.168.0.1/24.
                   properties:
                     ipPrefix:
-                      description: Address and mask to use
+                      description: IP Address and prefix length in CIDR notation.
                       type: string
                     primary:
-                      description: Indicates which address to use as primary for broadcast
+                      description: Indicates which address to use as primary.
                       type: boolean
                   required:
                     - ipPrefix
@@ -172,10 +175,10 @@ schema:
                   description: IPv6 address in IP/mask form, e.g., fc00::1/120.
                   properties:
                     ipPrefix:
-                      description: Address and mask to use
+                      description: IP Address and prefix length in CIDR notation.
                       type: string
                     primary:
-                      description: Indicates which address to use as primary for broadcast
+                      description: Indicates which address to use as primary.
                       type: boolean
                   required:
                     - ipPrefix
@@ -391,10 +394,10 @@ schema:
                   items:
                     properties:
                       ipPrefix:
-                        description: Address and mask to use
+                        description: IP Address and prefix length in CIDR notation.
                         type: string
                       primary:
-                        description: Indicates which address to use as primary for broadcast
+                        description: Indicates which address to use as primary.
                         type: boolean
                     required:
                       - ipPrefix
@@ -405,10 +408,10 @@ schema:
                   items:
                     properties:
                       ipPrefix:
-                        description: Address and mask to use
+                        description: IP Address and prefix length in CIDR notation.
                         type: string
                       primary:
-                        description: Indicates which address to use as primary for broadcast
+                        description: Indicates which address to use as primary.
                         type: boolean
                     required:
                       - ipPrefix
@@ -443,6 +446,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

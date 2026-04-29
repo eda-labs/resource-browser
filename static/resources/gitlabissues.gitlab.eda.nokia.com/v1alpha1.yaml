@@ -30,6 +30,7 @@ schema:
             description: Gitlab instance name.
             type: string
           issue:
+            description: Issue to create.
             properties:
               assignees:
                 description: Assignees of the issue.
@@ -52,10 +53,13 @@ schema:
                 type: string
             type: object
           repo:
+            description: Repository to create the issue.
             type: string
           trigger:
+            description: Trigger conditions to create the issue.
             properties:
               alarm:
+                description: Alarm trigger.
                 properties:
                   exclude:
                     description: Excluded alarm types that don't trigger the workflow
@@ -69,6 +73,7 @@ schema:
                     type: array
                 type: object
               query:
+                description: Query trigger.
                 properties:
                   fields:
                     description: List of fields to watch

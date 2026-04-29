@@ -1,7 +1,9 @@
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
-    description: ConnectInterface is the Schema for the connectinterfaces API.
+    description: ConnectInterface is the Schema for the connectinterfaces API
     properties:
       apiVersion:
         description: |-
@@ -21,7 +23,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: ConnectInterfaceSpec defines the desired state of ConnectInterface.
+        description: ConnectInterfaceSpec defines the desired state of ConnectInterface
         properties:
           bond:
             description: Bond is an Optional Bond definition, indicating the naming of a Bond on the Compute.
@@ -86,6 +88,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

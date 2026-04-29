@@ -5,13 +5,21 @@ additionalPrinterColumns:
   - jsonPath: .spec.pluginType
     name: Plugin Type
     type: string
+  - jsonPath: .spec.heartbeatInterval
+    name: Heartbeat Interval
+    type: integer
+  - jsonPath: .status.stale
+    name: Stale
+    type: boolean
   - jsonPath: .metadata.creationTimestamp
     name: Age
     type: date
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
-    description: ConnectPlugin is the Schema for the connectplugins API.
+    description: ConnectPlugin is the Schema for the connectplugins API
     properties:
       apiVersion:
         description: |-
@@ -31,7 +39,7 @@ schema:
       metadata:
         type: object
       spec:
-        description: ConnectPluginSpec defines the desired state of ConnectPlugin.
+        description: ConnectPluginSpec defines the desired state of ConnectPlugin
         properties:
           heartbeatInterval:
             description: |-
@@ -59,7 +67,7 @@ schema:
           - pluginType
         type: object
       status:
-        description: ConnectPluginStatus defines the observed state of ConnectPlugin.
+        description: ConnectPluginStatus defines the observed state of ConnectPlugin
         properties:
           stale:
             description: |-
@@ -69,6 +77,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

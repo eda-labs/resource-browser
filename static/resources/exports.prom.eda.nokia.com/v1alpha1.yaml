@@ -151,7 +151,7 @@ schema:
             type: array
           group:
             description: Metric group, defines the collector the metrics belong to.
-            pattern: ^[a-zA-Z0-9._~-]+$
+            pattern: ^[a-zA-Z0-9._~-]$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-]$|^[a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$
             type: string
         required:
           - exports

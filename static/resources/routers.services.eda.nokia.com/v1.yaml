@@ -17,6 +17,8 @@ additionalPrinterColumns:
   - jsonPath: .status.lastChange
     name: LastChange
     type: string
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1
 schema:
   openAPIV3Schema:
@@ -182,7 +184,7 @@ schema:
             minimum: 1
             type: integer
           evi:
-            description: EVI for the Router; leave blank for auto-allocation from EVI pool.
+            description: EVI for the Router; leave blank for auto-allocation from EVI pool. Optional for IPVPN (can be used to auto-derive RTs), required for EVPN.
             maximum: 65535
             minimum: 1
             type: integer
@@ -247,23 +249,23 @@ schema:
             type: string
           tunnelIndexPool:
             default: tunnel-index-pool
-            description: Reference to tunnel index allocation pool.
+            description: Reference to tunnel index allocation pool. Only applicable to VXLAN encapsulation.
             type: string
           type:
             default: EVPNVXLAN
-            description: Select the type of Router.  Simple doesn't include any overlay control plane or dataplane properties (EVPN/VXLAN). EVPNVXLAN includes the properties needed to provision this Router over an IP Fabric.
+            description: Select the type of Router. Simple doesn't include any overlay control plane or dataplane properties (such as EVPN/VXLAN). EVPNVXLAN includes the properties needed to provision this Router over an IP Fabric.
             enum:
               - SIMPLE
               - EVPNVXLAN
             type: string
           vni:
-            description: VNI for the Router; leave blank for auto-allocation from VNI pool.
+            description: VNI for the Router; leave blank for auto-allocation from VNI pool. Only applicable to VXLAN encapsulation.
             maximum: 16777215
             minimum: 1
             type: integer
           vniPool:
             default: vni-pool
-            description: Reference to VNI pool for auto-allocation.
+            description: Reference to VNI pool for auto-allocation. Only applicable to VXLAN encapsulation.
             type: string
         type: object
       status:
@@ -347,6 +349,6 @@ schema:
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

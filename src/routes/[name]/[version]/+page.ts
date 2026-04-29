@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit'
 
+import { sortApiVersionsNewestFirst } from '$lib/apiVersion'
 import type { CrdVersionsMap, OpenAPISchema } from '$lib/structure'
 
 import yaml from 'js-yaml'
@@ -32,7 +33,9 @@ export async function load({ fetch, params }) {
     const kind = crdMeta[0].kind
     const deprecated = crdMetaVersion[0].deprecated
     const appVersion = ('appVersion' in crdMetaVersion[0] ? crdMetaVersion[0].appVersion : "")
-    const validVersions = crdMeta[0].versions.map(x => x.name)
+    const validVersions = sortApiVersionsNewestFirst(
+      crdMeta[0].versions.map((x) => x.name)
+    )
 
     const spec = crd.schema.openAPIV3Schema.properties.spec
     const status = crd.schema.openAPIV3Schema.properties.status
