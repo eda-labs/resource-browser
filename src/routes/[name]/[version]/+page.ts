@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit'
+import { error, isHttpError } from '@sveltejs/kit'
 
 import { sortApiVersionsNewestFirst } from '$lib/apiVersion'
 import type { CrdVersionsMap, OpenAPISchema } from '$lib/structure'
@@ -24,24 +24,49 @@ export async function load({ fetch, params }) {
     throw error(404, "Invalid version for the resource name")
   }
 
-  try {
-    const resp = await fetch(`/resources/${name}/${versionOnFocus}.yaml`)
-    const crdText = await resp.text()
-    const crd = yaml.load(crdText) as OpenAPISchema
-
-    const group = crdMeta[0].group
-    const kind = crdMeta[0].kind
-    const deprecated = crdMetaVersion[0].deprecated
-    const appVersion = ('appVersion' in crdMetaVersion[0] ? crdMetaVersion[0].appVersion : "")
-    const validVersions = sortApiVersionsNewestFirst(
-      crdMeta[0].versions.map((x) => x.name)
+  const resourceUrl = `/resources/${name}/${versionOnFocus}.yaml`
+  const resp = await fetch(resourceUrl)
+  if (!resp.ok) {
+    throw error(
+      404,
+      `CRD YAML not found (${resp.status}): ${resourceUrl}. Regenerate static/resources (see static/get-crds.sh).`
     )
-
-    const spec = crd.schema.openAPIV3Schema.properties.spec
-    const status = crd.schema.openAPIV3Schema.properties.status
-
-    return { name, versionOnFocus, kind, group, deprecated, appVersion, validVersions, spec, status }
-  } catch(e) {
-    throw error(404, "Error fetching resource" + e)
   }
+
+  const crdText = await resp.text()
+  const trimmed = crdText.trimStart()
+  if (trimmed.startsWith('<!') || trimmed.toLowerCase().startsWith('<html')) {
+    throw error(
+      404,
+      `CRD YAML missing or misconfigured: ${resourceUrl} returned HTML instead of YAML (static file likely missing).`
+    )
+  }
+
+  let crd: OpenAPISchema
+  try {
+    crd = yaml.load(crdText) as OpenAPISchema
+  } catch (e) {
+    if (isHttpError(e)) throw e
+    const msg = e instanceof Error ? e.message : String(e)
+    throw error(404, `Invalid CRD YAML for ${resourceUrl}: ${msg}`)
+  }
+
+  const spec = crd?.schema?.openAPIV3Schema?.properties?.spec
+  const status = crd?.schema?.openAPIV3Schema?.properties?.status
+  if (spec === undefined || status === undefined) {
+    throw error(
+      404,
+      `CRD YAML for ${resourceUrl} does not define spec/status schema under schema.openAPIV3Schema.properties.`
+    )
+  }
+
+  const group = crdMeta[0].group
+  const kind = crdMeta[0].kind
+  const deprecated = crdMetaVersion[0].deprecated
+  const appVersion = ('appVersion' in crdMetaVersion[0] ? crdMetaVersion[0].appVersion : "")
+  const validVersions = sortApiVersionsNewestFirst(
+    crdMeta[0].versions.map((x) => x.name)
+  )
+
+  return { name, versionOnFocus, kind, group, deprecated, appVersion, validVersions, spec, status }
 }

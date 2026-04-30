@@ -669,13 +669,6 @@ coreext.eda.nokia.com:
       - name: v1alpha1
         deprecated: false
         appVersion: v6.0.0
-cx.eda.nokia.com:
-  - name: cxclusters.cx.eda.nokia.com
-    group: cx.eda.nokia.com
-    kind: CxCluster
-    versions:
-      - name: v1alpha1
-        deprecated: false
 environment.eda.nokia.com:
   - name: cliplugins.environment.eda.nokia.com
     group: environment.eda.nokia.com
@@ -2288,27 +2281,6 @@ support.eda.nokia.com:
       - name: v1
         deprecated: false
         appVersion: v6.0.0
-system.eda.nokia.com:
-  - name: monitors.system.eda.nokia.com
-    group: system.eda.nokia.com
-    kind: Monitor
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v4.0.0
-test.eda.nokia.com:
-  - name: simlinks.test.eda.nokia.com
-    group: test.eda.nokia.com
-    kind: SimLink
-    versions:
-      - name: v1
-        deprecated: false
-  - name: simnodes.test.eda.nokia.com
-    group: test.eda.nokia.com
-    kind: SimNode
-    versions:
-      - name: v1
-        deprecated: false
 timing.eda.nokia.com:
   - name: ntpclients.timing.eda.nokia.com
     group: timing.eda.nokia.com
@@ -2330,13 +2302,6 @@ topologies.eda.nokia.com:
       - name: v1
         deprecated: false
         appVersion: v6.0.0
-  - name: cpuutiloverlays.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: CPUUtilOverlay
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.2+25.4.3
   - name: deviationoverlays.topologies.eda.nokia.com
     group: topologies.eda.nokia.com
     kind: DeviationOverlay
@@ -2347,13 +2312,6 @@ topologies.eda.nokia.com:
       - name: v1
         deprecated: false
         appVersion: v6.0.0
-  - name: diskoverlays.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: DiskOverlay
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.2+25.4.3
   - name: lldpoverlays.topologies.eda.nokia.com
     group: topologies.eda.nokia.com
     kind: LldpOverlay
@@ -2364,13 +2322,6 @@ topologies.eda.nokia.com:
       - name: v1
         deprecated: false
         appVersion: v6.0.0
-  - name: memoryoverlays.topologies.eda.nokia.com
-    group: topologies.eda.nokia.com
-    kind: MemoryOverlay
-    versions:
-      - name: v1alpha1
-        deprecated: false
-        appVersion: v3.0.2+25.4.3
   - name: networktopologies.topologies.eda.nokia.com
     group: topologies.eda.nokia.com
     kind: NetworkTopology
