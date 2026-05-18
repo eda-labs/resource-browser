@@ -8,7 +8,7 @@
 >
 	<div class="mx-auto max-w-2xl px-4">
 		<div class="flex items-center justify-center gap-4">
-					// ...existing code...
+
 
 			<!-- (Removed CRD site text link per request) -->
 		</div>
