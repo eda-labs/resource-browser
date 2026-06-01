@@ -9,6 +9,16 @@
 	import type { OpenAPISchema, Schema, VersionSchema } from '$lib/structure';
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
 
+	type UploadedCrd = {
+		spec: {
+			group: string;
+			names: {
+				kind: string;
+			};
+			versions: OpenAPISchema[];
+		};
+	};
+
 	let files: FileList;
 
 	expandAll.set(false);
@@ -19,7 +29,7 @@
 	let group = '';
 	let versions: VersionSchema = {};
 	let spec: Schema;
-	let status: Schema;
+	let status: Schema | undefined;
 	let plaintextCrd = '';
 
 	let validVersions: string[] = [];
@@ -27,7 +37,7 @@
 
 	function processYaml() {
 		try {
-			const crd = yaml.load(plaintextCrd);
+			const crd = yaml.load(plaintextCrd) as UploadedCrd;
 			group = crd.spec.group;
 			kind = crd.spec.names.kind;
 
@@ -198,8 +208,10 @@
 			</button>
 		</div>
 		<Render source={'uploaded'} type={'spec'} data={spec} />
-		<div class="my-10"></div>
-		<Render source={'uploaded'} type={'status'} data={status} />
+		{#if status}
+			<div class="my-10"></div>
+			<Render source={'uploaded'} type={'status'} data={status} />
+		{/if}
 	{/if}
 </div>
 

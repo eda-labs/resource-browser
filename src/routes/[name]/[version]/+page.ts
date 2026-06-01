@@ -53,10 +53,10 @@ export async function load({ fetch, params }) {
 
   const spec = crd?.schema?.openAPIV3Schema?.properties?.spec
   const status = crd?.schema?.openAPIV3Schema?.properties?.status
-  if (spec === undefined || status === undefined) {
+  if (spec === undefined) {
     throw error(
       404,
-      `CRD YAML for ${resourceUrl} does not define spec/status schema under schema.openAPIV3Schema.properties.`
+      `CRD YAML for ${resourceUrl} does not define spec schema under schema.openAPIV3Schema.properties.`
     )
   }
 

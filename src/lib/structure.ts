@@ -53,7 +53,7 @@ export interface OpenAPISchema {
     openAPIV3Schema: {
       properties: {
         spec: Schema;
-        status: Schema
+        status?: Schema;
       }
     }
   }
@@ -62,7 +62,7 @@ export interface OpenAPISchema {
 export interface VersionSchema {
   [key: string]: {
     spec: Schema;
-    status: Schema;
+    status?: Schema;
     deprecated: boolean;
   }
 }

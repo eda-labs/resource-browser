@@ -45,8 +45,10 @@
 			</button>
 		</div>
 		<Render {hash} source={'eda'} type={'spec'} data={spec} />
-		<div class="my-10"></div>
-		<Render {hash} source={'eda'} type={'status'} data={status} />
+		{#if status}
+			<div class="my-10"></div>
+			<Render {hash} source={'eda'} type={'status'} data={status} />
+		{/if}
 	</main>
 
 	<Footer home={false} />
