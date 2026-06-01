@@ -2,6 +2,7 @@
 
 test-results
 node_modules
+.pnpm-store
 
 # Output
 .output
