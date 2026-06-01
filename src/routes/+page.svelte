@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, tick } from 'svelte';
 	import { derived, writable } from 'svelte/store';
 
 	import Footer from '$lib/components/Footer.svelte';
@@ -24,6 +25,94 @@
 				$resourceSearch.split(/\s+/).every((y) => x.includes(y.toLowerCase()))
 			)
 	);
+
+	let selectedIndex = crdMeta.length > 0 ? 0 : -1;
+	let previousSearch = '';
+	let searchInput: HTMLInputElement;
+	let resourceList: HTMLDivElement;
+
+	onMount(() => {
+		searchInput?.focus();
+	});
+
+	$: {
+		const search = $resourceSearch;
+		const resultCount = $resourceSearchFilter.length;
+
+		if (search !== previousSearch) {
+			previousSearch = search;
+			selectedIndex = resultCount > 0 ? 0 : -1;
+		} else if (resultCount === 0) {
+			selectedIndex = -1;
+		} else if (selectedIndex < 0) {
+			selectedIndex = 0;
+		} else if (selectedIndex >= resultCount) {
+			selectedIndex = resultCount - 1;
+		}
+	}
+
+	function getResourceDefinition(resource: string) {
+		return crdMeta.find((x) => x.name === resource);
+	}
+
+	function getResourceHref(resource: string) {
+		const resDef = getResourceDefinition(resource);
+		if (!resDef) return '';
+
+		const targetVersion = newestApiVersion(resDef.versions.map((x) => x.name));
+		return `${resource}/${targetVersion}`;
+	}
+
+	async function focusSelectedResource() {
+		await tick();
+
+		resourceList
+			?.querySelector<HTMLAnchorElement>(`[data-resource-index="${selectedIndex}"]`)
+			?.focus();
+	}
+
+	async function scrollSelectedResourceIntoView() {
+		await tick();
+
+		resourceList
+			?.querySelector<HTMLAnchorElement>(`[data-resource-index="${selectedIndex}"]`)
+			?.scrollIntoView({ block: 'nearest' });
+	}
+
+	function moveSelection(delta: number, focusSelection = false) {
+		const resultCount = $resourceSearchFilter.length;
+		if (resultCount === 0) return;
+
+		selectedIndex = (selectedIndex + delta + resultCount) % resultCount;
+
+		if (focusSelection) {
+			focusSelectedResource();
+		} else {
+			scrollSelectedResourceIntoView();
+		}
+	}
+
+	function openSelectedResource() {
+		const selectedResource = $resourceSearchFilter[selectedIndex];
+		if (!selectedResource) return;
+
+		window.location.href = getResourceHref(selectedResource);
+	}
+
+	function handleResourceKeydown(event: KeyboardEvent) {
+		const focusSelection = event.target instanceof HTMLAnchorElement;
+
+		if (event.key === 'ArrowDown') {
+			event.preventDefault();
+			moveSelection(1, focusSelection);
+		} else if (event.key === 'ArrowUp') {
+			event.preventDefault();
+			moveSelection(-1, focusSelection);
+		} else if (event.key === 'Enter') {
+			event.preventDefault();
+			openSelectedResource();
+		}
+	}
 </script>
 
 <svelte:head>
@@ -61,29 +150,41 @@
 					<input
 						type="text"
 						placeholder="Search..."
+						bind:this={searchInput}
 						bind:value={$resourceSearch}
+						on:keydown={handleResourceKeydown}
+						aria-controls="resource-list"
+						aria-activedescendant={selectedIndex >= 0
+							? `resource-option-${selectedIndex}`
+							: undefined}
 						class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2
               text-[12.5px] text-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
 					/>
 				</div>
-				<div class="scroll-thin h-[300px] overflow-y-auto">
-					<ul>
+				<div class="scroll-thin h-[300px] overflow-y-auto" bind:this={resourceList}>
+					<ul id="resource-list">
 						{#each $resourceSearchFilter as resource, i}
-							{@const resDef = $crdMetaStore.filter((x) => x.name == resource)[0]}
-							{@const targetVersion = newestApiVersion(
-								resDef.versions.map((x) => x.name)
-							)}
+							{@const resDef = getResourceDefinition(resource)}
 							<li
-								class="text-gray-900 hover:bg-gray-200 {i > 0
+								class="text-gray-900 hover:bg-gray-200 {selectedIndex === i
+									? 'bg-gray-200 dark:bg-gray-700'
+									: ''} {i > 0
 									? 'border-t border-gray-300 dark:border-gray-600'
 									: ''} dark:hover:bg-gray-700"
 							>
-								<a class="flex flex-col px-4 py-3" href={`${resource}/${targetVersion}`}>
+								<a
+									id={`resource-option-${i}`}
+									data-resource-index={i}
+									class="flex flex-col px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-inset"
+									href={getResourceHref(resource)}
+									on:focus={() => (selectedIndex = i)}
+									on:keydown={handleResourceKeydown}
+								>
 									<span class="scroll-thin overflow-x-auto font-nokia-headline dark:text-gray-200"
-										>{resDef.kind}</span
+										>{resDef?.kind}</span
 									>
 									<span class="font-fira scroll-thin overflow-x-auto text-xs dark:text-gray-200"
-										>{resDef.group}</span
+										>{resDef?.group}</span
 									>
 								</a>
 							</li>
