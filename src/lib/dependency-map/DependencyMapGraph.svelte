@@ -225,7 +225,7 @@
 	}
 
 	function toggleInspector(open?: boolean) {
-		inspectorOpen = open ?? !inspectorOpen;
+		inspectorOpen = typeof open === 'boolean' ? open : !inspectorOpen;
 		if (browser) {
 			sessionStorage.setItem(INSPECTOR_STORAGE_KEY, String(inspectorOpen));
 		}
@@ -379,7 +379,7 @@
 				type="button"
 				class="dep-map-btn dep-map-inspector-toggle"
 				class:dep-map-btn-active={inspectorOpen}
-				on:click={toggleInspector}
+				on:click={() => toggleInspector()}
 				aria-pressed={inspectorOpen}
 				aria-label={inspectorOpen ? 'Hide inspector panel' : 'Show inspector panel'}
 				title={inspectorOpen ? 'Hide inspector' : 'Show inspector'}
@@ -487,8 +487,9 @@
 			</div>
 		</div>
 
-		{#if selectedNode && inspectorOpen}
+		{#if inspectorOpen}
 			<aside class="dep-map-panel" aria-label="Selected CRD details">
+				{#if selectedNode}
 				<div class="dep-map-panel-header">
 					<div>
 						<h3 class="dep-map-panel-title">{selectedNode.kind}</h3>
@@ -725,6 +726,12 @@
 						View CRD schema
 					</button>
 				{/if}
+				{:else}
+					<div class="dep-map-panel-empty">
+						<p class="dep-map-panel-empty-title">No node selected</p>
+						<p class="dep-map-panel-empty-hint">Click a node in the graph to inspect its dependencies.</p>
+					</div>
+				{/if}
 			</aside>
 		{/if}
 	</div>
@@ -881,7 +888,8 @@
 		position: absolute;
 		top: 50%;
 		right: 0;
-		z-index: 4;
+		z-index: 20;
+		pointer-events: auto;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
@@ -986,8 +994,8 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		flex: 1;
-		min-height: min(50vh, 28rem);
-		overflow: visible;
+		min-height: 0;
+		overflow: hidden;
 	}
 
 	@media (min-width: 1024px) {
@@ -1001,23 +1009,13 @@
 		position: relative;
 		flex: 1 1 auto;
 		min-width: 0;
-		min-height: min(50vh, 28rem);
+		min-height: 0;
 		width: 100%;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-bg);
 		overflow: hidden;
 		isolation: isolate;
-	}
-
-	@media (min-width: 1024px) {
-		.dep-map-canvas-wrap {
-			min-height: min(52vh, 32rem);
-		}
-
-		.dep-map-body--panel-hidden .dep-map-canvas-wrap {
-			min-height: min(56vh, 36rem);
-		}
 	}
 
 	.dep-map-panel {
@@ -1181,6 +1179,27 @@
 	.dep-map-panel-close:hover {
 		background: var(--dep-bg);
 		color: var(--dep-text);
+	}
+
+	.dep-map-panel-empty {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 0.5rem 0;
+	}
+
+	.dep-map-panel-empty-title {
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: var(--dep-text);
+	}
+
+	.dep-map-panel-empty-hint {
+		margin: 0;
+		font-size: 0.75rem;
+		line-height: 1.45;
+		color: var(--dep-text-muted);
 	}
 
 	.dep-map-panel-meta {

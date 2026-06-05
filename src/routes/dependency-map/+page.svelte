@@ -611,7 +611,7 @@
 			{/if}
 		</div>
 
-		<div class="mt-4">
+		<div class="mt-4" class:dep-map-page-credits--hidden={!!subgraph}>
 			<PageCredits />
 		</div>
 	</div>
@@ -851,21 +851,27 @@
 	:global(.dep-map-page--active) {
 		display: flex;
 		flex-direction: column;
+		min-height: 100dvh;
+		max-height: 100dvh;
+		overflow: hidden;
 	}
 
 	:global(.dep-map-page--active .spec-search-main) {
 		flex: 1;
 		min-height: 0;
-		padding-bottom: 1rem;
-		gap: 0.75rem;
+		overflow: hidden;
+		padding-bottom: 0.5rem;
+		gap: 0.5rem;
 	}
 
 	:global(.dep-map-page--active .comparison-hero) {
+		flex-shrink: 0;
 		padding: 0.65rem 0.85rem;
 		gap: 0.65rem;
 	}
 
 	:global(.dep-map-page--active .spec-search-filters) {
+		flex-shrink: 0;
 		padding: 0.5rem 0.65rem;
 	}
 
@@ -874,11 +880,16 @@
 		min-height: 0;
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-start;
+		overflow: hidden;
+	}
+
+	:global(.dep-map-page--active .dep-map-focus-banner) {
+		flex-shrink: 0;
 	}
 
 	.dependency-map-graph-shell {
 		padding: 0.5rem 0.65rem 0.65rem;
-		min-height: 22rem;
 	}
 
 	:global(.dep-map-page--active) .dependency-map-graph-shell {
@@ -887,6 +898,7 @@
 		display: flex;
 		flex-direction: column;
 		padding: 0.35rem 0.5rem 0.5rem;
+		overflow: hidden;
 	}
 
 	@media (min-width: 768px) {
@@ -897,5 +909,9 @@
 		:global(.dep-map-page--active) .dependency-map-graph-shell {
 			padding: 0.4rem 0.65rem 0.65rem;
 		}
+	}
+
+	:global(.dep-map-page-credits--hidden) {
+		display: none;
 	}
 </style>
