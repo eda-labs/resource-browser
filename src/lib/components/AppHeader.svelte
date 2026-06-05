@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Theme from '$lib/components/Theme.svelte';
 
 	/** Small badge beside brand, e.g. "CRD Catalog" */
@@ -10,6 +11,31 @@
 	export let fixed = false;
 	/** Optional handler when logo is clicked (e.g. exit browse mode) */
 	export let onLogoClick: ((e: MouseEvent) => void) | undefined = undefined;
+	/** Show global tools navigation (default on) */
+	export let showToolsNav = true;
+
+	let mobileNavOpen = false;
+
+	const toolsNav = [
+		{ href: '/?browse=true', label: 'Catalog', match: (path: string) => path === '/' },
+		{ href: '/spec-search', label: 'Spec Search', match: (path: string) => path.startsWith('/spec-search') },
+		{ href: '/validate-yaml', label: 'Validate YAML', match: (path: string) => path.startsWith('/validate-yaml') },
+		{ href: '/comparison', label: 'Comparison', match: (path: string) => path.startsWith('/comparison') },
+		{ href: '/uploads', label: 'Uploads', match: (path: string) => path.startsWith('/uploads') }
+	] as const;
+
+	function isNavActive(match: (path: string) => boolean): boolean {
+		return match($page.url.pathname);
+	}
+
+	function catalogHref(): string {
+		const release = $page.url.searchParams.get('release');
+		return release ? `/?browse=true&release=${encodeURIComponent(release)}` : '/?browse=true';
+	}
+
+	function closeMobileNav() {
+		mobileNavOpen = false;
+	}
 </script>
 
 <header
@@ -69,6 +95,24 @@
 
 		<!-- Right: mobile context + actions + theme -->
 		<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+			{#if showToolsNav}
+				<button
+					type="button"
+					class="app-header-nav-toggle flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 md:hidden dark:text-slate-300 dark:hover:bg-slate-800"
+					aria-expanded={mobileNavOpen}
+					aria-controls="app-header-tools-nav"
+					aria-label={mobileNavOpen ? 'Close tools menu' : 'Open tools menu'}
+					on:click={() => (mobileNavOpen = !mobileNavOpen)}
+				>
+					<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+						{#if mobileNavOpen}
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						{:else}
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+						{/if}
+					</svg>
+				</button>
+			{/if}
 			{#if contextTitle}
 				<div
 					class="max-w-[7rem] min-w-0 truncate text-sm font-semibold text-slate-900 sm:max-w-[10rem] md:hidden dark:text-white"
@@ -87,6 +131,31 @@
 			<Theme />
 		</div>
 	</div>
+
+	{#if showToolsNav}
+		<nav
+			id="app-header-tools-nav"
+			class="app-header-tools-nav border-t border-slate-100 dark:border-slate-800 {mobileNavOpen
+				? 'is-open'
+				: ''}"
+			aria-label="Tools"
+		>
+			<div class="app-header-tools-inner mx-auto max-w-7xl px-4 sm:px-6">
+				{#each toolsNav as item (item.href)}
+					{@const active = isNavActive(item.match)}
+					{@const href = item.label === 'Catalog' ? catalogHref() : item.href}
+					<a
+						{href}
+						class="app-header-tools-link {active ? 'is-active' : ''}"
+						aria-current={active ? 'page' : undefined}
+						on:click={closeMobileNav}
+					>
+						{item.label}
+					</a>
+				{/each}
+			</div>
+		</nav>
+	{/if}
 
 	<slot />
 </header>

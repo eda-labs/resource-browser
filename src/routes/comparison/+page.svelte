@@ -18,7 +18,7 @@
 	} from '$lib/comparison/diffEngine';
 	import { resourceLinkContext } from '$lib/comparison/links';
 	import type { BulkDiffReport, CrdDiffEntry, DiffStatus } from '$lib/comparison/types';
-	import type { ManifestResource } from '$lib/spec-search/searchEngine';
+	import { getManifestCache } from '$lib/manifest';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { CrdResource, EdaRelease, ReleasesConfig } from '$lib/structure';
 
@@ -55,7 +55,7 @@
 	let modalRelease: EdaRelease | null = null;
 	let modalVersion: string | null = null;
 
-	const manifestCache: Map<string, ManifestResource[]> = new Map();
+	const manifestCache = getManifestCache();
 	const yamlCache: Map<string, string> = new Map();
 
 	$: sourceRelease = sourceReleaseName

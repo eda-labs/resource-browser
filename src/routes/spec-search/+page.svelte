@@ -7,20 +7,16 @@
     // AnimatedBackground is dynamically imported/rendered by the layout; avoid importing here to keep it lazy
     import AppHeader from '$lib/components/AppHeader.svelte';
     import PageCredits from '$lib/components/PageCredits.svelte';
-
-    import Render from '$lib/components/Render.svelte';
+    import ResourceModal from '$lib/components/ResourceModal.svelte';
     import { stripResourcePrefixFQDN } from '$lib/components/functions';
+    import type { CrdResource } from '$lib/structure';
     import {
         extractPaths,
         markMatchingNodes,
         type PathInfo
     } from '$lib/spec-search/schemaUtils';
-    import {
-        fetchManifest,
-        searchManifest,
-        type ManifestResource,
-        type SearchMatch
-    } from '$lib/spec-search/searchEngine';
+    import { fetchManifest } from '$lib/manifest';
+    import { searchManifest, type SearchMatch } from '$lib/spec-search/searchEngine';
     // expandAll controls removed from this auto-search page (no UI button)
     import releasesYaml from '$lib/releases.yaml?raw';
     import type { EdaRelease, ReleasesConfig } from '$lib/structure';
@@ -35,11 +31,12 @@
 
     let query = '';
     let searchInDescription = false;
-    let selectedResource: string | null = null;
-    let isModalOpen = false;
-    let modalData: (GroupedResult & { markedFull?: { spec?: unknown; status?: unknown } }) | null = null;
-    let expandedPaths: string[] = [];
-    let modalExpandAll = false;
+    let modalOpen = false;
+    let modalResource: CrdResource | null = null;
+    let modalInitialVersion: string | null = null;
+    let modalHighlightPaths: string[] = [];
+    let modalDisplaySpec: unknown = null;
+    let modalDisplayStatus: unknown = null;
 
     // Client-only init: URL params, version list, and initial search run in onMount (see homepage pattern).
     let clientReady = false;
@@ -115,14 +112,12 @@
         return Array.from(map.values()).slice(0, MAX_RESULTS);
     }
 
-    // Simple in-memory caches to avoid refetching manifests and YAML repeatedly
-    const manifestCache: Map<string, ManifestResource[]> = new Map();
     const yamlCache: Map<string, string> = new Map();
     const parsedCache: Map<string, { spec?: unknown; status?: unknown }> = new Map();
 
     // Prefetch manifest for the currently-selected release to reduce first-search latency
-    $: if (browser && clientReady && release?.folder && !manifestCache.has(release.folder)) {
-        void fetchManifest(release.folder, manifestCache);
+    $: if (browser && clientReady && release?.folder) {
+        void fetchManifest(release.folder);
     }
 
     $: release = releaseName
@@ -130,20 +125,35 @@
         : null;
 
     function openResourceModal(g: GroupedResult) {
-        expandedPaths = [];
         const matchedPaths = new Set<string>();
         for (const p of g.specPaths) matchedPaths.add(p.path);
         for (const p of g.statusPaths) matchedPaths.add(p.path);
-        expandedPaths = [...matchedPaths];
-
-        const markedFull = {
-            spec: g.fullSpec ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec') : g.fullSpec,
-            status: g.fullStatus ? markMatchingNodes(g.fullStatus, matchedPaths, 'status') : g.fullStatus
+        modalHighlightPaths = [...matchedPaths];
+        modalDisplaySpec = g.fullSpec
+            ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec')
+            : null;
+        modalDisplayStatus = g.fullStatus
+            ? markMatchingNodes(g.fullStatus, matchedPaths, 'status')
+            : null;
+        modalInitialVersion = g.version || null;
+        modalResource = {
+            name: g.name,
+            kind: g.kind || g.name.split('.')[0],
+            group: g.name.split('.').slice(1).join('.'),
+            versions: g.version
+                ? [{ name: g.version, deprecated: false, appVersion: '' }]
+                : []
         };
+        modalOpen = true;
+    }
 
-        modalExpandAll = false;
-        modalData = { ...g, markedFull };
-        isModalOpen = true;
+    function closeResourceModal() {
+        modalOpen = false;
+        modalResource = null;
+        modalInitialVersion = null;
+        modalHighlightPaths = [];
+        modalDisplaySpec = null;
+        modalDisplayStatus = null;
     }
 
     async function loadVersions() {
@@ -159,7 +169,7 @@
         }
         loadingVersions = true;
         try {
-            const manifest = await fetchManifest(rel.folder, manifestCache);
+            const manifest = await fetchManifest(rel.folder);
             if (manifest) {
                 const versionSet = new Set<string>();
                 manifest.forEach((resource) => {
@@ -204,7 +214,7 @@
         searching = true;
 
         try {
-            const manifest = await fetchManifest(release.folder, manifestCache);
+            const manifest = await fetchManifest(release.folder);
             if (!manifest || generation !== searchGeneration) return;
 
             const matches = await searchManifest({
@@ -512,7 +522,6 @@
                                 results = [];
                                 groupedResults = [];
                                 searching = false;
-                                selectedResource = null;
                                 updateURL();
                             }}
                             class="rounded p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
@@ -876,154 +885,16 @@
     </div>
 </div>
 
-<!-- Modal for Resource Details -->
-{#if isModalOpen && modalData}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div 
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-        on:click|self={() => { isModalOpen = false; modalData = null; modalExpandAll = false; }}
-        style="animation: fadeIn 0.2s ease-out;"
-    >
-        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-        <div 
-            class="relative w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800"
-            on:click|stopPropagation
-            on:keydown={(e) => { if (e.key === 'Escape') { isModalOpen = false; modalData = null; modalExpandAll = false; } }}
-            role="dialog"
-            aria-modal="true"
-            tabindex="-1"
-            style="animation: slideUp 0.3s ease-out;"
-        >
-            <!-- Modal Header -->
-            <div class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-4 dark:border-gray-700 dark:from-slate-900 dark:to-slate-800">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-white">{modalData.kind}</h2>
-                        <p class="text-sm text-cyan-300">{stripResourcePrefixFQDN(String(modalData.name))}</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    {#if version}
-                        <span class="rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 px-3 py-1 text-sm font-mono font-semibold text-cyan-300">
-                            {version}
-                        </span>
-                    {/if}
-                    <button
-                        on:click={() => { modalExpandAll = !modalExpandAll; }}
-                        class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:from-purple-700 hover:to-indigo-700 hover:shadow-lg"
-                    >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            {#if modalExpandAll}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                            {:else}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                            {/if}
-                        </svg>
-                        {modalExpandAll ? 'Collapse All' : 'Expand All'}
-                    </button>
-                    <button
-                        on:click={() => { isModalOpen = false; modalData = null; modalExpandAll = false; }}
-                        class="rounded-lg p-2 text-gray-400 transition-all hover:bg-white/10 hover:text-white"
-                        aria-label="Close modal"
-                    >
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="overflow-y-auto bg-slate-50 p-6 dark:bg-slate-900" style="max-height: calc(90vh - 80px);">
-                <div class="space-y-6">
-                    {#if modalData.fullSpec}
-                        <div class="rounded-xl border-2 border-cyan-200 bg-white shadow-sm dark:border-cyan-800/50 dark:bg-slate-800">
-                            <div class="border-b border-cyan-100 bg-gradient-to-r from-cyan-50 to-blue-50 px-5 py-3 dark:border-cyan-900/50 dark:from-cyan-950/30 dark:to-blue-950/30">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600">
-                                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-base font-bold text-cyan-900 dark:text-cyan-100">Spec Schema</h3>
-                                        <p class="text-xs text-cyan-700 dark:text-cyan-400">Resource specification and configuration</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-5">
-                                {#key modalExpandAll}
-                                    <Render
-                                        hash={expandedPaths.join('|')}
-                                        source={release?.name || 'release'}
-                                        type={'spec'}
-                                        data={modalData.markedFull?.spec || modalData.fullSpec}
-                                        showType={false}
-                                        showDiffIndicator={true}
-                                        forceExpandAll={modalExpandAll}
-                                    />
-                                {/key}
-                            </div>
-                        </div>
-                    {/if}
-                    {#if modalData.fullStatus}
-                        <div class="rounded-xl border-2 border-green-200 bg-white shadow-sm dark:border-green-800/50 dark:bg-slate-800">
-                            <div class="border-b border-green-100 bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-3 dark:border-green-900/50 dark:from-green-950/30 dark:to-emerald-950/30">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600">
-                                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-base font-bold text-green-900 dark:text-green-100">Status Schema</h3>
-                                        <p class="text-xs text-green-700 dark:text-green-400">Observed state and runtime information</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-5">
-                                {#key modalExpandAll}
-                                    <Render
-                                        hash={expandedPaths.join('|')}
-                                        source={release?.name || 'release'}
-                                        type={'status'}
-                                        data={modalData.markedFull?.status || modalData.fullStatus}
-                                        showType={false}
-                                        showDiffIndicator={true}
-                                        forceExpandAll={modalExpandAll}
-                                    />
-                                {/key}
-                            </div>
-                        </div>
-                    {/if}
-                </div>
-            </div>
-        </div>
-    </div>
+{#if release}
+    <ResourceModal
+        open={modalOpen}
+        resourceDef={modalResource}
+        selectedRelease={release}
+        allReleases={releasesConfig.releases}
+        initialVersion={modalInitialVersion}
+        highlightPaths={modalHighlightPaths}
+        displaySpec={modalDisplaySpec}
+        displayStatus={modalDisplayStatus}
+        onClose={closeResourceModal}
+    />
 {/if}
-
-<style>
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    @keyframes slideUp {
-        from { 
-            opacity: 0;
-            transform: translateY(20px) scale(0.95);
-        }
-        to { 
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-    
-    .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; }
-</style>

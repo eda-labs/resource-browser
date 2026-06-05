@@ -9,7 +9,7 @@
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig } from '$lib/structure';
 	import type { ErrorObject } from 'ajv';
-	import { fetchManifest, type ManifestResource } from '$lib/spec-search/searchEngine';
+	import { fetchManifest, getManifestCache } from '$lib/manifest';
 	import {
 		validateYamlInput,
 		prefetchManifest,
@@ -42,7 +42,7 @@
 	let copyFeedback = '';
 	let yamlTextarea: HTMLTextAreaElement | undefined;
 
-	const manifestCache: Map<string, ManifestResource[]> = new Map();
+	const manifestCache = getManifestCache();
 
 	$: release = releaseName
 		? releasesConfig.releases.find((r) => r.name === releaseName) || null

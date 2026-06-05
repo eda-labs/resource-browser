@@ -6,11 +6,9 @@ import {
 	stripDescriptions
 } from './schemaUtils';
 
-export type ManifestResource = {
-	name: string;
-	kind?: string;
-	versions?: { name: string }[];
-};
+import type { ManifestResource } from '$lib/manifest';
+
+export type { ManifestResource };
 
 export type SearchMatch = {
 	name: string;
@@ -230,16 +228,4 @@ export async function searchManifest(options: SearchOptions): Promise<SearchMatc
 	return matches;
 }
 
-export async function fetchManifest(
-	releaseFolder: string,
-	cache: Map<string, ManifestResource[]>
-): Promise<ManifestResource[] | null> {
-	if (cache.has(releaseFolder)) {
-		return cache.get(releaseFolder)!;
-	}
-	const resp = await fetch(`/${releaseFolder}/manifest.json`);
-	if (!resp.ok) return null;
-	const manifest = (await resp.json()) as ManifestResource[];
-	cache.set(releaseFolder, manifest);
-	return manifest;
-}
+export { fetchManifest } from '$lib/manifest';

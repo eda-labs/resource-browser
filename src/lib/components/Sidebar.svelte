@@ -6,6 +6,7 @@
 	import { page } from '$app/stores';
 	import yaml from 'js-yaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
+	import { loadCrdsForRelease as loadManifestCrds } from '$lib/manifest';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
 	import { getLatestVersion } from '$lib/versions';
 	import { onMount, onDestroy } from 'svelte';
@@ -50,29 +51,13 @@
 		return new URLSearchParams(window.location.search).get('release');
 	}
 
-	// Load CRDs dynamically for the selected release
 	async function loadCrdsForRelease(release: EdaRelease) {
 		try {
-			const manifestResponse = await fetch(`/${release.folder}/manifest.json`);
-			if (manifestResponse.ok) {
-				const manifest = await manifestResponse.json();
-				crdMetaStore.set(manifest);
-				lastLoadedReleaseName = release.name;
-				setTimeout(() => updateThumb(), 0);
-				return manifest as CrdResource[];
-			}
-		} catch (e) {
-			// No manifest file found, loading from resources.yaml (fallback)
-		}
-
-		try {
-			const res = await import('$lib/resources.yaml?raw');
-			const resources = yaml.load(res.default) as any;
-			const crdMeta = Object.values(resources).flat() as CrdResource[];
-			crdMetaStore.set(crdMeta);
+			const manifest = await loadManifestCrds(release);
+			crdMetaStore.set(manifest);
 			lastLoadedReleaseName = release.name;
 			setTimeout(() => updateThumb(), 0);
-			return crdMeta;
+			return manifest;
 		} catch (e) {
 			console.error('Failed to load resources:', e);
 			crdMetaStore.set([]);

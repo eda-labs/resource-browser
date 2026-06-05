@@ -3670,3 +3670,86 @@ html:not(.dark) .react-select__menu {
 		transform: translateX(18px);
 	}
 }
+
+/* ============================================
+   APP HEADER — GLOBAL TOOLS NAV
+   ============================================ */
+.app-header-tools-nav {
+	display: none;
+}
+
+.app-header-tools-nav.is-open {
+	display: block;
+}
+
+@media (min-width: 768px) {
+	.app-header-tools-nav {
+		display: block;
+	}
+
+	.app-header-nav-toggle {
+		display: none;
+	}
+}
+
+.app-header-tools-inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem;
+	padding-top: 0.375rem;
+	padding-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+	.app-header-tools-inner {
+		gap: 0.125rem;
+		padding-top: 0;
+		padding-bottom: 0.375rem;
+	}
+}
+
+.app-header-tools-link {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2rem;
+	padding: 0.375rem 0.625rem;
+	border-radius: 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1;
+	color: rgb(71 85 105);
+	text-decoration: none;
+	transition: background-color 0.15s, color 0.15s;
+}
+
+.dark .app-header-tools-link {
+	color: rgb(203 213 225);
+}
+
+.app-header-tools-link:hover {
+	background-color: rgb(241 245 249);
+	color: rgb(30 41 59);
+}
+
+.dark .app-header-tools-link:hover {
+	background-color: rgb(30 41 59);
+	color: rgb(248 250 252);
+}
+
+.app-header-tools-link.is-active {
+	background-color: rgb(239 246 255);
+	color: rgb(29 78 216);
+}
+
+.dark .app-header-tools-link.is-active {
+	background-color: rgb(30 58 138 / 0.35);
+	color: rgb(147 197 253);
+}
+
+@media (min-width: 640px) {
+	.app-header-tools-link {
+		font-size: 0.8125rem;
+		padding: 0.375rem 0.75rem;
+	}
+}

@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { derived, writable } from 'svelte/store';
 import { onMount, onDestroy } from 'svelte';
+import { browser } from '$app/environment';
 import { page } from '$app/stores';
 import { goto } from '$app/navigation';
+import {
+	loadCrdsForRelease as loadManifestCrds,
+	loadVersionsForRelease as loadManifestVersions,
+	loadVersionsForResource as loadManifestResourceVersions
+} from '$lib/manifest';
 
 // AnimatedBackground is provided by the layout and imported dynamically there to improve LCP
 	import PageCredits from '$lib/components/PageCredits.svelte';
@@ -11,7 +17,6 @@ import { goto } from '$app/navigation';
 	import Render from '$lib/components/Render.svelte';
 	// Avoid importing DiffRender on the home page — it is only useful on detail pages and is lazily loaded there
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
-	import type { CrdVersionsMap } from '$lib/structure';
 	import yaml from 'js-yaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
@@ -147,6 +152,26 @@ import { goto } from '$app/navigation';
 		selectedVersion = null;
 		resourceData = null;
 	}
+
+	let previousBrowseRelease = '';
+	$: if (browser && initialLoaded && showBrowseMode && !selectedResource) {
+		const name = $selectedRelease.name;
+		if (name !== previousBrowseRelease) {
+			previousBrowseRelease = name;
+			syncBrowseUrl(name);
+		}
+	}
+
+	function syncBrowseUrl(releaseName: string) {
+		if (!browser || !showBrowseMode) return;
+		const params = new URLSearchParams();
+		params.set('browse', 'true');
+		params.set('release', releaseName);
+		const targetUrl = `/?${params.toString()}`;
+		const currentUrl = `${$page.url.pathname}${$page.url.search}`;
+		if (targetUrl === currentUrl) return;
+		goto(targetUrl, { replaceState: true, noScroll: true, keepFocus: true });
+	}
 	// When the selected release object changes, load versions and set version lists
 	$: if (compareRelease && selectedResource) {
 		loadVersionsForResourceInRelease(compareRelease, selectedResource).then((versions) => {
@@ -197,66 +222,18 @@ import { goto } from '$app/navigation';
 	}
 
 	async function loadCrdsForRelease(release: EdaRelease): Promise<CrdResource[]> {
-		try {
-			const manifestResponse = await fetch(`/${release.folder}/manifest.json`);
-			if (manifestResponse.ok) {
-				const manifest = await manifestResponse.json();
-				crdMetaStore.set(manifest);
-				return manifest as CrdResource[];
-			}
-		} catch (e) {}
-		try {
-			const res = await import('$lib/resources.yaml?raw');
-			const resources = yaml.load(res.default) as CrdVersionsMap;
-			const crdMeta = Object.values(resources).flat();
-			crdMetaStore.set(crdMeta);
-			return crdMeta as CrdResource[];
-		} catch (e) {
-			crdMetaStore.set([]);
-			return [] as CrdResource[];
-		}
+		const manifest = await loadManifestCrds(release);
+		crdMetaStore.set(manifest);
+		return manifest;
 	}
 	async function loadVersionsForRelease(release: EdaRelease): Promise<string[]> {
-		try {
-			const manifestResponse = await fetch(`/${release.folder}/manifest.json`);
-			if (manifestResponse.ok) {
-				const manifest = await manifestResponse.json();
-				console.log(
-					'[diagnostic] loadVersionsForRelease()',
-					release.name,
-					'manifest length',
-					Array.isArray(manifest) ? manifest.length : typeof manifest,
-					manifest?.slice?.(0, 2)
-				);
-				const versionSet = new Set<string>();
-				manifest.forEach((resource: any) => {
-					resource.versions?.forEach((v: any) => {
-						versionSet.add(v.name);
-					});
-				});
-				return Array.from(versionSet).sort();
-			}
-		} catch (e) {
-			console.warn('[diagnostic] loadVersionsForRelease() failed for', release.name, e);
-		}
-		return [];
+		return loadManifestVersions(release);
 	}
 	async function loadVersionsForResourceInRelease(
 		release: EdaRelease,
 		resourceName: string
 	): Promise<string[]> {
-		try {
-			const manifestUrl = `/${release.folder}/manifest.json`;
-			const manifestResponse = await fetch(manifestUrl);
-			if (manifestResponse.ok) {
-				const manifest = await manifestResponse.json();
-				const resource = manifest.find((r: any) => r.name === resourceName);
-				if (resource && resource.versions) {
-					return resource.versions.map((v: any) => v.name);
-				}
-			}
-		} catch (e) {}
-		return [];
+		return loadManifestResourceVersions(release, resourceName);
 	}
 	async function selectResource(resourceName: string, version: string) {
 		selectedResource = resourceName;

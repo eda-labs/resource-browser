@@ -73,14 +73,4 @@ export function getOrCompileValidator(
 	return validator;
 }
 
-export function prefetchManifest<T>(releaseFolder: string, cache: Map<string, T[]>): void {
-	if (cache.has(releaseFolder)) return;
-	void fetch(`/${releaseFolder}/manifest.json`)
-		.then((resp) => (resp.ok ? resp.json() : null))
-		.then((manifest) => {
-			if (manifest) cache.set(releaseFolder, manifest as T[]);
-		})
-		.catch(() => {
-			/* ignore prefetch errors */
-		});
-}
+export { prefetchManifest } from '$lib/manifest';

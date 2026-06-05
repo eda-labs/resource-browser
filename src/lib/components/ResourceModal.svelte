@@ -7,6 +7,7 @@
 	import ResourceViewTabs from '$lib/components/ResourceViewTabs.svelte';
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
 	import { compareVersionDesc, getLatestVersion } from '$lib/versions';
+	import { fetchVersionsForResource } from '$lib/manifest';
 	import type { CrdResource, CrdVersions, EdaRelease, ReleasesConfig } from '$lib/structure';
 	import releasesYaml from '$lib/releases.yaml?raw';
 
@@ -34,6 +35,11 @@
 	export let allReleases: EdaRelease[] = [];
 	/** When set, opens the modal on this API version instead of the latest. */
 	export let initialVersion: string | null = null;
+	/** Optional path highlights (e.g. from spec search). */
+	export let highlightPaths: string[] = [];
+	/** Optional pre-marked schema trees for highlighted display. */
+	export let displaySpec: unknown = null;
+	export let displayStatus: unknown = null;
 	export let onClose: () => void = () => {};
 
 	let loading = false;
@@ -140,24 +146,6 @@
 		return version;
 	}
 
-	async function fetchVersionsForResource(
-		resourceName: string,
-		release: EdaRelease,
-		fallback: CrdVersions[] = []
-	): Promise<CrdVersions[]> {
-		try {
-			const resp = await fetch(`/${release.folder}/manifest.json`);
-			if (resp.ok) {
-				const manifest = await resp.json();
-				const entry = manifest.find((m: { name: string }) => m.name === resourceName);
-				if (entry?.versions?.length) return entry.versions;
-			}
-		} catch {
-			/* ignore */
-		}
-		return fallback;
-	}
-
 	function getReleaseList(): EdaRelease[] {
 		return allReleases.length > 0 ? allReleases : releasesConfig.releases;
 	}
@@ -173,12 +161,12 @@
 		const requestId = ++deprecatedSinceRequestId;
 		const sortedReleases = getReleaseList().slice().reverse();
 
+		const { fetchManifest } = await import('$lib/manifest');
 		for (const r of sortedReleases) {
 			try {
-				const resp = await fetch(`/${r.folder}/manifest.json`);
-				if (!resp.ok) continue;
-				const manifest = await resp.json();
-				const entry = manifest.find((x: { name: string }) => x.name === resourceName);
+				const manifest = await fetchManifest(r.folder);
+				if (!manifest) continue;
+				const entry = manifest.find((x) => x.name === resourceName);
 				if (!entry?.versions) continue;
 				const v = entry.versions.find((vv: { name: string }) => vv.name === version);
 				if (v?.deprecated) {
@@ -279,21 +267,15 @@
 				}
 				return;
 			}
-			const resp = await fetch(`/${release.folder}/manifest.json`);
-			if (resp.ok) {
-				const manifest = await resp.json();
-				const entry = manifest.find((m: any) => m.name === resourceName);
-				if (entry?.versions) {
-					if (requestId === compareVersionsRequestId) {
-						compareReleaseVersions = entry.versions
-							.map((v: any) => v.name)
-							.sort(compareVersionDesc);
-						compareVersionDeprecated = Object.fromEntries(
-							entry.versions.map((v: any) => [v.name, !!v.deprecated])
-						);
-					}
-					return;
+			const versions = await fetchVersionsForResource(resourceName, release);
+			if (versions.length > 0) {
+				if (requestId === compareVersionsRequestId) {
+					compareReleaseVersions = versions.map((v) => v.name).sort(compareVersionDesc);
+					compareVersionDeprecated = Object.fromEntries(
+						versions.map((v) => [v.name, !!v.deprecated])
+					);
 				}
+				return;
 			}
 		} catch {
 			/* ignore */
@@ -520,14 +502,15 @@
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
 								</svg>
 							</button>
-							{#if specExpanded && spec}
+							{#if specExpanded && (displaySpec || spec)}
 								<div class="overflow-x-auto px-3 py-3 text-sm sm:p-4">
 									<Render
-										hash=""
+										hash={highlightPaths.join('|')}
 										source="eda"
 										type="spec"
-										data={spec}
+										data={displaySpec ?? spec}
 										showType={false}
+										showDiffIndicator={highlightPaths.length > 0}
 										onResourcePage={true}
 										resourceName={name}
 										resourceVersion={versionOnFocus}
@@ -562,14 +545,15 @@
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
 								</svg>
 							</button>
-							{#if statusExpanded && status}
+							{#if statusExpanded && (displayStatus || status)}
 								<div class="overflow-x-auto px-3 py-3 text-sm sm:p-4">
 									<Render
-										hash=""
+										hash={highlightPaths.join('|')}
 										source="eda"
 										type="status"
-										data={status}
+										data={displayStatus ?? status}
 										showType={false}
+										showDiffIndicator={highlightPaths.length > 0}
 										onResourcePage={true}
 										resourceName={name}
 										resourceVersion={versionOnFocus}

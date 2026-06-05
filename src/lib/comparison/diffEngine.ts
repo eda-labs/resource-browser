@@ -1,6 +1,5 @@
 import yaml from 'js-yaml';
-import type { ManifestResource } from '$lib/spec-search/searchEngine';
-import { fetchManifest } from '$lib/spec-search/searchEngine';
+import { fetchManifest, loadCrdsForRelease as loadCrdsFromManifest, type ManifestResource } from '$lib/manifest';
 import type { CrdResource, EdaRelease } from '$lib/structure';
 import { compareSchemas } from './schemaDiff';
 import type { BulkDiffReport, CrdDiffEntry } from './types';
@@ -26,15 +25,7 @@ export async function loadCrdsForRelease(
 	release: EdaRelease,
 	manifestCache: Map<string, ManifestResource[]>
 ): Promise<CrdResource[]> {
-	const manifest = await fetchManifest(release.folder, manifestCache);
-	if (manifest) return manifest as CrdResource[];
-	try {
-		const res = await import('$lib/resources.yaml?raw');
-		const resources = yaml.load(res.default) as Record<string, CrdResource[]>;
-		return Object.values(resources).flat();
-	} catch {
-		return [];
-	}
+	return loadCrdsFromManifest(release, manifestCache);
 }
 
 async function checkCrdInRelease(

@@ -154,7 +154,8 @@
 		if (action.id === 'browse') {
 			void onBrowseRelease($selectedRelease);
 		} else if (action.href) {
-			void goto(action.href);
+			const url = `${action.href}?release=${encodeURIComponent($selectedRelease.name)}`;
+			void goto(url);
 		}
 	}
 
