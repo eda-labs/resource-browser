@@ -238,18 +238,20 @@
 
 <!-- Sidebar -->
 <div
-	class="app-sidebar surface-sidebar fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-xl transition-transform duration-300 ease-in-out
-	       lg:sticky lg:top-16 lg:z-auto lg:h-[calc(100dvh-4rem)] lg:w-64 xl:w-72
-	       dark:border-blue-900/40
+	class="app-sidebar fixed inset-y-0 left-0 z-50 flex w-[min(16rem,85vw)] flex-col border-r border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-in-out
+	       lg:sticky lg:top-16 lg:z-auto lg:h-[calc(100dvh-4rem)] lg:w-64
+	       dark:border-slate-700 dark:bg-slate-900
 	       {$mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
 	       {$sidebarOpen ? 'lg:translate-x-0' : 'lg:-translate-x-full'}"
 >
 	<!-- Header -->
-	<div class="relative border-b border-slate-200 bg-slate-50 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] dark:border-blue-900/30 dark:bg-[#0c2340]/60">
+	<div
+		class="relative shrink-0 space-y-2.5 border-b border-gray-200 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] dark:border-slate-700"
+	>
 		<!-- Mobile close -->
 		<button
 			type="button"
-			class="absolute top-[max(0.5rem,env(safe-area-inset-top))] right-2 inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+			class="absolute top-[max(0.5rem,env(safe-area-inset-top))] right-2 inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
 			on:click={closeMobileDrawer}
 			aria-label="Close navigation"
 		>
@@ -261,11 +263,11 @@
 		<!-- Desktop toggle -->
 		<button
 			type="button"
-			class="absolute top-2 right-2 hidden min-h-9 min-w-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-all hover:bg-slate-50 lg:inline-flex dark:border-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700"
+			class="absolute top-2 right-2 hidden min-h-8 min-w-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:inline-flex dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
 			on:click={() => sidebarOpen.toggle()}
 			aria-label={$sidebarOpen ? 'Collapse sidebar' : 'Open sidebar'}
 		>
-			<svg class="h-4 w-4 text-slate-700 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				{#if $sidebarOpen}
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 				{:else}
@@ -275,15 +277,15 @@
 		</button>
 
 		<!-- Release Selector -->
-		<div class="mb-3">
-			<label for="release-select" class="mb-1.5 block text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400">
+		<div class="pr-10 lg:pr-8">
+			<label for="release-select" class="mb-1 block text-[10px] font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400">
 				Release
 			</label>
 			<select
 				id="release-select"
 				on:change={handleReleaseChange}
 				value={$selectedRelease.name}
-				class="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+				class="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
 			>
 				{#each releasesConfig.releases as release}
 					<option value={release.name}>{release.label}{release.default ? ' (Latest)' : ''}</option>
@@ -292,113 +294,103 @@
 		</div>
 
 		<!-- Resource Search -->
-		<div class="space-y-2">
-			<div class="relative">
-				<input
-					type="search"
-					bind:value={$resourceSearch}
-					placeholder="Search by kind, name, or API group…"
-					class="min-h-11 w-full rounded-lg border border-slate-200 bg-white py-2.5 pr-3 pl-9 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
-				/>
-				<svg class="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-				</svg>
-			</div>
+		<div class="relative">
+			<svg
+				class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+				aria-hidden="true"
+			>
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+			</svg>
+			<input
+				type="search"
+				bind:value={$resourceSearch}
+				placeholder="Search resources…"
+				class="w-full rounded-lg border border-slate-200 bg-white py-2 pr-3 pl-9 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
+			/>
+		</div>
 
-			<!-- Resource Type Filter -->
-			<div class="flex items-center gap-1.5 overflow-x-auto pb-0.5" role="group" aria-label="Resource type filter">
-				{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
-					<button
-						type="button"
-						on:click={() => resourceTypeFilter.set(chip.id as 'all' | 'state' | 'config')}
-						class="shrink-0 rounded-full border px-3 py-2 text-xs font-medium transition-colors
-						       {$resourceTypeFilter === chip.id
-							? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-300'
-							: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'}"
-					>
-						{chip.label}
-					</button>
-				{/each}
-			</div>
+		<!-- Resource Type Filter -->
+		<div class="flex items-center gap-1.5 overflow-x-auto pb-0.5" role="group" aria-label="Resource type filter">
+			{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
+				<button
+					type="button"
+					on:click={() => resourceTypeFilter.set(chip.id as 'all' | 'state' | 'config')}
+					class="shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors
+					       {$resourceTypeFilter === chip.id
+						? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-300'
+						: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-500'}"
+				>
+					{chip.label}
+				</button>
+			{/each}
 		</div>
 	</div>
 
 	<!-- Resource List -->
 	<div
-		class="relative flex-1 overflow-y-auto p-3"
+		class="scroll-thin relative flex-1 overflow-y-auto px-2 py-2"
 		bind:this={resourceListEl}
 		on:scroll={handleListScroll}
 	>
-		<div class="mb-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+		<div class="mb-1.5 px-1 text-xs text-slate-500 dark:text-slate-400">
 			<span class="tabular-nums">{$resourceSearchFilter.length}</span>
 			resource{$resourceSearchFilter.length !== 1 ? 's' : ''}
 		</div>
-		<div class="space-y-0.5">
-			<!-- Custom scroll thumb -->
-			<div aria-hidden="true" class="sidebar-scroll-thumb" bind:this={sidebarThumbEl}></div>
-		{#each $resourceSearchFilter as resDef}
-			{@const isSelected = $page.url.pathname.startsWith(`/${resDef.name}/`)}
-			<button
-				type="button"
-				on:click={() => handleResourceClick(resDef.name, resDef)}
-				class="group min-h-11 w-full rounded-lg border px-2.5 py-2.5 text-left transition-colors
-				       {isSelected
-					? 'border-blue-200 bg-blue-50/80 dark:border-blue-800 dark:bg-blue-900/20'
-					: 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60'}"
-			>
-				<div class="flex items-start justify-between gap-2">
-					<div class="min-w-0 flex-1">
-						<div class="flex items-center gap-1.5">
-							<div
-								class="truncate text-sm font-semibold
-												{isSelected
-									? 'text-blue-700 dark:text-blue-300'
-									: 'text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400'}"
-							>
-								{resDef.name.split('.')[0]}
-							</div>
-							{#if isPreferredVersionDeprecated(resDef)}
+
+		<!-- Custom scroll thumb -->
+		<div aria-hidden="true" class="sidebar-scroll-thumb" bind:this={sidebarThumbEl}></div>
+
+		<div class="space-y-px">
+			{#each $resourceSearchFilter as resDef}
+				{@const isSelected = $page.url.pathname.startsWith(`/${resDef.name}/`)}
+				<button
+					type="button"
+					on:click={() => handleResourceClick(resDef.name, resDef)}
+					class="group w-full rounded-r-md border-l-[3px] px-2.5 py-2 text-left transition-colors
+					       {isSelected
+						? 'border-l-blue-500 bg-blue-50/70 dark:border-l-blue-400 dark:bg-blue-900/20'
+						: 'border-l-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60'}"
+				>
+					<div class="flex items-start justify-between gap-1.5">
+						<div class="min-w-0 flex-1">
+							<div class="flex items-center gap-1.5">
 								<span
-									class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-semibold text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
-									>DEPRECATED</span
+									class="truncate text-sm font-semibold
+									       {isSelected
+										? 'text-blue-700 dark:text-blue-300'
+										: 'text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400'}"
 								>
-							{/if}
-						</div>
-						<div
-							class="truncate font-mono text-xs
-							{isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-500 dark:text-slate-400'}"
-						>
-							{resDef.name.split('.').slice(1).join('.')}
+									{resDef.name.split('.')[0]}
+								</span>
+								{#if isPreferredVersionDeprecated(resDef)}
+									<span
+										class="shrink-0 rounded bg-orange-100 px-1 py-0.5 text-[9px] font-semibold text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+									>
+										DEPRECATED
+									</span>
+								{/if}
+							</div>
+							<div
+								class="truncate font-mono text-[11px] leading-tight
+								       {isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-500 dark:text-slate-400'}"
+							>
+								{resDef.name.split('.').slice(1).join('.')}
+							</div>
 						</div>
 						{#if resDef.versions.length > 1}
-							<div class="mt-0.5">
-								<span
-									class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300"
-								>
-									{getLatestVersion(resDef)}
-								</span>
-							</div>
+							<span
+								class="mt-0.5 shrink-0 rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-500 dark:bg-slate-700 dark:text-slate-400"
+								title="{resDef.versions.length} versions"
+							>
+								{resDef.versions.length}
+							</span>
 						{/if}
 					</div>
-					<svg
-						class="mt-0.5 h-4 w-4 flex-shrink-0 transition-transform
-						       {isSelected
-							? 'text-blue-500'
-							: 'text-slate-400 group-hover:translate-x-0.5 group-hover:text-blue-500'}"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M9 5l7 7-7 7"
-						/>
-					</svg>
-				</div>
-			</button>
-		{/each}
+				</button>
+			{/each}
 		</div>
 	</div>
 </div>

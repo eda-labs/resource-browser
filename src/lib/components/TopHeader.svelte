@@ -12,16 +12,12 @@
 	export let versionOnFocus: string = '';
 	export let validVersions: string[] = [];
 	export let versionDeprecated: Record<string, boolean> = {};
-	export let deprecated: boolean = false;
-	export let deprecatedSince: string | null = null;
 	export let kind: string = '';
 	export let releaseLabel: string = '';
 
 	$: shortName = name ? name.split('.')[0] : '';
-	$: groupPath = name ? name.split('.').slice(1).join('.') : '';
 	$: displayKind = kind || shortName;
 	$: headerTitle = title || (name ? displayKind : '');
-	$: headerSubtitle = subtitle || (name && !title ? groupPath || name : '');
 
 	function handleVersionChange(event: Event) {
 		const select = event.target as HTMLSelectElement;
@@ -52,17 +48,13 @@
 	}
 </script>
 
-<AppHeader
-	contextTitle={headerTitle}
-	contextSubtitle={headerSubtitle}
-	fixed={true}
->
+<AppHeader contextTitle={headerTitle} fixed={true}>
 	<svelte:fragment slot="leading">
 		{#if $isDetailPage}
 			<button
 				type="button"
 				on:click={openSidebar}
-				class="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+				class="inline-flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
 				aria-label="Open resource navigation"
 			>
 				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -76,7 +68,7 @@
 		{#if name}
 			{#if releaseLabel}
 				<span
-					class="hidden rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 md:inline dark:bg-blue-900/30 dark:text-blue-300"
+					class="hidden shrink-0 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 sm:inline dark:bg-blue-900/30 dark:text-blue-300"
 				>
 					{releaseLabel}
 				</span>
@@ -85,7 +77,7 @@
 			{#if validVersions && validVersions.length > 0}
 				{#if validVersions.length > 1}
 					<select
-						class="max-w-[6.5rem] min-h-11 rounded-lg border border-slate-200 bg-white px-2 py-2 font-mono text-xs text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:max-w-none sm:px-3 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+						class="max-w-[5.5rem] min-h-9 rounded-lg border border-slate-200 bg-white px-2 py-1.5 font-mono text-xs text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:max-w-none sm:px-2.5 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
 						bind:value={versionOnFocus}
 						on:change={handleVersionChange}
 						aria-label="Select resource version"
@@ -96,20 +88,11 @@
 					</select>
 				{:else}
 					<span
-						class="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+						class="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200"
 					>
 						{validVersions[0]}
 					</span>
 				{/if}
-			{/if}
-
-			{#if deprecated}
-				<span
-					class="hidden items-center gap-1 rounded-md bg-orange-100 px-2 py-1 text-[10px] font-semibold text-orange-700 md:inline-flex sm:text-xs dark:bg-orange-900/30 dark:text-orange-400"
-					title={deprecatedSince ? `Deprecated since ${deprecatedSince}` : 'Deprecated'}
-				>
-					DEPR
-				</span>
 			{/if}
 		{/if}
 	</svelte:fragment>
@@ -118,7 +101,7 @@
 		<button
 			type="button"
 			on:click={() => sidebarOpen.open()}
-			class="fixed top-[4.25rem] left-4 z-[60] hidden min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-lg transition-all hover:bg-slate-50 sm:top-[4.5rem] lg:flex dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+			class="fixed top-[4.25rem] left-4 z-[60] hidden min-h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-md transition-all hover:bg-slate-50 sm:top-[4.5rem] lg:flex dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
 			aria-label="Open sidebar"
 		>
 			<svg class="h-4 w-4 text-slate-700 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">

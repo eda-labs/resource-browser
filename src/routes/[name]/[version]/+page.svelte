@@ -287,15 +287,13 @@
 		{versionOnFocus}
 		{validVersions}
 		{versionDeprecated}
-		{deprecated}
-		deprecatedSince={clientDeprecatedSince}
 		{kind}
 		{releaseLabel}
 	/>
 
 	<div class="page-shell relative flex min-h-full flex-col text-gray-900 dark:text-gray-100">
 		<main class="flex-1 px-3 pt-2 pb-8 sm:px-3 sm:pt-3 md:px-4 md:pt-4">
-			<div class="mx-auto w-full max-w-7xl space-y-4">
+			<div class="mx-auto w-full max-w-7xl space-y-3">
 				<ResourceDetailHeader
 					{kind}
 					{group}
@@ -306,10 +304,7 @@
 					deprecatedSince={clientDeprecatedSince}
 				/>
 
-				<!-- Sticky view controls -->
-				<div
-					class="sticky top-14 z-30 -mx-1 rounded-xl border border-gray-200 bg-white/95 px-3 py-3 shadow-sm backdrop-blur-sm sm:top-16 sm:mx-0 sm:px-4 dark:border-slate-700 dark:bg-slate-900/95"
-				>
+				<div class="py-1">
 					<ResourceViewTabs
 						{viewMode}
 						onViewChange={(mode) => (viewMode = mode)}
