@@ -287,9 +287,8 @@ import { goto } from '$app/navigation';
 		}
 	}
 
-	async function selectRelease(release: EdaRelease) {
+	function handleHomeReleaseSelect(release: EdaRelease) {
 		selectedRelease.set(release);
-		await loadCrdsForRelease(release);
 	}
 
 	async function enterBrowseMode(release: EdaRelease) {
@@ -563,8 +562,8 @@ import { goto } from '$app/navigation';
 					bind:groupedReleases
 					{selectedRelease}
 					{crdMetaStore}
-					onReleaseSelect={selectRelease}
 					onResourceSelect={handleHomeResourceClick}
+					onReleaseSelect={handleHomeReleaseSelect}
 					onBrowseRelease={enterBrowseMode}
 				/>
 			{:else if showBrowseMode && !selectedResource}

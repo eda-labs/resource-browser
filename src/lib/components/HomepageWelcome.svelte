@@ -15,8 +15,8 @@
 	export let groupedReleases: ReleaseGroup[];
 	export let selectedRelease: Writable<EdaRelease>;
 	export let crdMetaStore: Writable<CrdResource[]>;
-	export let onReleaseSelect: (release: EdaRelease) => void | Promise<void>;
 	export let onResourceSelect: (resourceName: string) => void | Promise<void>;
+	export let onReleaseSelect: (release: EdaRelease) => void | Promise<void>;
 	export let onBrowseRelease: (release: EdaRelease) => void | Promise<void>;
 
 	let heroSearch = '';
@@ -126,7 +126,7 @@
 	}
 
 	async function handleReleaseClick(release: EdaRelease) {
-		await onReleaseSelect(release);
+		await onBrowseRelease(release);
 	}
 
 	async function handleMajorSelect(label: string) {
@@ -135,7 +135,7 @@
 		const current = group.releases.find((r) => r.name === $selectedRelease.name);
 		if (current) return;
 		const next = group.releases.find((r) => r.default) ?? group.releases[0];
-		if (next) await handleReleaseClick(next);
+		if (next) await onReleaseSelect(next);
 	}
 
 	function handleQuickAction(action: (typeof quickActions)[number]) {
