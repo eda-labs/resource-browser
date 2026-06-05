@@ -2882,24 +2882,31 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 
 	.homepage-train-label {
 		flex-shrink: 0;
-		min-width: 2.25rem;
-		font-size: 0.6875rem;
-		font-weight: 700;
+		min-width: 2.5rem;
+		padding: 0.2rem 0.45rem;
+		font-size: 0.75rem;
+		font-weight: 800;
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: #475569;
+		letter-spacing: 0.05em;
+		color: #1e40af;
+		background: #dbeafe;
+		border-radius: 9999px;
 		line-height: 1.2;
+		text-align: center;
 	}
 
 	@media (min-width: 640px) {
 		.homepage-train-label {
-			width: 2.5rem;
-			font-size: 0.75rem;
+			width: auto;
+			min-width: 2.75rem;
+			font-size: 0.8125rem;
+			padding: 0.25rem 0.5rem;
 		}
 	}
 
 	.dark .homepage-train-label {
-		color: #94a3b8;
+		color: #93c5fd;
+		background: rgba(30, 58, 138, 0.45);
 	}
 
 	.homepage-train-releases {

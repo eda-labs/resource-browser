@@ -522,7 +522,17 @@
 							</button>
 							{#if specExpanded && spec}
 								<div class="overflow-x-auto px-3 py-3 text-sm sm:p-4">
-									<Render hash="" source="eda" type="spec" data={spec} showType={false} onResourcePage={true} />
+									<Render
+										hash=""
+										source="eda"
+										type="spec"
+										data={spec}
+										showType={false}
+										onResourcePage={true}
+										resourceName={name}
+										resourceVersion={versionOnFocus}
+										releaseName={selectedRelease.name}
+									/>
 								</div>
 							{:else if specExpanded}
 								<p class="px-3 py-4 text-sm text-slate-500 dark:text-slate-400">No specification schema available.</p>
@@ -554,7 +564,17 @@
 							</button>
 							{#if statusExpanded && status}
 								<div class="overflow-x-auto px-3 py-3 text-sm sm:p-4">
-									<Render hash="" source="eda" type="status" data={status} showType={false} onResourcePage={true} />
+									<Render
+										hash=""
+										source="eda"
+										type="status"
+										data={status}
+										showType={false}
+										onResourcePage={true}
+										resourceName={name}
+										resourceVersion={versionOnFocus}
+										releaseName={selectedRelease.name}
+									/>
 								</div>
 							{:else if statusExpanded}
 								<p class="px-3 py-4 text-sm text-slate-500 dark:text-slate-400">No status schema available.</p>

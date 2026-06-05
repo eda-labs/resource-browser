@@ -11,6 +11,9 @@
 	export let showType: boolean = true;
 	export let compact: boolean = false;
 	export let onResourcePage: boolean = false;
+	export let resourceName: string = '';
+	export let resourceVersion: string = '';
+	export let releaseName: string = '';
 	export let showDiffIndicator: boolean = false;
 	export let forceExpandAll: boolean = false;
 
@@ -51,6 +54,9 @@
 						expanded={forceExpandAll || hashExistDeep(hash, `${type}.${key}`)}
 						{compact}
 						{onResourcePage}
+						{resourceName}
+						{resourceVersion}
+						{releaseName}
 						{showDiffIndicator}
 						{forceExpandAll}
 					/>

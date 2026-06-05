@@ -29,6 +29,9 @@
 	export let borderColor: string;
 	export let compact: boolean = false;
 	export let onResourcePage: boolean = false;
+	export let resourceName: string = '';
+	export let resourceVersion: string = '';
+	export let releaseName: string = '';
 	export let forceExpandAll: boolean = false;
 	$: desc = getDescription(folder);
 	$: compactRowPadding = compact ? 'px-1 py-0.5' : 'px-2 py-2';
@@ -126,6 +129,66 @@
 		const resName = hh.substring(0, idx);
 		const resVersion = hh.substring(idx + 1);
 		return { resName, resVersion };
+	}
+
+	function resolveResourceContext() {
+		const pathParts = window.location.pathname.split('/').filter(Boolean);
+		let resName = '';
+		let resVersion = '';
+		if (pathParts.length >= 2) {
+			resName = pathParts[0];
+			resVersion = pathParts[1];
+		} else if (resourceName) {
+			resName = resourceName;
+			resVersion = resourceVersion;
+		} else {
+			const parsed = parseResourceFromHash(hash || '');
+			resName = parsed.resName;
+			resVersion = parsed.resVersion;
+		}
+		const urlSearch = new URLSearchParams(window.location.search);
+		const selectedReleaseParam = urlSearch.get('release');
+		const releaseParam =
+			releaseName ||
+			selectedReleaseParam ||
+			(source && source !== 'release' && source !== 'eda' && source !== 'uploaded'
+				? source
+				: '');
+		return { pathParts, resName, resVersion, releaseParam };
+	}
+
+	function scrollToField(fieldId: string, fullUrl: string) {
+		const { pathParts } = resolveResourceContext();
+		if (pathParts.length >= 2) {
+			const newUrl = `${window.location.pathname}${window.location.search}#${fieldId}`;
+			history.pushState(null, '', newUrl);
+		}
+		const el = document.getElementById(fieldId);
+		if (!el || typeof el.scrollIntoView !== 'function') return;
+		el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		try {
+			(el as HTMLElement).focus();
+		} catch {
+			/* ignore */
+		}
+		try {
+			el.classList.add('bg-amber-100', 'dark:bg-amber-900/10');
+			copiedPath = fieldId;
+			if (timeout) clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				if (copiedPath === fieldId) copiedPath = null;
+			}, 500);
+			try {
+				navigator.clipboard.writeText(fullUrl);
+			} catch {
+				/* ignore */
+			}
+			setTimeout(() => {
+				el.classList.remove('bg-amber-100', 'dark:bg-amber-900/10');
+			}, 1800);
+		} catch {
+			/* ignore */
+		}
 	}
 
 	// Diff mode props
@@ -402,79 +465,10 @@
 					? 'block'
 					: 'hidden'} hover:text-cyan-700 md:hidden md:group-hover:block md:group-active:block dark:hover:text-cyan-300"
 				on:click|capture={(e) => {
-					// Prefer using the current page path/search when available (resource view)
-					const pathParts = window.location.pathname.split('/').filter(Boolean);
-					let resName = '';
-					let resVersion = '';
-					if (pathParts.length >= 2) {
-						resName = pathParts[0];
-						resVersion = pathParts[1];
-					} else {
-						const lastDot = (hash || '').lastIndexOf('.');
-						resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : hash || '';
-						resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
-					}
-					const urlSearch = new URLSearchParams(window.location.search);
-					const selectedReleaseParam = urlSearch.get('release');
-					// Use explicit URL release param if present; otherwise use `source` only when
-					// it represents a real release name (avoid fallback `release` string).
-					const releaseParam =
-						selectedReleaseParam || (source && source !== 'release' ? source : '');
-					const url = `${window.location.origin}/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
-					// Determine whether we are already on the resource page for this resource.
-					// If so, just update the hash to highlight and scroll to this field rather than opening a new page.
-					const isOnResourcePage =
-						onResourcePage &&
-						pathParts.length >= 2 &&
-						pathParts[0] === resName &&
-						(!resVersion || pathParts[1] === resVersion);
-					// Construct the URL using parsed resName/resVersion from `hash` if possible
-					// Prefer the pathname-resolved resource name/version when on a resource page
-					let resourcePath = resName || '';
-					let verPath = resVersion ? `/${resVersion}` : '';
-					if (pathParts.length < 2) {
-						const { resName: parsedResName, resVersion: parsedResVersion } = parseResourceFromHash(
-							hash || ''
-						);
-						if (parsedResName) resourcePath = parsedResName;
-						if (parsedResVersion) verPath = `/${parsedResVersion}`;
-					}
-					const base = window.location.origin;
-					const fullUrl = `${base}/${resourcePath}${verPath}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
-					if (isOnResourcePage) {
-						// Navigate to the element hash in-place without opening a new page
-						const newUrl = `${window.location.pathname}${window.location.search}#${currentId}`;
-						history.pushState(null, '', newUrl);
-						const el = document.getElementById(currentId);
-						if (el && typeof el.scrollIntoView === 'function') {
-							el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-							// Optionally focus the element for accessibility
-							try {
-								(el as HTMLElement).focus();
-							} catch (e) {
-								/* ignore */
-							}
-							// Add temporary highlight to make the selected field visually distinct AND copy link
-							try {
-								el.classList.add('bg-amber-100', 'dark:bg-amber-900/10');
-								// set copy indication
-								copiedPath = currentId;
-								if (timeout) clearTimeout(timeout);
-								timeout = setTimeout(() => {
-									if (copiedPath === currentId) copiedPath = null;
-								}, 500);
-								try {
-									navigator.clipboard.writeText(fullUrl);
-								} catch (e) {
-									/* ignore */
-								}
-								setTimeout(() => {
-									el.classList.remove('bg-amber-100', 'dark:bg-amber-900/10');
-								}, 1800);
-							} catch (e) {
-								/* ignore */
-							}
-						}
+					const { resName, resVersion, releaseParam } = resolveResourceContext();
+					const fullUrl = `${window.location.origin}/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`;
+					if (onResourcePage) {
+						scrollToField(currentId, fullUrl);
 					} else {
 						// Prefetch the resource YAML to warm the HTTP cache and reduce the two-step blank loading,
 						// but don't block the UI for too long — try fetch and open immediately.
@@ -489,21 +483,7 @@
 				}}
 				use:copy={{
 					text: (() => {
-						const pathParts = window.location.pathname.split('/').filter(Boolean);
-						let resName = '';
-						let resVersion = '';
-						if (pathParts.length >= 2) {
-							resName = pathParts[0];
-							resVersion = pathParts[1];
-						} else {
-							const lastDot = (hash || '').lastIndexOf('.');
-							resName = lastDot !== -1 ? (hash || '').substring(0, lastDot) : hash || '';
-							resVersion = lastDot !== -1 ? (hash || '').substring(lastDot + 1) : '';
-						}
-						const urlSearch = new URLSearchParams(window.location.search);
-						const selectedReleaseParam = urlSearch.get('release');
-						const releaseParam =
-							selectedReleaseParam || (source && source !== 'release' ? source : '');
+						const { resName, resVersion, releaseParam } = resolveResourceContext();
 						return (
 							window.location.origin +
 							`/${resName}/${resVersion}${releaseParam ? `?release=${encodeURIComponent(releaseParam)}` : ''}#${currentId}`
@@ -676,6 +656,10 @@
 								diffCurrentData={subCurrentData}
 								{diffSide}
 								{compact}
+								{onResourcePage}
+								{resourceName}
+								{resourceVersion}
+								{releaseName}
 								{forceExpandAll}
 								{showDiffIndicator}
 							/>

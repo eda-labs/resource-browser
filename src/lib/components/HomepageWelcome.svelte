@@ -318,10 +318,7 @@
 								visibleReleases
 							)}
 							<div class="homepage-train-row">
-								<div
-									class="homepage-train-label text-slate-600 dark:text-slate-300"
-									aria-hidden="true"
-								>
+								<div class="homepage-train-label" aria-hidden="true">
 									{group.label}
 								</div>
 								<div class="homepage-train-releases">
