@@ -17,50 +17,29 @@
 	export let onResourceSelect: (resourceName: string) => void | Promise<void>;
 	export let onBrowseRelease: (release: EdaRelease) => void | Promise<void>;
 
-	const VISIBLE_RELEASE_COUNT = 9;
+	const VISIBLE_PER_TRAIN = 3;
 
 	let heroSearch = '';
 	let searchFocused = false;
 	let highlightedIndex = 0;
 	let resourceTypeFilter: 'all' | 'state' | 'config' = 'all';
-	let moreReleasePick = '';
 
-	function parseVersion(name: string) {
-		return String(name)
-			.split('.')
-			.map((n) => parseInt(n, 10) || 0);
-	}
-
-	function compareReleaseDesc(a: EdaRelease, b: EdaRelease) {
-		const pa = parseVersion(a.name);
-		const pb = parseVersion(b.name);
-		const len = Math.max(pa.length, pb.length);
-		for (let i = 0; i < len; i++) {
-			const na = pa[i] || 0;
-			const nb = pb[i] || 0;
-			if (na > nb) return -1;
-			if (na < nb) return 1;
-		}
-		return 0;
-	}
-
-	$: allReleases = groupedReleases
-		.flatMap((group) => group.releases)
-		.sort(compareReleaseDesc);
-
-	$: visibleReleases = (() => {
-		const top = allReleases.slice(0, VISIBLE_RELEASE_COUNT);
+	function visibleReleasesForGroup(releases: EdaRelease[]) {
+		const top = releases.slice(0, VISIBLE_PER_TRAIN);
 		const selected = $selectedRelease;
 		if (top.some((release) => release.name === selected.name)) return top;
-		return [selected, ...top.slice(0, VISIBLE_RELEASE_COUNT - 1)].sort(compareReleaseDesc);
-	})();
+		const selectedInGroup = releases.find((release) => release.name === selected.name);
+		if (!selectedInGroup) return top;
+		return [
+			selectedInGroup,
+			...top.filter((release) => release.name !== selectedInGroup.name)
+		].slice(0, VISIBLE_PER_TRAIN);
+	}
 
-	$: hiddenReleases = allReleases.filter(
-		(release) => !visibleReleases.some((visible) => visible.name === release.name)
-	);
-
-	function majorLabel(name: string) {
-		return `v${String(name).split('.')[0]}`;
+	function hiddenReleasesForGroup(releases: EdaRelease[], visible: EdaRelease[]) {
+		return releases.filter(
+			(release) => !visible.some((item) => item.name === release.name)
+		);
 	}
 
 	const quickActions = [
@@ -161,11 +140,13 @@
 		await onBrowseRelease(release);
 	}
 
-	async function handleMoreReleasePick(event: Event) {
-		const value = (event.currentTarget as HTMLSelectElement).value;
-		moreReleasePick = '';
+	async function handleMoreReleasePick(groupLabel: string, event: Event) {
+		const select = event.currentTarget as HTMLSelectElement;
+		const value = select.value;
+		select.value = '';
 		if (!value) return;
-		const release = allReleases.find((item) => item.name === value);
+		const group = groupedReleases.find((item) => item.label === groupLabel);
+		const release = group?.releases.find((item) => item.name === value);
 		if (release) await handleReleaseClick(release);
 	}
 
@@ -329,59 +310,77 @@
 				</div>
 
 				<div class="homepage-release-picker">
-					<div
-						class="homepage-release-grid"
-						role="listbox"
-						aria-label="EDA releases"
-					>
-						{#each visibleReleases as release}
-							{@const isSelected = $selectedRelease.name === release.name}
-							<button
-								type="button"
-								role="option"
-								class="homepage-release-btn {isSelected ? 'is-active' : ''}"
-								aria-selected={isSelected}
-								on:click={() => handleReleaseClick(release)}
-							>
-								<span class="homepage-release-train">{majorLabel(release.name)}</span>
-								<span class="homepage-release-name">{release.name}</span>
-								{#if isSelected}
-									<span class="homepage-release-active-dot" aria-hidden="true"></span>
-								{/if}
-								{#if release.default}
-									<span
-										class="homepage-default-tag {isSelected
-											? 'homepage-default-tag--on-active'
-											: 'homepage-default-tag--pill'}">latest</span
+					<div class="homepage-releases" role="group" aria-label="EDA releases by train">
+						{#each groupedReleases as group (group.label)}
+							{@const visibleReleases = visibleReleasesForGroup(group.releases)}
+							{@const hiddenReleases = hiddenReleasesForGroup(
+								group.releases,
+								visibleReleases
+							)}
+							<div class="homepage-train-row">
+								<div
+									class="homepage-train-label text-slate-600 dark:text-slate-300"
+									aria-hidden="true"
+								>
+									{group.label}
+								</div>
+								<div class="homepage-train-releases">
+									<div
+										class="homepage-train-release-cards"
+										role="listbox"
+										aria-label="{group.label} releases"
 									>
-								{/if}
-							</button>
+										{#each visibleReleases as release (release.name)}
+											{@const isSelected = $selectedRelease.name === release.name}
+											<button
+												type="button"
+												role="option"
+												class="homepage-release-btn {isSelected ? 'is-active' : ''}"
+												aria-selected={isSelected}
+												on:click={() => handleReleaseClick(release)}
+											>
+												<span class="homepage-release-name">{release.name}</span>
+												{#if isSelected}
+													<span
+														class="homepage-release-active-dot"
+														aria-hidden="true"
+													></span>
+												{/if}
+												{#if release.default}
+													<span
+														class="homepage-default-tag {isSelected
+															? 'homepage-default-tag--on-active'
+															: 'homepage-default-tag--pill'}">latest</span
+													>
+												{/if}
+											</button>
+										{/each}
+									</div>
+									{#if hiddenReleases.length > 0}
+										<div class="homepage-train-more">
+											<label
+												for="homepage-more-{group.label}"
+												class="sr-only"
+											>
+												More {group.label} releases
+											</label>
+											<select
+												id="homepage-more-{group.label}"
+												class="homepage-train-more-select border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+												on:change={(event) =>
+													handleMoreReleasePick(group.label, event)}
+											>
+												<option value="">More</option>
+												{#each hiddenReleases as release (release.name)}
+													<option value={release.name}>{release.name}</option>
+												{/each}
+											</select>
+										</div>
+									{/if}
+								</div>
+							</div>
 						{/each}
 					</div>
-
-					{#if hiddenReleases.length > 0}
-						<div class="homepage-release-more-row">
-							<label
-								for="homepage-more-releases"
-								class="homepage-release-more-label text-slate-500 dark:text-slate-400"
-							>
-								More releases
-							</label>
-							<select
-								id="homepage-more-releases"
-								class="homepage-release-more-select border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-								bind:value={moreReleasePick}
-								on:change={handleMoreReleasePick}
-							>
-								<option value="">Choose a release…</option>
-								{#each hiddenReleases as release}
-									<option value={release.name}>
-										{release.name} ({majorLabel(release.name)})
-									</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
 				</div>
 			</section>
 
