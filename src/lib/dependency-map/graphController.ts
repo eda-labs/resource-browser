@@ -121,6 +121,27 @@ function placeArc(
 	});
 }
 
+function maxRingDepth(
+	upstreamByRing: Map<number, string[]>,
+	downstreamByRing: Map<number, string[]>,
+	bridgeByRing: Map<number, string[]>
+): number {
+	const depths = [
+		...upstreamByRing.keys(),
+		...downstreamByRing.keys(),
+		...bridgeByRing.keys()
+	];
+	return depths.length > 0 ? Math.max(...depths) : 1;
+}
+
+function radialScale(width: number, height: number, maxDepth: number): number {
+	const labelMargin = 36;
+	const available = Math.min(width, height) / 2 - labelMargin;
+	const baseMaxRadius = INNER_RING + Math.max(maxDepth - 1, 0) * RING_GAP + RING_GAP * 0.35;
+	if (baseMaxRadius <= 0) return 1;
+	return Math.min(1, available / baseMaxRadius);
+}
+
 function computeRadialPositions(
 	nodes: SimNode[],
 	links: SimLink[],
@@ -174,18 +195,22 @@ function computeRadialPositions(
 		}
 	}
 
+	const scale = radialScale(width, height, maxRingDepth(upstreamByRing, downstreamByRing, bridgeByRing));
+	const innerRing = INNER_RING * scale;
+	const ringGap = RING_GAP * scale;
+
 	for (const [depth, ids] of upstreamByRing) {
-		const radius = INNER_RING + (depth - 1) * RING_GAP;
+		const radius = innerRing + (depth - 1) * ringGap;
 		placeArc(ids, cx, cy, radius, Math.PI * 0.55, Math.PI * 1.45, positions);
 	}
 
 	for (const [depth, ids] of downstreamByRing) {
-		const radius = INNER_RING + (depth - 1) * RING_GAP;
+		const radius = innerRing + (depth - 1) * ringGap;
 		placeArc(ids, cx, cy, radius, -Math.PI * 0.45, Math.PI * 0.45, positions);
 	}
 
 	for (const [depth, ids] of bridgeByRing) {
-		const radius = INNER_RING + (depth - 1) * RING_GAP + RING_GAP * 0.35;
+		const radius = innerRing + (depth - 1) * ringGap + ringGap * 0.35;
 		const top = ids.filter((_, i) => i % 2 === 0);
 		const bottom = ids.filter((_, i) => i % 2 === 1);
 		placeArc(top, cx, cy, radius, -Math.PI * 0.12, Math.PI * 0.12, positions);
@@ -259,8 +284,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	function measure() {
 		const rect = container.getBoundingClientRect();
-		width = Math.max(rect.width, 320);
-		height = Math.max(rect.height, 480);
+		width = Math.max(rect.width, 1);
+		height = Math.max(rect.height, 1);
 		select(svg)
 			.attr('width', width)
 			.attr('height', height)
@@ -382,21 +407,31 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	function fitToScreen() {
 		if (!zoomBehavior || simNodes.length === 0) return;
-		const padding = 56;
-		const labelPad = 28;
-		const xs = simNodes.map((n) => n.x ?? 0);
-		const ys = simNodes.map((n) => (n.y ?? 0) - labelPad).concat(simNodes.map((n) => (n.y ?? 0) + labelPad));
-		const allXs = xs;
-		const allYs = ys;
-		const minX = Math.min(...allXs);
-		const maxX = Math.max(...allXs);
-		const minY = Math.min(...allYs);
-		const maxY = Math.max(...allYs);
+		const paddingX = 56;
+		const paddingTop = 80;
+		const paddingBottom = 80;
+		const centerId = getCenterNodeId?.() ?? null;
+		const labelPad = 30;
+		let minX = Infinity;
+		let maxX = -Infinity;
+		let minY = Infinity;
+		let maxY = -Infinity;
+		for (const n of simNodes) {
+			const x = n.x ?? 0;
+			const y = n.y ?? 0;
+			const r = nodeRadius(n, centerId) + 6;
+			minX = Math.min(minX, x - r);
+			maxX = Math.max(maxX, x + r);
+			minY = Math.min(minY, y - r);
+			maxY = Math.max(maxY, y + r + labelPad);
+		}
 		const dx = maxX - minX || 1;
 		const dy = maxY - minY || 1;
-		const scale = Math.min((width - padding * 2) / dx, (height - padding * 2) / dy, 2.2);
-		const tx = width / 2 - (scale * (minX + maxX)) / 2;
-		const ty = height / 2 - (scale * (minY + maxY)) / 2;
+		const availableW = width - paddingX * 2;
+		const availableH = height - paddingTop - paddingBottom;
+		const scale = Math.min(availableW / dx, availableH / dy, 2.2);
+		const tx = paddingX + (availableW - scale * dx) / 2 - scale * minX;
+		const ty = paddingTop + (availableH - scale * dy) / 2 - scale * minY;
 		if (!Number.isFinite(scale) || !Number.isFinite(tx) || !Number.isFinite(ty)) return;
 		select(svg)
 			.transition()

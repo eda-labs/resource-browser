@@ -3859,7 +3859,7 @@ html:not(.dark) .react-select__menu {
    ============================================ */
 .dependency-map-graph-shell {
 	font-family: 'NokiaPureText', ui-sans-serif, system-ui, sans-serif;
-	min-height: 22rem;
+	min-height: min(50vh, 28rem);
 }
 
 .dep-map-page--active .spec-search-main {

@@ -224,11 +224,14 @@
 		controller?.zoomOut();
 	}
 
-	function toggleInspector() {
-		inspectorOpen = !inspectorOpen;
+	function toggleInspector(open?: boolean) {
+		inspectorOpen = open ?? !inspectorOpen;
 		if (browser) {
 			sessionStorage.setItem(INSPECTOR_STORAGE_KEY, String(inspectorOpen));
 		}
+		requestAnimationFrame(() => {
+			controller?.fitToScreen();
+		});
 	}
 
 	onMount(async () => {
@@ -439,6 +442,26 @@
 
 			<svg class="dep-map-svg" bind:this={svgEl} role="img" aria-label="CRD dependency graph"></svg>
 			<div class="dep-map-tooltip" bind:this={tooltipEl} aria-hidden="true"></div>
+
+			{#if !inspectorOpen}
+				<button
+					type="button"
+					class="dep-map-inspector-reopen"
+					on:click={() => toggleInspector(true)}
+					aria-label="Show inspector panel"
+					title="Show inspector"
+				>
+					<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+						/>
+					</svg>
+					<span>Show inspector</span>
+				</button>
+			{/if}
 
 			<div class="dep-map-zoom-controls" role="toolbar" aria-label="Graph zoom controls">
 				<button type="button" class="dep-map-zoom-btn" on:click={zoomIn} aria-label="Zoom in">
@@ -848,16 +871,45 @@
 	}
 
 	.dep-map-inspector-toggle {
-		display: none;
+		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
 		margin-left: auto;
 	}
 
-	@media (min-width: 1024px) {
-		.dep-map-inspector-toggle {
-			display: inline-flex;
-		}
+	.dep-map-inspector-reopen {
+		position: absolute;
+		top: 50%;
+		right: 0;
+		z-index: 4;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.5rem 0.55rem 0.5rem 0.65rem;
+		border: 1px solid var(--dep-panel-border);
+		border-right: none;
+		border-radius: 0.5rem 0 0 0.5rem;
+		background: color-mix(in srgb, var(--dep-panel) 94%, transparent);
+		color: var(--dep-text-muted);
+		font-size: 0.7rem;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: -2px 0 10px rgba(15, 23, 42, 0.08);
+		backdrop-filter: blur(6px);
+		transform: translateY(-50%);
+		transition: border-color 0.15s, color 0.15s, background 0.15s;
+	}
+
+	.dep-map-inspector-reopen svg {
+		width: 0.95rem;
+		height: 0.95rem;
+		flex-shrink: 0;
+	}
+
+	.dep-map-inspector-reopen:hover {
+		border-color: var(--dep-chip-active);
+		color: var(--dep-chip-active);
+		background: color-mix(in srgb, var(--dep-chip-active) 8%, var(--dep-panel));
 	}
 
 	.dep-map-inspector-icon {
@@ -934,15 +986,14 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		flex: 1;
-		min-height: 0;
-		min-height: 22rem;
+		min-height: min(50vh, 28rem);
+		overflow: visible;
 	}
 
 	@media (min-width: 1024px) {
 		.dep-map-body {
 			flex-direction: row;
 			align-items: stretch;
-			min-height: min(32rem, 52vh);
 		}
 	}
 
@@ -950,10 +1001,8 @@
 		position: relative;
 		flex: 1 1 auto;
 		min-width: 0;
-		min-height: 18rem;
+		min-height: min(50vh, 28rem);
 		width: 100%;
-		aspect-ratio: 2.15 / 1;
-		max-height: min(38vh, 34rem);
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-bg);
@@ -963,12 +1012,11 @@
 
 	@media (min-width: 1024px) {
 		.dep-map-canvas-wrap {
-			aspect-ratio: 2.35 / 1;
-			max-height: min(42vh, 36rem);
+			min-height: min(52vh, 32rem);
 		}
 
 		.dep-map-body--panel-hidden .dep-map-canvas-wrap {
-			max-height: min(44vh, 38rem);
+			min-height: min(56vh, 36rem);
 		}
 	}
 
