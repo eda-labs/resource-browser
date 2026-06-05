@@ -20,7 +20,8 @@
   "generate:sitemap": "node scripts/generate-sitemap.mjs"
  },
  "dependencies": {
-  "ajv": "^8.17.1"
+  "ajv": "^8.17.1",
+  "d3": "^7.9.0"
  },
  "devDependencies": {
   "@eslint/compat": "^1.2.5",
@@ -31,6 +32,7 @@
   "@sveltejs/kit": "^2.22.0",
   "@sveltejs/vite-plugin-svelte": "^6.0.0",
   "@tailwindcss/vite": "^4.1.11",
+  "@types/d3": "^7.4.3",
   "@types/js-yaml": "^4.0.9",
   "@vitest/browser": "^3.2.3",
   "eslint": "^9.18.0",

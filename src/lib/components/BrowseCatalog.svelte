@@ -100,7 +100,6 @@
 	class="page-shell flex min-h-full min-w-0 flex-col overflow-x-hidden bg-gray-50 text-sm text-gray-900 dark:text-gray-100"
 >
 	<AppHeader
-		contextBadge="CRD Catalog"
 		onLogoClick={(e) => {
 			e.preventDefault();
 			onExitBrowse();

@@ -5,19 +5,11 @@
 	import { sidebarOpen, mobileSidebarOpen } from '$lib/store';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 
-	export let title: string = '';
-	export let subtitle: string = '';
-
 	export let name: string = '';
 	export let versionOnFocus: string = '';
 	export let validVersions: string[] = [];
 	export let versionDeprecated: Record<string, boolean> = {};
-	export let kind: string = '';
 	export let releaseLabel: string = '';
-
-	$: shortName = name ? name.split('.')[0] : '';
-	$: displayKind = kind || shortName;
-	$: headerTitle = title || (name ? displayKind : '');
 
 	function handleVersionChange(event: Event) {
 		const select = event.target as HTMLSelectElement;
@@ -48,7 +40,7 @@
 	}
 </script>
 
-<AppHeader contextTitle={headerTitle} fixed={true}>
+<AppHeader fixed={true}>
 	<svelte:fragment slot="leading">
 		{#if $isDetailPage}
 			<button

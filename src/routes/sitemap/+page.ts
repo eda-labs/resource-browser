@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import resourcesYaml from '$lib/resources.yaml?raw';
 import type { PageLoad } from './$types';
 
-const staticPaths = ['/', '/spec-search', '/spec-search-auto', '/comparison', '/uploads', '/validate-yaml'];
+const staticPaths = ['/', '/spec-search', '/spec-search-auto', '/comparison', '/validate-yaml'];
 
 export const prerender = true;
 

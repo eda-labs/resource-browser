@@ -287,7 +287,6 @@
 		{versionOnFocus}
 		{validVersions}
 		{versionDeprecated}
-		{kind}
 		{releaseLabel}
 	/>
 

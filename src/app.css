@@ -3676,15 +3676,28 @@ html:not(.dark) .react-select__menu {
    ============================================ */
 .app-header-tools-nav {
 	display: none;
+	border-top: 1px solid rgb(226 232 240);
+	background-color: rgb(248 250 252 / 0.85);
+}
+
+.dark .app-header-tools-nav {
+	border-top-color: rgb(51 65 85);
+	background-color: rgb(15 23 42 / 0.6);
 }
 
 .app-header-tools-nav.is-open {
 	display: block;
+	box-shadow: 0 4px 6px -1px rgb(15 23 42 / 0.06);
+}
+
+.dark .app-header-tools-nav.is-open {
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.25);
 }
 
 @media (min-width: 768px) {
 	.app-header-tools-nav {
 		display: block;
+		box-shadow: none;
 	}
 
 	.app-header-nav-toggle {
@@ -3694,62 +3707,143 @@ html:not(.dark) .react-select__menu {
 
 .app-header-tools-inner {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 0.25rem;
-	padding-top: 0.375rem;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.125rem;
+	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
 }
 
 @media (min-width: 768px) {
 	.app-header-tools-inner {
-		gap: 0.125rem;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: 0;
 		padding-top: 0;
-		padding-bottom: 0.375rem;
+		padding-bottom: 0;
 	}
+}
+
+.app-header-tools-sep {
+	flex-shrink: 0;
+	width: 1px;
+	height: 1rem;
+	margin: 0 0.125rem;
+	background-color: rgb(203 213 225);
+}
+
+.dark .app-header-tools-sep {
+	background-color: rgb(71 85 105);
 }
 
 .app-header-tools-link {
 	display: inline-flex;
 	align-items: center;
-	min-height: 2rem;
-	padding: 0.375rem 0.625rem;
-	border-radius: 0.5rem;
-	font-size: 0.75rem;
-	font-weight: 600;
+	gap: 0.4375rem;
+	min-height: 2.25rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.375rem;
+	border: 1px solid transparent;
+	font-size: 0.8125rem;
+	font-weight: 500;
 	line-height: 1;
+	letter-spacing: -0.01em;
 	color: rgb(71 85 105);
 	text-decoration: none;
-	transition: background-color 0.15s, color 0.15s;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+@media (min-width: 768px) {
+	.app-header-tools-link {
+		position: relative;
+		min-height: 2.375rem;
+		padding: 0.5rem 0.875rem;
+		border-radius: 0;
+		border: none;
+		border-bottom: 2px solid transparent;
+		margin-bottom: -1px;
+	}
 }
 
 .dark .app-header-tools-link {
-	color: rgb(203 213 225);
+	color: rgb(148 163 184);
+}
+
+.app-header-tools-icon {
+	flex-shrink: 0;
+	width: 0.9375rem;
+	height: 0.9375rem;
+	opacity: 0.72;
+	transition: opacity 0.15s ease;
+}
+
+.app-header-tools-link:hover .app-header-tools-icon,
+.app-header-tools-link.is-active .app-header-tools-icon {
+	opacity: 1;
+}
+
+.app-header-tools-label {
+	white-space: nowrap;
 }
 
 .app-header-tools-link:hover {
 	background-color: rgb(241 245 249);
+	border-color: rgb(226 232 240);
 	color: rgb(30 41 59);
 }
 
+@media (min-width: 768px) {
+	.app-header-tools-link:hover {
+		background-color: rgb(241 245 249 / 0.7);
+		border-color: transparent;
+	}
+}
+
 .dark .app-header-tools-link:hover {
-	background-color: rgb(30 41 59);
-	color: rgb(248 250 252);
+	background-color: rgb(30 41 59 / 0.65);
+	border-color: rgb(51 65 85);
+	color: rgb(226 232 240);
+}
+
+@media (min-width: 768px) {
+	.dark .app-header-tools-link:hover {
+		background-color: rgb(30 41 59 / 0.45);
+		border-color: transparent;
+	}
 }
 
 .app-header-tools-link.is-active {
 	background-color: rgb(239 246 255);
+	border-color: rgb(191 219 254);
 	color: rgb(29 78 216);
+	font-weight: 600;
+}
+
+@media (min-width: 768px) {
+	.app-header-tools-link.is-active {
+		background-color: transparent;
+		border-color: transparent;
+		border-bottom-color: rgb(37 99 235);
+		color: rgb(29 78 216);
+	}
 }
 
 .dark .app-header-tools-link.is-active {
-	background-color: rgb(30 58 138 / 0.35);
+	background-color: rgb(30 58 138 / 0.25);
+	border-color: rgb(30 58 138 / 0.5);
 	color: rgb(147 197 253);
 }
 
-@media (min-width: 640px) {
-	.app-header-tools-link {
-		font-size: 0.8125rem;
-		padding: 0.375rem 0.75rem;
+@media (min-width: 768px) {
+	.dark .app-header-tools-link.is-active {
+		background-color: transparent;
+		border-color: transparent;
+		border-bottom-color: rgb(96 165 250);
+		color: rgb(147 197 253);
 	}
 }

@@ -681,7 +681,7 @@
 
 <svelte:head>
     <title>EDA Resource Browser | Resource Search</title>
-</svelte:head><TopHeader title="Resource Search" />
+</svelte:head><TopHeader />
 
 <div class="relative flex h-full flex-col overflow-y-auto pt-12 md:pt-14">
     <div class="mx-auto w-full max-w-7xl flex-1 px-3 py-3 sm:px-4 sm:py-4">

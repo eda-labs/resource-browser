@@ -340,7 +340,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <div class="spec-search-page page-shell min-h-full bg-gray-50 dark:text-gray-100">
-	<AppHeader contextTitle="Release Comparison" contextBadge="Compare" fixed={false} />
+	<AppHeader fixed={false} />
 
 	<div class="spec-search-main">
 		<ComparisonHeader activeStep={activeStep as 1 | 2 | 3} />

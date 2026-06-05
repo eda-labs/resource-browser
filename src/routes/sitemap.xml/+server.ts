@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import resourcesYaml from '$lib/resources.yaml?raw';
 import type { RequestHandler } from './$types';
 
-const staticPaths = ['/', '/sitemap', '/spec-search', '/spec-search-auto', '/comparison', '/uploads', '/validate-yaml'];
+const staticPaths = ['/', '/sitemap', '/spec-search', '/spec-search-auto', '/comparison', '/validate-yaml'];
 
 function escapeXml(value: string) {
 	return value.replace(/[<>&"']/g, (char) => {

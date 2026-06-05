@@ -369,7 +369,7 @@
 </svelte:head>
 
 <div class="spec-search-page page-shell min-h-full bg-gray-50 dark:text-gray-100">
-    <AppHeader contextTitle="Spec Search" contextBadge="Schema" fixed={false} />
+    <AppHeader fixed={false} />
 
     <div class="spec-search-main">
         <section class="spec-search-hero" aria-labelledby="spec-search-heading">

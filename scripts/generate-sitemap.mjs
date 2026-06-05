@@ -11,7 +11,6 @@ const staticRoutes = [
 	'/spec-search',
 	'/spec-search-auto',
 	'/comparison',
-	'/uploads',
 	'/validate-yaml'
 ];
 

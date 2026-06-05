@@ -11419,12 +11419,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://resource-browser-92y.pages.dev/uploads</loc>
-    <lastmod>2026-05-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://resource-browser-92y.pages.dev/userdeployments.aaa.eda.nokia.com/v1</loc>
     <lastmod>2026-05-14</lastmod>
     <changefreq>monthly</changefreq>
