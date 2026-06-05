@@ -32,6 +32,8 @@
 	export let resourceDef: CrdResource | null = null;
 	export let selectedRelease: EdaRelease;
 	export let allReleases: EdaRelease[] = [];
+	/** When set, opens the modal on this API version instead of the latest. */
+	export let initialVersion: string | null = null;
 	export let onClose: () => void = () => {};
 
 	let loading = false;
@@ -66,7 +68,7 @@
 
 	$: if (open && resourceDef) {
 		const versionsKey = (resourceDef.versions ?? []).map((v) => v.name).join(',');
-		const key = `${resourceDef.name}@${selectedRelease.name}@${versionsKey}`;
+		const key = `${resourceDef.name}@${selectedRelease.name}@${initialVersion ?? ''}@${versionsKey}`;
 		if (key !== loadedKey) {
 			loadedKey = key;
 			loadResource(resourceDef, selectedRelease);
@@ -227,7 +229,11 @@
 
 	async function loadResource(res: CrdResource, release: EdaRelease) {
 		const versions = await fetchVersionsForResource(res.name, release, res.versions ?? []);
-		const version = getLatestVersion(versions);
+		const versionNames = versions.map((v) => v.name);
+		const version =
+			initialVersion && versionNames.includes(initialVersion)
+				? initialVersion
+				: getLatestVersion(versions);
 		if (!version) {
 			error = 'No version available for this resource';
 			return;

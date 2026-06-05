@@ -1,16 +1,29 @@
 <script lang="ts">
 	import type { EdaRelease } from '$lib/structure';
 
-	export let role: 'source' | 'target';
-	export let releaseName = '';
-	export let version = '';
-	export let release: EdaRelease | null = null;
-	export let releases: EdaRelease[] = [];
-	export let versions: string[] = [];
-	export let versionsLoading = false;
-	export let swapping = false;
-	export let onReleaseChange: () => void = () => {};
-	export let onVersionChange: () => void = () => {};
+	let {
+		role,
+		releaseName = $bindable(''),
+		version = $bindable(''),
+		release = null,
+		releases = [],
+		versions = [],
+		versionsLoading = false,
+		swapping = false,
+		onReleaseChange = () => {},
+		onVersionChange = () => {}
+	}: {
+		role: 'source' | 'target';
+		releaseName?: string;
+		version?: string;
+		release?: EdaRelease | null;
+		releases?: EdaRelease[];
+		versions?: string[];
+		versionsLoading?: boolean;
+		swapping?: boolean;
+		onReleaseChange?: () => void;
+		onVersionChange?: () => void;
+	} = $props();
 
 	const idPrefix = role === 'source' ? 'source' : 'target';
 	const badgeClass =
@@ -44,7 +57,7 @@
 				<select
 					id="{idPrefix}-release"
 					bind:value={releaseName}
-					on:change={onReleaseChange}
+					onchange={onReleaseChange}
 					class="spec-search-select w-full"
 				>
 					<option value="">Select release…</option>
@@ -63,7 +76,7 @@
 				<select
 					id="{idPrefix}-version"
 					bind:value={version}
-					on:change={onVersionChange}
+					onchange={onVersionChange}
 					disabled={!release || versions.length === 0}
 					class="spec-search-select w-full disabled:cursor-not-allowed disabled:opacity-60"
 				>

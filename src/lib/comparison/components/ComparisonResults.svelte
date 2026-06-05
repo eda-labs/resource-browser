@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { stripResourcePrefixFQDN } from '$lib/components/functions';
 	import { highlightMatches } from '../highlight';
-	import { resourceDetailHref } from '../links';
+	import { resourceLinkContext } from '../links';
 	import {
 		STATUS_FILTERS,
 		STATUS_SECTIONS,
@@ -30,6 +30,7 @@
 	export let onSearchInput: () => void = () => {};
 	export let onClearSearch: () => void = () => {};
 	export let onToggleSearchRegex: () => void = () => {};
+	export let onViewCrd: (crd: CrdDiffEntry) => void = () => {};
 
 	$: summaryCounts = {
 		added: report.crds.filter((c) => c.status === 'added').length,
@@ -193,7 +194,7 @@
 
 					<div class="comparison-results__cards">
 						{#each section.crds as crd (crd.name)}
-							{@const href = resourceDetailHref(
+							{@const linkCtx = resourceLinkContext(
 								crd,
 								sourceReleaseName,
 								targetReleaseName,
@@ -225,20 +226,19 @@
 										<span class="comparison-crd-card__kind">{crd.kind}</span>
 									</div>
 									<div class="comparison-crd-card__name font-mono">
-										{#if href}
-											<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-											<a
-												href={href}
+										{#if linkCtx}
+											<button
+												type="button"
 												class="comparison-crd-card__link"
-												title="Open resource detail"
-												on:click|stopPropagation
+												title="View CRD schema"
+												on:click|stopPropagation={() => onViewCrd(crd)}
 											>
 												{@html highlightMatches(
 													stripResourcePrefixFQDN(crd.name),
 													effectiveSearch,
 													searchRegex
 												)}
-											</a>
+											</button>
 										{:else}
 											{@html highlightMatches(
 												stripResourcePrefixFQDN(crd.name),
@@ -252,14 +252,14 @@
 											{crd.details.length} change{crd.details.length === 1 ? '' : 's'}
 										</span>
 									{/if}
-									{#if href}
-										<a
-											href={href}
+									{#if linkCtx}
+										<button
+											type="button"
 											class="comparison-crd-card__view-btn"
-											on:click|stopPropagation
+											on:click|stopPropagation={() => onViewCrd(crd)}
 										>
 											View CRD
-										</a>
+										</button>
 									{/if}
 								</button>
 

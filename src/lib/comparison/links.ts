@@ -1,12 +1,17 @@
 import type { CrdDiffEntry } from './types';
 
-export function resourceDetailHref(
+export type ResourceLinkContext = {
+	releaseName: string;
+	version: string;
+};
+
+export function resourceLinkContext(
 	crd: CrdDiffEntry,
 	sourceReleaseName: string,
 	targetReleaseName: string,
 	sourceVersion: string,
 	targetVersion: string
-): string | null {
+): ResourceLinkContext | null {
 	if (crd.status === 'not-in-either' || crd.status === 'error') return null;
 
 	const releaseName =
@@ -22,5 +27,23 @@ export function resourceDetailHref(
 				? sourceVersion
 				: sourceVersion;
 
-	return `/${crd.name}/${version}?release=${encodeURIComponent(releaseName)}`;
+	return { releaseName, version };
+}
+
+export function resourceDetailHref(
+	crd: CrdDiffEntry,
+	sourceReleaseName: string,
+	targetReleaseName: string,
+	sourceVersion: string,
+	targetVersion: string
+): string | null {
+	const ctx = resourceLinkContext(
+		crd,
+		sourceReleaseName,
+		targetReleaseName,
+		sourceVersion,
+		targetVersion
+	);
+	if (!ctx) return null;
+	return `/${crd.name}/${ctx.version}?release=${encodeURIComponent(ctx.releaseName)}`;
 }

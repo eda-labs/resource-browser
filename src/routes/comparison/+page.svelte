@@ -9,16 +9,18 @@
 	import ComparisonHeader from '$lib/comparison/components/ComparisonHeader.svelte';
 	import ReleaseSelectorCard from '$lib/comparison/components/ReleaseSelectorCard.svelte';
 	import ComparisonResults from '$lib/comparison/components/ComparisonResults.svelte';
+	import ResourceModal from '$lib/components/ResourceModal.svelte';
 	import { compareHint, matchesSearch } from '$lib/comparison/comparisonUtils';
 	import {
 		generateBulkDiffReport,
 		loadCrdsForRelease,
 		loadVersionsForRelease
 	} from '$lib/comparison/diffEngine';
-	import type { BulkDiffReport, DiffStatus } from '$lib/comparison/types';
+	import { resourceLinkContext } from '$lib/comparison/links';
+	import type { BulkDiffReport, CrdDiffEntry, DiffStatus } from '$lib/comparison/types';
 	import type { ManifestResource } from '$lib/spec-search/searchEngine';
 	import releasesYaml from '$lib/releases.yaml?raw';
-	import type { EdaRelease, ReleasesConfig } from '$lib/structure';
+	import type { CrdResource, EdaRelease, ReleasesConfig } from '$lib/structure';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 
@@ -47,6 +49,11 @@
 	let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
 	let clientReady = false;
 	let swapping = false;
+
+	let modalOpen = false;
+	let modalResource: CrdResource | null = null;
+	let modalRelease: EdaRelease | null = null;
+	let modalVersion: string | null = null;
 
 	const manifestCache: Map<string, ManifestResource[]> = new Map();
 	const yamlCache: Map<string, string> = new Map();
@@ -241,6 +248,36 @@
 		} finally {
 			generating = false;
 		}
+	}
+
+	async function openCrdModal(crd: CrdDiffEntry) {
+		const ctx = resourceLinkContext(
+			crd,
+			sourceReleaseName,
+			targetReleaseName,
+			sourceVersion,
+			targetVersion
+		);
+		if (!ctx) return;
+
+		const release = releasesConfig.releases.find((r) => r.name === ctx.releaseName);
+		if (!release) return;
+
+		const crds = await loadCrdsForRelease(release, manifestCache);
+		const resource = crds.find((r) => r.name === crd.name);
+		if (!resource) return;
+
+		modalResource = resource;
+		modalRelease = release;
+		modalVersion = ctx.version;
+		modalOpen = true;
+	}
+
+	function closeCrdModal() {
+		modalOpen = false;
+		modalResource = null;
+		modalRelease = null;
+		modalVersion = null;
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
@@ -445,6 +482,7 @@
 				onToggleSearchRegex={() => {
 					searchRegex = !searchRegex;
 				}}
+				onViewCrd={openCrdModal}
 			/>
 		{:else if generating}
 			<div class="spec-search-results-panel">
@@ -473,3 +511,14 @@
 		<PageCredits />
 	</div>
 </div>
+
+{#if modalRelease}
+	<ResourceModal
+		open={modalOpen}
+		resourceDef={modalResource}
+		selectedRelease={modalRelease}
+		allReleases={releasesConfig.releases}
+		initialVersion={modalVersion}
+		onClose={closeCrdModal}
+	/>
+{/if}
