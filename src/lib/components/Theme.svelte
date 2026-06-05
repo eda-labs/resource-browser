@@ -6,17 +6,7 @@
 
 	onMount(() => {
 		if (browser) {
-			// Check local storage or system preference
-			if (
-				localStorage.theme === 'dark' ||
-				(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-			) {
-				darkMode = true;
-				document.documentElement.classList.add('dark');
-			} else {
-				darkMode = false;
-				document.documentElement.classList.remove('dark');
-			}
+			darkMode = document.documentElement.classList.contains('dark');
 		}
 	});
 
