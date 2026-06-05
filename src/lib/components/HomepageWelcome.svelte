@@ -294,23 +294,27 @@
 
 		<div class="homepage-workspace">
 			<section
-				class="homepage-panel homepage-releases-panel border-slate-200 bg-white dark:border-blue-900/40"
+				class="homepage-panel homepage-releases-panel homepage-releases-panel--prominent border-slate-200 bg-white dark:border-blue-900/40"
 				aria-labelledby="releases-heading"
 			>
-				<div
-					class="homepage-panel-header border-b border-slate-200 dark:border-slate-700"
-				>
+				<div class="homepage-releases-hero">
 					<h2
 						id="releases-heading"
-						class="homepage-panel-title text-slate-900 dark:text-slate-100"
+						class="homepage-releases-heading text-slate-900 dark:text-slate-100"
 					>
 						EDA Releases
 					</h2>
-					<p class="homepage-panel-desc text-slate-500 dark:text-slate-400">
-						Viewing <span class="homepage-mono text-slate-700 dark:text-slate-300"
+					<div class="homepage-selected-release" aria-live="polite">
+						<span class="homepage-selected-label text-slate-500 dark:text-slate-400"
+							>Selected</span
+						>
+						<span class="homepage-selected-version text-slate-900 dark:text-white"
 							>{$selectedRelease.name}</span
 						>
-					</p>
+						{#if $selectedRelease.default}
+							<span class="homepage-default-tag homepage-default-tag--hero">default</span>
+						{/if}
+					</div>
 				</div>
 
 				<div class="homepage-release-picker">
@@ -342,18 +346,24 @@
 						aria-label="EDA releases for {focusedMajorGroup}"
 					>
 						{#each activeGroupReleases as release}
+							{@const isSelected = $selectedRelease.name === release.name}
 							<button
 								type="button"
 								role="option"
-								class="homepage-release-btn {$selectedRelease.name === release.name
-									? 'is-active'
-									: ''}"
-								aria-selected={$selectedRelease.name === release.name}
+								class="homepage-release-btn {isSelected ? 'is-active' : ''}"
+								aria-selected={isSelected}
 								on:click={() => handleReleaseClick(release)}
 							>
 								<span class="homepage-release-name">{release.name}</span>
+								{#if isSelected}
+									<span class="homepage-release-active-dot" aria-hidden="true"></span>
+								{/if}
 								{#if release.default}
-									<span class="homepage-default-tag">default</span>
+									<span
+										class="homepage-default-tag {isSelected
+											? 'homepage-default-tag--on-active'
+											: 'homepage-default-tag--pill'}">default</span
+									>
 								{/if}
 							</button>
 						{/each}
