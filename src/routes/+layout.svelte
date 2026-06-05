@@ -31,7 +31,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="h-screen w-full overflow-y-auto bg-slate-50 dark:bg-slate-950">
+	<div class="h-screen w-full overflow-y-auto bg-white dark:bg-slate-900">
 		{@render children()}
 	</div>
 {/if}

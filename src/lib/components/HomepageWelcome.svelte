@@ -154,10 +154,10 @@
 </script>
 
 <div
-	class="homepage-welcome min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+	class="homepage-welcome min-h-full bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100"
 >
 	<header
-		class="homepage-topbar sticky top-0 z-50 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"
+		class="homepage-topbar sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
 	>
 		<div class="homepage-topbar-inner">
 			<div class="homepage-brand">

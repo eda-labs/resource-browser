@@ -111,15 +111,15 @@
    ============================================ */
 @layer base {
 	/* Modern CSS reset */
-	:global(*),
-	:global(*::before),
-	:global(*::after) {
+	*,
+	*::before,
+	*::after {
 		box-sizing: border-box;
 		margin: 0;
 		padding: 0;
 	}
 
-	:global(html) {
+	html {
 		scroll-behavior: smooth;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
@@ -127,7 +127,7 @@
 		overflow: hidden;
 	}
 
-	:global(body) {
+	body {
 		@apply text-slate-900 antialiased bg-white dark:bg-slate-900 dark:text-slate-100;
 		font-family: var(--font-nokia), 'Nunito', sans-serif;
 		min-height: 100vh;
@@ -137,17 +137,17 @@
 
 	/* Reduce CLS by stabilizing headline and hero typography metrics across font swap.
      `font-size-adjust` helps keep x-height consistent across fallback and web fonts. */
-	:global(h1),
-	:global(.font-nokia-headline) {
+	h1,
+	.font-nokia-headline {
 		font-size-adjust: 0.5; /* conservative default for Nokia headline to reduce size shift */
 		line-height: 1.02; /* stabilize line height for large titles */
 	}
 
 	/* Headings and display text should use the Nokia headline family */
-	:global(h1),
-	:global(h2),
-	:global(h3),
-	:global(h4) {
+	h1,
+	h2,
+	h3,
+	h4 {
 		font-family:
 			var(--font-nokia-headline),
 			var(--font-nokia),
@@ -162,8 +162,8 @@
 	}
 
 	/* Small UI copy / pills use medium weight for clarity */
-	:global(.pill),
-	:global(.badge) {
+	.pill,
+	.badge {
 		font-family:
 			var(--font-nokia),
 			system-ui,
@@ -177,18 +177,18 @@
 	}
 
 	/* Ensure images and media are responsive by default */
-	:global(img),
-	:global(picture),
-	:global(video),
-	:global(canvas),
-	:global(svg) {
+	img,
+	picture,
+	video,
+	canvas,
+	svg {
 		display: block;
 		max-width: 100%;
 		height: auto;
 	}
 
 	/* Remove default button styles */
-	:global(button) {
+	button {
 		background: none;
 		border: none;
 		font: inherit;
@@ -196,22 +196,22 @@
 	}
 
 	/* Smooth transitions for interactive elements */
-	:global(button),
-	:global(a),
-	:global(input),
-	:global(select),
-	:global(textarea) {
+	button,
+	a,
+	input,
+	select,
+	textarea {
 		@apply transition-colors duration-200;
 	}
 
 	/* Modern focus styles */
-	:global(*:focus-visible) {
+	*:focus-visible {
 		@apply outline-2 outline-offset-2 outline-blue-500;
 	}
 
 	/* Remove default list styles */
-	:global(ul),
-	:global(ol) {
+	ul,
+	ol {
 		list-style: none;
 	}
 }
@@ -242,7 +242,7 @@
 	}
 
 	/* Dark Mode: Apply gradient overlay and white text */
-	:global(.dark) .has-header-img {
+	.dark .has-header-img {
 		/* Same styles as default, kept for specificity if needed */
 		background-image:
 			linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
@@ -264,7 +264,7 @@
 		/* Always show */
 		display: block;
 	}
-	:global(.dark) .header-bg-container {
+	.dark .header-bg-container {
 		display: block;
 	}
 	.header-bg-img {
@@ -281,20 +281,20 @@
 
 /* Light-mode: make the hero image appear as a lighter background
    We apply a subtle brightening / desaturation so foreground dark text is readable. */
-:global(:not(.dark)) .header-bg-img {
+html:not(.dark) .header-bg-img {
 	filter: brightness(1.15) saturate(0.85) contrast(1.05);
 	opacity: 0.55;
 	transition: filter 260ms ease, opacity 260ms ease;
 }
 
 /* Dark-mode: darker and slightly more saturated image to match dark overlay */
-:global(.dark) .header-bg-img {
+.dark .header-bg-img {
 	filter: brightness(0.5) saturate(0.9) contrast(0.95);
 	transition: filter 260ms ease;
 }
 
 /* Light mode: softer overlay so background image reads as enterprise doc backdrop */
-:global(:not(.dark)) .has-header-img {
+html:not(.dark) .has-header-img {
 	background-image:
 		linear-gradient(120deg, rgba(255, 255, 255, 0.72), rgba(248, 250, 252, 0.62)),
 		linear-gradient(60deg, rgba(255, 255, 255, 0.45), rgba(241, 245, 249, 0.35));
@@ -302,12 +302,12 @@
 }
 
 /* Amber accent only for Nokia headline branding — not all headings */
-:global(:not(.dark)) .font-nokia-headline.font-extrabold {
+html:not(.dark) .font-nokia-headline.font-extrabold {
 	color: #f59e0b !important;
 }
 
 /* Ensure dark-mode retains the darker overlay defined earlier */
-:global(.dark) .has-header-img {
+.dark .has-header-img {
 	background-image:
 		linear-gradient(120deg, rgba(2, 10, 35, 0.42), rgba(4, 45, 120, 0.48)),
 		linear-gradient(60deg, rgba(7, 36, 120, 0.25), rgba(18, 164, 228, 0.2));
@@ -315,7 +315,7 @@
 
 	/* Mobile - use lighter background image and scroll attachment to reduce performance cost */
 	@media (max-width: 768px) {
-		:global(.dark) .has-header-img {
+		.dark .has-header-img {
 			/* For mobile devices, avoid loading the large background image to improve LCP.
          Use the gradient overlay instead — this provides a visually similar look while
          saving network bytes. If you prefer to use a mobile-optimized image, add
@@ -329,7 +329,7 @@
 	}
 
 	/* Avoid layout shifts for short action buttons by sizing them in CSS. */
-	:global(.release-more-btn) {
+	.release-more-btn {
 		min-width: 84px; /* ensures min width for 'More' button to avoid width change when fonts load */
 		display: inline-flex;
 		align-items: center;
@@ -358,39 +358,39 @@
 	}
 
 	/* Light-mode dropdowns and select controls: ensure background is light and text is dark for readability */
-	:global(:not(.dark)) .dropdown-content,
-	:global(:not(.dark)) .dropdown,
-	:global(:not(.dark)) .select-pro,
-	:global(:not(.dark)) select,
-	:global(:not(.dark)) .dropdown-item,
-	:global(:not(.dark)) .menu,
-	:global(:not(.dark)) .dropdown .content {
+	html:not(.dark) .dropdown-content,
+	html:not(.dark) .dropdown,
+	html:not(.dark) .select-pro,
+	html:not(.dark) select,
+	html:not(.dark) .dropdown-item,
+	html:not(.dark) .menu,
+	html:not(.dark) .dropdown .content {
 		background: #ffffff !important;
 		color: rgba(2,6,23,0.96) !important;
 		border-color: rgba(2,6,23,0.06) !important;
 	}
 
-	:global(:not(.dark)) .dropdown-content a,
-	:global(:not(.dark)) .dropdown-content button,
-	:global(:not(.dark)) .dropdown-content span {
+	html:not(.dark) .dropdown-content a,
+	html:not(.dark) .dropdown-content button,
+	html:not(.dark) .dropdown-content span {
 		color: rgba(2,6,23,0.96) !important;
 	}
 
 	/* Make sure custom select component uses dark text on light mode */
-	:global(:not(.dark)) .select-pro {
+	html:not(.dark) .select-pro {
 		@apply bg-white text-gray-900; /* Tailwind will process */
 	}
 
 	/* Ensure dropdown options use dark text and white background in light mode (dropdown menu in native selects) */
-	:global(:not(.dark)) select option,
-	:global(:not(.dark)) .select-pro option {
+	html:not(.dark) select option,
+	html:not(.dark) .select-pro option {
 		color: rgba(2,6,23,0.96) !important;
 		background: #ffffff !important;
 	}
 
 	/* Header (top nav) overrides for light mode: ensure any hard-coded white text becomes dark for readability */
-	:global(:not(.dark)) nav.fixed,
-	:global(:not(.dark)) nav.fixed * {
+	html:not(.dark) nav.fixed,
+	html:not(.dark) nav.fixed * {
 		color: rgba(2,6,23,0.95) !important;
 	}
 
@@ -431,19 +431,19 @@
 	}
 
 	/* Homepage — surface-driven theme (no hero overlay inheritance) */
-	:global(.has-header-img:has(.homepage-welcome)) {
+	.has-header-img:has(.homepage-welcome) {
 		background-image: none !important;
 		background-color: #f8fafc !important;
 		color: inherit;
 	}
 
-	:global(.dark .has-header-img:has(.homepage-welcome)) {
+	.dark .has-header-img:has(.homepage-welcome) {
 		background-image: none !important;
 		background-color: #0f172a !important;
 		color: inherit;
 	}
 
-	:global(:has(.homepage-welcome)) .header-bg-container {
+	:has(.homepage-welcome) .header-bg-container {
 		display: none !important;
 	}
 
@@ -452,7 +452,7 @@
 		background: #f8fafc;
 	}
 
-	:global(.dark) .homepage-welcome {
+	.dark .homepage-welcome {
 		color: #f1f5f9;
 		background: #020617;
 	}
@@ -466,7 +466,7 @@
 		backdrop-filter: blur(8px);
 	}
 
-	:global(.dark) .homepage-topbar {
+	.dark .homepage-topbar {
 		border-bottom-color: #334155;
 		background: rgba(15, 23, 42, 0.95);
 	}
@@ -516,7 +516,7 @@
 		text-overflow: ellipsis;
 	}
 
-	:global(.dark) .homepage-brand-title {
+	.dark .homepage-brand-title {
 		color: #f8fafc;
 	}
 
@@ -556,7 +556,7 @@
 		margin-bottom: 0.375rem;
 	}
 
-	:global(.dark) .homepage-hero-kicker {
+	.dark .homepage-hero-kicker {
 		color: #60a5fa;
 	}
 
@@ -568,15 +568,15 @@
 		color: #0f172a !important;
 	}
 
-	:global(.dark) .homepage-title {
+	.dark .homepage-title {
 		color: #f8fafc !important;
 	}
 
-	:global(:not(.dark)) .homepage-welcome h3 {
+	html:not(.dark) .homepage-welcome h3 {
 		color: #0f172a !important;
 	}
 
-	:global(.dark) .homepage-welcome h3 {
+	.dark .homepage-welcome h3 {
 		color: #f8fafc !important;
 	}
 
@@ -593,7 +593,7 @@
 		color: #64748b;
 	}
 
-	:global(.dark) .homepage-subtitle {
+	.dark .homepage-subtitle {
 		color: #94a3b8;
 	}
 
@@ -605,7 +605,7 @@
 		color: #64748b;
 	}
 
-	:global(.dark) .homepage-section-label {
+	.dark .homepage-section-label {
 		color: #94a3b8;
 	}
 
@@ -617,7 +617,7 @@
 		color: #64748b;
 	}
 
-	:global(.dark) .homepage-section-desc {
+	.dark .homepage-section-desc {
 		color: #94a3b8;
 	}
 
@@ -649,13 +649,13 @@
 		box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 	}
 
-	:global(.dark) .homepage-search-input {
+	.dark .homepage-search-input {
 		border-color: #334155;
 		background: #0f172a;
 		box-shadow: none;
 	}
 
-	:global(.dark) .homepage-search-input:focus-within {
+	.dark .homepage-search-input:focus-within {
 		border-color: #3b82f6;
 		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 	}
@@ -681,11 +681,11 @@
 		color: #94a3b8;
 	}
 
-	:global(.dark) .homepage-search-field {
+	.dark .homepage-search-field {
 		color: #f8fafc;
 	}
 
-	:global(.dark) .homepage-search-field::placeholder {
+	.dark .homepage-search-field::placeholder {
 		color: #64748b;
 	}
 
@@ -700,7 +700,7 @@
 		color: #64748b;
 	}
 
-	:global(.dark) .homepage-kbd {
+	.dark .homepage-kbd {
 		border-color: #334155;
 		background: #1e293b;
 		color: #94a3b8;
@@ -720,7 +720,7 @@
 		box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 	}
 
-	:global(.dark) .homepage-results {
+	.dark .homepage-results {
 		border-color: #334155;
 		background: #0f172a;
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -748,8 +748,8 @@
 		background: #f1f5f9;
 	}
 
-	:global(.dark) .homepage-result-row:hover,
-	:global(.dark) .homepage-result-row.is-active {
+	.dark .homepage-result-row:hover,
+	.dark .homepage-result-row.is-active {
 		background: #1e293b;
 	}
 
@@ -762,7 +762,7 @@
 		color: #0f172a;
 	}
 
-	:global(.dark) .homepage-result-name {
+	.dark .homepage-result-name {
 		color: #f8fafc;
 	}
 
@@ -797,7 +797,7 @@
 		color: #b45309;
 	}
 
-	:global(.dark) .homepage-tag-warning {
+	.dark .homepage-tag-warning {
 		background: rgba(245, 158, 11, 0.15);
 		color: #fbbf24;
 	}
@@ -813,7 +813,7 @@
 		color: #475569;
 	}
 
-	:global(.dark) .homepage-tag-version {
+	.dark .homepage-tag-version {
 		background: #1e293b;
 		color: #94a3b8;
 	}
@@ -834,12 +834,12 @@
 		color: #fff;
 	}
 
-	:global(.dark) .homepage-filter-chip {
+	.dark .homepage-filter-chip {
 		border-color: #334155;
 		color: #cbd5e1;
 	}
 
-	:global(.dark) .homepage-filter-chip.is-active {
+	.dark .homepage-filter-chip.is-active {
 		border-color: #3b82f6;
 		background: #3b82f6;
 	}
@@ -849,7 +849,7 @@
 		color: #cbd5e1;
 	}
 
-	:global(.dark) .homepage-panel-desc-sep {
+	.dark .homepage-panel-desc-sep {
 		color: #475569;
 	}
 
@@ -874,7 +874,7 @@
 		overflow: hidden;
 	}
 
-	:global(.dark) .homepage-panel {
+	.dark .homepage-panel {
 		border-color: #334155;
 		background: #1e293b;
 	}
@@ -884,7 +884,7 @@
 		border-bottom: 1px solid #e2e8f0;
 	}
 
-	:global(.dark) .homepage-panel-header {
+	.dark .homepage-panel-header {
 		border-bottom-color: #334155;
 	}
 
@@ -896,7 +896,7 @@
 		color: #0f172a;
 	}
 
-	:global(.dark) .homepage-panel-title {
+	.dark .homepage-panel-title {
 		color: #f8fafc;
 	}
 
@@ -906,7 +906,7 @@
 		color: #64748b;
 	}
 
-	:global(.dark) .homepage-panel-desc {
+	.dark .homepage-panel-desc {
 		color: #94a3b8;
 	}
 
@@ -916,7 +916,7 @@
 		color: #0f172a;
 	}
 
-	:global(.dark) .homepage-mono {
+	.dark .homepage-mono {
 		color: #e2e8f0;
 	}
 
@@ -937,7 +937,7 @@
 		gap: 0.125rem;
 	}
 
-	:global(.dark) .homepage-version-segmented {
+	.dark .homepage-version-segmented {
 		border-color: #475569;
 		background: #0f172a;
 	}
@@ -959,11 +959,11 @@
 		color: #334155;
 	}
 
-	:global(.dark) .homepage-version-segment {
+	.dark .homepage-version-segment {
 		color: #94a3b8;
 	}
 
-	:global(.dark) .homepage-version-segment:hover {
+	.dark .homepage-version-segment:hover {
 		color: #e2e8f0;
 	}
 
@@ -973,7 +973,7 @@
 		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 	}
 
-	:global(.dark) .homepage-version-segment.is-active {
+	.dark .homepage-version-segment.is-active {
 		background: #334155;
 		color: #f8fafc;
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -1004,12 +1004,12 @@
 		background: #f8fafc;
 	}
 
-	:global(.dark) .homepage-action-btn {
+	.dark .homepage-action-btn {
 		border-color: #334155;
 		background: #1e293b;
 	}
 
-	:global(.dark) .homepage-action-btn:hover {
+	.dark .homepage-action-btn:hover {
 		border-color: #475569;
 		background: #334155;
 	}
@@ -1042,7 +1042,7 @@
 		color: #fff;
 	}
 
-	:global(.dark) .homepage-action-icon {
+	.dark .homepage-action-icon {
 		background: #0f172a;
 		color: #60a5fa;
 	}
@@ -1064,7 +1064,7 @@
 		color: #fff;
 	}
 
-	:global(.dark) .homepage-action-label {
+	.dark .homepage-action-label {
 		color: #f1f5f9;
 	}
 
@@ -1078,7 +1078,7 @@
 		color: rgba(255, 255, 255, 0.8);
 	}
 
-	:global(.dark) .homepage-action-desc {
+	.dark .homepage-action-desc {
 		color: #94a3b8;
 	}
 
@@ -1094,7 +1094,7 @@
 		padding: 1rem 1.25rem;
 	}
 
-	:global(.dark) .homepage-resource-strip {
+	.dark .homepage-resource-strip {
 		border-color: #334155;
 		background: rgba(15, 23, 42, 0.9);
 	}
@@ -1115,7 +1115,7 @@
 		color: #64748b;
 	}
 
-	:global(.dark) .homepage-strip-title {
+	.dark .homepage-strip-title {
 		color: #94a3b8;
 	}
 
@@ -1128,7 +1128,7 @@
 		padding: 0;
 	}
 
-	:global(.dark) .homepage-strip-link {
+	.dark .homepage-strip-link {
 		color: #60a5fa;
 	}
 
@@ -1155,12 +1155,12 @@
 		background: #eff6ff;
 	}
 
-	:global(.dark) .homepage-resource-chip {
+	.dark .homepage-resource-chip {
 		border-color: #334155;
 		background: #1e293b;
 	}
 
-	:global(.dark) .homepage-resource-chip:hover {
+	.dark .homepage-resource-chip:hover {
 		border-color: #3b82f6;
 		background: rgba(59, 130, 246, 0.1);
 	}
@@ -1170,7 +1170,7 @@
 		color: #0f172a;
 	}
 
-	:global(.dark) .homepage-chip-kind {
+	.dark .homepage-chip-kind {
 		color: #f1f5f9;
 	}
 
@@ -1183,7 +1183,7 @@
 		white-space: nowrap;
 	}
 
-	:global(.dark) .homepage-chip-group {
+	.dark .homepage-chip-group {
 		color: #94a3b8;
 	}
 
@@ -1197,7 +1197,7 @@
 		color: #475569;
 	}
 
-	:global(.dark) .homepage-chip-version {
+	.dark .homepage-chip-version {
 		background: #334155;
 		color: #94a3b8;
 	}
@@ -1242,7 +1242,7 @@
 		color: #b45309;
 	}
 
-	:global(.dark) .homepage-default-tag {
+	.dark .homepage-default-tag {
 		background: rgba(245, 158, 11, 0.15);
 		color: #fbbf24;
 	}
@@ -1290,18 +1290,18 @@
 		color: #fff;
 	}
 
-	:global(.dark) .homepage-release-btn {
+	.dark .homepage-release-btn {
 		border-color: #475569;
 		background: #1e293b;
 		color: #e2e8f0;
 	}
 
-	:global(.dark) .homepage-release-btn:hover:not(.is-active) {
+	.dark .homepage-release-btn:hover:not(.is-active) {
 		border-color: #64748b;
 		background: #334155;
 	}
 
-	:global(.dark) .homepage-release-btn.is-active {
+	.dark .homepage-release-btn.is-active {
 		border-color: #3b82f6;
 		background: #3b82f6;
 		box-shadow: 0 0 0 1px #3b82f6;
@@ -1324,7 +1324,7 @@
 		box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 	}
 
-	:global(.dark) .homepage-dropdown {
+	.dark .homepage-dropdown {
 		border-color: #334155;
 		background: #0f172a;
 	}
@@ -1349,16 +1349,16 @@
 		font-weight: 600;
 	}
 
-	:global(.dark) .homepage-dropdown-item {
+	.dark .homepage-dropdown-item {
 		color: #e2e8f0;
 	}
 
-	:global(.dark) .homepage-dropdown-item:hover,
-	:global(.dark) .homepage-dropdown-item.is-active {
+	.dark .homepage-dropdown-item:hover,
+	.dark .homepage-dropdown-item.is-active {
 		background: #1e293b;
 	}
 
-	:global(.dark) .homepage-dropdown-item.is-active {
+	.dark .homepage-dropdown-item.is-active {
 		color: #60a5fa;
 	}
 
@@ -1368,7 +1368,7 @@
 		border-top: 1px solid #e2e8f0;
 	}
 
-	:global(.dark) .homepage-browse-zone {
+	.dark .homepage-browse-zone {
 		border-top-color: #334155;
 	}
 
@@ -1413,7 +1413,7 @@
 		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 	}
 
-	:global(.dark) .homepage-tool-card {
+	.dark .homepage-tool-card {
 		border-color: #334155;
 		background: #0f172a;
 		box-shadow: none;
@@ -1432,7 +1432,7 @@
 		margin-bottom: 0.75rem;
 	}
 
-	:global(.dark) .homepage-tool-icon {
+	.dark .homepage-tool-icon {
 		background: #1e293b;
 		color: #60a5fa;
 	}
@@ -1443,7 +1443,7 @@
 		color: #0f172a;
 	}
 
-	:global(.dark) .homepage-tool-title {
+	.dark .homepage-tool-title {
 		color: #f8fafc;
 	}
 
@@ -1455,7 +1455,7 @@
 		flex: 1;
 	}
 
-	:global(.dark) .homepage-tool-desc {
+	.dark .homepage-tool-desc {
 		color: #94a3b8;
 	}
 
@@ -1466,7 +1466,7 @@
 		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 	}
 
-	:global(.dark) .homepage-card {
+	.dark .homepage-card {
 		border-color: #334155;
 		background: #0f172a;
 		box-shadow: none;
@@ -1502,7 +1502,7 @@
 		color: rgba(51, 65, 85, 0.95);
 	}
 
-	:global(.dark) .homepage-browse-back {
+	.dark .homepage-browse-back {
 		border-color: rgba(255, 255, 255, 0.12);
 		background: rgba(30, 41, 59, 0.8);
 		color: rgba(226, 232, 240, 0.95);
@@ -1521,7 +1521,7 @@
 		box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 	}
 
-	:global(.dark) .homepage-browse-item {
+	.dark .homepage-browse-item {
 		border-color: rgba(255, 255, 255, 0.1);
 		background: rgba(15, 23, 42, 0.65);
 	}
@@ -1548,12 +1548,12 @@
 }
 
 /* Additional light-mode dropdown/popover containers used by various components */
-:global(:not(.dark)) .dropdown-menu,
-:global(:not(.dark)) .popover,
-:global(:not(.dark)) .popover-content,
-:global(:not(.dark)) .popup,
-:global(:not(.dark)) .choices__list,
-:global(:not(.dark)) .react-select__menu {
+html:not(.dark) .dropdown-menu,
+html:not(.dark) .popover,
+html:not(.dark) .popover-content,
+html:not(.dark) .popup,
+html:not(.dark) .choices__list,
+html:not(.dark) .react-select__menu {
 	background: #ffffff !important;
 	color: rgba(2,6,23,0.96) !important;
 	border-color: rgba(2,6,23,0.06) !important;
@@ -1606,8 +1606,8 @@
 	}
 
 	/* When a header image is active, remove any border/backgrounds for top elements so the image shows through */
-	:global(.has-header-img) .sidebar-header,
-	:global(.has-header-img) .content-header {
+	.has-header-img .sidebar-header,
+	.has-header-img .content-header {
 		background: transparent !important;
 		border-color: transparent !important;
 		box-shadow: none !important;
@@ -1679,7 +1679,7 @@
 	}
 }
 /* Ensure content sits above the header image */
-:global(.has-header-img) {
+.has-header-img {
 	position: relative;
 	z-index: 1;
 }
@@ -1726,7 +1726,7 @@
 }
 
 /* Dark track styling when dark mode is active on root */
-:global(.dark) .theme-track {
+.dark .theme-track {
 	background: linear-gradient(180deg, #0f172a, #0b1220);
 	border: 1px solid rgba(255,255,255,0.06);
 }
