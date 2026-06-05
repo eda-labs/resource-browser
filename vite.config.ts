@@ -36,12 +36,6 @@ const suppressCrdCheckLogs = (): Plugin => ({
 
 export default defineConfig({
 	plugins: [suppressCrdCheckLogs(), tailwindcss(), sveltekit(), devtoolsJson()],
-	// Rollup treeshake hits "object is not extensible" with d3 submodules in this toolchain.
-	build: {
-		rollupOptions: {
-			treeshake: false
-		}
-	},
 	test: {
 		projects: [
 			{

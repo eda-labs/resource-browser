@@ -1,17 +1,19 @@
-import { drag } from 'd3-drag';
 import {
+	drag,
 	forceCenter,
 	forceCollide,
 	forceLink,
 	forceManyBody,
 	forceSimulation,
+	linkHorizontal,
+	select,
+	zoom,
+	zoomIdentity,
 	type Simulation,
 	type SimulationLinkDatum,
-	type SimulationNodeDatum
-} from 'd3-force';
-import { linkHorizontal } from 'd3-shape';
-import { select } from 'd3-selection';
-import { zoom, zoomIdentity, type ZoomBehavior } from 'd3-zoom';
+	type SimulationNodeDatum,
+	type ZoomBehavior
+} from 'd3';
 import { getGraphPalette, nodeFill, nodeFillLight, REL_LABELS } from './graphColors';
 import type { GraphLink, GraphNode, LinkRelation } from './types';
 import { getHighlightSets, type ChainMode } from './transitiveClosure';
