@@ -1921,6 +1921,11 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.comparison-crd-card__link {
+		border: none;
+		background: none;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
 		color: #2563eb;
 		text-decoration: none;
 	}
@@ -1949,6 +1954,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 		font-weight: 600;
 		color: #2563eb;
 		text-decoration: none;
+		background: transparent;
+		cursor: pointer;
 	}
 
 	.comparison-crd-card__view-btn:hover {
