@@ -68,13 +68,11 @@
 				try {
 					var stored = localStorage.getItem('theme');
 					var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-					if (stored === 'dark' || (!stored && prefersDark)) {
-						document.documentElement.classList.add('dark');
-					} else {
-						document.documentElement.classList.remove('dark');
-					}
+					var isDark = stored === 'dark' || (stored !== 'light' && prefersDark);
+					document.documentElement.classList.toggle('dark', isDark);
 				} catch (e) {
-					document.documentElement.classList.add('dark');
+					/* default to light when storage is unavailable */
+					document.documentElement.classList.remove('dark');
 				}
 			})();
 		</script>
