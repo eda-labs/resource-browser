@@ -2725,6 +2725,7 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 
 	.homepage-release-picker__trains {
 		flex-shrink: 0;
+		width: 100%;
 	}
 
 	@media (min-width: 480px) {
@@ -2734,14 +2735,14 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.homepage-release-picker__releases {
-		flex: 1;
+		flex: 1 1 0;
 		min-width: 0;
+		width: 100%;
 	}
 
 	.homepage-version-segmented {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
 		padding: 0.25rem;
 		border-radius: 0.625rem;
 		border: 1px solid #cbd5e1;
