@@ -35,6 +35,21 @@
 	let hideThumbTimer: number | null = null;
 	let thumbRaf: number | null = null;
 
+	let manifestLoading = false;
+	let syncInFlight = false;
+	let initialUrlSyncDone = false;
+	let lastSyncedReleaseParam: string | null | undefined = undefined;
+	let lastLoadedReleaseName: string | null = null;
+
+	function currentReleaseParam(): string | null {
+		return releaseParamFromWindow() ?? $page.url.searchParams.get('release');
+	}
+
+	function releaseParamFromWindow(): string | null {
+		if (!browser || typeof window === 'undefined') return null;
+		return new URLSearchParams(window.location.search).get('release');
+	}
+
 	// Load CRDs dynamically for the selected release
 	async function loadCrdsForRelease(release: EdaRelease) {
 		try {
@@ -42,7 +57,7 @@
 			if (manifestResponse.ok) {
 				const manifest = await manifestResponse.json();
 				crdMetaStore.set(manifest);
-				// ensure the scroll thumb updates once the DOM is updated with new content
+				lastLoadedReleaseName = release.name;
 				setTimeout(() => updateThumb(), 0);
 				return manifest as CrdResource[];
 			}
@@ -55,12 +70,42 @@
 			const resources = yaml.load(res.default) as any;
 			const crdMeta = Object.values(resources).flat() as CrdResource[];
 			crdMetaStore.set(crdMeta);
+			lastLoadedReleaseName = release.name;
 			setTimeout(() => updateThumb(), 0);
 			return crdMeta;
 		} catch (e) {
 			console.error('Failed to load resources:', e);
 			crdMetaStore.set([]);
+			lastLoadedReleaseName = release.name;
 			return [] as CrdResource[];
+		}
+	}
+
+	async function syncReleaseFromUrl(force = false, explicitParam?: string | null) {
+		if (!browser || syncInFlight) return;
+
+		const param = explicitParam !== undefined ? explicitParam : releaseParamFromWindow();
+		const release = releaseFromParam(param);
+		const releaseChanged = release.name !== $selectedRelease.name;
+		const manifestStale = lastLoadedReleaseName !== release.name || $crdMetaStore.length === 0;
+		const paramChanged = param !== lastSyncedReleaseParam;
+
+		if (!force && !paramChanged && !releaseChanged && !manifestStale) return;
+
+		syncInFlight = true;
+		manifestLoading = true;
+
+		if (releaseChanged || force) {
+			selectedRelease.set(release);
+		}
+
+		lastSyncedReleaseParam = param;
+
+		try {
+			await loadCrdsForRelease(release);
+		} finally {
+			manifestLoading = false;
+			syncInFlight = false;
 		}
 	}
 
@@ -87,15 +132,11 @@
 		}
 	);
 
-	let lastSyncedReleaseParam: string | null | undefined = undefined;
-
-	$: if (browser) {
-		const param = $page.url.searchParams.get('release');
-		if (param !== lastSyncedReleaseParam) {
-			lastSyncedReleaseParam = param;
-			const release = releaseFromParam(param);
-			selectedRelease.set(release);
-			void loadCrdsForRelease(release);
+	// Defer until after onMount — avoids racing with hydration and syncInFlight blocking the initial load
+	$: if (browser && initialUrlSyncDone) {
+		const param = currentReleaseParam();
+		if (param !== lastSyncedReleaseParam && !syncInFlight) {
+			void syncReleaseFromUrl(false, param);
 		}
 	}
 
@@ -212,7 +253,12 @@
 	}
 
 	onMount(() => {
-		// initial calculation and listen for resizes to adjust thumb
+		// Prefer window.location on mount — $page.url can lag on mobile Safari hydration
+		void (async () => {
+			await syncReleaseFromUrl(true, currentReleaseParam());
+			initialUrlSyncDone = true;
+		})();
+
 		updateThumb();
 		const resizeObserver = new ResizeObserver(() => updateThumb());
 		if (resourceListEl) resizeObserver.observe(resourceListEl);
@@ -227,7 +273,7 @@
 <!-- Overlay (Mobile Only) -->
 {#if $mobileSidebarOpen}
 	<div
-		class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+		class="fixed top-14 right-0 bottom-0 left-0 z-40 bg-black/50 backdrop-blur-sm sm:top-16 lg:hidden"
 		on:click={closeMobileDrawer}
 		on:keydown={(e) => e.key === 'Escape' && closeMobileDrawer()}
 		role="button"
@@ -236,9 +282,10 @@
 	></div>
 {/if}
 
-<!-- Sidebar -->
+<!-- Sidebar: on mobile starts below AppHeader (h-14 / h-16) so release selector is not obscured -->
 <div
-	class="app-sidebar fixed inset-y-0 left-0 z-50 flex w-[min(16rem,85vw)] flex-col border-r border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-in-out
+	class="app-sidebar fixed top-14 bottom-0 left-0 z-40 flex w-[min(16rem,85vw)] flex-col border-r border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-in-out
+	       sm:top-16
 	       lg:sticky lg:top-16 lg:z-auto lg:h-[calc(100dvh-4rem)] lg:w-64
 	       dark:border-slate-700 dark:bg-slate-900
 	       {$mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -246,12 +293,12 @@
 >
 	<!-- Header -->
 	<div
-		class="relative shrink-0 space-y-2.5 border-b border-gray-200 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] dark:border-slate-700"
+		class="relative shrink-0 space-y-2.5 border-b border-gray-200 p-3 dark:border-slate-700"
 	>
 		<!-- Mobile close -->
 		<button
 			type="button"
-			class="absolute top-[max(0.5rem,env(safe-area-inset-top))] right-2 inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+			class="absolute top-2 right-2 inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
 			on:click={closeMobileDrawer}
 			aria-label="Close navigation"
 		>
@@ -335,16 +382,24 @@
 		bind:this={resourceListEl}
 		on:scroll={handleListScroll}
 	>
-		<div class="mb-1.5 px-1 text-xs text-slate-500 dark:text-slate-400">
-			<span class="tabular-nums">{$resourceSearchFilter.length}</span>
-			resource{$resourceSearchFilter.length !== 1 ? 's' : ''}
-		</div>
+		{#if manifestLoading}
+			<div class="flex flex-col items-center justify-center gap-2 px-2 py-10 text-center">
+				<div
+					class="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600 dark:border-slate-600 dark:border-t-blue-400"
+				></div>
+				<p class="text-xs text-slate-500 dark:text-slate-400">Loading resources…</p>
+			</div>
+		{:else}
+			<div class="mb-1.5 px-1 text-xs text-slate-500 dark:text-slate-400">
+				<span class="tabular-nums">{$resourceSearchFilter.length}</span>
+				resource{$resourceSearchFilter.length !== 1 ? 's' : ''}
+			</div>
 
-		<!-- Custom scroll thumb -->
-		<div aria-hidden="true" class="sidebar-scroll-thumb" bind:this={sidebarThumbEl}></div>
+			<!-- Custom scroll thumb -->
+			<div aria-hidden="true" class="sidebar-scroll-thumb" bind:this={sidebarThumbEl}></div>
 
-		<div class="space-y-px">
-			{#each $resourceSearchFilter as resDef}
+			<div class="space-y-px">
+				{#each $resourceSearchFilter as resDef}
 				{@const isSelected = $page.url.pathname.startsWith(`/${resDef.name}/`)}
 				<button
 					type="button"
@@ -390,7 +445,8 @@
 						{/if}
 					</div>
 				</button>
-			{/each}
-		</div>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>

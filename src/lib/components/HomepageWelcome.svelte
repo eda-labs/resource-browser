@@ -160,12 +160,10 @@
 
 	<main class="homepage-main">
 		<section class="homepage-hero" aria-labelledby="hero-heading">
+			<p class="homepage-hero-kicker">Nokia Event-Driven Automation</p>
 			<h1 id="hero-heading" class="homepage-title text-slate-900 dark:text-slate-100">
 				EDA CRD Schema Explorer
 			</h1>
-			<p class="homepage-subtitle text-slate-600 dark:text-slate-400">
-				Search, browse, and validate CRD schemas across EDA releases.
-			</p>
 		</section>
 
 		<section class="homepage-search-zone" aria-labelledby="search-heading">
@@ -386,7 +384,7 @@
 								class="homepage-action-icon bg-slate-100 text-blue-600 dark:bg-slate-900 dark:text-blue-400"
 								aria-hidden="true"
 							>
-								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="homepage-action-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
 										stroke-linecap="round"
 										stroke-linejoin="round"
@@ -409,7 +407,7 @@
 							</span>
 							{#if action.primary}
 								<svg
-									class="homepage-action-arrow h-4 w-4"
+									class="homepage-action-arrow homepage-action-svg"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"

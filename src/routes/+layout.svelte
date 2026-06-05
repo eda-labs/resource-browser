@@ -36,7 +36,7 @@
 	</div>
 {:else}
 	<div
-		class="page-shell min-h-[100dvh] w-full overflow-x-hidden overflow-y-auto bg-gray-50 pb-[env(safe-area-inset-bottom)]"
+		class="page-shell h-[100dvh] w-full overflow-x-hidden overflow-y-auto bg-gray-50 pb-[env(safe-area-inset-bottom)]"
 	>
 		{@render children()}
 	</div>

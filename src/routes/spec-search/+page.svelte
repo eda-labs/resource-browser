@@ -1,15 +1,26 @@
 <script lang="ts">
     import yaml from 'js-yaml';
     import { onMount, onDestroy } from 'svelte';
+    import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     // AnimatedBackground is dynamically imported/rendered by the layout; avoid importing here to keep it lazy
-    import TopHeader from '$lib/components/TopHeader.svelte';
+    import AppHeader from '$lib/components/AppHeader.svelte';
     import PageCredits from '$lib/components/PageCredits.svelte';
 
     import Render from '$lib/components/Render.svelte';
-    import YangView from '$lib/components/YangView.svelte';
     import { stripResourcePrefixFQDN } from '$lib/components/functions';
+    import {
+        extractPaths,
+        markMatchingNodes,
+        type PathInfo
+    } from '$lib/spec-search/schemaUtils';
+    import {
+        fetchManifest,
+        searchManifest,
+        type ManifestResource,
+        type SearchMatch
+    } from '$lib/spec-search/searchEngine';
     // expandAll controls removed from this auto-search page (no UI button)
     import releasesYaml from '$lib/releases.yaml?raw';
     import type { EdaRelease, ReleasesConfig } from '$lib/structure';
@@ -24,217 +35,120 @@
 
     let query = '';
     let searchInDescription = false;
-    let selectedTokens = new Set<string>();
     let selectedResource: string | null = null;
     let isModalOpen = false;
-    let modalData: { name: string; kind?: string; version?: string; spec?: any; status?: any; fullSpec?: any; fullStatus?: any; markedFull?: { spec?: any; status?: any } } | null = null;
+    let modalData: (GroupedResult & { markedFull?: { spec?: unknown; status?: unknown } }) | null = null;
     let expandedPaths: string[] = [];
     let modalExpandAll = false;
 
-    // Extract all property paths from a schema object to determine what should be expanded
-    function extractPaths(obj: any, prefix: string = '', paths: any[] = []): any[] {
-        if (!obj || typeof obj !== 'object') return paths;
-        
-        if (obj.properties) {
-            for (const key of Object.keys(obj.properties)) {
-                const path = prefix ? `${prefix}.${key}` : key;
-                const prop = obj.properties[key];
-                
-                // A node is a leaf if it has NO nested properties AND NO items (array children)
-                const hasNestedProperties = prop.properties && Object.keys(prop.properties).length > 0;
-                const hasArrayItems = prop.items && (prop.items.properties || prop.items.items);
-                const isLeaf = !hasNestedProperties && !hasArrayItems;
-                
-                if (isLeaf) {
-                    const pathInfo: any = { path };
-                    
-                    // Add type info
-                    if (prop.type) pathInfo.type = prop.type;
-                    
-                    // Add enum if present
-                    if (prop.enum && Array.isArray(prop.enum)) pathInfo.enum = prop.enum;
-                    
-                    // Add default value if present
-                    if (prop.default !== undefined) pathInfo.default = prop.default;
-                    
-                    // Add constraints
-                    const constraints: string[] = [];
-                    if (prop.minimum !== undefined) constraints.push(`min: ${prop.minimum}`);
-                    if (prop.maximum !== undefined) constraints.push(`max: ${prop.maximum}`);
-                    if (prop.minLength !== undefined) constraints.push(`minLen: ${prop.minLength}`);
-                    if (prop.maxLength !== undefined) constraints.push(`maxLen: ${prop.maxLength}`);
-                    if (prop.pattern) constraints.push(`pattern: ${prop.pattern}`);
-                    if (constraints.length > 0) pathInfo.constraints = constraints;
-                    
-                    paths.push(pathInfo);
-                }
-                
-                // Always recurse to find nested leaves
-                extractPaths(obj.properties[key], path, paths);
-            }
-        }
-        
-        if (obj.items) {
-            extractPaths(obj.items, prefix, paths);
-        }
-        
-        return paths;
-    }
+    // Client-only init: URL params, version list, and initial search run in onMount (see homepage pattern).
+    let clientReady = false;
 
-    // Mark nodes in full schema that match the search by adding diff status
-    function markMatchingNodes(fullSchema: any, matchedPaths: Set<string>, currentPath: string = ''): any {
-        if (!fullSchema || typeof fullSchema !== 'object') return fullSchema;
-        
-        const result = { ...fullSchema };
-        
-        if (result.properties) {
-            const newProps: any = {};
-            for (const [key, value] of Object.entries(result.properties)) {
-                const path = currentPath ? `${currentPath}.${key}` : key;
-                const markedValue = markMatchingNodes(value, matchedPaths, path);
-                
-                // Mark as 'modified' (amber highlight) if this path matches search
-                if (matchedPaths.has(path)) {
-                    newProps[key] = { ...markedValue, __diffStatus: 'modified' };
-                } else {
-                    newProps[key] = markedValue;
-                }
-            }
-            result.properties = newProps;
-        }
-        
-        if (result.items) {
-            result.items = markMatchingNodes(result.items, matchedPaths, currentPath);
-        }
-        
-        return result;
-    }
-
-    // Initialize from URL parameters only once on mount
-    let initialized = false;
-    $: {
-        if (!initialized) {
-            const urlRelease = $page.url.searchParams.get('release');
-            const urlVersion = $page.url.searchParams.get('version');
-            const urlQuery = $page.url.searchParams.get('q');
-            
-            if (urlRelease) {
-                releaseName = urlRelease;
-                loadVersions();
-            }
-            if (urlVersion) {
-                version = urlVersion;
-            }
-            if (urlQuery) {
-                query = urlQuery;
-            }
-            initialized = true;
-        }
-    }
-
-    // Update URL when parameters change
     function updateURL() {
+        if (!browser) return;
+
         const params = new URLSearchParams();
         if (releaseName) params.set('release', releaseName);
         if (version) params.set('version', version);
         if (query && query.trim()) params.set('q', query);
-        
-        const targetUrl = `/spec-search-auto${params.toString() ? `?${params.toString()}` : ''}`;
-        
-        // Always update to ensure URL reflects current state
+
+        const targetUrl = `/spec-search${params.toString() ? `?${params.toString()}` : ''}`;
+        const currentUrl = `${$page.url.pathname}${$page.url.search}`;
+        if (targetUrl === currentUrl) return;
+
         goto(targetUrl, { replaceState: true, noScroll: true, keepFocus: true });
     }
 
-    $: selectedTokens = new Set(query.split(/\s+/).filter(Boolean));
+    const SEARCH_DEBOUNCE_MS = 250;
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let searchGeneration = 0;
 
-    function ensureRenderable(schema: any) {
-        if (!schema || typeof schema !== 'object') return schema;
-        // If schema already has explicit type or properties/items, return as-is
-        if ('type' in schema || 'properties' in schema || 'items' in schema) {
-            // Common malformed wrapper: { properties: { spec: { properties: {...} }, ... } }
-            // If we detect a top-level properties that contains a `spec` entry that itself
-            // looks like a schema, unwrap it so the renderer shows the actual spec fields.
-            try {
-                if (
-                    schema.properties &&
-                    schema.properties.spec &&
-                    (schema.properties.spec.properties || schema.properties.spec.items)
-                ) {
-                    return ensureRenderable(schema.properties.spec);
-                }
-            } catch (e) {
-                // ignore and fall through to return schema as-is
-            }
-            return schema;
-        }
-        // Otherwise treat the object as properties map
-        try {
-            return { type: 'object', properties: schema };
-        } catch (e) {
-            return schema;
-        }
-    }
+    let searching = false;
+    let results: SearchMatch[] = [];
+    const MAX_RESULTS = 100;
 
-    let loading = false;
-    let results: Array<{
+    type GroupedResult = {
         name: string;
         kind?: string;
-        schema: any;
         version?: string;
-        type?: 'spec' | 'status';
-    }> = [];
-    const MAX_RESULTS = 100; // Limit results for performance
-    $: displayedResults = results.slice(0, MAX_RESULTS);
+        spec?: unknown;
+        status?: unknown;
+        specPaths: PathInfo[];
+        statusPaths: PathInfo[];
+        fullSpec?: unknown;
+        fullStatus?: unknown;
+    };
 
-    // Simple in-memory caches to avoid refetching manifests and YAML repeatedly
-    const manifestCache: Map<string, any> = new Map();
-    const yamlCache: Map<string, string> = new Map();
-
-    // Prefetch manifest for the currently-selected release to reduce first-search latency
-    $: if (release && release.folder && !manifestCache.has(release.folder)) {
-        fetch(`/${release.folder}/manifest.json`)
-            .then((r) => { if (r.ok) return r.json(); return null; })
-            .then((j) => { if (j) manifestCache.set(release.folder, j); })
-            .catch(() => { /* ignore prefetch errors */ });
-    }
-
-    type GroupedResult = { name: string; kind?: string; version?: string; spec?: any; status?: any; fullSpec?: any; fullStatus?: any };
     let groupedResults: GroupedResult[] = [];
-    let fullSchemas = new Map<string, { spec?: any; status?: any }>();
-    
-    $: groupedResults = (() => {
+
+    function groupSearchResults(matches: SearchMatch[]): GroupedResult[] {
         const map = new Map<string, GroupedResult>();
-        for (const r of displayedResults) {
+        for (const r of matches) {
             const key = `${r.name}::${r.version || ''}`;
             if (!map.has(key)) {
-                const fullSchema = fullSchemas.get(key) || {};
                 map.set(key, {
                     name: r.name,
                     kind: r.kind,
                     version: r.version,
-                    spec: undefined,
-                    status: undefined,
-                    fullSpec: fullSchema.spec,
-                    fullStatus: fullSchema.status
+                    specPaths: [],
+                    statusPaths: [],
+                    fullSpec: r.fullSpec,
+                    fullStatus: r.fullStatus
                 });
             }
             const entry = map.get(key)!;
-            if (r.type === 'spec') entry.spec = entry.spec || r.schema;
-            if (r.type === 'status') entry.status = entry.status || r.schema;
+            if (r.type === 'spec') {
+                entry.spec = entry.spec || r.schema;
+                entry.fullSpec = entry.fullSpec || r.fullSpec;
+                if (entry.specPaths.length === 0) {
+                    entry.specPaths = extractPaths(r.schema, 'spec');
+                }
+            }
+            if (r.type === 'status') {
+                entry.status = entry.status || r.schema;
+                entry.fullStatus = entry.fullStatus || r.fullStatus;
+                if (entry.statusPaths.length === 0) {
+                    entry.statusPaths = extractPaths(r.schema, 'status');
+                }
+            }
         }
-        return Array.from(map.values());
-    })();
+        return Array.from(map.values()).slice(0, MAX_RESULTS);
+    }
 
-    // The page attaches an event listener for `yang:pathclick` further down.
+    // Simple in-memory caches to avoid refetching manifests and YAML repeatedly
+    const manifestCache: Map<string, ManifestResource[]> = new Map();
+    const yamlCache: Map<string, string> = new Map();
+    const parsedCache: Map<string, { spec?: unknown; status?: unknown }> = new Map();
 
-    // Results are YANG-only for auto-search page
+    // Prefetch manifest for the currently-selected release to reduce first-search latency
+    $: if (browser && clientReady && release?.folder && !manifestCache.has(release.folder)) {
+        void fetchManifest(release.folder, manifestCache);
+    }
 
     $: release = releaseName
         ? releasesConfig.releases.find((r) => r.name === releaseName) || null
         : null;
 
+    function openResourceModal(g: GroupedResult) {
+        expandedPaths = [];
+        const matchedPaths = new Set<string>();
+        for (const p of g.specPaths) matchedPaths.add(p.path);
+        for (const p of g.statusPaths) matchedPaths.add(p.path);
+        expandedPaths = [...matchedPaths];
+
+        const markedFull = {
+            spec: g.fullSpec ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec') : g.fullSpec,
+            status: g.fullStatus ? markMatchingNodes(g.fullStatus, matchedPaths, 'status') : g.fullStatus
+        };
+
+        modalExpandAll = false;
+        modalData = { ...g, markedFull };
+        isModalOpen = true;
+    }
+
     async function loadVersions() {
+        if (!browser) return;
+
         const rel =
             release ||
             (releaseName ? releasesConfig.releases.find((r) => r.name === releaseName) || null : null);
@@ -245,13 +159,12 @@
         }
         loadingVersions = true;
         try {
-            const resp = await fetch(`/${rel.folder}/manifest.json`);
-            if (resp.ok) {
-                const manifest = await resp.json();
+            const manifest = await fetchManifest(rel.folder, manifestCache);
+            if (manifest) {
                 const versionSet = new Set<string>();
-                manifest.forEach((resource: any) => {
-                    resource.versions?.forEach((v: any) => {
-                        if (v && v.name) versionSet.add(v.name);
+                manifest.forEach((resource) => {
+                    resource.versions?.forEach((v) => {
+                        if (v?.name) versionSet.add(v.name);
                     });
                 });
                 versions = Array.from(versionSet).sort();
@@ -283,520 +196,345 @@
             loadingVersions = false;
         }
     }
-    
-    // Update URL when version changes
-    $: if (version !== undefined && release) {
-        updateURL();
-    }
-    
-    function stripDescriptions(obj: any): any {
-        if (obj == null) return obj;
-        if (Array.isArray(obj)) return obj.map(stripDescriptions);
-        if (typeof obj === 'object') {
-            const out: any = {};
-            for (const k of Object.keys(obj)) {
-                if (k === 'description') continue;
-                out[k] = stripDescriptions(obj[k]);
-            }
-            return out;
-        }
-        return obj;
-    }
-
-    function restoreDescriptions(node: any, original: any, isRoot = false) {
-        if (!node || typeof node !== 'object') return node;
-        if (!original || typeof original !== 'object') return node;
-        try {
-            if (
-                !isRoot &&
-                'description' in original &&
-                original.description &&
-                !('description' in node)
-            ) {
-                node.description = original.description;
-            }
-        } catch (e) { }
-        if (node.properties && original.properties) {
-            for (const k of Object.keys(node.properties)) {
-                try {
-                    node.properties[k] = restoreDescriptions(
-                        node.properties[k],
-                        original.properties ? original.properties[k] : undefined,
-                        false
-                    );
-                } catch (e) {
-                    // ignore per-field
-                }
-            }
-        }
-        if (node.items && original.items) {
-            node.items = restoreDescriptions(node.items, original.items, false);
-        }
-        return node;
-    }
-
-    function pruneSchema(node: any, re: RegExp | null, q: string, includeDesc: boolean = false): any | null {
-        // Only match structural paths (property names / titles) by default.
-        // Optionally include descriptions if includeDesc is true.
-        if (node == null) return null;
-        if (typeof node !== 'object' || (Array.isArray(node) === true && node.length === 0)) {
-            // Do not match primitive leaf values by default (prevents matching enum values, formats, etc.)
-            return null;
-        }
-        const out: any = {};
-        let matched = false;
-        function copyMeta(src: any, dst: any) {
-            const keys = ['type', 'format', 'enum', 'default', 'minimum', 'maximum', 'minLength', 'maxLength', 'pattern', 'title'];
-            for (const k of keys) {
-                if (k in src && src[k] !== undefined) dst[k] = src[k];
-            }
-        }
-        
-        // Check if description matches (if includeDesc is true)
-        if (includeDesc && node.description && typeof node.description === 'string' && q) {
-            const descLower = node.description.toLowerCase();
-            const qLower = q.toLowerCase();
-            if (descLower.includes(qLower)) {
-                matched = true;
-                copyMeta(node, out);
-                if (node.description) out.description = node.description;
-            }
-        }
-        
-        if (node.properties && typeof node.properties === 'object') {
-            const props: any = {};
-            for (const [pname, pval] of Object.entries(node.properties)) {
-                // First, check if the property name itself matches the query (normalize camelCase/underscores)
-                let nameMatched = false;
-                if (q) {
-                    const normalizedName = String(pname)
-                        .replace(/([a-z])([A-Z])/g, '$1 $2')
-                        .replace(/[_.\-]/g, ' ')
-                        .toLowerCase();
-                    // Also consider a spaceless/compact form so queries like "maclimit"
-                    // match camelCase names like "macLimit" (which normalize to "mac limit").
-                    const normalizedNameNoSpace = normalizedName.replace(/\s+/g, '');
-                    const qLower = q.toLowerCase();
-                    const qNoSpace = qLower.replace(/[\s_.\-]/g, '');
-                    if (normalizedName.includes(qLower) || normalizedNameNoSpace.includes(qNoSpace)) {
-                        props[pname] = stripDescriptions(pval);
-                        matched = true;
-                        nameMatched = true;
-                    }
-                }
-
-                // If name didn't match, recurse into the property's schema to find deeper property-name matches
-                if (!nameMatched) {
-                    const pr = pruneSchema(pval as any, re, q, includeDesc);
-                    if (pr != null) {
-                        props[pname] = pr;
-                        matched = true;
-                    }
-                }
-            }
-            if (Object.keys(props).length > 0) {
-                out.properties = props;
-                if (node.type) out.type = node.type;
-            }
-        }
-        if (node.items) {
-            const pr = pruneSchema(node.items, re, q, includeDesc);
-            if (pr != null) {
-                out.items = pr;
-                if (node.type) out.type = node.type;
-                matched = true;
-            }
-        }
-        for (const comb of ['allOf', 'anyOf', 'oneOf']) {
-            if (Array.isArray(node[comb])) {
-                const arr: any[] = [];
-                for (const el of node[comb]) {
-                    const pr = pruneSchema(el, re, q, includeDesc);
-                    if (pr != null) {
-                        arr.push(pr);
-                        matched = true;
-                    }
-                }
-                if (arr.length > 0) out[comb] = arr;
-            }
-        }
-        if (node.additionalProperties && typeof node.additionalProperties === 'object') {
-            const pr = pruneSchema(node.additionalProperties, re, q, includeDesc);
-            if (pr != null) {
-                out.additionalProperties = pr;
-                matched = true;
-            }
-        }
-        // Only consider 'title' as a scalar-key match target by default (titles are descriptive labels)
-        const scalarKeys = ['title'];
-        for (const k of scalarKeys) {
-            if (k in node && node[k] !== undefined && q) {
-                const s = String(node[k]);
-                const sNorm = s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_.\-]/g, ' ').toLowerCase();
-                const qLower = q.toLowerCase();
-                const sNormNoSpace = sNorm.replace(/\s+/g, '');
-                const qNoSpace = qLower.replace(/[\s_.\-]/g, '');
-                if (sNorm.includes(qLower) || sNormNoSpace.includes(qNoSpace)) {
-                    out[k] = node[k];
-                    matched = true;
-                }
-            }
-        }
-        if (!matched) return null;
-        copyMeta(node, out);
-        return out;
-    }
-
-    function escapeHtml(s: string) {
-        const entityMap: Record<string, string> = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        };
-        return String(s ?? '').replace(/[&<>"']/g, (c) => entityMap[c] ?? c);
-    }
-    function escapeRegExp(s: string) {
-        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
-    function highlightMatches(text: string, q: string) {
-        const query = String(q ?? '').trim();
-        if (!query) return escapeHtml(text);
-        const hay = String(text || '');
-        try {
-            const re = new RegExp(query, 'ig');
-            let lastIndex = 0;
-            const parts: string[] = [];
-            let match: RegExpExecArray | null;
-            while ((match = re.exec(hay)) !== null) {
-                const start = match.index;
-                const end = re.lastIndex;
-                parts.push(escapeHtml(hay.substring(lastIndex, start)));
-                parts.push(
-                    ` <mark class="bg-yellow-200 dark:bg-yellow-700/30 rounded px-0.5">${escapeHtml(hay.substring(start, end))}</mark>`
-                );
-                lastIndex = end;
-                if (re.lastIndex === match.index) re.lastIndex++;
-            }
-            parts.push(escapeHtml(hay.substring(lastIndex)));
-            return parts.join('');
-        } catch (e) {
-            const idx = hay.toLowerCase().indexOf(query.toLowerCase());
-            if (idx === -1) return escapeHtml(hay);
-            return `${escapeHtml(hay.substring(0, idx))}<mark class="bg-yellow-200 dark:bg-yellow-700/30 rounded px-0.5">${escapeHtml(hay.substring(idx, idx + query.length))}</mark>${escapeHtml(hay.substring(idx + query.length))}`;
-        }
-    }
 
     async function performSearch() {
-        results = [];
-        if (!release || !query) return;
-        loading = true;
+        if (!browser || !release || !query.trim()) return;
+
+        const generation = ++searchGeneration;
+        searching = true;
+
         try {
-            let manifest: any;
-            if (manifestCache.has(release.folder)) {
-                manifest = manifestCache.get(release.folder);
-            } else {
-                const resp = await fetch(`/${release.folder}/manifest.json`);
-                if (!resp.ok) return;
-                manifest = await resp.json();
-                manifestCache.set(release.folder, manifest);
-            }
-            const q = String(query ?? '').trim();
-            let re: RegExp | null = null;
-            try { re = new RegExp(q, 'i'); } catch (e) { re = null; }
-            const promises = manifest.flatMap(async (res: any) => {
-                if (!res || !res.name) return [];
-                if (String(res.name).toLowerCase().includes('states')) return [];
-                const candidateVersions = version
-                    ? [version]
-                    : res.versions
-                        ? res.versions.map((v: any) => v.name)
-                        : [];
-                const matches: Array<any> = [];
-                for (const ver of candidateVersions) {
-                    try {
-                        const path = `/${release.folder}/${res.name}/${ver}.yaml`;
-                        let txt: string | undefined = undefined;
-                        if (yamlCache.has(path)) {
-                            txt = yamlCache.get(path);
-                        } else {
-                            const r = await fetch(path);
-                            if (!r.ok) continue;
-                            txt = await r.text();
-                            yamlCache.set(path, txt);
-                        }
-                        const parsed = yaml.load(txt) as any;
-                        const spec = parsed?.schema?.openAPIV3Schema?.properties?.spec;
-                        const status = parsed?.schema?.openAPIV3Schema?.properties?.status;
+            const manifest = await fetchManifest(release.folder, manifestCache);
+            if (!manifest || generation !== searchGeneration) return;
 
-                        // Store full unfiltered schemas
-                        const resourceKey = `${res.name}::${ver}`;
-                        fullSchemas.set(resourceKey, {
-                            spec: spec ? ensureRenderable(spec) : undefined,
-                            status: status ? ensureRenderable(status) : undefined
-                        });
-
-                        if (spec) {
-                            const stripped = searchInDescription ? spec : stripDescriptions(spec);
-                            const pruned = pruneSchema(stripped, re, q, searchInDescription);
-                            if (pruned) {
-                                let readySchema = pruned;
-                                try {
-                                    if (
-                                        (!pruned.properties || Object.keys(pruned.properties).length === 0) &&
-                                        Array.isArray(pruned.required) &&
-                                        stripped &&
-                                        stripped.properties
-                                    ) {
-                                        const focusedProps: any = {};
-                                        for (const rk of pruned.required) {
-                                            if (rk in stripped.properties) focusedProps[rk] = stripped.properties[rk];
-                                        }
-                                        if (Object.keys(focusedProps).length > 0) {
-                                            readySchema = {
-                                                type: 'object',
-                                                properties: focusedProps,
-                                                required: pruned.required
-                                            };
-                                        }
-                                    }
-                                } catch (e) { readySchema = pruned; }
-                                try { readySchema = restoreDescriptions(readySchema, spec, true); } catch (e) { }
-                                const ready = ensureRenderable(readySchema);
-                                matches.push({ name: res.name, kind: res.kind, schema: ready, version: ver, type: 'spec' });
-                            }
-                        }
-                        if (status) {
-                            const strippedStatus = searchInDescription ? status : stripDescriptions(status);
-                            const prunedStatus = pruneSchema(strippedStatus, re, q, searchInDescription);
-                            if (prunedStatus) {
-                                let readyStatus = prunedStatus;
-                                try { readyStatus = restoreDescriptions(readyStatus, status, true); } catch (e) {}
-                                const ensured = ensureRenderable(readyStatus);
-                                matches.push({ name: res.name, kind: res.kind, schema: ensured, version: ver, type: 'status' });
-                            }
-                        }
-                    } catch (e) {}
+            const matches = await searchManifest({
+                releaseFolder: release.folder,
+                manifest,
+                query: query.trim(),
+                version,
+                searchInDescription,
+                maxResults: MAX_RESULTS,
+                yamlCache,
+                parsedCache,
+                isCancelled: () => generation !== searchGeneration,
+                onProgress: (progress) => {
+                    if (generation !== searchGeneration) return;
+                    results = progress.matches;
+                    if (progress.done) {
+                        groupedResults = groupSearchResults(progress.matches);
+                    }
                 }
-                return matches;
             });
-            const settled = await Promise.all(promises);
-            results = settled.flat().filter(Boolean) as any;
-        } finally { loading = false; }
-    }
 
-    function toggleToken(token: string) {
-        const toks = query.split(/\s+/).filter(Boolean);
-        if (toks.includes(token)) {
-            query = toks.filter((t) => t !== token).join(' ');
-        } else {
-            toks.push(token);
-            query = toks.join(' ');
-        }
-    }
-
-    // schedule debounced search when user types
-    function scheduleSearch() {
-        if (debounceTimer) clearTimeout(debounceTimer);
-        
-        // Don't search without a release selected
-        if (!release || !releaseName) {
-            results = [];
-            loading = false;
-            return;
-        }
-        
-        // If query is empty, clear results immediately
-        if (!query || query.trim().length === 0) {
-            results = [];
-            loading = false;
-            updateURL(); // Update URL to remove query parameter
-            return;
-        }
-        
-        // Clear old results immediately when query changes to avoid showing stale data
-        results = [];
-        loading = true;
-        
-        debounceTimer = setTimeout(() => {
-            debounceTimer = null;
-            performSearch();
-            updateURL(); // Update URL after search is triggered
-        }, 100); // Ultra-fast: reduced to 100ms for instant feel
-    }
-
-    // Watch query changes reactively to trigger search on any change (typing, clear button, etc.)
-    let previousQuery = '';
-    $: {
-        // This reactive block re-runs whenever query changes
-        if (query !== previousQuery) {
-            previousQuery = query;
-            scheduleSearch();
-        }
-    }
-
-    // Trigger search when searchInDescription toggle changes
-    let previousSearchInDescription = false;
-    $: {
-        if (searchInDescription !== previousSearchInDescription && query) {
-            previousSearchInDescription = searchInDescription;
-            scheduleSearch();
-        }
-    }
-
-    // Global listener for YangView pathclick document events.
-    // This covers any cases where YangView also emits `yang:pathclick` on document
-    // (in addition to component-level `pathclick`). It toggles token selection
-    // and schedules a search so results update automatically.
-    let _yangHandler: any = null;
-    if (typeof window !== 'undefined') {
-        _yangHandler = (e: any) => {
-            try {
-                const token = (e?.detail?.displayPath || e?.detail?.path) as string;
-                if (!token) return;
-                const toks = query.split(/\s+/).filter(Boolean);
-                if (toks.includes(token)) query = toks.filter((t: string) => t !== token).join(' ');
-                else {
-                    toks.push(token);
-                    query = toks.join(' ');
-                }
-                // Immediately run search for a more responsive UX when user clicks YANG paths
-                if (debounceTimer) {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = null;
-                }
-                performSearch();
-            } catch (err) {
-                /* ignore */
+            if (generation !== searchGeneration) return;
+            results = matches;
+            groupedResults = groupSearchResults(matches);
+        } finally {
+            if (generation === searchGeneration) {
+                searching = false;
             }
-        };
-        document.addEventListener('yang:pathclick', _yangHandler);
+        }
     }
+
+    function scheduleSearch(immediate = false) {
+        if (!browser || !clientReady) return;
+
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
+        }
+
+        if (!release || !releaseName) {
+            searchGeneration++;
+            results = [];
+            groupedResults = [];
+            searching = false;
+            return;
+        }
+
+        if (!query || query.trim().length === 0) {
+            searchGeneration++;
+            results = [];
+            groupedResults = [];
+            searching = false;
+            updateURL();
+            return;
+        }
+
+        searching = true;
+
+        const run = () => {
+            debounceTimer = null;
+            void performSearch();
+            updateURL();
+        };
+
+        if (immediate) {
+            run();
+        } else {
+            debounceTimer = setTimeout(run, SEARCH_DEBOUNCE_MS);
+        }
+    }
+
+    let previousQuery = '';
+    $: if (browser && clientReady && query !== previousQuery) {
+        previousQuery = query;
+        scheduleSearch();
+    }
+
+    let previousSearchInDescription = false;
+    $: if (
+        browser &&
+        clientReady &&
+        searchInDescription !== previousSearchInDescription &&
+        query.trim()
+    ) {
+        previousSearchInDescription = searchInDescription;
+        scheduleSearch(true);
+    }
+
+    function handleYangPathClick(e: CustomEvent<{ displayPath?: string; path?: string }>) {
+        try {
+            const token = (e?.detail?.displayPath || e?.detail?.path) as string;
+            if (!token) return;
+            const toks = query.split(/\s+/).filter(Boolean);
+            if (toks.includes(token)) query = toks.filter((t: string) => t !== token).join(' ');
+            else {
+                toks.push(token);
+                query = toks.join(' ');
+            }
+            scheduleSearch(true);
+        } catch {
+            /* ignore */
+        }
+    }
+
+    onMount(async () => {
+        const urlRelease = $page.url.searchParams.get('release');
+        const urlVersion = $page.url.searchParams.get('version');
+        const urlQuery = $page.url.searchParams.get('q');
+
+        if (urlRelease) {
+            releaseName = urlRelease;
+        } else {
+            const defaultRelease =
+                releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
+            if (defaultRelease) {
+                releaseName = defaultRelease.name;
+            }
+        }
+        if (urlVersion) {
+            version = urlVersion;
+        }
+        if (urlQuery) {
+            query = urlQuery;
+            previousQuery = urlQuery;
+        }
+        previousSearchInDescription = searchInDescription;
+
+        await loadVersions();
+
+        if (urlQuery?.trim()) {
+            await performSearch();
+        }
+
+        clientReady = true;
+
+        document.addEventListener('yang:pathclick', handleYangPathClick as EventListener);
+    });
+
     onDestroy(() => {
-        if (typeof window !== 'undefined' && _yangHandler) document.removeEventListener('yang:pathclick', _yangHandler);
+        if (browser) {
+            document.removeEventListener('yang:pathclick', handleYangPathClick as EventListener);
+        }
     });
 </script>
 
 <svelte:head>
-    <title>EDA Resource Browser | Resource Search</title>
-</svelte:head><TopHeader title="Resource Search" />
+    <title>EDA Resource Browser | Spec Search</title>
+    <meta
+        name="description"
+        content="Search CRD schema property paths across Nokia EDA releases — find spec and status fields by name or description."
+    />
+</svelte:head>
 
-<div class="relative flex h-full flex-col overflow-y-auto pt-12 md:pt-14">
-    <div class="mx-auto w-full max-w-7xl flex-1 px-4 py-4">
-        
-        <!-- Ultra-Compact Filters -->
-        <div class="mb-4 flex flex-wrap items-center gap-2">
-            <select 
-                id="spec-release" 
-                bind:value={releaseName} 
-                on:change={loadVersions} 
-                class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 shadow-sm transition-all hover:border-cyan-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-500 dark:focus:border-cyan-400"
+<div class="spec-search-page page-shell min-h-full bg-gray-50 dark:text-gray-100">
+    <AppHeader contextTitle="Spec Search" contextBadge="Schema" fixed={false} />
+
+    <div class="spec-search-main">
+        <section class="spec-search-hero" aria-labelledby="spec-search-heading">
+            <p class="homepage-hero-kicker">Schema discovery</p>
+            <h1 id="spec-search-heading" class="homepage-title text-slate-900 dark:text-slate-100">
+                Search CRD property paths
+            </h1>
+            <p class="homepage-subtitle text-slate-600 dark:text-slate-400">
+                Find spec and status fields across resources — filter by release, version, and optional
+                description text.
+            </p>
+        </section>
+
+        <div class="spec-search-filters" role="search" aria-label="Spec search filters">
+            <select
+                id="spec-release"
+                bind:value={releaseName}
+                on:change={async () => {
+                    await loadVersions();
+                    if (query.trim()) scheduleSearch(true);
+                }}
+                class="spec-search-select min-w-[10rem] flex-1 sm:flex-none"
             >
-                <option value="">Select release...</option>
+                <option value="">Select release…</option>
                 {#each releasesConfig.releases as r}
-                    <option value={r.name}>{r.label}</option>
+                    <option value={r.name}>{r.label}{r.default ? ' (latest)' : ''}</option>
                 {/each}
             </select>
-            
-            <select 
-                id="spec-version" 
+
+            <select
+                id="spec-version"
                 bind:value={version}
                 on:change={() => {
                     updateURL();
                     if (query && query.trim()) {
-                        scheduleSearch();
+                        scheduleSearch(true);
                     }
                 }}
-                class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 shadow-sm transition-all hover:border-cyan-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-500 dark:focus:border-cyan-400" 
+                class="spec-search-select min-w-[8rem] flex-1 sm:flex-none"
                 disabled={!release || versions.length === 0 || loadingVersions}
             >
-                <option value="">{loadingVersions ? 'Loading...' : 'All versions'}</option>
+                <option value="">{loadingVersions ? 'Loading…' : 'All versions'}</option>
                 {#each versions as v}
                     <option value={v}>{v}</option>
                 {/each}
             </select>
-            
-            <label class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm shadow-sm transition-all hover:border-cyan-400 dark:border-gray-600 dark:bg-gray-800">
-                <input 
-                    type="checkbox" 
+
+            <label
+                class="flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800/80"
+            >
+                <input
+                    type="checkbox"
                     bind:checked={searchInDescription}
-                    class="h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-700"
+                    class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700"
                 />
-                <span class="text-gray-700 dark:text-gray-300">Search descriptions</span>
+                <span class="text-slate-700 dark:text-slate-300">Include descriptions</span>
             </label>
-            
-            {#if groupedResults.length > 0}
-                <div class="ml-auto text-xs text-gray-500 dark:text-gray-400">
-                    {groupedResults.length} resource{groupedResults.length !== 1 ? 's' : ''} found
+
+            {#if loadingVersions}
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                    <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                    </svg>
+                    Loading versions…
+                </div>
+            {:else if groupedResults.length > 0}
+                <div class="ml-auto flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                    {#if searching}
+                        <svg class="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <span>Updating…</span>
+                    {/if}
+                    {groupedResults.length} resource{groupedResults.length !== 1 ? 's' : ''}
                     {#if results.length > MAX_RESULTS}
-                        <span class="text-amber-600 dark:text-amber-400">(showing first {MAX_RESULTS})</span>
+                        <span class="text-amber-600 dark:text-amber-400">
+                            (first {MAX_RESULTS})
+                        </span>
                     {/if}
                 </div>
             {/if}
         </div>
 
-        <!-- Compact Search Input -->
-        <div class="mb-4">
+        <div class="homepage-search-zone">
+            <label for="spec-query" class="sr-only">Search property paths</label>
             <div class="relative">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-                    </svg>
-                </div>
-                <input
-                    id="spec-query"
-                    bind:value={query}
-                    on:keydown={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            if (debounceTimer) {
-                                clearTimeout(debounceTimer);
-                                debounceTimer = null;
-                            }
-                            performSearch();
-                        }
-                    }}
-                    placeholder="Search property paths..."
-                    class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-9 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-cyan-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:hover:border-gray-500 dark:focus:border-cyan-400"
-                />
-                {#if query}
-                    <button 
-                        type="button"
-                        aria-label="Clear search" 
-                        on:click|preventDefault|stopPropagation={() => { 
-                            query = ''; 
-                            previousQuery = '';
-                            results = []; 
-                            selectedResource = null;
-                            selectedTokens = new Set();
-                            updateURL();
-                        }} 
-                        class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                <div
+                    class="homepage-search-input border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-800"
+                >
+                    <svg
+                        class="homepage-search-icon text-slate-400 dark:text-slate-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
                     >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                    <input
+                        id="spec-query"
+                        bind:value={query}
+                        on:keydown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                scheduleSearch(true);
+                            }
+                        }}
+                        placeholder={release
+                            ? 'Search paths (e.g. vlan, macLimit, adminState)…'
+                            : 'Select a release to start searching…'}
+                        class="homepage-search-field text-slate-900 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
+                        disabled={!release}
+                        autocomplete="off"
+                        aria-busy={searching}
+                    />
+                    {#if searching}
+                        <svg
+                            class="h-4 w-4 shrink-0 animate-spin text-slate-400 dark:text-slate-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            aria-label="Searching"
+                        >
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
                         </svg>
-                    </button>
-                {/if}
+                    {/if}
+                    {#if query}
+                        <button
+                            type="button"
+                            aria-label="Clear search"
+                            on:click|preventDefault|stopPropagation={() => {
+                                query = '';
+                                previousQuery = '';
+                                searchGeneration++;
+                                results = [];
+                                groupedResults = [];
+                                searching = false;
+                                selectedResource = null;
+                                updateURL();
+                            }}
+                            class="rounded p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+                        >
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    {/if}
+                </div>
             </div>
         </div>
 
-        <!-- Loading Indicator -->
-        {#if loading}
-            <div class="mb-4">
-                <div class="flex items-center justify-center gap-2 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 dark:border-cyan-800 dark:bg-cyan-900/20">
-                    <div class="h-4 w-4 animate-spin rounded-full border-2 border-cyan-200 border-t-cyan-600 dark:border-cyan-700 dark:border-t-cyan-400"></div>
-                    <span class="text-sm font-medium text-cyan-700 dark:text-cyan-300">Searching...</span>
-                </div>
-            </div>
-        {/if}
-
-        <!-- Results Section -->
-        {#if loading}
+        <div class="spec-search-results-panel" class:opacity-70={searching && groupedResults.length > 0} class:transition-opacity={searching}>
+            {#if loadingVersions}
                     <!-- Loading Skeleton -->
-                    <div class="space-y-4">
+                    <div class="space-y-4 p-4">
                         {#each [1, 2, 3] as _}
                             <div class="animate-pulse overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
                                 <div class="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white px-5 py-4 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800">
@@ -815,35 +553,14 @@
                             </div>
                         {/each}
                     </div>
-                {:else if displayedResults.length > 0}
+                {:else if groupedResults.length > 0}
                     <!-- Mobile Cards -->
                     <div class="space-y-2 sm:hidden">
                         {#each groupedResults as g}
                             <button
                                 on:click={(e) => {
                                     e.preventDefault();
-                                    expandedPaths = [];
-                                    const matchedPaths = new Set<string>();
-                                    
-                                    if (g.spec) {
-                                        const specPaths = extractPaths(g.spec, 'spec');
-                                        expandedPaths.push(...specPaths.map(p => typeof p === 'string' ? p : p.path));
-                                        specPaths.forEach(p => matchedPaths.add(typeof p === 'string' ? p : p.path));
-                                    }
-                                    if (g.status) {
-                                        const statusPaths = extractPaths(g.status, 'status');
-                                        expandedPaths.push(...statusPaths.map(p => typeof p === 'string' ? p : p.path));
-                                        statusPaths.forEach(p => matchedPaths.add(typeof p === 'string' ? p : p.path));
-                                    }
-                                    
-                                    const markedFull = {
-                                        spec: g.fullSpec ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec') : g.fullSpec,
-                                        status: g.fullStatus ? markMatchingNodes(g.fullStatus, matchedPaths, 'status') : g.fullStatus
-                                    };
-                                    
-                                    modalExpandAll = false;
-                                    modalData = { ...g, markedFull };
-                                    isModalOpen = true;
+                                    openResourceModal(g);
                                 }}
                                 class="w-full overflow-hidden rounded-lg border border-gray-200 bg-white text-left transition-colors hover:border-cyan-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-cyan-600 dark:hover:bg-gray-700/50">
                                 <div class="p-3">
@@ -861,30 +578,28 @@
                                     <!-- Schema badges and paths -->
                                     <div class="space-y-1.5">
                                         {#if g.spec}
-                                            {@const paths = extractPaths(g.spec, 'spec')}
                                             <div>
                                                 <span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
                                                     Spec
                                                 </span>
                                                 <div class="mt-1 flex flex-wrap gap-1">
-                                                    {#each paths as pathInfo}
+                                                    {#each g.specPaths as pathInfo}
                                                         <span class="inline-flex rounded bg-amber-100 px-1.5 py-0.5 text-xs font-mono text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                                                            {typeof pathInfo === 'string' ? pathInfo : pathInfo.path}
+                                                            {pathInfo.path}
                                                         </span>
                                                     {/each}
                                                 </div>
                                             </div>
                                         {/if}
                                         {#if g.status}
-                                            {@const paths = extractPaths(g.status, 'status')}
                                             <div>
                                                 <span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
                                                     Status
                                                 </span>
                                                 <div class="mt-1 flex flex-wrap gap-1">
-                                                    {#each paths as pathInfo}
+                                                    {#each g.statusPaths as pathInfo}
                                                         <span class="inline-flex rounded bg-amber-100 px-1.5 py-0.5 text-xs font-mono text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                                                            {typeof pathInfo === 'string' ? pathInfo : pathInfo.path}
+                                                            {pathInfo.path}
                                                         </span>
                                                     {/each}
                                                 </div>
@@ -917,28 +632,7 @@
                                     <tr
                                         on:click={(e) => {
                                             e.preventDefault();
-                                            expandedPaths = [];
-                                            const matchedPaths = new Set<string>();
-                                            
-                                            if (g.spec) {
-                                                const specPaths = extractPaths(g.spec, 'spec');
-                                                expandedPaths.push(...specPaths.map(p => typeof p === 'string' ? p : p.path));
-                                                specPaths.forEach(p => matchedPaths.add(typeof p === 'string' ? p : p.path));
-                                            }
-                                            if (g.status) {
-                                                const statusPaths = extractPaths(g.status, 'status');
-                                                expandedPaths.push(...statusPaths.map(p => typeof p === 'string' ? p : p.path));
-                                                statusPaths.forEach(p => matchedPaths.add(typeof p === 'string' ? p : p.path));
-                                            }
-                                            
-                                            const markedFull = {
-                                                spec: g.fullSpec ? markMatchingNodes(g.fullSpec, matchedPaths, 'spec') : g.fullSpec,
-                                                status: g.fullStatus ? markMatchingNodes(g.fullStatus, matchedPaths, 'status') : g.fullStatus
-                                            };
-                                            
-                                            modalExpandAll = false;
-                                            modalData = { ...g, markedFull };
-                                            isModalOpen = true;
+                                            openResourceModal(g);
                                         }}
                                         class="cursor-pointer transition-colors {idx % 2 === 0 ? '' : 'bg-gray-50/50 dark:bg-gray-900/20'} hover:bg-cyan-50 dark:hover:bg-cyan-900/20"
                                     >
@@ -955,16 +649,14 @@
                                         </td>
                                         <td class="px-4 py-2.5">
                                             <div class="space-y-1.5">
-                                                {#if g.spec}
-                                                    {@const paths = extractPaths(g.spec, 'spec')}
-                                                    {#if paths.length > 0}
-                                                        <div class="rounded border border-cyan-200 bg-cyan-50/30 p-1.5 dark:border-cyan-800 dark:bg-cyan-900/20">
-                                                            <div class="mb-1 text-xs font-semibold text-cyan-700 dark:text-cyan-400">Spec</div>
-                                                            <div class="space-y-0.5">
-                                                                {#each paths as pathInfo}
-                                                                    <div class="group relative flex items-center gap-1.5 flex-wrap">
-                                                                        <span class="text-xs font-mono text-amber-700 dark:text-amber-300">{typeof pathInfo === 'string' ? pathInfo : pathInfo.path}</span>
-                                                                        {#if typeof pathInfo === 'object' && pathInfo.type}
+                                                {#if g.spec && g.specPaths.length > 0}
+                                                    <div class="rounded border border-cyan-200 bg-cyan-50/30 p-1.5 dark:border-cyan-800 dark:bg-cyan-900/20">
+                                                        <div class="mb-1 text-xs font-semibold text-cyan-700 dark:text-cyan-400">Spec</div>
+                                                        <div class="space-y-0.5">
+                                                            {#each g.specPaths as pathInfo}
+                                                                <div class="group relative flex items-center gap-1.5 flex-wrap">
+                                                                    <span class="text-xs font-mono text-amber-700 dark:text-amber-300">{pathInfo.path}</span>
+                                                                    {#if pathInfo.type}
                                                                             {@const typeColors = {
                                                                                 string: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800',
                                                                                 integer: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
@@ -1032,18 +724,15 @@
                                                                 {/each}
                                                             </div>
                                                         </div>
-                                                    {/if}
                                                 {/if}
-                                                {#if g.status}
-                                                    {@const paths = extractPaths(g.status, 'status')}
-                                                    {#if paths.length > 0}
-                                                        <div class="rounded border border-green-200 bg-green-50/30 p-1.5 dark:border-green-800 dark:bg-green-900/20">
-                                                            <div class="mb-1 text-xs font-semibold text-green-700 dark:text-green-400">Status</div>
-                                                            <div class="space-y-0.5">
-                                                                {#each paths as pathInfo}
-                                                                    <div class="group relative flex items-center gap-1.5 flex-wrap">
-                                                                        <span class="text-xs font-mono text-amber-700 dark:text-amber-300">{typeof pathInfo === 'string' ? pathInfo : pathInfo.path}</span>
-                                                                        {#if typeof pathInfo === 'object' && pathInfo.type}
+                                                {#if g.status && g.statusPaths.length > 0}
+                                                    <div class="rounded border border-green-200 bg-green-50/30 p-1.5 dark:border-green-800 dark:bg-green-900/20">
+                                                        <div class="mb-1 text-xs font-semibold text-green-700 dark:text-green-400">Status</div>
+                                                        <div class="space-y-0.5">
+                                                            {#each g.statusPaths as pathInfo}
+                                                                <div class="group relative flex items-center gap-1.5 flex-wrap">
+                                                                    <span class="text-xs font-mono text-amber-700 dark:text-amber-300">{pathInfo.path}</span>
+                                                                    {#if pathInfo.type}
                                                                             {@const typeColors = {
                                                                                 string: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800',
                                                                                 integer: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
@@ -1111,7 +800,6 @@
                                                                 {/each}
                                                             </div>
                                                         </div>
-                                                    {/if}
                                                 {/if}
                                                 {#if !g.spec && !g.status}
                                                     <span class="text-xs text-gray-400 dark:text-gray-500">—</span>
@@ -1124,41 +812,65 @@
                         </table>
                     </div>
                 {:else}
-                    <div class="overflow-hidden rounded-2xl border-2 border-dashed border-gray-300 bg-gradient-to-br from-gray-50 via-white to-gray-50 shadow-sm dark:border-gray-700 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                        <div class="px-6 py-12 text-center sm:py-16">
-                            <div class="mx-auto flex max-w-md flex-col items-center gap-4">
-                                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-inner dark:from-gray-800 dark:to-gray-700">
-                                    <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-                                    </svg>
-                                </div>
-                                <div class="space-y-2">
-                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">No Results Found</h3>
-                                    <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                                        {#if !release || !releaseName}
-                                            Please select a release to begin searching.
-                                        {:else if !query}
-                                            Start typing to search across CRD schemas.
-                                        {:else}
-                                            No matches found for your query. Try different search terms.
-                                        {/if}
-                                    </p>
-                                </div>
-                                {#if query}
-                                    <button 
-                                        on:click={() => { query = ''; results = []; }}
-                                        class="mt-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:from-cyan-600 hover:to-blue-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
-                                    >
-                                        Clear Search
-                                    </button>
-                                {/if}
-                            </div>
+                    <div class="spec-search-empty">
+                        <div class="spec-search-empty-icon">
+                            <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"
+                                />
+                            </svg>
                         </div>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+                            {#if loadingVersions}
+                                Loading release data…
+                            {:else if searching && query.trim()}
+                                Searching…
+                            {:else if !release || !releaseName}
+                                Select a release
+                            {:else if !query}
+                                Start typing to search
+                            {:else}
+                                No matching paths
+                            {/if}
+                        </h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                            {#if loadingVersions}
+                                Fetching version list for the selected release.
+                            {:else if searching && query.trim()}
+                                Scanning schema paths across {release?.label ?? 'the selected release'}…
+                            {:else if !release || !releaseName}
+                                Choose an EDA release above to search spec and status schema paths.
+                            {:else if !query}
+                                Enter property names like <span class="font-mono">vlan</span> or
+                                <span class="font-mono">adminState</span> — results update as you type.
+                            {:else}
+                                No matches for “{query}”. Try shorter terms or enable description search.
+                            {/if}
+                        </p>
+                        {#if query && !searching}
+                            <button
+                                type="button"
+                                on:click={() => {
+                                    query = '';
+                                    previousQuery = '';
+                                    searchGeneration++;
+                                    results = [];
+                                    groupedResults = [];
+                                    updateURL();
+                                }}
+                                class="homepage-browse-cta mt-4"
+                            >
+                                Clear search
+                            </button>
+                        {/if}
                     </div>
                 {/if}
+        </div>
 
-        <!-- Footer Credits -->
-        <div class="mt-8">
+        <div class="mt-6">
             <PageCredits />
         </div>
     </div>

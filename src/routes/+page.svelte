@@ -552,7 +552,12 @@ import { goto } from '$app/navigation';
 				aria-label="Close"
 			></button>{/if}
 
-		<div id="main-scroll" class="relative flex flex-1 flex-col overflow-y-auto">
+		<div
+			id="main-scroll"
+			class="relative flex flex-1 flex-col {selectedResource || showBrowseMode
+				? 'overflow-y-auto'
+				: ''}"
+		>
 			{#if !selectedResource && !showBrowseMode}
 				<HomepageWelcome
 					bind:groupedReleases
@@ -568,7 +573,6 @@ import { goto } from '$app/navigation';
 					selectedRelease={$selectedRelease}
 					allReleases={releasesConfig.releases}
 					onReleaseChange={handleBrowseReleaseChange}
-					onResourceClick={handleHomeResourceClick}
 					onExitBrowse={exitBrowseMode}
 				/>
 			{:else if loading}
