@@ -878,7 +878,7 @@
 
 	.dependency-map-graph-shell {
 		padding: 0.5rem 0.65rem 0.65rem;
-		min-height: 30rem;
+		min-height: 22rem;
 	}
 
 	:global(.dep-map-page--active) .dependency-map-graph-shell {
