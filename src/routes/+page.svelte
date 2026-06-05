@@ -469,8 +469,8 @@ import { goto } from '$app/navigation';
 </svelte:head>
 
 <div
-	class="relative flex flex-col pt-14 md:pt-16 {showBrowseMode || selectedResource
-		? 'lg:h-screen lg:overflow-hidden'
+	class="relative flex flex-col {showBrowseMode || selectedResource
+		? 'pt-14 md:pt-16 lg:h-screen lg:overflow-hidden'
 		: ''}"
 >
 	<div class="relative z-10 flex flex-1 flex-col lg:flex-row">
