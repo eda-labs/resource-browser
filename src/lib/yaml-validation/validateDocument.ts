@@ -1,0 +1,423 @@
+import type { ErrorObject, ValidateFunction } from 'ajv';
+import { getLatestVersion } from '$lib/versions';
+import { formatVersionLabel } from './formatErrors';
+import { formatLocationInfo, getFieldLocationInfo } from './parseDocuments';
+import type { EnrichedError, ManifestEntry, ParsedDocument, ValidationMode } from './types';
+import type { SchemaSections } from './schemaCache';
+
+type ValidateDocContext = {
+	doc: ParsedDocument;
+	totalDocs: number;
+	releaseFolder: string;
+	releaseLabel: string;
+	mode: ValidationMode;
+	manifest: ManifestEntry[];
+	schemas: Map<string, SchemaSections>;
+	getSpecValidator: (key: string, schema: unknown) => ValidateFunction;
+	getStatusValidator: (key: string, schema: unknown) => ValidateFunction;
+};
+
+function docPrefix(index: number, total: number) {
+	return total > 1 ? `[Doc ${index + 1}] ` : '';
+}
+
+function findResourceEntry(manifest: ManifestEntry[], kind: string, group: string) {
+	let entry = manifest.find((r) => r.kind === kind && (!r.group || r.group === group));
+	if (!entry) entry = manifest.find((r) => r.kind === kind);
+	if (!entry) {
+		entry = manifest.find((r) => {
+			const kindLower = kind?.toLowerCase();
+			const nameLower = r.name?.toLowerCase();
+			const resourceType = nameLower?.split('.')[0];
+			return resourceType === kindLower;
+		});
+	}
+	return entry;
+}
+
+function enrichError(
+	err: ErrorObject,
+	ctx: {
+		docIndex: number;
+		docPrefix: string;
+		locationInfo: string;
+		resourceLink?: { name: string; version: string };
+		line?: number;
+	}
+): EnrichedError {
+	return {
+		...err,
+		docIndex: ctx.docIndex + 1,
+		resourceLink: ctx.resourceLink,
+		line: ctx.line
+	};
+}
+
+export function validateDocument(ctx: ValidateDocContext): {
+	errors: EnrichedError[];
+	warnings: EnrichedError[];
+	valid: boolean;
+	schemaPath?: string;
+} {
+	const { doc, totalDocs, releaseLabel, mode, manifest, schemas } = ctx;
+	const parsedYaml = doc.data;
+	const prefix = docPrefix(doc.index, totalDocs);
+	const locationInfo = formatLocationInfo(doc.startLine, 0);
+	const errors: EnrichedError[] = [];
+	const warnings: EnrichedError[] = [];
+	let valid = true;
+
+	const getFieldLoc = (fieldPath: string) =>
+		getFieldLocationInfo(doc.rawText, doc.startLine, fieldPath);
+
+	if (!parsedYaml.apiVersion) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}Missing required 'apiVersion' field${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/required',
+					keyword: 'required',
+					params: { missingProperty: 'apiVersion' }
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, line: doc.startLine + 1 }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	const apiVersionParts = String(parsedYaml.apiVersion).split('/');
+	if (apiVersionParts.length !== 2) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}Invalid apiVersion format: '${parsedYaml.apiVersion}' (expected 'group/version')${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/properties/apiVersion/pattern',
+					keyword: 'pattern',
+					params: {}
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	const group = apiVersionParts[0];
+	const version = apiVersionParts[1];
+
+	if (!parsedYaml.kind) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}Missing required 'kind' field${locationInfo}`,
+					instancePath: '/kind',
+					schemaPath: '#/required',
+					keyword: 'required',
+					params: { missingProperty: 'kind' }
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	if (!parsedYaml.metadata) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}Missing required 'metadata' field${locationInfo}`,
+					instancePath: '/metadata',
+					schemaPath: '#/required',
+					keyword: 'required',
+					params: { missingProperty: 'metadata' }
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+			)
+		);
+		valid = false;
+	} else {
+		const metadata = parsedYaml.metadata as Record<string, unknown>;
+		if (!metadata.name) {
+			errors.push(
+				enrichError(
+					{
+						message: `${prefix}Missing required 'metadata.name' field${locationInfo}`,
+						instancePath: '/metadata/name',
+						schemaPath: '#/properties/metadata/required',
+						keyword: 'required',
+						params: { missingProperty: 'name' }
+					} as ErrorObject,
+					{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+				)
+			);
+			valid = false;
+		}
+		if (
+			metadata.name &&
+			!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/.test(String(metadata.name))
+		) {
+			errors.push(
+				enrichError(
+					{
+						message: `${prefix}metadata.name must be a valid DNS subdomain (lowercase alphanumeric, hyphens, dots)${locationInfo}`,
+						instancePath: '/metadata/name',
+						schemaPath: '#/properties/metadata/properties/name/pattern',
+						keyword: 'pattern',
+						params: { pattern: 'DNS subdomain' }
+					} as ErrorObject,
+					{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+				)
+			);
+			valid = false;
+		}
+	}
+
+	const resourceEntry = findResourceEntry(manifest, String(parsedYaml.kind), group);
+	if (!resourceEntry) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}Could not find CRD definition for kind '${parsedYaml.kind}' in release ${releaseLabel}. Available kinds: ${manifest
+						.map((r) => r.kind)
+						.filter(Boolean)
+						.slice(0, 5)
+						.join(', ')}...`,
+					instancePath: '/kind',
+					schemaPath: '#/properties/kind',
+					keyword: 'enum',
+					params: {}
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	const resourceLink = { name: resourceEntry.name, version };
+	const supportedVersions = (resourceEntry.versions || []).map((v) => v?.name).filter(Boolean);
+	const supportedVersionsDetailed = (resourceEntry.versions || [])
+		.map((v) => formatVersionLabel(v))
+		.filter(Boolean);
+	const nonDeprecatedVersions = (resourceEntry.versions || [])
+		.filter((v) => v?.name && !v?.deprecated)
+		.map((v) => v.name);
+	const deprecatedVersions = (resourceEntry.versions || [])
+		.filter((v) => v?.name && v?.deprecated)
+		.map((v) => v.name);
+	const matchedVersionEntry = (resourceEntry.versions || []).find((v) => v?.name === version);
+	const latestVersion = getLatestVersion(resourceEntry);
+
+	if (!matchedVersionEntry) {
+		const supportedText =
+			nonDeprecatedVersions.length > 0
+				? `Supported versions: ${nonDeprecatedVersions.join(', ')}`
+				: `Supported versions: ${supportedVersionsDetailed.join(', ')}`;
+		const deprecatedText =
+			deprecatedVersions.length > 0 ? `. Deprecated versions: ${deprecatedVersions.join(', ')}` : '';
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is not supported for kind '${parsedYaml.kind}' in release ${releaseLabel}. ${supportedText}${deprecatedText}${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/properties/apiVersion/enum',
+					keyword: 'enum',
+					params: { allowedValues: supportedVersions },
+					resourceLink
+				} as EnrichedError,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	if (matchedVersionEntry.deprecated) {
+		warnings.push(
+			enrichError(
+				{
+					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is deprecated for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/properties/apiVersion',
+					keyword: 'deprecated',
+					params: {}
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+			)
+		);
+	}
+
+	if (latestVersion && version !== latestVersion && !matchedVersionEntry.deprecated) {
+		warnings.push(
+			enrichError(
+				{
+					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is not the latest for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/properties/apiVersion',
+					keyword: 'warning',
+					params: {}
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+			)
+		);
+	}
+
+	if (!latestVersion) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}No API versions found for kind '${parsedYaml.kind}' in release ${releaseLabel}${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/properties/apiVersion/enum',
+					params: {},
+					resourceLink
+				} as EnrichedError,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	const schemaVersion = mode === 'latest' ? latestVersion : version;
+	const schemaKey = `/${ctx.releaseFolder}/${resourceEntry.name}/${schemaVersion}.yaml`;
+	const schemaSections = schemas.get(schemaKey);
+
+	if (!schemaSections) {
+		errors.push(
+			enrichError(
+				{
+					message: `${prefix}Could not find schema for ${parsedYaml.kind} version ${schemaVersion}${locationInfo}`,
+					instancePath: '/apiVersion',
+					schemaPath: '#/properties/apiVersion',
+					keyword: 'schema',
+					params: {},
+					resourceLink
+				} as EnrichedError,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+			)
+		);
+		return { errors, warnings, valid: false };
+	}
+
+	const { spec, status, isSpecRequired } = schemaSections;
+
+	if (parsedYaml.spec && spec) {
+		const validatorKey = `${schemaKey}::spec`;
+		const specValidator = ctx.getSpecValidator(validatorKey, spec);
+		if (!specValidator(parsedYaml.spec)) {
+			valid = false;
+			const docErrors = (specValidator.errors || []).map((err) => {
+				let message = err.message || 'validation error';
+				if (err.keyword === 'required' && (spec as { required?: string[] }).required) {
+					message = `${message}. Required fields in spec: ${(spec as { required: string[] }).required.join(', ')}`;
+				}
+				if (err.keyword === 'enum') {
+					const allowedValues = err.params?.allowedValues;
+					const providedValue = getValueByPointer(parsedYaml.spec, err.instancePath);
+					if (providedValue !== undefined) {
+						message = `${message}. Provided value: ${String(providedValue)}`;
+					}
+					if (Array.isArray(allowedValues) && allowedValues.length > 0) {
+						message = `${message}. Allowed values: ${allowedValues.join(', ')}`;
+					}
+				}
+				const fieldLocationInfo = getFieldLoc(`/spec${err.instancePath}`);
+				const lineMatch = fieldLocationInfo.match(/Line\s+(\d+)/i);
+				return enrichError(
+					{
+						...err,
+						message: `${prefix}spec${err.instancePath}: ${message}${fieldLocationInfo}`,
+						instancePath: `/spec${err.instancePath}`,
+						resourceLink
+					} as ErrorObject,
+					{
+						docIndex: doc.index,
+						docPrefix: prefix,
+						locationInfo: fieldLocationInfo,
+						resourceLink,
+						line: lineMatch ? Number(lineMatch[1]) : undefined
+					}
+				);
+			});
+			errors.push(...docErrors);
+		}
+	} else if (!parsedYaml.spec) {
+		if (isSpecRequired || spec) {
+			errors.push(
+				enrichError(
+					{
+						message: `${prefix}Missing required 'spec' field${locationInfo}`,
+						instancePath: '/spec',
+						schemaPath: '#/required',
+						keyword: 'required',
+						params: { missingProperty: 'spec' },
+						resourceLink
+					} as EnrichedError,
+					{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+				)
+			);
+			valid = false;
+		}
+	}
+
+	if (parsedYaml.status && status) {
+		const validatorKey = `${schemaKey}::status`;
+		const statusValidator = ctx.getStatusValidator(validatorKey, status);
+		if (!statusValidator(parsedYaml.status)) {
+			const statusErrors = (statusValidator.errors || []).map((err) => {
+				const fieldLocationInfo = getFieldLoc(`/status${err.instancePath}`);
+				const lineMatch = fieldLocationInfo.match(/Line\s+(\d+)/i);
+				return enrichError(
+					{
+						...err,
+						message: `${prefix}status${err.instancePath}: ${err.message}${fieldLocationInfo}`,
+						instancePath: `/status${err.instancePath}`,
+						keyword: 'warning',
+						resourceLink
+					} as ErrorObject,
+					{
+						docIndex: doc.index,
+						docPrefix: prefix,
+						locationInfo: fieldLocationInfo,
+						resourceLink,
+						line: lineMatch ? Number(lineMatch[1]) : undefined
+					}
+				);
+			});
+			warnings.push(...statusErrors);
+		}
+	}
+
+	const allowedTopLevel = ['apiVersion', 'kind', 'metadata', 'spec', 'status'];
+	const unexpectedFields = Object.keys(parsedYaml).filter((k) => !allowedTopLevel.includes(k));
+	if (unexpectedFields.length > 0) {
+		warnings.push(
+			enrichError(
+				{
+					message: `${prefix}Unexpected top-level fields: ${unexpectedFields.join(', ')}${locationInfo}`,
+					instancePath: '',
+					schemaPath: '',
+					keyword: 'warning',
+					params: {}
+				} as ErrorObject,
+				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+			)
+		);
+	}
+
+	return { errors, warnings, valid, schemaPath: schemaKey };
+}
+
+function getValueByPointer(data: unknown, pointer: string) {
+	if (!pointer) return data;
+	const parts = pointer.split('/').filter(Boolean);
+	let current: unknown = data;
+	for (const p of parts) {
+		const key = p.replace(/~1/g, '/').replace(/~0/g, '~');
+		if (current === null || current === undefined) return undefined;
+		if (typeof current !== 'object') return undefined;
+		current = (current as Record<string, unknown>)[key];
+	}
+	return current;
+}
+
+export type { ValidateDocContext };
