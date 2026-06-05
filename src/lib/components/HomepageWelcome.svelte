@@ -9,27 +9,59 @@
 	type ReleaseGroup = {
 		label: string;
 		releases: EdaRelease[];
-		showMore: boolean;
 	};
 
 	export let groupedReleases: ReleaseGroup[];
 	export let selectedRelease: Writable<EdaRelease>;
 	export let crdMetaStore: Writable<CrdResource[]>;
 	export let onResourceSelect: (resourceName: string) => void | Promise<void>;
-	export let onReleaseSelect: (release: EdaRelease) => void | Promise<void>;
 	export let onBrowseRelease: (release: EdaRelease) => void | Promise<void>;
+
+	const VISIBLE_RELEASE_COUNT = 9;
 
 	let heroSearch = '';
 	let searchFocused = false;
 	let highlightedIndex = 0;
 	let resourceTypeFilter: 'all' | 'state' | 'config' = 'all';
+	let moreReleasePick = '';
 
-	$: focusedMajorGroup = `v${String($selectedRelease.name).split('.')[0]}`;
+	function parseVersion(name: string) {
+		return String(name)
+			.split('.')
+			.map((n) => parseInt(n, 10) || 0);
+	}
 
-	$: activeGroupReleases =
-		groupedReleases.find((g) => g.label === focusedMajorGroup)?.releases ??
-		groupedReleases[0]?.releases ??
-		[];
+	function compareReleaseDesc(a: EdaRelease, b: EdaRelease) {
+		const pa = parseVersion(a.name);
+		const pb = parseVersion(b.name);
+		const len = Math.max(pa.length, pb.length);
+		for (let i = 0; i < len; i++) {
+			const na = pa[i] || 0;
+			const nb = pb[i] || 0;
+			if (na > nb) return -1;
+			if (na < nb) return 1;
+		}
+		return 0;
+	}
+
+	$: allReleases = groupedReleases
+		.flatMap((group) => group.releases)
+		.sort(compareReleaseDesc);
+
+	$: visibleReleases = (() => {
+		const top = allReleases.slice(0, VISIBLE_RELEASE_COUNT);
+		const selected = $selectedRelease;
+		if (top.some((release) => release.name === selected.name)) return top;
+		return [selected, ...top.slice(0, VISIBLE_RELEASE_COUNT - 1)].sort(compareReleaseDesc);
+	})();
+
+	$: hiddenReleases = allReleases.filter(
+		(release) => !visibleReleases.some((visible) => visible.name === release.name)
+	);
+
+	function majorLabel(name: string) {
+		return `v${String(name).split('.')[0]}`;
+	}
 
 	const quickActions = [
 		{
@@ -129,13 +161,12 @@
 		await onBrowseRelease(release);
 	}
 
-	async function handleMajorSelect(label: string) {
-		const group = groupedReleases.find((g) => g.label === label);
-		if (!group) return;
-		const current = group.releases.find((r) => r.name === $selectedRelease.name);
-		if (current) return;
-		const next = group.releases.find((r) => r.default) ?? group.releases[0];
-		if (next) await onReleaseSelect(next);
+	async function handleMoreReleasePick(event: Event) {
+		const value = (event.currentTarget as HTMLSelectElement).value;
+		moreReleasePick = '';
+		if (!value) return;
+		const release = allReleases.find((item) => item.name === value);
+		if (release) await handleReleaseClick(release);
 	}
 
 	function handleQuickAction(action: (typeof quickActions)[number]) {
@@ -298,34 +329,12 @@
 				</div>
 
 				<div class="homepage-release-picker">
-					{#if groupedReleases.length > 1}
-						<div
-							class="homepage-release-picker__trains homepage-version-segmented"
-							role="tablist"
-							aria-label="Major version"
-						>
-							{#each groupedReleases as group}
-								<button
-									type="button"
-									role="tab"
-									class="homepage-version-segment {focusedMajorGroup === group.label
-										? 'is-active'
-										: ''}"
-									aria-selected={focusedMajorGroup === group.label}
-									on:click={() => handleMajorSelect(group.label)}
-								>
-									{group.label}
-								</button>
-							{/each}
-						</div>
-					{/if}
-
 					<div
-						class="homepage-release-picker__releases homepage-release-grid"
+						class="homepage-release-grid"
 						role="listbox"
-						aria-label="EDA releases for {focusedMajorGroup}"
+						aria-label="EDA releases"
 					>
-						{#each activeGroupReleases as release}
+						{#each visibleReleases as release}
 							{@const isSelected = $selectedRelease.name === release.name}
 							<button
 								type="button"
@@ -334,6 +343,7 @@
 								aria-selected={isSelected}
 								on:click={() => handleReleaseClick(release)}
 							>
+								<span class="homepage-release-train">{majorLabel(release.name)}</span>
 								<span class="homepage-release-name">{release.name}</span>
 								{#if isSelected}
 									<span class="homepage-release-active-dot" aria-hidden="true"></span>
@@ -348,6 +358,30 @@
 							</button>
 						{/each}
 					</div>
+
+					{#if hiddenReleases.length > 0}
+						<div class="homepage-release-more-row">
+							<label
+								for="homepage-more-releases"
+								class="homepage-release-more-label text-slate-500 dark:text-slate-400"
+							>
+								More releases
+							</label>
+							<select
+								id="homepage-more-releases"
+								class="homepage-release-more-select border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+								bind:value={moreReleasePick}
+								on:change={handleMoreReleasePick}
+							>
+								<option value="">Choose a release…</option>
+								{#each hiddenReleases as release}
+									<option value={release.name}>
+										{release.name} ({majorLabel(release.name)})
+									</option>
+								{/each}
+							</select>
+						</div>
+					{/if}
 				</div>
 			</section>
 

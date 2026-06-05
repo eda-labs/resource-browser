@@ -39,7 +39,6 @@ import { goto } from '$app/navigation';
 		}
 	);
 	// Group releases by major version (e.g., 25 -> v25)
-	// Add a `showMore` property to each group for dropdown toggles.
 	// Use numeric version comparison to ensure newest releases sort first (by major, minor, patch).
 	let groupedReleases = (() => {
 		const groups: Record<string, any[]> = {};
@@ -74,8 +73,7 @@ import { goto } from '$app/navigation';
 			.sort((a, b) => parseInt(b[0].replace('v', '')) - parseInt(a[0].replace('v', '')))
 			.map(([label, releases]) => ({
 				label,
-				releases: releases.sort(compareReleaseDesc),
-				showMore: false
+				releases: releases.sort(compareReleaseDesc)
 			}));
 	})();
 
@@ -285,10 +283,6 @@ import { goto } from '$app/navigation';
 		} finally {
 			loading = false;
 		}
-	}
-
-	function handleHomeReleaseSelect(release: EdaRelease) {
-		selectedRelease.set(release);
 	}
 
 	async function enterBrowseMode(release: EdaRelease) {
@@ -559,11 +553,10 @@ import { goto } from '$app/navigation';
 		>
 			{#if !selectedResource && !showBrowseMode}
 				<HomepageWelcome
-					bind:groupedReleases
+					{groupedReleases}
 					{selectedRelease}
 					{crdMetaStore}
 					onResourceSelect={handleHomeResourceClick}
-					onReleaseSelect={handleHomeReleaseSelect}
 					onBrowseRelease={enterBrowseMode}
 				/>
 			{:else if showBrowseMode && !selectedResource}
