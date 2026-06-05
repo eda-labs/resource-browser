@@ -3853,6 +3853,17 @@ html:not(.dark) .react-select__menu {
    ============================================ */
 .dependency-map-graph-shell {
 	font-family: 'NokiaPureText', ui-sans-serif, system-ui, sans-serif;
+	min-height: 30rem;
+}
+
+.dep-map-page--active .spec-search-main {
+	display: flex;
+	flex-direction: column;
+}
+
+.dep-map-page--active .spec-search-results-panel > .dependency-map-graph-shell {
+	flex: 1;
+	min-height: 0;
 }
 
 .dep-map-svg-inner :is(.dep-links path) {

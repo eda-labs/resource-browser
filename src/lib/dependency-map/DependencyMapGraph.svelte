@@ -93,10 +93,10 @@
 		controller.rebuild();
 	}
 
-	$: if (focusNodeId && graph.nodes.some((n) => n.id === focusNodeId)) {
+	$: if (controller && focusNodeId && graph.nodes.some((n) => n.id === focusNodeId)) {
 		selectedId = focusNodeId;
-		controller?.updateHighlight();
-		controller?.focusNode(focusNodeId);
+		controller.updateHighlight();
+		controller.focusNode(focusNodeId);
 	}
 
 	$: if (controller) {
@@ -239,7 +239,10 @@
 			getCenterNodeId: () => focusNodeId
 		});
 
-		if (focusNodeId) {
+		// Explicit initial build — async onMount assignment may not trigger $: rebuild
+		controller.rebuild();
+
+		if (focusNodeId && graph.nodes.some((n) => n.id === focusNodeId)) {
 			selectedId = focusNodeId;
 			controller.updateHighlight();
 		}
@@ -356,6 +359,28 @@
 		</div>
 	</div>
 
+	<div class="dep-map-legend-strip" aria-label="Graph legend">
+		<div class="dep-map-legend-group">
+			<span class="dep-map-legend-label">Nodes</span>
+			<span class="dep-map-legend-item">
+				<span class="dep-map-dot dep-map-dot-config"></span> Config
+			</span>
+			<span class="dep-map-legend-item">
+				<span class="dep-map-dot dep-map-dot-state"></span> State
+			</span>
+		</div>
+		<span class="dep-map-legend-divider" aria-hidden="true"></span>
+		<div class="dep-map-legend-group dep-map-legend-group-edges">
+			<span class="dep-map-legend-label">Edges</span>
+			{#each LEGEND_REL_ORDER as rel}
+				<span class="dep-map-legend-item">
+					<span class="dep-map-rel-swatch" style:background={palette.rel[rel]}></span>
+					{relLabel(rel)}
+				</span>
+			{/each}
+		</div>
+	</div>
+
 	<div class="dep-map-body">
 		<div class="dep-map-canvas-wrap" bind:this={containerEl}>
 			{#if !graphReady}
@@ -396,27 +421,6 @@
 						/>
 					</svg>
 				</button>
-			</div>
-
-			<div class="dep-map-canvas-legend" aria-label="Graph legend">
-				<div class="dep-map-canvas-legend-section">
-					<span class="dep-map-canvas-legend-title">Nodes</span>
-					<span class="dep-map-legend-item">
-						<span class="dep-map-dot dep-map-dot-config"></span> Config
-					</span>
-					<span class="dep-map-legend-item">
-						<span class="dep-map-dot dep-map-dot-state"></span> State
-					</span>
-				</div>
-				<div class="dep-map-canvas-legend-section">
-					<span class="dep-map-canvas-legend-title">Edges</span>
-					{#each LEGEND_REL_ORDER as rel}
-						<span class="dep-map-legend-item">
-							<span class="dep-map-rel-swatch" style:background={palette.rel[rel]}></span>
-							{relLabel(rel)}
-						</span>
-					{/each}
-				</div>
 			</div>
 		</div>
 
@@ -668,15 +672,17 @@
 	.dep-map-root {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		flex: 1;
+		min-height: 0;
+		gap: 0.5rem;
 		color: var(--dep-text);
 	}
 
 	.dep-map-toolbar {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		padding: 0.75rem 1rem;
+		gap: 0.4rem;
+		padding: 0.5rem 0.75rem;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-panel);
@@ -801,23 +807,73 @@
 		background: transparent;
 	}
 
+	.dep-map-legend-strip {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem 0.75rem;
+		padding: 0.4rem 0.75rem;
+		border: 1px solid var(--dep-panel-border);
+		border-radius: 0.5rem;
+		background: var(--dep-panel);
+		font-size: 0.6875rem;
+		color: var(--dep-text-muted);
+		flex-shrink: 0;
+	}
+
+	.dep-map-legend-group {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35rem 0.65rem;
+	}
+
+	.dep-map-legend-group-edges {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.dep-map-legend-label {
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dep-text);
+		margin-right: 0.1rem;
+	}
+
+	.dep-map-legend-divider {
+		width: 1px;
+		height: 1rem;
+		background: var(--dep-panel-border);
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 639px) {
+		.dep-map-legend-divider {
+			display: none;
+		}
+	}
+
 	.dep-map-body {
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 0.75rem;
-		min-height: 28rem;
+		gap: 0.5rem;
+		flex: 1;
+		min-height: 0;
+		min-height: min(42rem, calc(100dvh - 14rem));
 	}
 
 	@media (min-width: 1024px) {
 		.dep-map-body {
-			grid-template-columns: 1fr min(24rem, 36%);
+			grid-template-columns: 1fr min(20rem, 30%);
+			min-height: calc(100dvh - 12rem);
 		}
 	}
 
 	.dep-map-canvas-wrap {
 		position: relative;
-		min-height: 24rem;
-		height: min(70vh, 42rem);
+		min-height: 22rem;
+		height: 100%;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-bg);
@@ -857,7 +913,8 @@
 		}
 	}
 
-	.dep-map-svg {
+	.dep-map-svg,
+	:global(svg.dep-map-svg-inner) {
 		display: block;
 		width: 100%;
 		height: 100%;
@@ -913,40 +970,6 @@
 		background: color-mix(in srgb, var(--dep-chip-active) 8%, var(--dep-bg));
 	}
 
-	.dep-map-canvas-legend {
-		position: absolute;
-		left: 0.65rem;
-		bottom: 0.65rem;
-		z-index: 2;
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		max-width: min(16rem, calc(100% - 5rem));
-		padding: 0.45rem 0.6rem;
-		border: 1px solid var(--dep-panel-border);
-		border-radius: 0.5rem;
-		background: color-mix(in srgb, var(--dep-panel) 92%, transparent);
-		box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
-		backdrop-filter: blur(6px);
-		font-size: 0.625rem;
-		color: var(--dep-text-muted);
-	}
-
-	.dep-map-canvas-legend-section {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.3rem 0.55rem;
-	}
-
-	.dep-map-canvas-legend-title {
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--dep-text);
-		margin-right: 0.15rem;
-	}
-
 	.dep-map-tooltip {
 		position: fixed;
 		z-index: 50;
@@ -967,11 +990,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.85rem;
-		padding: 1rem 1.1rem;
+		padding: 0.85rem 1rem;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-panel);
-		max-height: min(70vh, 42rem);
+		max-height: 100%;
 		overflow-y: auto;
 	}
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import yaml from 'js-yaml';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -20,7 +20,6 @@
 	import type { CrdResource, EdaRelease, ReleasesConfig } from '$lib/structure';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
-	const SEARCH_DEBOUNCE_MS = 250;
 	const MAX_SUGGESTIONS = 10;
 
 	const workflowSteps = [
@@ -46,10 +45,8 @@
 	let buildGeneration = 0;
 
 	let resourceSearch = '';
-	let debouncedSearch = '';
 	let searchFocused = false;
 	let highlightedIndex = 0;
-	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 	let modalOpen = false;
 	let modalResource: CrdResource | null = null;
@@ -77,7 +74,7 @@
 
 	$: filteredResources = manifestResources
 		.filter((resource) => {
-			const query = debouncedSearch.trim().toLowerCase();
+			const query = resourceSearch.trim().toLowerCase();
 			if (!query) return false;
 			const terms = query.split(/\s+/);
 			const haystack = `${resource.name} ${resource.kind} ${resource.group}`.toLowerCase();
@@ -85,8 +82,7 @@
 		})
 		.slice(0, MAX_SUGGESTIONS);
 
-	$: showSearchResults =
-		searchFocused && debouncedSearch.trim().length > 0 && !buildingGraph && !subgraph;
+	$: showSearchResults = searchFocused && resourceSearch.trim().length > 0;
 
 	$: if (filteredResources.length === 0) {
 		highlightedIndex = 0;
@@ -94,17 +90,10 @@
 		highlightedIndex = filteredResources.length - 1;
 	}
 
-	$: if (browser && clientReady) {
-		const query = resourceSearch.trim();
-		if (debounceTimer) clearTimeout(debounceTimer);
-		if (!query) {
-			debouncedSearch = '';
-		} else {
-			debounceTimer = setTimeout(() => {
-				debouncedSearch = resourceSearch;
-				debounceTimer = null;
-			}, SEARCH_DEBOUNCE_MS);
-		}
+	function cancelPendingBuild() {
+		buildGeneration++;
+		buildingGraph = false;
+		progress = null;
 	}
 
 	function updateURL() {
@@ -131,12 +120,12 @@
 	}
 
 	function clearFocus() {
+		cancelPendingBuild();
 		focusResource = '';
 		focusNodeId = null;
 		subgraph = null;
 		error = null;
 		resourceSearch = '';
-		debouncedSearch = '';
 		searchFocused = false;
 		updateURL();
 	}
@@ -205,11 +194,11 @@
 
 	async function selectResource(resource: CrdResource) {
 		if (!release) return;
+		cancelPendingBuild();
 		resourceSearch = '';
-		debouncedSearch = '';
 		searchFocused = false;
 		error = null;
-		focusResource = resource.kind || shortName(resource.name);
+		focusResource = resource.name;
 		focusNodeId = resource.name;
 		updateURL();
 		await buildSubgraphForFocus(release, resource.name);
@@ -219,7 +208,6 @@
 		if (event.key === 'Escape') {
 			searchFocused = false;
 			resourceSearch = '';
-			debouncedSearch = '';
 			return;
 		}
 		if (!showSearchResults || filteredResources.length === 0) {
@@ -297,9 +285,7 @@
 		clientReady = true;
 	});
 
-	onDestroy(() => {
-		if (debounceTimer) clearTimeout(debounceTimer);
-	});
+
 </script>
 
 <svelte:head>
@@ -310,7 +296,10 @@
 	/>
 </svelte:head>
 
-<div class="spec-search-page page-shell min-h-full bg-gray-50 dark:text-gray-100">
+<div
+	class="spec-search-page page-shell min-h-full bg-gray-50 dark:text-gray-100"
+	class:dep-map-page--active={!!subgraph}
+>
 	<AppHeader fixed={false} />
 
 	<div class="spec-search-main">
@@ -414,7 +403,6 @@
 								aria-label="Clear search"
 								on:click|preventDefault|stopPropagation={() => {
 									resourceSearch = '';
-									debouncedSearch = '';
 								}}
 								class="rounded p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
 							>
@@ -438,7 +426,7 @@
 						>
 							{#if filteredResources.length === 0}
 								<li class="dep-map-search-empty">
-									No resources match “{debouncedSearch}”
+									No resources match “{resourceSearch.trim()}”
 								</li>
 							{:else}
 								<li class="dep-map-search-hint" aria-hidden="true">
@@ -592,11 +580,13 @@
 					</div>
 				</div>
 				<div class="dependency-map-graph-shell">
-					<DependencyMapGraph
-						graph={subgraph}
-						focusNodeId={focusNodeId}
-						onViewCrd={handleViewCrd}
-					/>
+					{#key focusNodeId}
+						<DependencyMapGraph
+							graph={subgraph}
+							focusNodeId={focusNodeId}
+							onViewCrd={handleViewCrd}
+						/>
+					{/key}
 				</div>
 			{:else}
 				<div class="spec-search-empty">
@@ -858,13 +848,56 @@
 		color: rgb(252 211 77);
 	}
 
+	:global(.dep-map-page--active) {
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	:global(.dep-map-page--active .spec-search-main) {
+		flex: 1;
+		min-height: 0;
+		padding-bottom: 1rem;
+		gap: 0.75rem;
+	}
+
+	:global(.dep-map-page--active .comparison-hero) {
+		padding: 0.65rem 0.85rem;
+		gap: 0.65rem;
+	}
+
+	:global(.dep-map-page--active .spec-search-filters) {
+		padding: 0.5rem 0.65rem;
+	}
+
+	:global(.dep-map-page--active .spec-search-results-panel) {
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
 	.dependency-map-graph-shell {
-		padding: 0.75rem 1rem 1rem;
+		padding: 0.5rem 0.65rem 0.65rem;
+		min-height: 30rem;
+	}
+
+	:global(.dep-map-page--active) .dependency-map-graph-shell {
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		padding: 0.35rem 0.5rem 0.5rem;
+		min-height: calc(100dvh - 12rem);
 	}
 
 	@media (min-width: 768px) {
 		.dependency-map-graph-shell {
-			padding: 1rem 1.25rem 1.25rem;
+			padding: 0.5rem 0.75rem 0.75rem;
+		}
+
+		:global(.dep-map-page--active) .dependency-map-graph-shell {
+			padding: 0.4rem 0.65rem 0.65rem;
 		}
 	}
 </style>

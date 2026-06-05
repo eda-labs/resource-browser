@@ -245,6 +245,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 	let simLinks: SimLink[] = [];
 	let hoveredLinkId: string | null = null;
 	let hoveredNodeId: string | null = null;
+	let resizeObserver: ResizeObserver | null = null;
 
 	const linkGen = linkHorizontal<SimLink, SimNode>()
 		.x((d) => d.x ?? 0)
@@ -257,7 +258,12 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 	function measure() {
 		const rect = container.getBoundingClientRect();
 		width = Math.max(rect.width, 320);
-		height = Math.max(rect.height, 400);
+		height = Math.max(rect.height, 480);
+		select(svg)
+			.attr('width', width)
+			.attr('height', height)
+			.style('width', '100%')
+			.style('height', '100%');
 	}
 
 	function applyPositions(positions: Map<string, { x: number; y: number }>, nodes: SimNode[]) {
@@ -389,11 +395,44 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		const scale = Math.min((width - padding * 2) / dx, (height - padding * 2) / dy, 2.2);
 		const tx = width / 2 - (scale * (minX + maxX)) / 2;
 		const ty = height / 2 - (scale * (minY + maxY)) / 2;
+		if (!Number.isFinite(scale) || !Number.isFinite(tx) || !Number.isFinite(ty)) return;
 		select(svg)
 			.transition()
 			.duration(550)
 			.ease((t) => 1 - Math.pow(1 - t, 3))
 			.call(zoomBehavior.transform, zoomIdentity.translate(tx, ty).scale(scale));
+	}
+
+	function scheduleFitToScreen() {
+		requestAnimationFrame(() => {
+			measure();
+			requestAnimationFrame(() => fitToScreen());
+		});
+	}
+
+	function reflowForResize() {
+		if (simNodes.length === 0) return;
+		const centerId = getCenterNodeId?.() ?? null;
+		if (radialLayout) {
+			const positions = computeRadialPositions(simNodes, simLinks, centerId, width, height);
+			applyPositions(positions, simNodes);
+			linkSel?.attr('d', linkPath);
+			nodeSel?.attr('transform', (d: SimNode) => `translate(${d.x ?? 0},${d.y ?? 0})`);
+		}
+		scheduleFitToScreen();
+	}
+
+	function setupResizeObserver() {
+		resizeObserver?.disconnect();
+		resizeObserver = new ResizeObserver(() => {
+			const prevW = width;
+			const prevH = height;
+			measure();
+			if (Math.abs(prevW - width) > 2 || Math.abs(prevH - height) > 2) {
+				reflowForResize();
+			}
+		});
+		resizeObserver.observe(container);
 	}
 
 	function focusNode(id: string) {
@@ -513,7 +552,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		const root = select(svg);
 		if (!gRoot) {
 			root.selectAll('*').remove();
-			root.attr('class', 'dep-map-svg-inner');
+			root.attr('class', 'dep-map-svg dep-map-svg-inner');
 
 			const gridPattern = root
 				.append('defs')
@@ -677,7 +716,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			linkSel.attr('d', linkPath);
 			nodeSel.attr('transform', (d: SimNode) => `translate(${d.x ?? 0},${d.y ?? 0})`);
 			updateHighlight();
-			requestAnimationFrame(() => fitToScreen());
+			scheduleFitToScreen();
 		} else {
 			clearFixedPositions(simNodes);
 			simulation = forceSimulation(simNodes)
@@ -700,8 +739,10 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			});
 
 			updateHighlight();
-			simulation.on('end', () => fitToScreen());
+			simulation.on('end', () => scheduleFitToScreen());
 		}
+
+		setupResizeObserver();
 	}
 
 	return {
@@ -729,6 +770,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			rebuild();
 		},
 		destroy() {
+			resizeObserver?.disconnect();
+			resizeObserver = null;
 			simulation?.stop();
 		}
 	};
