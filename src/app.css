@@ -128,7 +128,7 @@
 	}
 
 	:global(body) {
-		@apply text-gray-900 dark:text-white antialiased bg-white dark:bg-[#0f172a];
+		@apply text-slate-900 antialiased bg-white dark:bg-slate-900 dark:text-slate-100;
 		font-family: var(--font-nokia), 'Nunito', sans-serif;
 		min-height: 100vh;
 		/* Hide the document scrollbar so child containers manage scrolling */
@@ -454,7 +454,7 @@
 
 	:global(.dark) .homepage-welcome {
 		color: #f1f5f9;
-		background: #0f172a;
+		background: #020617;
 	}
 
 	.homepage-topbar {

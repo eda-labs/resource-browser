@@ -42,7 +42,7 @@
 </script>
 
 <nav
-	class="fixed top-0 right-0 left-0 z-30 h-14 border-b border-white/10 bg-white/5 shadow-lg backdrop-blur-sm md:h-16 dark:border-white/10 dark:bg-transparent"
+	class="fixed top-0 right-0 left-0 z-30 h-14 border-b border-slate-200 bg-white shadow-sm md:h-16 dark:border-slate-700 dark:bg-slate-900"
 >
 	<!-- Logo / app identity stays pinned to the far left edge (desktop only) -->
 	<div class="absolute inset-y-0 left-0 hidden items-center pl-4 lg:flex">
@@ -57,8 +57,8 @@
 				fetchpriority="high"
 			/>
 			<div class="hidden leading-tight xl:block">
-				<div class="text-sm font-semibold text-blue-400 dark:text-blue-400">Nokia EDA</div>
-				<div class="text-xs text-amber-500 dark:text-gray-300">Resource Browser</div>
+				<div class="text-sm font-semibold text-blue-600 dark:text-blue-400">Nokia EDA</div>
+				<div class="text-xs text-slate-600 dark:text-slate-300">Resource Browser</div>
 			</div>
 		</a>
 	</div>
@@ -112,13 +112,13 @@
 				</div>
 				{#if title}
 					<div
-						class="w-full text-center text-sm font-extrabold text-blue-600 sm:text-base lg:w-auto lg:text-left lg:text-lg dark:text-white"
+						class="w-full text-center text-sm font-extrabold text-slate-900 sm:text-base lg:w-auto lg:text-left lg:text-lg dark:text-white"
 					>
 						{title}
 					</div>
 					{#if subtitle}
 						<div
-							class="mt-0.5 w-full text-center text-[10px] text-gray-300 sm:text-xs lg:w-auto lg:text-left dark:text-gray-300"
+							class="mt-0.5 w-full text-center text-[10px] text-slate-500 sm:text-xs lg:w-auto lg:text-left dark:text-slate-400"
 						>
 							{subtitle}
 						</div>
@@ -127,15 +127,15 @@
 					<div class="flex items-center justify-center gap-2 lg:justify-start">
 						<div class="min-w-0 text-center lg:text-left">
 							<h1
-								class="truncate text-sm font-extrabold leading-tight text-blue-600 sm:text-base lg:text-lg dark:text-white"
+								class="truncate text-sm font-extrabold leading-tight text-slate-900 sm:text-base lg:text-lg dark:text-white"
 							>
 								{kind || shortName}
 							</h1>
 							<p
-								class="mt-0.5 flex items-center justify-center gap-1.5 truncate text-[10px] text-gray-300 sm:text-xs lg:justify-start dark:text-gray-300"
+								class="mt-0.5 flex items-center justify-center gap-1.5 truncate text-[10px] text-slate-500 sm:text-xs lg:justify-start dark:text-slate-400"
 							>
-								<span class="truncate text-amber-500 dark:text-gray-300">{groupPath || name}</span>
-								<span class="text-gray-400">/</span>
+								<span class="truncate text-slate-600 dark:text-slate-300">{groupPath || name}</span>
+								<span class="text-slate-400">/</span>
 								<span class="flex items-center">
 									{#if validVersions && validVersions.length > 1}
 										<select

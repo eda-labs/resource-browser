@@ -564,7 +564,6 @@ import { goto } from '$app/navigation';
 					bind:groupedReleases
 					{selectedRelease}
 					{crdMetaStore}
-					totalReleases={releasesConfig.releases.length}
 					onReleaseSelect={selectRelease}
 					onResourceSelect={handleHomeResourceClick}
 					onBrowseRelease={enterBrowseMode}

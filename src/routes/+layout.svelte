@@ -3,7 +3,6 @@
 
 	import { initTheme } from '$lib/theme';
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	let AnimatedBackground: any = $state(null);
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
@@ -21,113 +20,18 @@
 
 	// Only show the global footer on the homepage
 	// no special-case: show credits on all pages
-	onMount(() => {
-		const cleanupTheme = initTheme();
-
-		// Defer loading heavy animated background until the browser is idle so it doesn't
-		// compete with LCP-critical assets and main-thread tasks.
-		const loadAnimatedBackground = async () => {
-			const m = await import('$lib/components/AnimatedBackground.svelte');
-			AnimatedBackground = m.default;
-		};
-		if (typeof (window as any).requestIdleCallback === 'function') {
-			(window as any).requestIdleCallback(() => {
-				void loadAnimatedBackground();
-			});
-		} else {
-			setTimeout(() => {
-				void loadAnimatedBackground();
-			}, 300);
-		}
-
-		return cleanupTheme;
-	});
+	onMount(() => initTheme());
 </script>
 
-{#if AnimatedBackground}
-	<AnimatedBackground />
-{/if}
-
-<!-- Inline LCP hero background image: place an image early in the DOM so it can be preloaded and measured
-		 by the browser as the LCP candidate. We use a dedicated container so styles can keep the gradient
-		 overlay and the content flush on top of the image. -->
-<!-- Light hero — shown when .dark is absent on <html> (manual toggle + inline init script) -->
-<div class="header-bg-container dark:hidden" aria-hidden="true">
-	<picture>
-		<source
-			media="(min-width: 1200px)"
-			type="image/webp"
-			srcset="/images/background-light-1920.webp 1920w, /images/background-light-1600.webp 1600w, /images/background-light-1280.webp 1280w"
-			sizes="(min-width:1200px) 1920px"
-		/>
-		<source
-			media="(min-width: 769px)"
-			type="image/webp"
-			srcset="/images/background-light-1280.webp 1280w, /images/background-light-1024.webp 1024w"
-			sizes="(min-width:769px) 1280px"
-		/>
-		<source
-			media="(max-width: 768px)"
-			type="image/webp"
-			srcset="/images/background-light-360.webp 360w, /images/background-light-480.webp 480w, /images/background-light-640.webp 640w"
-			sizes="100vw"
-		/>
-		<img
-			src="/images/background-light-360.webp"
-			srcset="/images/background-light-360.webp 360w, /images/background-light-640.webp 640w"
-			sizes="100vw"
-			alt=""
-			class="header-bg-img"
-			loading="eager"
-			fetchpriority="high"
-			width="1920"
-			height="720"
-		/>
-	</picture>
-</div>
-<!-- Dark hero — shown when <html> has .dark -->
-<div class="header-bg-container hidden dark:block" aria-hidden="true">
-	<picture>
-		<source
-			media="(min-width: 1200px)"
-			type="image/webp"
-			srcset="/images/background-1920.webp 1920w, /images/background-1600.webp 1600w, /images/background-1280.webp 1280w"
-			sizes="(min-width:1200px) 1920px"
-		/>
-		<source
-			media="(min-width: 769px)"
-			type="image/webp"
-			srcset="/images/background-1280.webp 1280w, /images/background-1024.webp 1024w"
-			sizes="(min-width:769px) 1280px"
-		/>
-		<source
-			media="(max-width: 768px)"
-			type="image/webp"
-			srcset="/images/background-640.webp 640w, /images/background-480.webp 480w, /images/background-360.webp 360w"
-			sizes="100vw"
-		/>
-		<img
-			src="/images/background-small.webp"
-			srcset="/images/background-360.webp 360w, /images/background-640.webp 640w"
-			sizes="100vw"
-			alt=""
-			class="header-bg-img"
-			loading="lazy"
-			width="1920"
-			height="720"
-		/>
-	</picture>
-</div>
-
 {#if $isDetailPage}
-	<div class="has-header-img flex h-screen overflow-hidden pt-14 md:pt-16">
+	<div class="flex h-screen overflow-hidden bg-white pt-14 md:pt-16 dark:bg-slate-900">
 		<Sidebar />
-		<div class="flex-1 overflow-y-auto px-3 pb-16 md:px-4">
+		<div class="flex-1 overflow-y-auto bg-white px-3 pb-16 md:px-4 dark:bg-slate-900">
 			{@render children()}
 		</div>
 	</div>
 {:else}
-	<div class="has-header-img h-screen w-full overflow-y-auto">
+	<div class="h-screen w-full overflow-y-auto bg-slate-50 dark:bg-slate-950">
 		{@render children()}
 	</div>
 {/if}

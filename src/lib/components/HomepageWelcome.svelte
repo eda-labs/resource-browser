@@ -15,7 +15,6 @@
 	export let groupedReleases: ReleaseGroup[];
 	export let selectedRelease: Writable<EdaRelease>;
 	export let crdMetaStore: Writable<CrdResource[]>;
-	export let totalReleases: number;
 	export let onReleaseSelect: (release: EdaRelease) => void | Promise<void>;
 	export let onResourceSelect: (resourceName: string) => void | Promise<void>;
 	export let onBrowseRelease: (release: EdaRelease) => void | Promise<void>;
@@ -155,10 +154,10 @@
 </script>
 
 <div
-	class="homepage-welcome min-h-full bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
+	class="homepage-welcome min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100"
 >
 	<header
-		class="homepage-topbar sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95"
+		class="homepage-topbar sticky top-0 z-50 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"
 	>
 		<div class="homepage-topbar-inner">
 			<div class="homepage-brand">
@@ -311,8 +310,6 @@
 						Viewing <span class="homepage-mono text-slate-700 dark:text-slate-300"
 							>{$selectedRelease.name}</span
 						>
-						<span class="homepage-panel-desc-sep" aria-hidden="true">·</span>
-						{totalReleases} release{totalReleases !== 1 ? 's' : ''} available
 					</p>
 				</div>
 
