@@ -30,7 +30,7 @@ function findResourceEntry(
 }
 
 export async function validateYamlInput(options: ValidateYamlOptions): Promise<ValidateYamlResult> {
-	const { yamlInput, releaseFolder, releaseLabel, mode, manifest } = options;
+	const { yamlInput, releaseFolder, releaseLabel, manifest } = options;
 
 	if (!yamlInput.trim()) {
 		return { valid: false, errors: [], warnings: [], summary: null, parsedDocs: [] };
@@ -84,7 +84,7 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 		const resourceEntry = findResourceEntry(manifest, kind, group);
 		if (!resourceEntry) continue;
 		const latestVersion = getLatestVersion(resourceEntry);
-		const schemaVersion = mode === 'latest' ? latestVersion : version;
+		const schemaVersion = latestVersion;
 		if (schemaVersion) {
 			schemaPaths.push(schemaPath(releaseFolder, resourceEntry.name, schemaVersion));
 		}
@@ -113,7 +113,6 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 			totalDocs: parsed.docs.length,
 			releaseFolder,
 			releaseLabel,
-			mode,
 			manifest,
 			schemas,
 			getSpecValidator,
@@ -130,13 +129,12 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 	const summary = buildSummary(parsed.docs.length, errors, warnings);
 
 	if (valid) {
-		const modeLabel = mode === 'latest' ? 'latest API per CRD' : 'declared apiVersion schema';
 		const successMsg =
 			parsed.docs.length > 1
 				? `✓ Successfully validated ${parsed.docs.length} Nokia EDA CRD documents`
 				: '✓ Valid Nokia EDA CRD configuration';
 		const successEntry: EnrichedError = {
-			message: `${successMsg} (release: ${releaseLabel}, validation mode: ${modeLabel})`,
+			message: `${successMsg} (release: ${releaseLabel}, latest schema per CRD)`,
 			instancePath: '',
 			schemaPath: '',
 			keyword: 'success',

@@ -25,7 +25,6 @@
 		isWarningEntry,
 		stripHighlightClauses,
 		type EnrichedError,
-		type ValidationMode,
 		type ValidationSummary
 	} from '$lib/yaml-validation';
 
@@ -38,7 +37,6 @@
 	let validationResult: 'valid' | 'invalid' | null = null;
 	let isValidating = false;
 	let validationSummary: ValidationSummary | null = null;
-	let validationMode: ValidationMode = 'declared';
 	let clientReady = false;
 	let mobileTab: 'input' | 'results' = 'input';
 	let copyFeedback = '';
@@ -56,12 +54,22 @@
 
 	function updateURL() {
 		if (!browser) return;
-		const params = new URLSearchParams();
-		if (releaseName) params.set('release', releaseName);
+		const params = new URLSearchParams($page.url.searchParams);
+		if (releaseName) {
+			params.set('release', releaseName);
+		} else {
+			params.delete('release');
+		}
 		const targetUrl = `/validate-yaml${params.toString() ? `?${params.toString()}` : ''}`;
 		const currentUrl = `${$page.url.pathname}${$page.url.search}`;
 		if (targetUrl === currentUrl) return;
 		goto(targetUrl, { replaceState: true, noScroll: true, keepFocus: true });
+	}
+
+	let previousReleaseName = '';
+	$: if (browser && clientReady && releaseName !== previousReleaseName) {
+		previousReleaseName = releaseName;
+		updateURL();
 	}
 
 	function clearValidationState() {
@@ -72,7 +80,6 @@
 
 	async function handleReleaseChange(revalidate = false) {
 		clearValidationState();
-		updateURL();
 		if (revalidate && yamlInput.trim() && release) {
 			await runValidation();
 		}
@@ -107,7 +114,6 @@
 				yamlInput,
 				releaseFolder: release.folder,
 				releaseLabel: release.label,
-				mode: validationMode,
 				manifest
 			});
 
@@ -199,7 +205,6 @@
 				releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
 			if (defaultRelease) releaseName = defaultRelease.name;
 		}
-		updateURL();
 		clientReady = true;
 	});
 </script>
@@ -241,22 +246,6 @@
 					<option value={r.name}>{r.label}{r.default ? ' (latest)' : ''}</option>
 				{/each}
 			</select>
-
-			<label
-				class="flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800/80"
-				title="When off, spec is validated against the apiVersion declared in the document. When on, spec uses the latest schema for that CRD."
-			>
-				<input
-					type="checkbox"
-					checked={validationMode === 'latest'}
-					on:change={(e) => {
-						validationMode = e.currentTarget.checked ? 'latest' : 'declared';
-						if (yamlInput.trim() && validationResult) void runValidation();
-					}}
-					class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-700"
-				/>
-				<span class="text-slate-700 dark:text-slate-300">Latest schema mode</span>
-			</label>
 
 			{#if release}
 				<span
@@ -320,12 +309,8 @@
 						</h3>
 						<ul class="space-y-1 text-slate-600 dark:text-slate-300">
 							<li>
-								<strong>Default:</strong> spec validated against the schema for the declared
-								<code class="text-[11px]">apiVersion</code>
-							</li>
-							<li>
-								<strong>Latest schema mode:</strong> spec validated against the newest API version
-								for each CRD
+								<strong>Spec:</strong> validated against the newest API version schema for each CRD
+								in the selected release
 							</li>
 							<li>
 								<strong>Deprecated apiVersion:</strong> reported as a

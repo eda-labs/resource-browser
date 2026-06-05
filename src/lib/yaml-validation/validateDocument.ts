@@ -2,7 +2,7 @@ import type { ErrorObject, ValidateFunction } from 'ajv';
 import { getLatestVersion } from '$lib/versions';
 import { formatVersionLabel } from './formatErrors';
 import { formatLocationInfo, getFieldLocationInfo } from './parseDocuments';
-import type { EnrichedError, ManifestEntry, ParsedDocument, ValidationMode } from './types';
+import type { EnrichedError, ManifestEntry, ParsedDocument } from './types';
 import type { SchemaSections } from './schemaCache';
 
 type ValidateDocContext = {
@@ -10,7 +10,6 @@ type ValidateDocContext = {
 	totalDocs: number;
 	releaseFolder: string;
 	releaseLabel: string;
-	mode: ValidationMode;
 	manifest: ManifestEntry[];
 	schemas: Map<string, SchemaSections>;
 	getSpecValidator: (key: string, schema: unknown) => ValidateFunction;
@@ -59,7 +58,7 @@ export function validateDocument(ctx: ValidateDocContext): {
 	valid: boolean;
 	schemaPath?: string;
 } {
-	const { doc, totalDocs, releaseLabel, mode, manifest, schemas } = ctx;
+	const { doc, totalDocs, releaseLabel, manifest, schemas } = ctx;
 	const parsedYaml = doc.data;
 	const prefix = docPrefix(doc.index, totalDocs);
 	const locationInfo = formatLocationInfo(doc.startLine, 0);
@@ -277,7 +276,7 @@ export function validateDocument(ctx: ValidateDocContext): {
 		return { errors, warnings, valid: false };
 	}
 
-	const schemaVersion = mode === 'latest' ? latestVersion : version;
+	const schemaVersion = latestVersion;
 	const schemaKey = `/${ctx.releaseFolder}/${resourceEntry.name}/${schemaVersion}.yaml`;
 	const schemaSections = schemas.get(schemaKey);
 

@@ -1,7 +1,5 @@
 import type { ErrorObject } from 'ajv';
 
-export type ValidationMode = 'declared' | 'latest';
-
 export type ValidationSummary = {
 	totalDocs: number;
 	docsWithErrors: number;
@@ -38,7 +36,6 @@ export type ValidateYamlOptions = {
 	yamlInput: string;
 	releaseFolder: string;
 	releaseLabel: string;
-	mode: ValidationMode;
 	manifest: ManifestEntry[];
 };
 
