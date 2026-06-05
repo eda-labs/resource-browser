@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { fade, fly } from 'svelte/transition';
 	import Theme from '$lib/components/Theme.svelte';
 	import type { CrdResource, EdaRelease } from '$lib/structure';
 	import { getLatestVersion } from '$lib/versions';
@@ -18,41 +18,39 @@
 	export let totalReleases: number;
 	export let onReleaseSelect: (release: EdaRelease) => void | Promise<void>;
 	export let onResourceSelect: (resourceName: string) => void | Promise<void>;
+	export let onBrowseRelease: (release: EdaRelease) => void | Promise<void>;
 
 	let heroSearch = '';
 	let searchFocused = false;
 	let highlightedIndex = 0;
 	let resourceTypeFilter: 'all' | 'state' | 'config' = 'all';
-	let animatedResourceCount = 0;
-	let animatedReleaseCount = 0;
+	let displayResourceCount = 0;
+	let displayReleaseCount = totalReleases;
 	let prevResourceCount = -1;
 
 	const tools = [
 		{
 			href: '/comparison',
 			title: 'Release Comparison',
-			description: 'Diff CRD schemas across EDA releases and export change reports.',
-			gradient: 'from-violet-500 to-purple-600',
-			shadow: 'hover:shadow-purple-500/20',
-			border: 'hover:border-purple-400/40',
+			description: 'Compare CRD schemas across EDA releases and generate diff reports.',
+			accent: 'text-violet-600 dark:text-violet-400',
+			iconBg: 'bg-violet-50 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400',
 			icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'
 		},
 		{
 			href: '/spec-search',
 			title: 'Spec Search',
-			description: 'Search thousands of CRD paths, fields, and nested properties instantly.',
-			gradient: 'from-cyan-500 to-blue-600',
-			shadow: 'hover:shadow-cyan-500/20',
-			border: 'hover:border-cyan-400/40',
+			description: 'Search CRD paths, fields, and nested properties across all releases.',
+			accent: 'text-blue-600 dark:text-blue-400',
+			iconBg: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400',
 			icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
 		},
 		{
 			href: '/validate-yaml',
 			title: 'YAML Validation',
-			description: 'Validate manifests against official Nokia EDA OpenAPI schemas.',
-			gradient: 'from-emerald-500 to-teal-600',
-			shadow: 'hover:shadow-emerald-500/20',
-			border: 'hover:border-emerald-400/40',
+			description: 'Validate configuration manifests against official EDA OpenAPI schemas.',
+			accent: 'text-emerald-600 dark:text-emerald-400',
+			iconBg: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400',
 			icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
 		}
 	];
@@ -79,7 +77,11 @@
 		highlightedIndex = filteredResources.length - 1;
 	}
 
-	function animateCount(target: number, setter: (n: number) => void, duration = 900) {
+	function animateCount(target: number, setter: (n: number) => void, duration = 700) {
+		if (!browser) {
+			setter(target);
+			return;
+		}
 		const start = performance.now();
 		const tick = (now: number) => {
 			const progress = Math.min((now - start) / duration, 1);
@@ -94,10 +96,10 @@
 		const count = $crdMetaStore.length;
 		if (count !== prevResourceCount) {
 			prevResourceCount = count;
-			animateCount(count, (n) => (animatedResourceCount = n));
+			animateCount(count, (n) => (displayResourceCount = n));
 		}
 	}
-	$: animateCount(totalReleases, (n) => (animatedReleaseCount = n));
+	$: animateCount(totalReleases, (n) => (displayReleaseCount = n));
 
 	function shortName(name: string) {
 		return name.split('.')[0];
@@ -148,346 +150,268 @@
 	}
 
 	async function handleReleaseClick(release: EdaRelease) {
-		await onReleaseSelect(release);
-		goto(`/?release=${release.name}`, { replaceState: true, keepFocus: true });
+		await onBrowseRelease(release);
 	}
 
-	function browseResources() {
-		const first = $crdMetaStore[0];
-		if (!first) return;
-		const version = getLatestVersion(first);
-		if (version) {
-			goto(`/${first.name}/${version}?release=${$selectedRelease.name}`);
+	function closeSearchResults() {
+		if (browser) {
+			setTimeout(() => (searchFocused = false), 150);
 		}
 	}
 </script>
 
-<div class="homepage-welcome relative min-h-full overflow-y-auto pb-10">
-	<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-		<div
-			class="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-500/20 blur-3xl"
-		></div>
-		<div class="absolute top-1/3 right-0 h-64 w-64 rounded-full bg-amber-500/15 blur-3xl"></div>
-		<div class="homepage-grid absolute inset-0 opacity-40"></div>
-	</div>
-
-	<div class="absolute top-4 right-4 z-50">
-		<Theme />
-	</div>
-
-	<div class="relative mx-auto max-w-7xl px-4 pt-10 sm:px-6 sm:pt-14 lg:px-8">
-		<!-- Hero -->
-		<section class="mb-10 text-center lg:mb-14" in:fade={{ duration: 400 }}>
-			<div
-				class="homepage-badge mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-cyan-100 backdrop-blur-md dark:text-cyan-200"
-			>
-				<span class="relative flex h-2 w-2">
-					<span
-						class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"
-					></span>
-					<span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-				</span>
-				{$selectedRelease.label}{#if $selectedRelease.default} · Default release{/if}
-			</div>
-
-			<div class="mb-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+<div class="homepage-welcome min-h-full">
+	<!-- Top bar -->
+	<header class="homepage-topbar">
+		<div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+			<div class="flex items-center gap-3">
 				<img
 					src="/images/eda.svg"
 					alt="Nokia EDA"
-					class="h-16 w-16 drop-shadow-2xl sm:h-20 sm:w-20"
+					class="h-9 w-9"
 					loading="eager"
 					fetchpriority="high"
 				/>
-				<div class="text-left sm:text-center">
-					<h1
-						class="font-nokia-headline text-4xl font-extrabold tracking-tight text-blue-400 sm:text-5xl lg:text-6xl"
-					>
-						Nokia EDA
-					</h1>
-					<p class="mt-1 text-lg font-light text-amber-500 sm:text-xl dark:text-amber-300">
-						Resource Browser
-					</p>
+				<div class="leading-tight">
+					<p class="text-sm font-semibold text-slate-900 dark:text-white">Nokia EDA</p>
+					<p class="text-xs text-amber-600 dark:text-amber-400">Resource Browser</p>
 				</div>
 			</div>
+			<Theme />
+		</div>
+	</header>
 
-			<p
-				class="homepage-hero-copy mx-auto max-w-3xl text-base leading-relaxed text-slate-700 sm:text-lg dark:text-slate-200"
-			>
-				Explore, compare, and validate Nokia EDA Custom Resource Definitions across every release —
-				with live schema search and instant YAML validation built in.
+	<main class="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+		<!-- 1. Compact hero -->
+		<section class="homepage-hero mb-8 pt-2 text-center sm:pt-4">
+			<span class="homepage-release-badge">
+				{$selectedRelease.label}{#if $selectedRelease.default}
+					<span class="homepage-default-tag">Default</span>{/if}
+			</span>
+			<h1 class="homepage-title mt-4">Browse EDA Custom Resource Definitions</h1>
+			<p class="homepage-subtitle mx-auto mt-2 max-w-2xl">
+				Explore schemas, compare versions across releases, and validate YAML — all in one place.
+			</p>
+		</section>
+
+		<!-- 2. Search (primary CTA) -->
+		<section class="homepage-card mb-6 p-5 sm:p-6" aria-labelledby="search-heading">
+			<div class="mb-4">
+				<h2 id="search-heading" class="homepage-section-title">Search resources</h2>
+				<p class="homepage-section-desc mt-1">
+					Find a CRD by name, kind, or API group. Results open the latest API version.
+				</p>
+			</div>
+
+			<div class="relative">
+				<label for="homepage-search" class="sr-only">Search CRD resources</label>
+				<div class="homepage-search-input flex items-center gap-3">
+					<svg
+						class="h-5 w-5 shrink-0 text-slate-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+						/>
+					</svg>
+					<input
+						id="homepage-search"
+						type="search"
+						bind:value={heroSearch}
+						on:focus={() => (searchFocused = true)}
+						on:blur={closeSearchResults}
+						on:keydown={handleSearchKeydown}
+						placeholder="e.g. AggregateRoute, protocols.eda.nokia.com…"
+						class="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white dark:placeholder:text-slate-500"
+						autocomplete="off"
+						aria-expanded={showSearchResults}
+						aria-controls="homepage-search-results"
+					/>
+					<kbd
+						class="homepage-kbd hidden sm:inline"
+						aria-hidden="true">↵</kbd
+					>
+				</div>
+
+				{#if showSearchResults}
+					<ul
+						id="homepage-search-results"
+						role="listbox"
+						class="homepage-results absolute z-40 mt-1.5 w-full"
+					>
+						{#if filteredResources.length === 0}
+							<li class="px-4 py-5 text-center text-sm text-slate-500 dark:text-slate-400">
+								No resources match “{heroSearch}”
+							</li>
+						{:else}
+							{#each filteredResources as resource, i}
+								<li role="option" aria-selected={i === highlightedIndex}>
+									<button
+										type="button"
+										on:mousedown|preventDefault={() => pickResource(resource)}
+										class="homepage-result-row {i === highlightedIndex ? 'is-active' : ''}"
+									>
+										<div class="min-w-0 flex-1">
+											<div class="flex items-center gap-2">
+												<span class="truncate text-sm font-medium text-slate-900 dark:text-white">
+													{resource.kind || shortName(resource.name)}
+												</span>
+												{#if isDeprecated(resource)}
+													<span class="homepage-tag-warning">Deprecated</span>
+												{/if}
+											</div>
+											<p class="truncate font-mono text-xs text-slate-500 dark:text-slate-400">
+												{groupName(resource.name)}
+											</p>
+										</div>
+										{#if resource.versions.length > 0}
+											<span class="homepage-tag-version">{getLatestVersion(resource)}</span>
+										{/if}
+									</button>
+								</li>
+							{/each}
+						{/if}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label="Resource type filter">
+				<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Type:</span>
+				{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
+					<button
+						type="button"
+						on:click={() => (resourceTypeFilter = chip.id as typeof resourceTypeFilter)}
+						class="homepage-filter-chip {resourceTypeFilter === chip.id ? 'is-active' : ''}"
+					>
+						{chip.label}
+					</button>
+				{/each}
+			</div>
+		</section>
+
+		<!-- 3. Stats strip -->
+		<section class="homepage-stats mb-8" aria-label="Catalog statistics">
+			{#each [
+				{ value: displayReleaseCount, label: 'Releases', sub: 'EDA versions' },
+				{ value: displayResourceCount, label: 'CRDs', sub: `in ${$selectedRelease.name}` },
+				{ value: multiVersionCount, label: 'Multi-version', sub: 'resources with upgrades' }
+			] as stat}
+				<div class="homepage-stat">
+					<p class="homepage-stat-value">{stat.value}</p>
+					<p class="homepage-stat-label">{stat.label}</p>
+					<p class="homepage-stat-sub">{stat.sub}</p>
+				</div>
+			{/each}
+		</section>
+
+		<!-- 4. Releases -->
+		<section class="homepage-card mb-6 p-5 sm:p-6" aria-labelledby="releases-heading">
+			<h2 id="releases-heading" class="homepage-section-title">EDA releases</h2>
+			<p class="homepage-section-desc mt-1 mb-4">
+				Choose a release, then browse its full CRD catalog.
 			</p>
 
-			<!-- Stats -->
-			<div
-				class="mx-auto mt-8 grid max-w-3xl grid-cols-3 gap-3 sm:gap-4"
-				in:fly={{ y: 16, duration: 450, delay: 120 }}
+			<button
+				type="button"
+				on:click={() => onBrowseRelease($selectedRelease)}
+				class="homepage-browse-cta mb-5 w-full sm:w-auto"
 			>
-				{#each [{ value: animatedReleaseCount, label: 'Releases' }, { value: animatedResourceCount, label: 'CRDs' }, { value: multiVersionCount, label: 'Multi-version' }] as stat}
-					<div class="homepage-stat-card rounded-2xl px-3 py-4 sm:px-5">
-						<div class="text-2xl font-bold text-blue-400 sm:text-3xl">{stat.value}</div>
-						<div class="mt-1 text-xs font-medium text-slate-600 sm:text-sm dark:text-slate-300">
-							{stat.label}
+				Browse {$selectedRelease.name} resources
+				<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+				</svg>
+			</button>
+
+			<div class="space-y-5">
+				{#each groupedReleases as group}
+					<div>
+						<p class="homepage-group-label">{group.label}</p>
+						<div class="mt-2 flex flex-wrap gap-2">
+							{#each group.releases.slice(0, 4) as release}
+								<button
+									type="button"
+									on:click={() => handleReleaseClick(release)}
+									class="homepage-release-btn {$selectedRelease.name === release.name
+										? 'is-active'
+										: ''}"
+								>
+									{release.name}
+									{#if release.default}
+										<span class="homepage-default-tag">Default</span>
+									{/if}
+								</button>
+							{/each}
+							{#if group.releases.length > 4}
+								<div class="relative">
+									<button
+										type="button"
+										on:click={() => toggleGroupShow(group.label)}
+										class="homepage-release-btn homepage-release-more"
+									>
+										+{group.releases.length - 4} more
+									</button>
+									{#if group.showMore}
+										<div class="homepage-dropdown">
+											{#each group.releases.slice(4) as release}
+												<button
+													type="button"
+													on:click={() => {
+														handleReleaseClick(release);
+														toggleGroupShow(group.label);
+													}}
+													class="homepage-dropdown-item"
+												>
+													{release.name}
+												</button>
+											{/each}
+										</div>
+									{/if}
+								</div>
+							{/if}
 						</div>
 					</div>
 				{/each}
 			</div>
 		</section>
 
-		<!-- Search + Release picker -->
-		<section
-			class="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8"
-			in:fly={{ y: 20, duration: 500, delay: 180 }}
-		>
-			<!-- Command-palette search -->
-			<div class="lg:col-span-7">
-				<div class="homepage-panel rounded-2xl p-5 sm:p-6">
-					<div class="mb-4 flex items-center justify-between gap-3">
-						<h2 class="text-lg font-bold text-slate-900 dark:text-white">Find a resource</h2>
-						<button
-							on:click={browseResources}
-							class="text-xs font-semibold text-cyan-600 transition-colors hover:text-cyan-500 dark:text-cyan-300"
-						>
-							Browse all →
-						</button>
-					</div>
+		<!-- 5. Tools -->
+		<section aria-labelledby="tools-heading">
+			<h2 id="tools-heading" class="homepage-section-title mb-1">Developer tools</h2>
+			<p class="homepage-section-desc mb-5">Additional utilities for working with EDA schemas.</p>
 
-					<div class="relative">
-						<div class="homepage-search-ring rounded-xl transition-shadow duration-300">
-							<div class="flex items-center gap-3 rounded-xl border border-white/20 bg-white/80 px-4 py-3 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-slate-900/70">
-								<svg
-									class="h-5 w-5 shrink-0 text-slate-400"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+				{#each tools as tool}
+					<button type="button" on:click={() => goto(tool.href)} class="homepage-tool-card group">
+						<div class="flex items-start gap-4">
+							<div class="homepage-tool-icon {tool.iconBg}">
+								<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 									<path
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										stroke-width="2"
-										d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+										d={tool.icon}
 									/>
 								</svg>
-								<input
-									type="search"
-									bind:value={heroSearch}
-									on:focus={() => (searchFocused = true)}
-									on:blur={() => setTimeout(() => (searchFocused = false), 150)}
-									on:keydown={handleSearchKeydown}
-									placeholder="Search by name, kind, or API group…"
-									class="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white dark:placeholder:text-slate-500"
-									autocomplete="off"
-									aria-label="Search CRD resources"
-									aria-expanded={showSearchResults}
-									aria-controls="homepage-search-results"
-								/>
-								<kbd
-									class="hidden rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 sm:inline dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400"
-									>↵</kbd
-								>
 							</div>
-						</div>
-
-						{#if showSearchResults}
-							<ul
-								id="homepage-search-results"
-								role="listbox"
-								class="homepage-results absolute z-40 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-white/20 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/95"
-								transition:fly={{ y: -6, duration: 180 }}
-							>
-								{#if filteredResources.length === 0}
-									<li class="px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
-										No resources match “{heroSearch}”
-									</li>
-								{:else}
-									{#each filteredResources as resource, i}
-										<li role="option" aria-selected={i === highlightedIndex}>
-											<button
-												on:mousedown|preventDefault={() => pickResource(resource)}
-												class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition-colors
-												       {i === highlightedIndex
-													? 'bg-cyan-500/15 text-cyan-900 dark:bg-cyan-500/20 dark:text-cyan-100'
-													: 'hover:bg-slate-100 dark:hover:bg-slate-800'}"
-											>
-												<div class="min-w-0">
-													<div class="flex items-center gap-2">
-														<span class="truncate text-sm font-semibold text-slate-900 dark:text-white">
-															{resource.kind || shortName(resource.name)}
-														</span>
-														{#if isDeprecated(resource)}
-															<span
-																class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold text-orange-600 dark:bg-orange-900/40 dark:text-orange-300"
-																>DEPRECATED</span
-															>
-														{/if}
-													</div>
-													<div class="truncate font-mono text-xs text-slate-500 dark:text-slate-400">
-														{groupName(resource.name)}
-													</div>
-												</div>
-												<div class="flex shrink-0 items-center gap-2">
-													{#if resource.versions.length > 1}
-														<span
-															class="rounded-full bg-cyan-100 px-2 py-0.5 text-[10px] font-semibold text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300"
-														>
-															{getLatestVersion(resource)}
-														</span>
-													{/if}
-													<svg
-														class="h-4 w-4 text-slate-400"
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
-													>
-														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															stroke-width="2"
-															d="M9 5l7 7-7 7"
-														/>
-													</svg>
-												</div>
-											</button>
-										</li>
-									{/each}
-								{/if}
-							</ul>
-						{/if}
-					</div>
-
-					<div class="mt-4 flex flex-wrap gap-2">
-						{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
-							<button
-								on:click={() => (resourceTypeFilter = chip.id as typeof resourceTypeFilter)}
-								class="rounded-full px-3 py-1 text-xs font-semibold transition-all
-								       {resourceTypeFilter === chip.id
-									? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
-									: 'bg-white/60 text-slate-600 hover:bg-white dark:bg-white/10 dark:text-slate-300 dark:hover:bg-white/20'}"
-							>
-								{chip.label}
-							</button>
-						{/each}
-					</div>
-				</div>
-			</div>
-
-			<!-- Release selector -->
-			<div class="lg:col-span-5">
-				<div class="homepage-panel h-full rounded-2xl p-5 sm:p-6">
-					<h2 class="mb-1 text-lg font-bold text-slate-900 dark:text-white">EDA Releases</h2>
-					<p class="mb-4 text-sm text-slate-600 dark:text-slate-400">
-						Select a release to scope search and schema data.
-					</p>
-
-					<div class="space-y-4">
-						{#each groupedReleases as group}
-							<div>
-								<div class="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
-									{group.label}
-								</div>
-								<div class="flex flex-wrap gap-2">
-									{#each group.releases.slice(0, 3) as release}
-										<button
-											on:click={() => handleReleaseClick(release)}
-											class="homepage-release-pill group relative rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200
-											       {$selectedRelease.name === release.name
-												? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25'
-												: 'border border-white/20 bg-white/50 text-slate-700 hover:border-cyan-400/50 hover:bg-white/80 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10'}"
-										>
-											{release.name}
-											{#if release.default}
-												<span
-													class="ml-1.5 rounded px-1 py-0.5 text-[9px] font-bold uppercase tracking-wide
-													       {$selectedRelease.name === release.name
-														? 'bg-white/20 text-white'
-														: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'}"
-													>default</span
-												>
-											{/if}
-										</button>
-									{/each}
-									{#if group.releases.length > 3}
-										<div class="relative">
-											<button
-												on:click={() => toggleGroupShow(group.label)}
-												class="release-more-btn rounded-lg border border-white/20 bg-white/40 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-white/70 dark:bg-white/5 dark:text-slate-300"
-											>
-												+{group.releases.length - 3}
-											</button>
-											{#if group.showMore}
-												<div
-													class="absolute left-0 z-50 mt-2 min-w-[10rem] rounded-xl border border-white/20 bg-white/95 p-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/95"
-												>
-													{#each group.releases.slice(3) as release}
-														<button
-															on:click={() => {
-																handleReleaseClick(release);
-																toggleGroupShow(group.label);
-															}}
-															class="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
-														>
-															{release.name}
-														</button>
-													{/each}
-												</div>
-											{/if}
-										</div>
-									{/if}
-								</div>
+							<div class="min-w-0 flex-1 text-left">
+								<h3 class="text-sm font-semibold text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+									{tool.title}
+								</h3>
+								<p class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+									{tool.description}
+								</p>
+								<span class="homepage-tool-link {tool.accent}">Open →</span>
 							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Tool cards bento grid -->
-		<section in:fly={{ y: 24, duration: 550, delay: 260 }}>
-			<h2 class="mb-4 text-center text-sm font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
-				Developer tools
-			</h2>
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-				{#each tools as tool, i}
-					<button
-						on:click={() => goto(tool.href)}
-						class="homepage-tool-card group rounded-2xl border border-white/20 bg-white/60 p-5 text-left backdrop-blur-md transition-all duration-300 hover:-translate-y-1 {tool.shadow} {tool.border} dark:bg-white/5"
-						style="animation-delay: {i * 80}ms"
-					>
-						<div
-							class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br {tool.gradient} text-white shadow-lg transition-transform duration-300 group-hover:scale-110"
-						>
-							<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d={tool.icon}
-								/>
-							</svg>
-						</div>
-						<h3
-							class="mb-1.5 text-base font-bold text-slate-900 transition-colors group-hover:text-cyan-600 dark:text-white dark:group-hover:text-cyan-300"
-						>
-							{tool.title}
-						</h3>
-						<p class="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-							{tool.description}
-						</p>
-						<div
-							class="mt-4 flex items-center gap-1 text-xs font-semibold text-cyan-600 opacity-0 transition-all duration-300 group-hover:opacity-100 dark:text-cyan-400"
-						>
-							Open tool
-							<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M17 8l4 4m0 0l-4 4m4-4H3"
-								/>
-							</svg>
 						</div>
 					</button>
 				{/each}
 			</div>
 		</section>
-	</div>
+	</main>
 </div>

@@ -192,7 +192,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="has-header-img h-screen w-full overflow-hidden">
+	<div class="has-header-img h-screen w-full overflow-y-auto">
 		{@render children()}
 	</div>
 {/if}
