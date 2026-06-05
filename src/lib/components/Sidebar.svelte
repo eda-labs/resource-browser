@@ -6,6 +6,7 @@
 	import yaml from 'js-yaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
+	import { getLatestVersion } from '$lib/versions';
 	import { onMount, onDestroy } from 'svelte';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
@@ -115,11 +116,7 @@
 							(v) => v.name === currentVersion
 						)?.name;
 						if (!targetVersion) {
-							// Pick a reasonable default: prefer the last version in array if sorted or the first entry
-							targetVersion =
-								resourceInNewRelease.versions && resourceInNewRelease.versions.length
-									? resourceInNewRelease.versions[0].name
-									: '';
+							targetVersion = getLatestVersion(resourceInNewRelease);
 						}
 						if (targetVersion) {
 							goto(`/${currentResourceName}/${targetVersion}?release=${newRelease.name}`);
@@ -145,42 +142,23 @@
 		try {
 			const manifest = await loadCrdsForRelease($selectedRelease);
 			const resourceInRelease = (manifest || []).find((r) => r.name === resource);
-			let targetVersion = '';
-			// Prefer the same version that the resources.yaml object suggests if available in the release manifest
-			if (resourceInRelease && resourceInRelease.versions && resourceInRelease.versions.length) {
-				const pref = resDef?.versions?.[0]?.name;
-				targetVersion =
-					resourceInRelease.versions.find((v) => v.name === pref)?.name ||
-					resourceInRelease.versions[0].name;
-			} else {
-				// Fallback to the resources.yaml version if the manifest doesn't include it
-				targetVersion = resDef?.versions?.[0]?.name || '';
-			}
+			const targetVersion =
+				getLatestVersion(resourceInRelease) || getLatestVersion(resDef) || '';
 			if (targetVersion) {
 				goto(`/${resource}/${targetVersion}?release=${$selectedRelease.name}`);
 			} else {
 				goto(`/?browse=true&release=${$selectedRelease.name}`);
 			}
 		} catch (e) {
-			// In case of any error, fallback to the original behavior to avoid blocking navigation
-			goto(`/${resource}/${resDef.versions[0].name}?release=${$selectedRelease.name}`);
+			const fallbackVersion = getLatestVersion(resDef);
+			if (fallbackVersion) {
+				goto(`/${resource}/${fallbackVersion}?release=${$selectedRelease.name}`);
+			} else {
+				goto(`/?browse=true&release=${$selectedRelease.name}`);
+			}
 		}
 		// Close mobile menu after navigation
 		isMobileMenuOpen = false;
-	}
-
-	/**
-	 * Determine the preferred version used for navigation for a resource in the current release.
-	 * This uses the release manifest if available, and prefers the version hinted by `resDef.versions[0]`.
-	 */
-	function preferredVersionForResource(resDef: CrdResource) {
-		const manifestEntry = $crdMetaStore.find((r) => r.name === resDef.name) || resDef;
-		const pref = resDef?.versions?.[0]?.name;
-		if (manifestEntry && manifestEntry.versions && manifestEntry.versions.length) {
-			const found = manifestEntry.versions.find((v) => v.name === pref);
-			return found ? found.name : manifestEntry.versions[0].name;
-		}
-		return pref || '';
 	}
 
 	function isPreferredVersionDeprecated(resDef: CrdResource) {

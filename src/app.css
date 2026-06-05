@@ -440,6 +440,65 @@
 		animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 	}
 
+	/* Homepage welcome redesign */
+	.homepage-grid {
+		background-image:
+			linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+		background-size: 48px 48px;
+		mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+	}
+
+	.homepage-panel {
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		background: rgba(255, 255, 255, 0.55);
+		backdrop-filter: blur(14px);
+		box-shadow:
+			0 20px 40px -12px rgba(2, 10, 35, 0.18),
+			inset 0 1px 0 rgba(255, 255, 255, 0.35);
+	}
+
+	:global(.dark) .homepage-panel {
+		background: rgba(15, 23, 42, 0.55);
+		border-color: rgba(255, 255, 255, 0.08);
+	}
+
+	.homepage-stat-card {
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: rgba(255, 255, 255, 0.45);
+		backdrop-filter: blur(10px);
+	}
+
+	:global(.dark) .homepage-stat-card {
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(255, 255, 255, 0.08);
+	}
+
+	.homepage-search-ring:focus-within {
+		box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.25);
+		border-radius: 0.85rem;
+	}
+
+	.homepage-tool-card {
+		animation: fadeIn 0.5s ease-out both;
+	}
+
+	.homepage-hero-copy {
+		text-wrap: balance;
+	}
+
+	:global(:not(.dark)) .homepage-hero-copy {
+		color: rgba(30, 41, 59, 0.92);
+	}
+
+	:global(:not(.dark)) .homepage-welcome h1 {
+		color: #2563eb !important;
+	}
+
+	:global(:not(.dark)) .homepage-welcome h2 {
+		color: rgba(15, 23, 42, 0.95) !important;
+	}
+
 	/* Professional glow effect for amber elements */
 	.glow-amber {
 		box-shadow:

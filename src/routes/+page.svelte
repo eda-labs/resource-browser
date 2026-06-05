@@ -2,27 +2,24 @@
 	import { derived, writable } from 'svelte/store';
 import { onMount, onDestroy } from 'svelte';
 import { page } from '$app/stores';
-import { goto, afterNavigate } from '$app/navigation';
+import { goto } from '$app/navigation';
 
 // AnimatedBackground is provided by the layout and imported dynamically there to improve LCP
 	import PageCredits from '$lib/components/PageCredits.svelte';
+	import HomepageWelcome from '$lib/components/HomepageWelcome.svelte';
 	import Render from '$lib/components/Render.svelte';
-	import Theme from '$lib/components/Theme.svelte';
 	// Avoid importing DiffRender on the home page — it is only useful on detail pages and is lazily loaded there
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
 	import type { CrdVersionsMap } from '$lib/structure';
 	import yaml from 'js-yaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
+	import { getLatestVersion } from '$lib/versions';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 
 	// Mobile panel state for compact release list (declared later)
 
-	// Short Nokia EDA description (sourced from Nokia pages)
-	const nokiaEdaDescription = `The Nokia EDA Resource Browser helps you discover Nokia EDA Custom Resource Definitions (CRDs) across releases, providing the specification and status fields needed to manage resources in your EDA environment.
-
-This browser makes it easier to find, validate and compare definitions for Nokia applications, helping developers and operators work with model-driven APIs and simplified tooling.`;
 	const defaultRelease =
 		releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
 	const crdMetaStore = writable<CrdResource[]>([]);
@@ -88,7 +85,6 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 	let loading = false;
 	let showBrowseMode = false;
 	let mobileMenuOpen = false;
-	let mobileReleasesOpen = false;
 	let showDiff = false;
 	let compareVersion: string | null = null;
 	let compareData: any = null;
@@ -98,10 +94,6 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 	let compareRelease: EdaRelease | null = null;
 	let compareReleaseData: any = null;
 	let compareReleaseVersions: string[] = [];
-
-	let mobileReleasesPanelEl: HTMLElement | null = null;
-	let lastActiveElement: Element | null = null;
-	let mobileTrapCleanup: (() => void) | null = null;
 
 	let yamlInput = '';
 	let validationErrors: any[] = [];
@@ -127,16 +119,23 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 	// Defer initial heavy manifest load until after paint to improve LCP (use requestIdleCallback where available)
 	let initialLoaded = false;
 	onMount(() => {
+		const urlParams = new URLSearchParams(window.location.search);
+		const releaseParam = urlParams.get('release');
+		if (releaseParam) {
+			const foundRelease = releasesConfig.releases.find((r) => r.name === releaseParam);
+			if (foundRelease) {
+				selectedRelease.set(foundRelease);
+			}
+		}
+
+		const startLoad = () => {
+			loadCrdsForRelease($selectedRelease);
+			initialLoaded = true;
+		};
 		if (typeof (window as any).requestIdleCallback === 'function') {
-			(window as any).requestIdleCallback(() => {
-				loadCrdsForRelease($selectedRelease);
-				initialLoaded = true;
-			});
+			(window as any).requestIdleCallback(startLoad);
 		} else {
-			setTimeout(() => {
-				loadCrdsForRelease($selectedRelease);
-				initialLoaded = true;
-			}, 200);
+			setTimeout(startLoad, 200);
 		}
 	});
 	// After initial load, reactively reload when selectedRelease changes.
@@ -155,26 +154,6 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 		compareReleaseVersions = [];
 	}
 	$: updateRootScroll();
-
-	$: if (typeof window !== 'undefined') {
-		if (mobileReleasesOpen) {
-			document.documentElement.classList.add('no-root-scroll');
-			document.body.classList.add('no-root-scroll');
-			setTimeout(() => {
-				if (mobileReleasesPanelEl) {
-					if (mobileTrapCleanup) mobileTrapCleanup();
-					mobileTrapCleanup = trapFocus(mobileReleasesPanelEl);
-				}
-			}, 0);
-		} else {
-			if (mobileTrapCleanup) {
-				mobileTrapCleanup();
-				mobileTrapCleanup = null;
-			}
-			document.documentElement.classList.remove('no-root-scroll');
-			document.body.classList.remove('no-root-scroll');
-		}
-	}
 
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
@@ -213,57 +192,6 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 	}
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
-	}
-
-	function toggleGroupShow(label: string) {
-		groupedReleases = groupedReleases.map((g) =>
-			g.label === label ? { ...g, showMore: !g.showMore } : g
-		);
-	}
-
-	function setGroupShow(label: string, value: boolean) {
-		groupedReleases = groupedReleases.map((g) =>
-			g.label === label ? { ...g, showMore: value } : g
-		);
-	}
-
-	// Focus trap helpers
-	function focusableElements(container: HTMLElement) {
-		return Array.from(
-			container.querySelectorAll<HTMLElement>(
-				`a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])`
-			)
-		).filter((el) => !el.hasAttribute('disabled'));
-	}
-
-	function trapFocus(container: HTMLElement) {
-		lastActiveElement = document.activeElement;
-		const focusables = focusableElements(container);
-		if (focusables.length) focusables[0].focus();
-		const keyHandler = (e: KeyboardEvent) => {
-			if (e.key === 'Tab') {
-				const focusables = focusableElements(container);
-				if (focusables.length === 0) return;
-				const first = focusables[0];
-				const last = focusables[focusables.length - 1];
-				if (e.shiftKey && document.activeElement === first) {
-					e.preventDefault();
-					last.focus();
-				} else if (!e.shiftKey && document.activeElement === last) {
-					e.preventDefault();
-					first.focus();
-				}
-			} else if (e.key === 'Escape') {
-				if (mobileReleasesOpen) {
-					mobileReleasesOpen = false;
-				}
-			}
-		};
-		container.addEventListener('keydown', keyHandler);
-		return () => {
-			container.removeEventListener('keydown', keyHandler);
-			if (lastActiveElement instanceof HTMLElement) lastActiveElement.focus();
-		};
 	}
 
 	async function loadCrdsForRelease(release: EdaRelease): Promise<CrdResource[]> {
@@ -355,12 +283,21 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 		}
 	}
 
+	async function selectRelease(release: EdaRelease) {
+		selectedRelease.set(release);
+		await loadCrdsForRelease(release);
+	}
+
 	async function handleHomeResourceClick(resourceName: string) {
 		// Ensure we have the manifest for the selected release and pick a version that exists in this release
 		const manifest = await loadCrdsForRelease($selectedRelease);
 		const resourceInRelease = (manifest || []).find((r: any) => r.name === resourceName);
 		if (resourceInRelease && resourceInRelease.versions && resourceInRelease.versions.length) {
-			const version = resourceInRelease.versions[0].name;
+			const version = getLatestVersion(resourceInRelease);
+			if (!version) {
+				goto(`/?browse=true&release=${$selectedRelease.name}`);
+				return;
+			}
 			goto(`/${resourceName}/${version}?release=${$selectedRelease.name}`);
 		} else {
 			// If not found, go to browse mode for the selected release
@@ -596,227 +533,14 @@ This browser makes it easier to find, validate and compare definitions for Nokia
 		<div id="main-scroll" class="has-header-img relative flex flex-1 flex-col overflow-y-auto">
 			<!-- Background is provided by CSS class .has-header-img; single background only (keep consistent with other pages) -->
 			{#if !selectedResource && !showBrowseMode}
-				<!-- YANG-Style Homepage -->
-				<div class="block">
-					<!-- Header removed for compact homepage design -->
-
-					{#if mobileReleasesOpen}
-						<div class="fixed inset-0 z-50 lg:hidden" aria-hidden={!mobileReleasesOpen}>
-							<button
-								class="absolute inset-0 bg-black/50"
-								aria-label="Close releases"
-								on:click={() => (mobileReleasesOpen = false)}
-							></button>
-							<div
-								bind:this={mobileReleasesPanelEl}
-								id="mobile-releases-panel"
-								role="dialog"
-								aria-modal="true"
-								tabindex="-1"
-								class="absolute top-12 right-4 left-4 max-h-[70vh] overflow-auto rounded-lg bg-gray-900 p-4 text-white shadow-lg"
-							>
-								<div class="mb-3 flex items-center justify-between">
-									<h3 class="text-lg font-semibold">Releases</h3>
-									<button
-										class="rounded-md bg-gray-800/60 p-1.5"
-										aria-label="Close"
-										on:click={() => (mobileReleasesOpen = false)}
-									>
-										<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-											><path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M6 18L18 6M6 6l12 12"
-											/></svg
-										>
-									</button>
-								</div>
-								<div class="space-y-2">
-									{#each groupedReleases as group}
-										<div>
-											<div class="mb-1 text-sm font-semibold text-white">{group.label}</div>
-											<div class="flex flex-wrap gap-2">
-												{#each group.releases as release}
-													<button
-														on:click={() => {
-															selectedRelease.set(release);
-															mobileReleasesOpen = false;
-															goto(`/?release=${release.name}`);
-														}}
-														class="shadow-pro rounded-xl border-2 border-slate-700/30 bg-gray-800/60 px-3 py-2 text-xs text-white transition-all duration-200 hover:border-amber-500 hover:bg-gray-800/80 sm:text-base dark:hover:border-amber-400"
-														>{release.name}</button
-													>
-												{/each}
-											</div>
-										</div>
-									{/each}
-								</div>
-							</div>
-						</div>
-					{/if}
-
-					<!-- Main Content -->
-					<div class="relative">
-						<!-- Theme Toggle (Absolute Top Right) -->
-						<div class="absolute top-4 right-4 z-50">
-							<Theme />
-						</div>
-
-						<div
-							class="mx-auto min-h-[220px] max-w-7xl px-4 pt-12 sm:min-h-[340px] sm:px-6 sm:py-12 md:min-h-[420px] lg:px-8"
-						>
-							<div class="grid grid-cols-1 gap-12 lg:grid-cols-12">
-								<!-- Left Column: Releases -->
-								<div class="lg:col-span-5 space-y-6">
-									{#each groupedReleases as group}
-										<div class="flex items-start gap-4">
-											<h3 class="text-xl font-bold text-white/90 w-12 shrink-0 pt-1.5">{group.label}</h3>
-											<div class="flex flex-wrap gap-2 items-center">
-												{#each group.releases.slice(0, 3) as release}
-													<button
-														on:click={async () => {
-															selectedRelease.set(release);
-															const manifest = await loadCrdsForRelease(release);
-															const firstResource =
-																manifest && manifest.length ? manifest[0] : undefined;
-															if (firstResource) {
-																const firstVersion = firstResource.versions?.[0]?.name;
-																if (firstVersion) {
-																	goto(
-																		`/${firstResource.name}/${firstVersion}?release=${release.name}`
-																	);
-																}
-															}
-															mobileReleasesOpen = false;
-														}}
-														class="group relative rounded-md border border-gray-200 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 transition-all hover:bg-white hover:text-blue-600 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
-													>
-														{release.name}
-													</button>
-												{/each}
-												{#if group.releases.length > 3}
-													<div class="relative inline-block">
-														<button
-															on:click={() => toggleGroupShow(group.label)}
-															class="rounded-md border border-gray-200 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-500 transition-all hover:bg-white hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-														>
-															More
-														</button>
-														{#if group.showMore}
-															<div
-																class="absolute left-0 z-50 mt-2 w-48 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800"
-															>
-																{#each group.releases.slice(3) as r}
-																	<button
-																		on:click={async () => {
-																			selectedRelease.set(r);
-																			const manifest = await loadCrdsForRelease(r);
-																			const firstResource =
-																				manifest && manifest.length ? manifest[0] : undefined;
-																			if (firstResource) {
-																				const firstVersion =
-																					firstResource.versions?.[0]?.name;
-																				if (firstVersion) {
-																					goto(
-																						`/${firstResource.name}/${firstVersion}?release=${r.name}`
-																					);
-																				}
-																			}
-																			mobileReleasesOpen = false;
-																			setGroupShow(group.label, false);
-																		}}
-																		class="block w-full rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
-																	>
-																		{r.name}
-																	</button>
-																{/each}
-															</div>
-														{/if}
-													</div>
-												{/if}
-											</div>
-										</div>
-									{/each}
-								</div>
-
-								<!-- Right Column: Info & Tools -->
-								<div class="lg:col-span-7">
-									<div class="mb-10">
-										<div class="mb-6 flex items-center gap-4">
-											<img
-												src="/images/eda.svg"
-												alt="EDA"
-												class="h-16 w-16 drop-shadow-lg"
-												loading="eager"
-												fetchpriority="high"
-											/>
-											<div>
-												<h1 class="text-4xl font-bold text-blue-400 tracking-tight">
-													Nokia EDA
-												</h1>
-												<p class="text-xl font-light text-amber-500 dark:text-gray-300">
-													Resource Browser
-												</p>
-											</div>
-										</div>
-										
-										<div class="prose prose-lg max-w-none text-gray-300">
-											<p class="leading-relaxed">
-												Nokia EDA makes extensive use of structured data models. Each application has a CRD model that defines its configuration and state.
-											</p>
-											<p class="leading-relaxed mt-4 text-gray-400">
-												A central role that is given to CRDs in Nokia EDA demands a convenient interface to browse, search through and process these data models. To answer these demands this portal provides:
-											</p>
-										</div>
-									</div>
-
-									<!-- Feature List / Quick Tools -->
-									<div class="grid grid-cols-1 gap-4">
-										<button
-											on:click={() => goto('/comparison')}
-											class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-										>
-											<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors dark:bg-purple-500/20 dark:text-purple-300 dark:group-hover:bg-purple-500">
-												<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-											</div>
-											<div class="text-left">
-												<h3 class="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors dark:text-white dark:group-hover:text-purple-300">Release Comparison</h3>
-												<p class="text-sm text-gray-500 dark:text-gray-400">Compare CRDs across different EDA releases and generate diff reports</p>
-											</div>
-										</button>
-
-										<button
-											on:click={() => goto('/spec-search')}
-											class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-										>
-											<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors dark:bg-blue-500/20 dark:text-blue-300 dark:group-hover:bg-blue-500">
-												<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" /></svg>
-											</div>
-											<div class="text-left">
-												<h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-300">Spec Search</h3>
-												<p class="text-sm text-gray-500 dark:text-gray-400">Fast search through thousands of available CRD paths and properties</p>
-											</div>
-										</button>
-
-										<button
-											on:click={() => goto('/validate-yaml')}
-											class="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-										>
-											<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors dark:bg-green-500/20 dark:text-green-300 dark:group-hover:bg-green-500">
-												<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-											</div>
-											<div class="text-left">
-												<h3 class="font-semibold text-gray-900 group-hover:text-green-600 transition-colors dark:text-white dark:group-hover:text-green-300">YAML Validation</h3>
-												<p class="text-sm text-gray-500 dark:text-gray-400">Validate your configuration against official Nokia EDA schemas</p>
-											</div>
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<HomepageWelcome
+					bind:groupedReleases
+					{selectedRelease}
+					{crdMetaStore}
+					totalReleases={releasesConfig.releases.length}
+					onReleaseSelect={selectRelease}
+					onResourceSelect={handleHomeResourceClick}
+				/>
 			{:else if loading}
 				<div class="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-800">
 					<div class="text-center">

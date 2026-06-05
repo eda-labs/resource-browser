@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 
 import type { PageLoad } from './$types';
 import type { CrdVersionsMap, ReleasesConfig } from '$lib/structure';
+import { getLatestVersion } from '$lib/versions';
 
 import yaml from 'js-yaml';
 import res from '$lib/resources.yaml?raw';
@@ -39,22 +40,27 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 		console.warn(`Could not load manifest for ${releaseFolder}`);
 	}
 
-	// First try to get metadata from resources.yaml
-	let crdMeta = resources[rest]?.filter((x) => x.name === name) || [];
-
-	// If not found in resources.yaml, try the release manifest (for "states" resources)
-	if (crdMeta.length === 0 && releaseManifest.length > 0) {
+	// Prefer release manifest entries when available; fallback to static resources.yaml otherwise
+	let crdMeta: any[] = [];
+	if (releaseManifest.length > 0) {
 		const manifestEntry = releaseManifest.find((x) => x.name === name);
 		if (manifestEntry) {
 			crdMeta = [manifestEntry];
 		}
 	}
 
+	if (crdMeta.length === 0) {
+		crdMeta = resources[rest]?.filter((x) => x.name === name) || [];
+	}
+
 	if (crdMeta.length !== 1) {
 		throw error(404, 'Invalid resource name');
 	}
 
-	const version = crdMeta[0].versions[0].name;
+	const version = getLatestVersion(crdMeta[0]);
+	if (!version) {
+		throw error(404, 'No version available for resource');
+	}
 	const releaseParam = requestedRelease ? `?release=${requestedRelease}` : '';
 	throw redirect(307, `/${name}/${version}${releaseParam}`);
 };

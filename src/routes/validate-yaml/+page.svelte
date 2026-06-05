@@ -5,6 +5,7 @@
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig } from '$lib/structure';
 	import type { ErrorObject } from 'ajv';
+	import { getLatestVersion } from '$lib/versions';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 
@@ -31,37 +32,9 @@
 	// Simple in-memory cache for manifests
 	const manifestCache: Map<string, any> = new Map();
 
-	function parseVersionName(versionName: string) {
-		const m = /^v(\d+)(?:(alpha|beta)(\d+)?)?$/.exec(versionName || '');
-		if (!m) {
-			return { major: -1, stage: -1, stageNum: -1, raw: versionName };
-		}
-
-		const stage = m[2] === 'alpha' ? 1 : m[2] === 'beta' ? 2 : 3;
-		const stageNum = Number(m[3] || 0);
-		return { major: Number(m[1]), stage, stageNum, raw: versionName };
-	}
-
-	function compareVersionDesc(a: string, b: string) {
-		const pa = parseVersionName(a);
-		const pb = parseVersionName(b);
-		if (pa.major !== pb.major) return pb.major - pa.major;
-		if (pa.stage !== pb.stage) return pb.stage - pa.stage;
-		if (pa.stageNum !== pb.stageNum) return pb.stageNum - pa.stageNum;
-		return pb.raw.localeCompare(pa.raw);
-	}
-
 	function formatVersionLabel(versionEntry: any) {
 		if (!versionEntry?.name) return '';
 		return versionEntry.deprecated ? `${versionEntry.name} (deprecated)` : versionEntry.name;
-	}
-
-	function getLatestVersion(resourceEntry: any): string {
-		const versions = Array.isArray(resourceEntry?.versions) ? resourceEntry.versions : [];
-		const nonDeprecated = versions.filter((v: any) => v?.name && !v?.deprecated);
-		const target = nonDeprecated.length > 0 ? nonDeprecated : versions.filter((v: any) => v?.name);
-		const sorted = target.map((v: any) => v.name).sort(compareVersionDesc);
-		return sorted[0] || '';
 	}
 
 	function getErrorTone(error: ErrorObject) {
