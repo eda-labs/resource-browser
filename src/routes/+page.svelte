@@ -7,6 +7,7 @@ import { goto } from '$app/navigation';
 // AnimatedBackground is provided by the layout and imported dynamically there to improve LCP
 	import PageCredits from '$lib/components/PageCredits.svelte';
 	import HomepageWelcome from '$lib/components/HomepageWelcome.svelte';
+	import BrowseCatalog from '$lib/components/BrowseCatalog.svelte';
 	import Render from '$lib/components/Render.svelte';
 	// Avoid importing DiffRender on the home page — it is only useful on detail pages and is lazily loaded there
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
@@ -37,19 +38,6 @@ import { goto } from '$app/navigation';
 			);
 		}
 	);
-	let browseTypeFilter: 'all' | 'state' | 'config' = 'all';
-	$: browseResourceList = $crdMetaStore.filter((res) => {
-		const query = $resourceSearch.trim().toLowerCase();
-		if (query) {
-			const terms = query.split(/\s+/);
-			const haystack = `${res.name} ${res.kind} ${res.group}`.toLowerCase();
-			if (!terms.every((term) => haystack.includes(term))) return false;
-		}
-		if (browseTypeFilter === 'state') return res.name.toLowerCase().includes('states');
-		if (browseTypeFilter === 'config') return !res.name.toLowerCase().includes('states');
-		return true;
-	});
-
 	// Group releases by major version (e.g., 25 -> v25)
 	// Add a `showMore` property to each group for dropdown toggles.
 	// Use numeric version comparison to ensure newest releases sort first (by major, minor, patch).
@@ -318,6 +306,12 @@ import { goto } from '$app/navigation';
 		goto('/', { replaceState: true });
 	}
 
+	async function handleBrowseReleaseChange(release: EdaRelease) {
+		selectedRelease.set(release);
+		await loadCrdsForRelease(release);
+		goto(`/?browse=true&release=${release.name}`, { replaceState: true, keepFocus: true });
+	}
+
 	async function handleHomeResourceClick(resourceName: string) {
 		// Ensure we have the manifest for the selected release and pick a version that exists in this release
 		const manifest = await loadCrdsForRelease($selectedRelease);
@@ -469,12 +463,12 @@ import { goto } from '$app/navigation';
 </svelte:head>
 
 <div
-	class="relative flex flex-col {showBrowseMode || selectedResource
+	class="relative flex flex-col {selectedResource
 		? 'pt-14 md:pt-16 lg:h-screen lg:overflow-hidden'
 		: ''}"
 >
 	<div class="relative z-10 flex flex-1 flex-col lg:flex-row">
-		{#if showBrowseMode || selectedResource}
+		{#if selectedResource}
 			<button
 				on:click={toggleMobileMenu}
 				class="no-blur fixed top-4 left-6 z-60 rounded-lg bg-blue-600 p-2 text-white shadow-xl"
@@ -552,7 +546,7 @@ import { goto } from '$app/navigation';
 				</div>
 			</div>
 		{/if}
-		{#if mobileMenuOpen && (showBrowseMode || selectedResource)}<button
+		{#if mobileMenuOpen && selectedResource}<button
 				class="fixed inset-0 z-30 bg-black/50 lg:hidden"
 				on:click={() => (mobileMenuOpen = false)}
 				aria-label="Close"
@@ -569,76 +563,14 @@ import { goto } from '$app/navigation';
 					onBrowseRelease={enterBrowseMode}
 				/>
 			{:else if showBrowseMode && !selectedResource}
-				<div class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:pl-72">
-					<div class="mx-auto max-w-5xl">
-						<div class="homepage-browse-header mb-6">
-							<div>
-								<p class="text-xs font-semibold tracking-wide text-blue-600 uppercase dark:text-blue-400">
-									{$selectedRelease.label}
-								</p>
-								<h1 class="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-									Browse resources
-								</h1>
-								<p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-									{browseResourceList.length} CRD{browseResourceList.length !== 1 ? 's' : ''} available
-								</p>
-							</div>
-							<button type="button" on:click={exitBrowseMode} class="homepage-browse-back">
-								← Home
-							</button>
-						</div>
-
-						<div class="homepage-card mb-4 p-4">
-							<input
-								type="search"
-								placeholder="Filter resources by name, kind, or group…"
-								bind:value={$resourceSearch}
-								class="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
-							/>
-							<div class="mt-3 flex flex-wrap gap-2">
-								{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
-									<button
-										type="button"
-										on:click={() => (browseTypeFilter = chip.id as typeof browseTypeFilter)}
-										class="homepage-filter-chip {browseTypeFilter === chip.id ? 'is-active' : ''}"
-									>
-										{chip.label}
-									</button>
-								{/each}
-							</div>
-						</div>
-
-						<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-							{#each browseResourceList as resDef}
-								<button
-									type="button"
-									on:click={() => handleHomeResourceClick(resDef.name)}
-									class="homepage-browse-item group text-left"
-								>
-									<div class="flex items-start justify-between gap-2">
-										<div class="min-w-0">
-											<p class="truncate text-sm font-semibold text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
-												{resDef.kind || resDef.name.split('.')[0]}
-											</p>
-											<p class="truncate font-mono text-xs text-slate-500 dark:text-slate-400">
-												{resDef.name.split('.').slice(1).join('.')}
-											</p>
-										</div>
-										{#if resDef.versions.length > 0}
-											<span class="homepage-tag-version shrink-0">
-												{getLatestVersion(resDef)}
-											</span>
-										{/if}
-									</div>
-								</button>
-							{:else}
-								<p class="col-span-full py-8 text-center text-sm text-slate-500 dark:text-slate-400">
-									No resources match your filter.
-								</p>
-							{/each}
-						</div>
-					</div>
-				</div>
+				<BrowseCatalog
+					allResources={$crdMetaStore}
+					selectedRelease={$selectedRelease}
+					allReleases={releasesConfig.releases}
+					onReleaseChange={handleBrowseReleaseChange}
+					onResourceClick={handleHomeResourceClick}
+					onExitBrowse={exitBrowseMode}
+				/>
 			{:else if loading}
 				<div class="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-800">
 					<div class="text-center">
@@ -815,7 +747,9 @@ import { goto } from '$app/navigation';
 		</div>
 	</div>
 
-	<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-		<PageCredits />
-	</div>
+	{#if !showBrowseMode || selectedResource}
+		<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+			<PageCredits />
+		</div>
+	{/if}
 </div>
