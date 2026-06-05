@@ -294,7 +294,7 @@
 							>{$selectedRelease.name}</span
 						>
 						{#if $selectedRelease.default}
-							<span class="homepage-default-tag homepage-default-tag--hero">default</span>
+							<span class="homepage-default-tag homepage-default-tag--hero">latest</span>
 						{/if}
 					</div>
 				</div>
@@ -344,7 +344,7 @@
 									<span
 										class="homepage-default-tag {isSelected
 											? 'homepage-default-tag--on-active'
-											: 'homepage-default-tag--pill'}">default</span
+											: 'homepage-default-tag--pill'}">latest</span
 									>
 								{/if}
 							</button>

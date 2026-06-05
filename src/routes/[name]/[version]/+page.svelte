@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { derived, writable } from 'svelte/store';
-	import { onMount, onDestroy } from 'svelte';
-	// Ajv and js-yaml are used only by validation flow; load dynamically to reduce initial bundle
-	import type { ErrorObject } from 'ajv';
+	import { onMount } from 'svelte';
 
 	import PageCredits from '$lib/components/PageCredits.svelte';
 	import TopHeader from '$lib/components/TopHeader.svelte';
@@ -122,7 +119,7 @@
 	}
 
 	// View mode state - start with schema view showing both spec and status
-	let viewMode: 'schema' | 'compare' | 'validate' = 'schema';
+	let viewMode: 'schema' | 'compare' = 'schema';
 	let specExpanded = true;
 	let statusExpanded = true;
 
@@ -136,11 +133,6 @@
 		}
 		return map;
 	})();
-
-	let yamlInput = '';
-	let validationErrors: ErrorObject[] = [];
-	let isValidating = false;
-	let validationResult: 'valid' | 'invalid' | null = null;
 
 	// Comparison state
 	let compareVersion: string | null = null;
@@ -194,151 +186,6 @@
 		} else {
 			expandAll.set(true);
 		}
-	}
-
-	async function validateYaml() {
-		const [{ default: Ajv }] = await Promise.all([import('ajv')]);
-		const yamlLib = (await import('js-yaml')).default;
-		if (!yamlInput.trim()) {
-			validationErrors = [];
-			validationResult = null;
-			return;
-		}
-
-		isValidating = true;
-		validationErrors = [];
-		validationResult = null;
-
-		try {
-			const yamlDocs = yamlInput.split(/^---$/m).filter((doc) => doc.trim());
-			const parsedDocs: any[] = [];
-
-			for (const doc of yamlDocs) {
-				try {
-					const parsed = yamlLib.load(doc.trim());
-					if (parsed) {
-						parsedDocs.push(parsed);
-					}
-				} catch (e) {
-					const allDocs = yamlLib.loadAll(doc.trim());
-					parsedDocs.push(...allDocs.filter((d) => d !== null && d !== undefined));
-				}
-			}
-
-			if (parsedDocs.length === 0) {
-				const allDocs = yamlLib.loadAll(yamlInput);
-				parsedDocs.push(...allDocs.filter((d) => d !== null && d !== undefined));
-			}
-
-			if (parsedDocs.length === 0) {
-				validationErrors = [
-					{
-						message: 'No valid YAML documents found',
-						instancePath: '',
-						schemaPath: '',
-						keyword: 'format',
-						params: {}
-					} as ErrorObject
-				];
-				validationResult = 'invalid';
-				isValidating = false;
-				return;
-			}
-
-			if (!spec || !spec.properties) {
-				validationErrors = [
-					{
-						message: 'No schema found in CRD for validation',
-						instancePath: '',
-						schemaPath: '',
-						keyword: 'schema',
-						params: {}
-					} as ErrorObject
-				];
-				validationResult = 'invalid';
-				isValidating = false;
-				return;
-			}
-
-			const ajv = new Ajv({
-				allErrors: true,
-				verbose: true,
-				strict: false,
-				validateFormats: false
-			});
-
-			let valid = true;
-			const errors: ErrorObject[] = [];
-
-			parsedDocs.forEach((parsedYaml, index) => {
-				const docPrefix = parsedDocs.length > 1 ? `[Document ${index + 1}] ` : '';
-
-				if (parsedYaml.spec && spec.properties.spec) {
-					const specValidator = ajv.compile(spec.properties.spec);
-					if (!specValidator(parsedYaml.spec)) {
-						valid = false;
-						const docErrors = (specValidator.errors || []).map((err) => ({
-							...err,
-							message: `${docPrefix}${err.message}`
-						}));
-						errors.push(...docErrors);
-					}
-				} else if (!parsedYaml.spec && spec.properties.spec) {
-					errors.push({
-						message: `${docPrefix}Missing required 'spec' field`,
-						instancePath: '',
-						schemaPath: '',
-						keyword: 'required',
-						params: { missingProperty: 'spec' }
-					} as ErrorObject);
-					valid = false;
-				}
-
-				if (parsedYaml.status && status && status.properties) {
-					const statusValidator = ajv.compile(status);
-					if (!statusValidator(parsedYaml.status)) {
-						valid = false;
-						const docErrors = (statusValidator.errors || []).map((err) => ({
-							...err,
-							message: `${docPrefix}${err.message}`
-						}));
-						errors.push(...docErrors);
-					}
-				}
-			});
-
-			if (valid) {
-				validationResult = 'valid';
-				if (parsedDocs.length > 1) {
-					validationErrors = [
-						{
-							message: `✓ Successfully validated ${parsedDocs.length} YAML documents`,
-							instancePath: '',
-							schemaPath: '',
-							keyword: 'success',
-							params: {}
-						} as ErrorObject
-					];
-				}
-			} else {
-				validationErrors = errors;
-				validationResult = 'invalid';
-			}
-		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : String(error);
-			validationErrors = [
-				{
-					message: `YAML parsing error: ${errorMessage}`,
-					instancePath: '',
-					schemaPath: '',
-					keyword: 'format',
-					params: {}
-				} as ErrorObject
-			];
-			validationResult = 'invalid';
-		}
-
-		isValidating = false;
 	}
 
 	async function handleVersionChange() {
@@ -421,9 +268,6 @@
 		compareRelease = null;
 		comparisonResult = null;
 		viewMode = 'schema';
-		yamlInput = '';
-		validationResult = null;
-		validationErrors = [];
 	}
 </script>
 
@@ -640,81 +484,6 @@
 											</div>
 										</div>
 									{/each}
-								</div>
-							{/if}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Validate view -->
-				{#if viewMode === 'validate'}
-					<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-blue-900/40 dark:bg-[#0f2a48]/88">
-						<div class="border-b border-slate-200 px-4 py-4 sm:px-5 dark:border-slate-700">
-							<h2 class="text-sm font-semibold text-slate-900 dark:text-white">Validate YAML</h2>
-							<p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-								Check a manifest against the {kind} schema ({versionOnFocus})
-							</p>
-						</div>
-						<div class="space-y-4 p-4 sm:p-5">
-							<div>
-								<label for="yaml-input" class="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-400">
-									YAML configuration
-								</label>
-								<textarea
-									id="yaml-input"
-									bind:value={yamlInput}
-									placeholder="apiVersion: ...&#10;kind: ...&#10;metadata:&#10;  name: ...&#10;spec:&#10;  ..."
-									rows="12"
-									class="w-full rounded-lg border border-slate-200 bg-white p-3 font-mono text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500"
-								></textarea>
-							</div>
-							<div class="flex justify-end">
-								<button
-									type="button"
-									on:click={validateYaml}
-									disabled={isValidating || !yamlInput.trim()}
-									class="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-								>
-									{isValidating ? 'Validating…' : 'Validate YAML'}
-								</button>
-							</div>
-
-							{#if validationResult === 'valid'}
-								<div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-900/20">
-									<div class="flex items-start gap-3">
-										<svg class="mt-0.5 h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-										</svg>
-										<div>
-											<p class="font-medium text-emerald-900 dark:text-emerald-300">Valid configuration</p>
-											<p class="mt-1 text-sm text-emerald-800 dark:text-emerald-400">Your YAML matches the schema requirements.</p>
-										</div>
-									</div>
-								</div>
-							{/if}
-
-							{#if validationResult === 'invalid' && validationErrors.length > 0}
-								<div class="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-									<div class="flex items-start gap-3">
-										<svg class="mt-0.5 h-5 w-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-										</svg>
-										<div class="min-w-0 flex-1">
-											<p class="mb-2 font-medium text-red-900 dark:text-red-300">
-												Validation errors ({validationErrors.length})
-											</p>
-											<ul class="space-y-2">
-												{#each validationErrors as err}
-													<li class="text-sm text-red-800 dark:text-red-400">
-														{#if err.instancePath}
-															<span class="mr-2 rounded bg-red-100 px-2 py-0.5 font-mono text-xs dark:bg-red-900/30">{err.instancePath}</span>
-														{/if}
-														{err.message}
-													</li>
-												{/each}
-											</ul>
-										</div>
-									</div>
 								</div>
 							{/if}
 						</div>

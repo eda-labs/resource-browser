@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { writable, derived } from 'svelte/store';
 	import { sidebarOpen, mobileSidebarOpen } from '$lib/store';
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import yaml from 'js-yaml';
@@ -12,6 +13,14 @@
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 	const defaultRelease =
 		releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
+
+	function releaseFromParam(param: string | null): EdaRelease {
+		if (param) {
+			const found = releasesConfig.releases.find((r) => r.name === param);
+			if (found) return found;
+		}
+		return defaultRelease;
+	}
 
 	export const selectedRelease = writable<EdaRelease>(defaultRelease);
 	export const crdMetaStore = writable<CrdResource[]>([]);
@@ -78,17 +87,17 @@
 		}
 	);
 
-	onMount(() => {
-		// Check if a specific release is requested
-		const urlParams = new URLSearchParams(window.location.search);
-		const releaseParam = urlParams.get('release');
-		if (releaseParam) {
-			const foundRelease = releasesConfig.releases.find((r) => r.name === releaseParam);
-			if (foundRelease) {
-				selectedRelease.set(foundRelease);
-			}
+	let lastSyncedReleaseParam: string | null | undefined = undefined;
+
+	$: if (browser) {
+		const param = $page.url.searchParams.get('release');
+		if (param !== lastSyncedReleaseParam) {
+			lastSyncedReleaseParam = param;
+			const release = releaseFromParam(param);
+			selectedRelease.set(release);
+			void loadCrdsForRelease(release);
 		}
-	});
+	}
 
 	async function handleReleaseChange(event: Event) {
 		const select = event.target as HTMLSelectElement;
@@ -277,7 +286,7 @@
 				class="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
 			>
 				{#each releasesConfig.releases as release}
-					<option value={release.name}>{release.label}{release.default ? ' (Default)' : ''}</option>
+					<option value={release.name}>{release.label}{release.default ? ' (Latest)' : ''}</option>
 				{/each}
 			</select>
 		</div>

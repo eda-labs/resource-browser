@@ -97,7 +97,7 @@
 			>
 				{#each allReleases as release}
 					<option value={release.name}>
-						{release.label}{release.default ? ' (Default)' : ''}
+						{release.label}{release.default ? ' (Latest)' : ''}
 					</option>
 				{/each}
 			</select>
