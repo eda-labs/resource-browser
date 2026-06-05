@@ -25,11 +25,18 @@
 	let highlightedIndex = 0;
 	let resourceTypeFilter: 'all' | 'state' | 'config' = 'all';
 
+	$: focusedMajorGroup = `v${String($selectedRelease.name).split('.')[0]}`;
+
+	$: activeGroupReleases =
+		groupedReleases.find((g) => g.label === focusedMajorGroup)?.releases ??
+		groupedReleases[0]?.releases ??
+		[];
+
 	const quickActions = [
 		{
 			id: 'browse',
 			label: 'Browse catalog',
-			description: 'Open full CRD list for selected release',
+			description: '',
 			primary: true,
 			icon: 'M4 6h16M4 10h16M4 14h16M4 18h16'
 		},
@@ -121,6 +128,15 @@
 
 	async function handleReleaseClick(release: EdaRelease) {
 		await onReleaseSelect(release);
+	}
+
+	async function handleMajorSelect(label: string) {
+		const group = groupedReleases.find((g) => g.label === label);
+		if (!group) return;
+		const current = group.releases.find((r) => r.name === $selectedRelease.name);
+		if (current) return;
+		const next = group.releases.find((r) => r.default) ?? group.releases[0];
+		if (next) await handleReleaseClick(next);
 	}
 
 	function handleQuickAction(action: (typeof quickActions)[number]) {
@@ -277,17 +293,6 @@
 			</div>
 		</section>
 
-		<section
-			class="homepage-stats border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
-			aria-label="Catalog statistics"
-		>
-			<div class="homepage-stat">
-				<span class="homepage-stat-value text-slate-900 dark:text-slate-100">{totalReleases}</span
-				>
-				<span class="homepage-stat-label text-slate-500 dark:text-slate-400">EDA releases</span>
-			</div>
-		</section>
-
 		<div class="homepage-workspace">
 			<section
 				class="homepage-panel homepage-releases-panel border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
@@ -303,37 +308,59 @@
 						EDA Releases
 					</h2>
 					<p class="homepage-panel-desc text-slate-500 dark:text-slate-400">
-						Select a release to load its CRD manifest
+						Viewing <span class="homepage-mono text-slate-700 dark:text-slate-300"
+							>{$selectedRelease.name}</span
+						>
+						<span class="homepage-panel-desc-sep" aria-hidden="true">·</span>
+						{totalReleases} release{totalReleases !== 1 ? 's' : ''} available
 					</p>
 				</div>
 
-				<div class="homepage-release-list-wrap">
-					{#each groupedReleases as group}
-						<div class="homepage-release-group">
-							<h3 class="homepage-group-label text-slate-500 dark:text-slate-400">
-								{group.label}
-							</h3>
-							<ul class="homepage-release-list">
-								{#each group.releases as release}
-									<li>
-										<button
-											type="button"
-											class="homepage-release-item {$selectedRelease.name === release.name
-												? 'is-selected'
-												: ''}"
-											on:click={() => handleReleaseClick(release)}
-											aria-pressed={$selectedRelease.name === release.name}
-										>
-											<span class="homepage-release-version">{release.name}</span>
-											{#if release.default}
-												<span class="homepage-default-tag">default</span>
-											{/if}
-										</button>
-									</li>
-								{/each}
-							</ul>
+				<div class="homepage-release-picker">
+					{#if groupedReleases.length > 1}
+						<div
+							class="homepage-version-segmented"
+							role="tablist"
+							aria-label="Major version"
+						>
+							{#each groupedReleases as group}
+								<button
+									type="button"
+									role="tab"
+									class="homepage-version-segment {focusedMajorGroup === group.label
+										? 'is-active'
+										: ''}"
+									aria-selected={focusedMajorGroup === group.label}
+									on:click={() => handleMajorSelect(group.label)}
+								>
+									{group.label}
+								</button>
+							{/each}
 						</div>
-					{/each}
+					{/if}
+
+					<div
+						class="homepage-release-grid"
+						role="listbox"
+						aria-label="EDA releases for {focusedMajorGroup}"
+					>
+						{#each activeGroupReleases as release}
+							<button
+								type="button"
+								role="option"
+								class="homepage-release-btn {$selectedRelease.name === release.name
+									? 'is-active'
+									: ''}"
+								aria-selected={$selectedRelease.name === release.name}
+								on:click={() => handleReleaseClick(release)}
+							>
+								<span class="homepage-release-name">{release.name}</span>
+								{#if release.default}
+									<span class="homepage-default-tag">default</span>
+								{/if}
+							</button>
+						{/each}
+					</div>
 				</div>
 			</section>
 
@@ -386,7 +413,9 @@
 								>
 								<span
 									class="homepage-action-desc text-slate-500 dark:text-slate-400"
-									>{action.description}</span
+									>{action.id === 'browse'
+										? `Open full CRD catalog for ${$selectedRelease.name}`
+										: action.description}</span
 								>
 							</span>
 							{#if action.primary}
