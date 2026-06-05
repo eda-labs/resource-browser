@@ -8,9 +8,11 @@ import {
 	catalogToNodes,
 	getKindIndex,
 	inferCatalogLinks,
-	inferSchemaLinks
+	inferSchemaLinks,
+	mergeGraphLinks
 } from './inferEdges';
 import type { BuildProgress, DependencyGraph } from './types';
+import { extractSubgraph } from './transitiveClosure';
 
 const FETCH_CONCURRENCY = 10;
 const graphCache = new Map<string, DependencyGraph>();
@@ -18,6 +20,7 @@ const graphCache = new Map<string, DependencyGraph>();
 type ParsedCrdSchema = {
 	spec?: unknown;
 	status?: unknown;
+	metadata?: unknown;
 	description?: string;
 };
 
@@ -45,7 +48,7 @@ async function loadCrdSchema(
 			schema?: {
 				openAPIV3Schema?: {
 					description?: string;
-					properties?: { spec?: unknown; status?: unknown };
+					properties?: { spec?: unknown; status?: unknown; metadata?: unknown };
 				};
 			};
 		};
@@ -53,6 +56,7 @@ async function loadCrdSchema(
 		return {
 			spec: root?.properties?.spec,
 			status: root?.properties?.status,
+			metadata: root?.properties?.metadata,
 			description: root?.description
 		};
 	} catch {
@@ -78,6 +82,45 @@ async function mapConcurrent<T, R>(
 	const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
 	await Promise.all(workers);
 	return results;
+}
+
+export function resolveFocusNodeId(
+	resources: CrdResource[],
+	params: { resource?: string | null; kind?: string | null; group?: string | null }
+): string | null {
+	const { resource, kind, group } = params;
+
+	if (kind && group) {
+		const match = resources.find((r) => r.kind === kind && r.group === group);
+		if (match) return match.name;
+	}
+
+	if (!resource) return null;
+
+	const byName = resources.find((r) => r.name === resource);
+	if (byName) return byName.name;
+
+	const byKind = resources.filter((r) => r.kind === resource);
+	if (byKind.length === 1) return byKind[0].name;
+	if (byKind.length > 1 && group) {
+		const match = byKind.find((r) => r.group === group);
+		if (match) return match.name;
+	}
+
+	const lower = resource.toLowerCase();
+	const byShort = resources.find(
+		(r) =>
+			r.name.split('.')[0].toLowerCase() === lower ||
+			(r.kind && r.kind.toLowerCase() === lower)
+	);
+	return byShort?.name ?? null;
+}
+
+export function buildFocusSubgraph(
+	graph: DependencyGraph,
+	focusNodeId: string
+): DependencyGraph | null {
+	return extractSubgraph(graph, focusNodeId);
 }
 
 export function clearDependencyGraphCache(releaseFolder?: string): void {
@@ -154,7 +197,7 @@ export async function buildDependencyGraph(
 			descriptions.set(res.name, parsed.description);
 		}
 
-		if (parsed?.spec || parsed?.status) {
+		if (parsed?.spec || parsed?.status || parsed?.metadata || parsed?.description) {
 			const entry = catalog.get(res.name);
 			const group = entry?.group ?? res.group;
 			const edges = inferSchemaLinks(
@@ -163,7 +206,11 @@ export async function buildDependencyGraph(
 				parsed.spec,
 				parsed.status,
 				kindIndex,
-				catalog
+				catalog,
+				{
+					metadataSchema: parsed.metadata,
+					rootDescription: parsed.description
+				}
 			);
 			schemaLinks.push(...edges);
 		}
@@ -191,14 +238,9 @@ export async function buildDependencyGraph(
 		message: 'Building dependency graph…'
 	});
 
-	const linkMap = new Map<string, (typeof catalogLinks)[number]>();
-	for (const link of [...catalogLinks, ...schemaLinks]) {
-		linkMap.set(link.id, link);
-	}
-
 	const graph: DependencyGraph = {
 		nodes: catalogToNodes(catalog, versions, descriptions),
-		links: [...linkMap.values()],
+		links: mergeGraphLinks([...catalogLinks, ...schemaLinks]),
 		releaseFolder: release.folder,
 		generatedAt: new Date().toISOString()
 	};
@@ -214,3 +256,5 @@ export async function buildDependencyGraph(
 
 	return graph;
 }
+
+export { extractSubgraph } from './transitiveClosure';

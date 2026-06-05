@@ -3847,3 +3847,35 @@ html:not(.dark) .react-select__menu {
 		color: rgb(147 197 253);
 	}
 }
+
+/* ============================================
+   DEPENDENCY MAP GRAPH
+   ============================================ */
+.dependency-map-graph-shell {
+	font-family: 'NokiaPureText', ui-sans-serif, system-ui, sans-serif;
+}
+
+.dep-map-svg-inner :is(.dep-links path) {
+	transition: stroke 0.18s ease, stroke-opacity 0.18s ease, stroke-width 0.18s ease;
+}
+
+.dep-map-svg-inner :is(.dep-node-shape, .dep-node-ring) {
+	transition: opacity 0.18s ease, stroke-width 0.18s ease;
+}
+
+.dep-map-svg-inner .dep-node-label-group {
+	transition: opacity 0.18s ease;
+}
+
+.dep-map-svg-inner .dep-node-label {
+	font-family: 'NokiaPureText', ui-sans-serif, system-ui, sans-serif;
+	letter-spacing: -0.01em;
+}
+
+.dep-map-svg-inner .dep-node--selected .dep-node-ring {
+	opacity: 1 !important;
+}
+
+.dep-map-svg-inner .dep-node--focus .dep-node-ring {
+	opacity: 0.9 !important;
+}

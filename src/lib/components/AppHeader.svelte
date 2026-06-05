@@ -15,7 +15,12 @@
 		{ href: '/?browse=true', label: 'Catalog', match: (path: string) => path === '/' },
 		{ href: '/spec-search', label: 'Spec Search', match: (path: string) => path.startsWith('/spec-search') },
 		{ href: '/validate-yaml', label: 'Validate YAML', match: (path: string) => path.startsWith('/validate-yaml') },
-		{ href: '/comparison', label: 'Comparison', match: (path: string) => path.startsWith('/comparison') }
+		{ href: '/comparison', label: 'Comparison', match: (path: string) => path.startsWith('/comparison') },
+		{
+			href: '/dependency-map',
+			label: 'Dependency Map',
+			match: (path: string) => path.startsWith('/dependency-map')
+		}
 	] as const;
 
 	function isNavActive(match: (path: string) => boolean): boolean {

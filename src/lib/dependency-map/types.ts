@@ -10,7 +10,16 @@ export type GraphNode = {
 	shortName: string;
 };
 
-export type LinkRelation = 'observes' | 'uses' | 'member' | 'deploys' | 'references';
+export type LinkRelation =
+	| 'observes'
+	| 'deploys'
+	| 'references'
+	| 'member'
+	| 'memberOf'
+	| 'bindsTo'
+	| 'appliesTo'
+	| 'orchestrates'
+	| 'extends';
 
 export type GraphLink = {
 	id: string;
@@ -18,6 +27,8 @@ export type GraphLink = {
 	target: string;
 	rel: LinkRelation;
 	field?: string;
+	reason?: string;
+	confidence?: number;
 };
 
 export type DependencyGraph = {
