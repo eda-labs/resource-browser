@@ -849,7 +849,6 @@
 	}
 
 	:global(.dep-map-page--active) {
-		min-height: 100dvh;
 		display: flex;
 		flex-direction: column;
 	}
@@ -888,7 +887,6 @@
 		display: flex;
 		flex-direction: column;
 		padding: 0.35rem 0.5rem 0.5rem;
-		min-height: calc(100dvh - 12rem);
 	}
 
 	@media (min-width: 768px) {

@@ -18,6 +18,8 @@
 	export let focusNodeId: string | null = null;
 	export let onViewCrd: ((node: GraphNode) => void) | undefined = undefined;
 
+	const INSPECTOR_STORAGE_KEY = 'dep-map-inspector-open';
+
 	let containerEl: HTMLDivElement;
 	let svgEl: SVGSVGElement;
 	let tooltipEl: HTMLDivElement;
@@ -32,6 +34,7 @@
 	let chainMode: ChainMode = 'full';
 	let collapsedRelGroups = new Set<string>();
 	let expandedReasonIds = new Set<string>();
+	let inspectorOpen = true;
 
 	$: palette = getGraphPalette($theme);
 
@@ -221,8 +224,20 @@
 		controller?.zoomOut();
 	}
 
+	function toggleInspector() {
+		inspectorOpen = !inspectorOpen;
+		if (browser) {
+			sessionStorage.setItem(INSPECTOR_STORAGE_KEY, String(inspectorOpen));
+		}
+	}
+
 	onMount(async () => {
 		if (!browser) return;
+
+		const stored = sessionStorage.getItem(INSPECTOR_STORAGE_KEY);
+		if (stored !== null) {
+			inspectorOpen = stored === 'true';
+		}
 
 		const { createGraphController } = await import('./graphController');
 		controller = createGraphController({
@@ -356,6 +371,31 @@
 					Direct only
 				</button>
 			</div>
+
+			<button
+				type="button"
+				class="dep-map-btn dep-map-inspector-toggle"
+				class:dep-map-btn-active={inspectorOpen}
+				on:click={toggleInspector}
+				aria-pressed={inspectorOpen}
+				aria-label={inspectorOpen ? 'Hide inspector panel' : 'Show inspector panel'}
+				title={inspectorOpen ? 'Hide inspector' : 'Show inspector'}
+			>
+				<svg class="dep-map-inspector-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+				</svg>
+				<span class="dep-map-inspector-label">Inspector</span>
+				<svg
+					class="dep-map-inspector-chevron"
+					class:dep-map-inspector-chevron--closed={!inspectorOpen}
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					aria-hidden="true"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+				</svg>
+			</button>
 		</div>
 	</div>
 
@@ -381,7 +421,7 @@
 		</div>
 	</div>
 
-	<div class="dep-map-body">
+	<div class="dep-map-body" class:dep-map-body--panel-hidden={!inspectorOpen}>
 		<div class="dep-map-canvas-wrap" bind:this={containerEl}>
 			{#if !graphReady}
 				<div class="dep-map-canvas-loading" aria-live="polite" aria-busy="true">
@@ -424,7 +464,7 @@
 			</div>
 		</div>
 
-		{#if selectedNode}
+		{#if selectedNode && inspectorOpen}
 			<aside class="dep-map-panel" aria-label="Selected CRD details">
 				<div class="dep-map-panel-header">
 					<div>
@@ -435,7 +475,7 @@
 						type="button"
 						class="dep-map-panel-close"
 						on:click={() => selectNode(null)}
-						aria-label="Close panel"
+						aria-label="Clear selection"
 					>
 						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -807,6 +847,41 @@
 		background: transparent;
 	}
 
+	.dep-map-inspector-toggle {
+		display: none;
+		align-items: center;
+		gap: 0.35rem;
+		margin-left: auto;
+	}
+
+	@media (min-width: 1024px) {
+		.dep-map-inspector-toggle {
+			display: inline-flex;
+		}
+	}
+
+	.dep-map-inspector-icon {
+		width: 0.95rem;
+		height: 0.95rem;
+		flex-shrink: 0;
+	}
+
+	.dep-map-inspector-label {
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.dep-map-inspector-chevron {
+		width: 0.75rem;
+		height: 0.75rem;
+		flex-shrink: 0;
+		transition: transform 0.15s;
+	}
+
+	.dep-map-inspector-chevron--closed {
+		transform: rotate(180deg);
+	}
+
 	.dep-map-legend-strip {
 		display: flex;
 		flex-wrap: wrap;
@@ -855,30 +930,67 @@
 	}
 
 	.dep-map-body {
-		display: grid;
-		grid-template-columns: 1fr;
+		display: flex;
+		flex-direction: column;
 		gap: 0.5rem;
 		flex: 1;
 		min-height: 0;
-		min-height: min(42rem, calc(100dvh - 14rem));
+		min-height: 22rem;
 	}
 
 	@media (min-width: 1024px) {
 		.dep-map-body {
-			grid-template-columns: 1fr min(20rem, 30%);
-			min-height: calc(100dvh - 12rem);
+			flex-direction: row;
+			align-items: stretch;
+			min-height: min(32rem, 52vh);
 		}
 	}
 
 	.dep-map-canvas-wrap {
 		position: relative;
-		min-height: 22rem;
-		height: 100%;
+		flex: 1 1 auto;
+		min-width: 0;
+		min-height: 18rem;
+		width: 100%;
+		aspect-ratio: 2.15 / 1;
+		max-height: min(38vh, 34rem);
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-bg);
 		overflow: hidden;
 		isolation: isolate;
+	}
+
+	@media (min-width: 1024px) {
+		.dep-map-canvas-wrap {
+			aspect-ratio: 2.35 / 1;
+			max-height: min(42vh, 36rem);
+		}
+
+		.dep-map-body--panel-hidden .dep-map-canvas-wrap {
+			max-height: min(44vh, 38rem);
+		}
+	}
+
+	.dep-map-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+		padding: 0.85rem 1rem;
+		border: 1px solid var(--dep-panel-border);
+		border-radius: 0.75rem;
+		background: var(--dep-panel);
+		max-height: 100%;
+		overflow-y: auto;
+	}
+
+	@media (min-width: 1024px) {
+		.dep-map-panel {
+			flex: 0 0 min(15rem, 20vw);
+			width: min(15rem, 20vw);
+			max-width: 15rem;
+			min-width: 13rem;
+		}
 	}
 
 	.dep-map-canvas-loading {
@@ -984,18 +1096,6 @@
 		line-height: 1.35;
 		box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
 		max-width: 16rem;
-	}
-
-	.dep-map-panel {
-		display: flex;
-		flex-direction: column;
-		gap: 0.85rem;
-		padding: 0.85rem 1rem;
-		border: 1px solid var(--dep-panel-border);
-		border-radius: 0.75rem;
-		background: var(--dep-panel);
-		max-height: 100%;
-		overflow-y: auto;
 	}
 
 	.dep-map-panel-header {

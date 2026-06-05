@@ -32,6 +32,13 @@
 	export let onToggleSearchRegex: () => void = () => {};
 	export let onViewCrd: (crd: CrdDiffEntry) => void = () => {};
 
+	function handleCardHeaderKeydown(event: KeyboardEvent, crdName: string) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
+			onToggleCrdExpand(crdName);
+		}
+	}
+
 	$: summaryCounts = {
 		added: report.crds.filter((c) => c.status === 'added').length,
 		removed: report.crds.filter((c) => c.status === 'removed').length,
@@ -203,10 +210,12 @@
 							)}
 							{@const expanded = expandedCrdNames.includes(crd.name)}
 							<article class="comparison-crd-card" class:comparison-crd-card--expanded={expanded}>
-								<button
-									type="button"
+								<div
+									role="button"
+									tabindex="0"
 									class="comparison-crd-card__header"
 									on:click={() => onToggleCrdExpand(crd.name)}
+									on:keydown={(event) => handleCardHeaderKeydown(event, crd.name)}
 									aria-expanded={expanded}
 								>
 									<svg
@@ -261,7 +270,7 @@
 											View CRD
 										</button>
 									{/if}
-								</button>
+								</div>
 
 								{#if expanded}
 									<div class="comparison-crd-card__body">
