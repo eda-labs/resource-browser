@@ -25,27 +25,6 @@
 	let highlightedIndex = 0;
 	let resourceTypeFilter: 'all' | 'state' | 'config' = 'all';
 
-	const tools = [
-		{
-			href: '/comparison',
-			title: 'Release Comparison',
-			description: 'Diff CRD schemas across EDA releases.',
-			icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'
-		},
-		{
-			href: '/spec-search',
-			title: 'Spec Search',
-			description: 'Query paths and fields across all CRDs.',
-			icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-		},
-		{
-			href: '/validate-yaml',
-			title: 'YAML Validation',
-			description: 'Validate manifests against OpenAPI schemas.',
-			icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
-		}
-	];
-
 	const quickActions = [
 		{
 			id: 'browse',
@@ -77,8 +56,6 @@
 		}
 	];
 
-	$: apiGroupCount = new Set($crdMetaStore.map((r) => r.group || r.name.split('.').slice(1).join('.'))).size;
-
 	$: filteredResources = $crdMetaStore
 		.filter((resource) => {
 			const query = heroSearch.trim().toLowerCase();
@@ -92,7 +69,6 @@
 		})
 		.slice(0, 8);
 
-	$: previewResources = $crdMetaStore.slice(0, 6);
 	$: showSearchResults = searchFocused && heroSearch.trim().length > 0;
 
 	$: if (filteredResources.length === 0) {
@@ -162,8 +138,12 @@
 	}
 </script>
 
-<div class="homepage-welcome min-h-full">
-	<header class="homepage-topbar">
+<div
+	class="homepage-welcome min-h-full bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
+>
+	<header
+		class="homepage-topbar sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95"
+	>
 		<div class="homepage-topbar-inner">
 			<div class="homepage-brand">
 				<img
@@ -173,7 +153,9 @@
 					loading="eager"
 					fetchpriority="high"
 				/>
-				<span class="homepage-brand-title">Nokia EDA Resource Browser</span>
+				<span class="homepage-brand-title text-slate-900 dark:text-slate-100"
+					>EDA Resource Browser</span
+				>
 			</div>
 			<Theme />
 		</div>
@@ -181,20 +163,22 @@
 
 	<main class="homepage-main">
 		<section class="homepage-hero" aria-labelledby="hero-heading">
-			<p class="homepage-hero-kicker">Nokia Event-Driven Automation</p>
-			<h1 id="hero-heading" class="homepage-title">EDA CRD Schema Explorer</h1>
-			<p class="homepage-subtitle">
-				Search, browse, and validate Custom Resource Definitions across EDA releases — built for
-				network operators and platform engineers.
+			<h1 id="hero-heading" class="homepage-title text-slate-900 dark:text-slate-100">
+				EDA CRD Schema Explorer
+			</h1>
+			<p class="homepage-subtitle text-slate-600 dark:text-slate-400">
+				Search, browse, and validate CRD schemas across EDA releases.
 			</p>
 		</section>
 
 		<section class="homepage-search-zone" aria-labelledby="search-heading">
 			<label for="homepage-search" class="sr-only">Search CRD resources</label>
 			<div class="relative">
-				<div class="homepage-search-input">
+				<div
+					class="homepage-search-input border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-800"
+				>
 					<svg
-						class="homepage-search-icon"
+						class="homepage-search-icon text-slate-400 dark:text-slate-500"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
@@ -215,39 +199,58 @@
 						on:blur={closeSearchResults}
 						on:keydown={handleSearchKeydown}
 						placeholder="Search {$crdMetaStore.length > 0 ? $crdMetaStore.length + '+' : '500+'} CRDs by name, kind, or group…"
-						class="homepage-search-field"
+						class="homepage-search-field text-slate-900 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
 						autocomplete="off"
 						aria-expanded={showSearchResults}
 						aria-controls="homepage-search-results"
 					/>
-					<kbd class="homepage-kbd hidden sm:inline" aria-hidden="true">↵</kbd>
+					<kbd
+						class="homepage-kbd hidden border-slate-200 bg-slate-100 text-slate-500 sm:inline dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400"
+						aria-hidden="true">↵</kbd
+					>
 				</div>
 
 				{#if showSearchResults}
-					<ul id="homepage-search-results" role="listbox" class="homepage-results">
+					<ul
+						id="homepage-search-results"
+						role="listbox"
+						class="homepage-results border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-800"
+					>
 						{#if filteredResources.length === 0}
-							<li class="homepage-results-empty">No resources match “{heroSearch}”</li>
+							<li class="homepage-results-empty text-slate-500 dark:text-slate-400">
+								No resources match “{heroSearch}”
+							</li>
 						{:else}
 							{#each filteredResources as resource, i}
 								<li role="option" aria-selected={i === highlightedIndex}>
 									<button
 										type="button"
 										on:mousedown|preventDefault={() => pickResource(resource)}
-										class="homepage-result-row {i === highlightedIndex ? 'is-active' : ''}"
+										class="homepage-result-row {i === highlightedIndex
+											? 'is-active bg-slate-100 dark:bg-slate-700'
+											: ''}"
 									>
 										<div class="min-w-0 flex-1">
 											<div class="flex items-center gap-2">
-												<span class="homepage-result-name">
+												<span
+													class="homepage-result-name text-slate-900 dark:text-slate-100"
+												>
 													{resource.kind || shortName(resource.name)}
 												</span>
 												{#if isDeprecated(resource)}
 													<span class="homepage-tag-warning">Deprecated</span>
 												{/if}
 											</div>
-											<p class="homepage-result-group">{groupName(resource.name)}</p>
+											<p class="homepage-result-group text-slate-500 dark:text-slate-400">
+												{groupName(resource.name)}
+											</p>
 										</div>
 										{#if resource.versions.length > 0}
-											<span class="homepage-tag-version">{getLatestVersion(resource)}</span>
+											<span
+												class="homepage-tag-version bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+											>
+												{getLatestVersion(resource)}
+											</span>
 										{/if}
 									</button>
 								</li>
@@ -258,12 +261,15 @@
 			</div>
 
 			<div class="homepage-filters" role="group" aria-label="Resource type filter">
-				<span class="homepage-filters-label">Filter</span>
+				<span class="homepage-filters-label text-slate-500 dark:text-slate-400">Filter</span>
 				{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
 					<button
 						type="button"
 						on:click={() => (resourceTypeFilter = chip.id as typeof resourceTypeFilter)}
-						class="homepage-filter-chip {resourceTypeFilter === chip.id ? 'is-active' : ''}"
+						class="homepage-filter-chip border-slate-200 text-slate-600 dark:border-slate-600 dark:text-slate-300 {resourceTypeFilter ===
+						chip.id
+							? 'is-active'
+							: ''}"
 					>
 						{chip.label}
 					</button>
@@ -271,84 +277,83 @@
 			</div>
 		</section>
 
-		<section class="homepage-stats" aria-label="Catalog statistics">
+		<section
+			class="homepage-stats border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+			aria-label="Catalog statistics"
+		>
 			<div class="homepage-stat">
-				<span class="homepage-stat-value">{totalReleases}</span>
-				<span class="homepage-stat-label">Releases</span>
-			</div>
-			<div class="homepage-stat-divider" aria-hidden="true"></div>
-			<div class="homepage-stat">
-				<span class="homepage-stat-value">{$crdMetaStore.length}</span>
-				<span class="homepage-stat-label">CRDs · {$selectedRelease.name}</span>
-			</div>
-			<div class="homepage-stat-divider" aria-hidden="true"></div>
-			<div class="homepage-stat">
-				<span class="homepage-stat-value">{apiGroupCount}</span>
-				<span class="homepage-stat-label">API groups</span>
+				<span class="homepage-stat-value text-slate-900 dark:text-slate-100">{totalReleases}</span
+				>
+				<span class="homepage-stat-label text-slate-500 dark:text-slate-400">EDA releases</span>
 			</div>
 		</section>
 
 		<div class="homepage-workspace">
-			<section class="homepage-panel homepage-releases-panel" aria-labelledby="releases-heading">
-				<div class="homepage-panel-header">
-					<h2 id="releases-heading" class="homepage-panel-title">EDA Releases</h2>
-					<p class="homepage-panel-desc">Select a release to load its CRD manifest</p>
+			<section
+				class="homepage-panel homepage-releases-panel border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+				aria-labelledby="releases-heading"
+			>
+				<div
+					class="homepage-panel-header border-b border-slate-200 dark:border-slate-700"
+				>
+					<h2
+						id="releases-heading"
+						class="homepage-panel-title text-slate-900 dark:text-slate-100"
+					>
+						EDA Releases
+					</h2>
+					<p class="homepage-panel-desc text-slate-500 dark:text-slate-400">
+						Select a release to load its CRD manifest
+					</p>
 				</div>
 
-				<div class="homepage-release-table-wrap">
-					<table class="homepage-release-table">
-						<thead>
-							<tr>
-								<th scope="col">Version</th>
-								<th scope="col">Label</th>
-								<th scope="col" class="text-right">CRDs</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each groupedReleases as group}
-								<tr class="homepage-release-group-row">
-									<td colspan="3">{group.label}</td>
-								</tr>
+				<div class="homepage-release-list-wrap">
+					{#each groupedReleases as group}
+						<div class="homepage-release-group">
+							<h3 class="homepage-group-label text-slate-500 dark:text-slate-400">
+								{group.label}
+							</h3>
+							<ul class="homepage-release-list">
 								{#each group.releases as release}
-									<tr
-										class="homepage-release-row {$selectedRelease.name === release.name
-											? 'is-selected'
-											: ''}"
-									>
-										<td>
-											<button
-												type="button"
-												class="homepage-release-select"
-												on:click={() => handleReleaseClick(release)}
-												aria-pressed={$selectedRelease.name === release.name}
-											>
-												<span class="homepage-release-version">{release.name}</span>
-												{#if release.default}
-													<span class="homepage-default-tag">default</span>
-												{/if}
-											</button>
-										</td>
-										<td class="homepage-release-label">{release.label}</td>
-										<td class="homepage-release-count text-right">
-											{#if $selectedRelease.name === release.name}
-												<span class="homepage-tag-version">{$crdMetaStore.length}</span>
-											{:else}
-												<span class="homepage-release-count-dash">—</span>
+									<li>
+										<button
+											type="button"
+											class="homepage-release-item {$selectedRelease.name === release.name
+												? 'is-selected'
+												: ''}"
+											on:click={() => handleReleaseClick(release)}
+											aria-pressed={$selectedRelease.name === release.name}
+										>
+											<span class="homepage-release-version">{release.name}</span>
+											{#if release.default}
+												<span class="homepage-default-tag">default</span>
 											{/if}
-										</td>
-									</tr>
+										</button>
+									</li>
 								{/each}
-							{/each}
-						</tbody>
-					</table>
+							</ul>
+						</div>
+					{/each}
 				</div>
 			</section>
 
-			<aside class="homepage-panel homepage-actions-panel" aria-labelledby="actions-heading">
-				<div class="homepage-panel-header">
-					<h2 id="actions-heading" class="homepage-panel-title">Quick actions</h2>
-					<p class="homepage-panel-desc">
-						Selected: <span class="homepage-mono">{$selectedRelease.name}</span>
+			<aside
+				class="homepage-panel homepage-actions-panel border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+				aria-labelledby="actions-heading"
+			>
+				<div
+					class="homepage-panel-header border-b border-slate-200 dark:border-slate-700"
+				>
+					<h2
+						id="actions-heading"
+						class="homepage-panel-title text-slate-900 dark:text-slate-100"
+					>
+						Quick actions
+					</h2>
+					<p class="homepage-panel-desc text-slate-500 dark:text-slate-400">
+						Selected: <span class="homepage-mono text-slate-900 dark:text-slate-200"
+							>{$selectedRelease.name}</span
+						>
 					</p>
 				</div>
 
@@ -356,10 +361,15 @@
 					{#each quickActions as action}
 						<button
 							type="button"
-							class="homepage-action-btn {action.primary ? 'is-primary' : ''}"
+							class="homepage-action-btn border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700/80 {action.primary
+								? 'is-primary'
+								: ''}"
 							on:click={() => handleQuickAction(action)}
 						>
-							<span class="homepage-action-icon" aria-hidden="true">
+							<span
+								class="homepage-action-icon bg-slate-100 text-blue-600 dark:bg-slate-900 dark:text-blue-400"
+								aria-hidden="true"
+							>
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
 										stroke-linecap="round"
@@ -370,8 +380,14 @@
 								</svg>
 							</span>
 							<span class="homepage-action-text">
-								<span class="homepage-action-label">{action.label}</span>
-								<span class="homepage-action-desc">{action.description}</span>
+								<span
+									class="homepage-action-label text-slate-900 dark:text-slate-100"
+									>{action.label}</span
+								>
+								<span
+									class="homepage-action-desc text-slate-500 dark:text-slate-400"
+									>{action.description}</span
+								>
 							</span>
 							{#if action.primary}
 								<svg
@@ -394,60 +410,5 @@
 				</div>
 			</aside>
 		</div>
-
-		{#if previewResources.length > 0}
-			<section class="homepage-resource-strip" aria-labelledby="preview-heading">
-				<div class="homepage-strip-header">
-					<h2 id="preview-heading" class="homepage-strip-title">
-						Top resources · {$selectedRelease.name}
-					</h2>
-					<button
-						type="button"
-						class="homepage-strip-link"
-						on:click={() => onBrowseRelease($selectedRelease)}
-					>
-						View all →
-					</button>
-				</div>
-				<div class="homepage-resource-chips">
-					{#each previewResources as resource}
-						<button
-							type="button"
-							class="homepage-resource-chip"
-							on:click={() => onResourceSelect(resource.name)}
-							title="{resource.kind || shortName(resource.name)} · {groupName(resource.name)}"
-						>
-							<span class="homepage-chip-kind">{resource.kind || shortName(resource.name)}</span>
-							<span class="homepage-chip-group">{groupName(resource.name)}</span>
-							{#if resource.versions.length > 0}
-								<span class="homepage-chip-version">{getLatestVersion(resource)}</span>
-							{/if}
-						</button>
-					{/each}
-				</div>
-			</section>
-		{/if}
-
-		<section class="homepage-section" aria-labelledby="tools-heading">
-			<h2 id="tools-heading" class="homepage-section-label">Operator tools</h2>
-			<div class="homepage-tools-grid">
-				{#each tools as tool}
-					<button type="button" on:click={() => goto(tool.href)} class="homepage-tool-card">
-						<div class="homepage-tool-icon">
-							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d={tool.icon}
-								/>
-							</svg>
-						</div>
-						<h3 class="homepage-tool-title">{tool.title}</h3>
-						<p class="homepage-tool-desc">{tool.description}</p>
-					</button>
-				{/each}
-			</div>
-		</section>
 	</main>
 </div>

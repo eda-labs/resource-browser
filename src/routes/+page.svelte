@@ -558,8 +558,7 @@ import { goto } from '$app/navigation';
 				aria-label="Close"
 			></button>{/if}
 
-		<div id="main-scroll" class="has-header-img relative flex flex-1 flex-col overflow-y-auto">
-			<!-- Background is provided by CSS class .has-header-img; single background only (keep consistent with other pages) -->
+		<div id="main-scroll" class="relative flex flex-1 flex-col overflow-y-auto">
 			{#if !selectedResource && !showBrowseMode}
 				<HomepageWelcome
 					bind:groupedReleases
