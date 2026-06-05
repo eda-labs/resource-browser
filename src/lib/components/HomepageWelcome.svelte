@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import Theme from '$lib/components/Theme.svelte';
+	import AppHeader from '$lib/components/AppHeader.svelte';
 	import type { CrdResource, EdaRelease } from '$lib/structure';
 	import { getLatestVersion } from '$lib/versions';
 	import type { Writable } from 'svelte/store';
@@ -156,25 +156,7 @@
 <div
 	class="homepage-welcome page-shell min-h-full bg-gray-50 text-gray-900 dark:text-gray-100"
 >
-	<header
-		class="homepage-topbar app-mobile-header sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-blue-900/40 dark:bg-[#0a1e38]/92 dark:backdrop-blur-md"
-	>
-		<div class="homepage-topbar-inner">
-			<div class="homepage-brand">
-				<img
-					src="/images/eda.svg"
-					alt=""
-					class="homepage-logo"
-					loading="eager"
-					fetchpriority="high"
-				/>
-				<span class="homepage-brand-title text-slate-900 dark:text-slate-100"
-					>EDA Resource Browser</span
-				>
-			</div>
-			<Theme />
-		</div>
-	</header>
+	<AppHeader />
 
 	<main class="homepage-main">
 		<section class="homepage-hero" aria-labelledby="hero-heading">

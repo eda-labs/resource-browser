@@ -450,7 +450,7 @@
 	/>
 
 	<div class="page-shell relative flex min-h-full flex-col text-gray-900 dark:text-gray-100">
-		<main class="flex-1 px-2 pt-2 pb-8 sm:px-3 sm:pt-3 md:px-4 md:pt-4">
+		<main class="flex-1 px-3 pt-2 pb-8 sm:px-3 sm:pt-3 md:px-4 md:pt-4">
 			<div class="mx-auto w-full max-w-7xl space-y-4">
 				<ResourceDetailHeader
 					{kind}
@@ -464,7 +464,7 @@
 
 				<!-- Sticky view controls -->
 				<div
-					class="sticky top-14 z-30 -mx-1 rounded-xl border border-slate-200 bg-white/95 px-3 py-3 shadow-sm backdrop-blur-sm sm:top-16 sm:mx-0 sm:px-4 dark:border-blue-900/40 dark:bg-[#0f2a48]/90"
+					class="sticky top-14 z-30 -mx-1 rounded-xl border border-gray-200 bg-white/95 px-3 py-3 shadow-sm backdrop-blur-sm sm:top-16 sm:mx-0 sm:px-4 dark:border-slate-700 dark:bg-slate-900/95"
 				>
 					<ResourceViewTabs
 						{viewMode}
@@ -502,7 +502,7 @@
 								</svg>
 							</button>
 							{#if specExpanded}
-								<div class="overflow-x-auto p-4 sm:p-5">
+								<div class="overflow-x-auto px-3 py-4 sm:p-5">
 									<Render {hash} source="eda" type="spec" data={spec} showType={false} onResourcePage={true} />
 								</div>
 							{/if}
@@ -532,7 +532,7 @@
 								</svg>
 							</button>
 							{#if statusExpanded}
-								<div class="overflow-x-auto p-4 sm:p-5">
+								<div class="overflow-x-auto px-3 py-4 sm:p-5">
 									<Render {hash} source="eda" type="status" data={status} showType={false} onResourcePage={true} />
 								</div>
 							{/if}

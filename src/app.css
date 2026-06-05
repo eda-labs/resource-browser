@@ -123,16 +123,16 @@
 		scroll-behavior: smooth;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		/* Prevent the browser (document) from showing a scrollbar; child containers handle scrolling */
 		overflow: hidden;
+		overflow-x: hidden;
 	}
 
 	body {
 		@apply text-slate-900 antialiased bg-white dark:text-slate-100;
 		font-family: var(--font-nokia), 'Nunito', sans-serif;
 		min-height: 100vh;
-		/* Hide the document scrollbar so child containers manage scrolling */
 		overflow: hidden;
+		overflow-x: hidden;
 	}
 
 	.dark body {
@@ -1468,7 +1468,7 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 
 	@media (max-width: 639px) {
 		.homepage-main {
-			padding: 1rem 0.875rem 3rem;
+			padding: 1rem 1rem 3rem;
 			gap: 1.25rem;
 		}
 

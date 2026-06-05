@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Theme from '$lib/components/Theme.svelte';
+	import AppHeader from '$lib/components/AppHeader.svelte';
 	import type { CrdResource, EdaRelease } from '$lib/structure';
 	import { getLatestVersion } from '$lib/versions';
 
@@ -76,71 +76,39 @@
 </script>
 
 <div class="page-shell flex min-h-full flex-col bg-gray-50 text-gray-900 dark:text-gray-100">
-	<!-- Top bar -->
-	<header
-		class="app-mobile-header surface-header sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-blue-900/40"
+	<AppHeader
+		contextBadge="CRD Catalog"
+		onLogoClick={(e) => {
+			e.preventDefault();
+			onExitBrowse();
+		}}
 	>
-		<div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
-			<div class="flex min-w-0 items-center gap-2 sm:gap-3">
-				<a href="/" class="flex shrink-0 items-center gap-2 no-underline" on:click|preventDefault={onExitBrowse}>
-					<img
-						src="/images/eda.svg"
-						alt="Nokia EDA"
-						width="28"
-						height="28"
-						class="h-7 w-7 rounded sm:h-8 sm:w-8"
-						loading="eager"
-					/>
-					<div class="hidden leading-tight md:block">
-						<div class="text-sm font-semibold text-blue-600 dark:text-blue-400">Nokia EDA</div>
-						<div class="text-xs text-slate-600 dark:text-slate-300">Resource Browser</div>
-					</div>
-				</a>
-				<div class="hidden h-6 w-px bg-slate-200 sm:block dark:bg-slate-700"></div>
-				<h1 class="truncate text-sm font-semibold text-slate-900 sm:text-base dark:text-white">
-					CRD Catalog
-				</h1>
-			</div>
-
-			<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
-				<div class="flex items-center gap-1.5 sm:gap-2">
-					<span
-						class="hidden rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 md:inline dark:bg-blue-900/30 dark:text-blue-300"
-					>
-						{selectedRelease.label}
-					</span>
-					<select
-						value={selectedRelease.name}
-						on:change={handleReleaseSelect}
-						aria-label="Select EDA release"
-						class="max-w-[8.5rem] min-h-11 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:max-w-none sm:px-3 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-					>
-						{#each allReleases as release}
-							<option value={release.name}>
-								{release.label}{release.default ? ' (Default)' : ''}
-							</option>
-						{/each}
-					</select>
-				</div>
-				<Theme />
-				<button
-					type="button"
-					on:click={onExitBrowse}
-					class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 sm:min-w-0 sm:px-3 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-					aria-label="Back to home"
-				>
-					<span class="sm:hidden" aria-hidden="true">←</span>
-					<span class="hidden sm:inline">← Home</span>
-				</button>
-			</div>
-		</div>
-	</header>
+		<svelte:fragment slot="actions">
+			<span
+				class="hidden rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 md:inline dark:bg-blue-900/30 dark:text-blue-300"
+			>
+				{selectedRelease.label}
+			</span>
+			<select
+				value={selectedRelease.name}
+				on:change={handleReleaseSelect}
+				aria-label="Select EDA release"
+				class="max-w-[8.5rem] min-h-11 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:max-w-none sm:px-3 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+			>
+				{#each allReleases as release}
+					<option value={release.name}>
+						{release.label}{release.default ? ' (Default)' : ''}
+					</option>
+				{/each}
+			</select>
+		</svelte:fragment>
+	</AppHeader>
 
 	<!-- Toolbar -->
 	<div
-		class="surface-header sticky top-14 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm sm:top-16 dark:border-blue-900/40"
+		class="sticky top-14 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-sm sm:top-16 dark:border-slate-700 dark:bg-slate-900/95"
 	>
-		<div class="mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-6">
+		<div class="mx-auto max-w-7xl space-y-3 px-4 py-3 sm:px-6">
 			<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
 				<div class="relative min-w-0 flex-1">
 					<svg
@@ -193,7 +161,7 @@
 	</div>
 
 	<!-- Main content -->
-	<main class="mx-auto w-full max-w-7xl flex-1 px-3 py-4 pb-[max(4rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-6">
+	<main class="mx-auto w-full max-w-7xl flex-1 px-4 py-4 pb-[max(4rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-6">
 		{#if sortedResources.length === 0}
 			<div
 				class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center dark:border-blue-900/40 dark:bg-[#0f2a48]/88"

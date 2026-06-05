@@ -58,7 +58,7 @@
 			{/if}
 		</div>
 
-		<dl class="grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-3">
+		<dl class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
 			<div class="min-w-0 space-y-0.5">
 				<dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400">API Group</dt>
 				<dd>

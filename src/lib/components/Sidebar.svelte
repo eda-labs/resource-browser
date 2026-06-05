@@ -55,7 +55,10 @@
 		}
 	}
 
-	$: loadCrdsForRelease($selectedRelease);
+	// Close mobile drawer when navigating
+	$: if ($page.url.pathname) {
+		mobileSidebarOpen.set(false);
+	}
 
 	const resourceSearchFilter = derived(
 		[resourceSearch, crdMetaStore, resourceTypeFilter],
