@@ -1,0 +1,62 @@
+name: v2
+schema:
+  openAPIV3Schema:
+    description: VmwareEDAManagedBridgeDomain is the Schema for the vmwareedamanagedbridgedomains API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: VmwareEDAManagedBridgeDomainSpec defines the desired state of VmwareEDAManagedBridgeDomain
+        properties:
+          bridgeDomainName:
+            description: The name of the Eda BridgeDomain.
+            type: string
+          datacenterName:
+            description: The name of the Datacenter in which the DVS exists.
+            type: string
+          dvpName:
+            description: The name of the Distributed Virtual Portgroup on which the vlan is configured.
+            type: string
+          dvsName:
+            description: The name of the Distributed Virtual Switch on which the DVP is configured.
+            type: string
+          pluginName:
+            description: The name of the ConnectPlugin managing the vCenter.
+            type: string
+        required:
+          - bridgeDomainName
+          - dvpName
+          - dvsName
+          - pluginName
+        type: object
+      status:
+        description: VmwareEDAManagedBridgeDomainStatus defines the observed state of VmwareEDAManagedBridgeDomain
+        properties:
+          errorMessage:
+            type: string
+          operationalStatus:
+            description: Indicates the current operational state of the BridgeDomain
+            type: string
+        required:
+          - operationalStatus
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

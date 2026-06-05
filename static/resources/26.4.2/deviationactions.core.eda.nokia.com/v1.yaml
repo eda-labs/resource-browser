@@ -1,0 +1,81 @@
+additionalPrinterColumns:
+  - jsonPath: .status.result
+    name: Result
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+name: v1
+schema:
+  openAPIV3Schema:
+    description: DeviationAction is the Schema for the deviationactions API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          DeviationAction allows manual and API-driven actions to be performed on Deviation resources.
+          They are the only means to which and end user can accept or reject deviations, as Deviation resources themselves are read only.
+        properties:
+          actions:
+            description: The set of actions to perform on the target.
+            items:
+              properties:
+                action:
+                  description: Action to perform on matching Deviations.
+                  enum:
+                    - setAccept
+                    - clearAccept
+                    - reject
+                  type: string
+                path:
+                  description: Path to match Deviation resources on this target. Only one action is allowed per path.
+                  type: string
+                recurse:
+                  description: Recursively accept/reject Deviations from the specified path.
+                  type: boolean
+              required:
+                - action
+                - path
+              type: object
+            type: array
+          nodeEndpoint:
+            description: The target on which this action is to be performed.
+            type: string
+        required:
+          - actions
+          - nodeEndpoint
+        type: object
+      status:
+        description: DeviationActionStatus defines the observed state of DeviationAction
+        properties:
+          result:
+            description: The result of the set of actions.
+            enum:
+              - OK
+              - Failed
+            type: string
+          transactionId:
+            description: The transaction id these actions were part of.
+            type: integer
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

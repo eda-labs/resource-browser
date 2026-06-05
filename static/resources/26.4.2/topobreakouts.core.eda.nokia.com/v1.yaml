@@ -1,0 +1,65 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: TopoBreakout is the Schema for the topobreakouts API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: TopoBreakoutSpec defines the desired state of TopoBreakout
+        properties:
+          channels:
+            description: The number of breakout channels to create
+            maximum: 8
+            minimum: 1
+            type: integer
+          interface:
+            description: A list of normalized parent interface/port
+            items:
+              type: string
+            type: array
+          node:
+            description: Reference to a list of TopoNodes where the parent interfaces are to be broken out
+            items:
+              type: string
+            type: array
+          speed:
+            description: The speed of each breakout channel
+            enum:
+              - 800G
+              - 400G
+              - 200G
+              - 100G
+              - 50G
+              - 40G
+              - 25G
+              - 10G
+            type: string
+        required:
+          - channels
+          - node
+          - speed
+        type: object
+      status:
+        description: TopoBreakoutStatus defines the observed state of TopoBreakout
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

@@ -1,0 +1,66 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: MCPSettings defines Settings for EDA MCP server
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: MCPSettingsSpec defines the desired state of MCPSettings
+        properties:
+          capabilities:
+            description: MCP capabilities
+            properties:
+              enableCompletions:
+                default: false
+                description: Enable completions
+                type: boolean
+              enableLogging:
+                default: false
+                description: Enable logging
+                type: boolean
+              promptListChangedNotifications:
+                default: true
+                description: Prompt list changed notifications Support
+                type: boolean
+              resourceListChangedNotifications:
+                default: true
+                description: Resource list changed notifications Support
+                type: boolean
+              resourceSubscribeSupport:
+                default: false
+                description: Resource subscribe support
+                type: boolean
+              toolListChangedNotifications:
+                default: true
+                description: Tool list changed notifications Support
+                type: boolean
+            type: object
+          enabled:
+            default: false
+            description: Enable EDA MCP Server
+            type: boolean
+        type: object
+      status:
+        description: MCPSettingsStatus defines the observed state of MCPSettings
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

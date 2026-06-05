@@ -1,0 +1,133 @@
+additionalPrinterColumns:
+  - jsonPath: .status.id
+    name: Name
+    type: integer
+  - jsonPath: .status.state
+    name: Status
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+name: v1
+schema:
+  openAPIV3Schema:
+    description: |-
+      TransactionPipeline is the Schema for the transactionpipelines API
+      It represents a CI/CD workflow with jobs, steps, and triggers
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          TransactionPipelineSpec defines the Run instance of a pipeline. It refers a pipeline definition by name and contains runtime
+          parameters to run pipeline(s). It is used as input to create a TransactionPipeline CR, which will trigger the execution of the pipeline(s).
+        properties:
+          pipelineDefinitions:
+            description: Reference to the PipelineDefinition, which needs to be run
+            items:
+              properties:
+                name:
+                  description: Name of the PipelineDefinition CR to run
+                  type: string
+                namespace:
+                  description: |-
+                    Namespace of the PipelineDefinition CR to look for,
+                    defaults to the system namespace.
+                  type: string
+              required:
+                - name
+              type: object
+            type: array
+          target:
+            description: |-
+              Target specifies which cluster(s) to run the pipeline on
+              Defaults to "Main" if not specified
+            items:
+              description: TargetCluster represents a target cluster
+              enum:
+                - Main
+                - DigitalTwin
+              type: string
+            type: array
+          transactionId:
+            description: The transaction id which triggered this pipeline run and is going to be committed after all the pre-commit jobs are successful.
+            format: int64
+            type: integer
+        required:
+          - pipelineDefinitions
+        type: object
+      status:
+        description: |-
+          TransactionPipelineStatus defines the observed state of TransactionPipeline
+          Contains runtime information and parsed/derived fields
+        properties:
+          completionTime:
+            description: CompletionTime is when the pipeline execution completed
+            format: date-time
+            type: string
+          id:
+            description: Unique ID for this pipeline execution, can be used for tracking logs and events
+            type: integer
+          jobStatuses:
+            additionalProperties:
+              description: JobStatus represents the runtime status of a job
+              properties:
+                completion-time:
+                  description: CompletionTime is when the job completed
+                  format: date-time
+                  type: string
+                start-time:
+                  description: StartTime is when the job started
+                  format: date-time
+                  type: string
+                state:
+                  description: Phase represents the current phase of job execution
+                  enum:
+                    - Pending
+                    - Running
+                    - Succeeded
+                    - Failed
+                    - Skipped
+                  type: string
+                workflow-id:
+                  description: |-
+                    workflow-id is the ID of the workflow instance created for this job, if this job is
+                    of workflowGVK type
+                  type: string
+              type: object
+            description: JobStatuses tracks the status of individual jobs, keyed by the jobID (which is the job key in the pipeline spec).
+            type: object
+          startTime:
+            description: StartTime is when the pipeline execution started
+            format: date-time
+            type: string
+          state:
+            description: State represents the current state of pipeline execution
+            enum:
+              - Pending
+              - Running
+              - Succeeded
+              - Failed
+              - Error
+            type: string
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

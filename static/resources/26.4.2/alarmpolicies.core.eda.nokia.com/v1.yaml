@@ -1,0 +1,113 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Alarm is the Schema for the alarms API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: AlarmPolicy defines rules to modify the default properties of raised alarms
+        properties:
+          action:
+            description: Action to apply to matched alarms
+            properties:
+              action:
+                description: Action to apply to matched alarms
+                enum:
+                  - Suppress
+                  - Acknowledge
+                  - ChangeSeverity
+                type: string
+              overrideSeverity:
+                description: Severity to apply when using ChangeSeverity action
+                enum:
+                  - warning
+                  - minor
+                  - major
+                  - critical
+                minLength: 1
+                type: string
+            required:
+              - action
+            type: object
+          match:
+            description: Match criteria for alarms
+            properties:
+              alarmResource:
+                description: Apply policy to alarms raised against a resource kind or a specific resource instance
+                properties:
+                  group:
+                    description: The group of the resource the alarm is raised against, for example core.eda.nokia.com
+                    minLength: 1
+                    type: string
+                  kind:
+                    description: The kind of the resource that the alarm is rasied against, for example Interface
+                    minLength: 1
+                    type: string
+                  names:
+                    description: List of resource names that alarm is rasied against, for example leaf-1-ethernet-1-1
+                    items:
+                      type: string
+                    type: array
+                required:
+                  - group
+                  - kind
+                type: object
+              alarmType:
+                description: Apply policy to alarms of a specific type
+                properties:
+                  sourceGroup:
+                    description: The group of the resource that raises the alarm, for example core.eda.nokia.com
+                    minLength: 1
+                    type: string
+                  type:
+                    description: Type of the alarm, for example InterfaceDown
+                    minLength: 1
+                    type: string
+                required:
+                  - sourceGroup
+                  - type
+                type: object
+              namespace:
+                description: Apply policy to alarms in a specific namespace. If unset, policy matches all namespaces.
+                minLength: 1
+                type: string
+              targetsAffected:
+                description: Apply policy to alarms affecting specific targets
+                properties:
+                  nodes:
+                    description: List of affected nodes to match the alarm policy
+                    items:
+                      type: string
+                    type: array
+                required:
+                  - nodes
+                type: object
+            type: object
+        required:
+          - action
+          - match
+        type: object
+      status:
+        description: AlarmPolicyStatus defines the status of AlarmPolicy
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

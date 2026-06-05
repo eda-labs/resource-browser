@@ -1,0 +1,98 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: Designer is the Schema for the designers API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: DesignerSpec defines the desired state of Designer
+        properties:
+          nodeTemplate:
+            description: A list of templates to use with nodes
+            items:
+              properties:
+                interfaceGroup:
+                  description: A list of interfaceGroups
+                  items:
+                    properties:
+                      interfaceTemplate:
+                        description: The interfaceTemplate associated with the interfaceGroup
+                        properties:
+                          fec:
+                            description: Set Forward Error Correction on interfaces
+                            type: string
+                          numberChannel:
+                            description: When set > 0 breakouts are configured on the interfaces
+                            type: integer
+                          speed:
+                            description: The speed set on each interface
+                            type: string
+                        required:
+                          - numberChannel
+                          - speed
+                        type: object
+                      interfaces:
+                        description: List of interfaces within the interfaceGroup in the dut-1/1/1 format (check this format)
+                        items:
+                          type: string
+                        type: array
+                      labels:
+                        description: List of labels to associate with the interfaces within this interface Gropu
+                        items:
+                          type: string
+                        type: array
+                    required:
+                      - interfaceTemplate
+                      - interfaces
+                    type: object
+                  type: array
+                name:
+                  type: string
+                operatingSystem:
+                  description: The OS running on this TopoNode, e.g. srl, sros
+                  enum:
+                    - srl
+                    - sros
+                    - eos
+                    - sonic
+                  type: string
+                platform:
+                  description: Platform type of this Node, e.g. 7220 IXR-D3L
+                  type: string
+                version:
+                  description: Sets the software version of this TopoNode, e.g. 22.6.1, 22.10.R1
+                  type: string
+              required:
+                - name
+                - operatingSystem
+                - platform
+                - version
+              type: object
+            type: array
+        required:
+          - nodeTemplate
+        type: object
+      status:
+        description: DesignerStatus defines the observed state of Designer
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

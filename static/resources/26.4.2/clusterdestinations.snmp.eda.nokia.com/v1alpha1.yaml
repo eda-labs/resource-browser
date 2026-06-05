@@ -1,0 +1,117 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: ClusterDestination is the Schema for the clusterdestinations API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: ClusterDestinationSpec defines the desired state of ClusterDestination
+        properties:
+          address:
+            description: |-
+              Address is the IP address and port of the SNMP trap receiver.
+              Format: "<host>:<port>" (e.g., "192.0.2.1:162").
+            type: string
+          authentication:
+            description: |-
+              Authentication contains the protocol and password used to authenticate SNMPv3 messages.
+              Required if SecurityLevel is "auth-no-priv" or "auth-priv".
+            properties:
+              password:
+                description: Password is the authentication password for SNMPv3.
+                minLength: 1
+                type: string
+              protocol:
+                description: Protocol specifies the authentication protocol.
+                enum:
+                  - hmac-md5-96
+                  - hmac-sha1-96
+                  - hmac-sha2-224
+                  - hmac-sha2-256
+                  - hmac-sha2-384
+                  - hmac-sha2-512
+                type: string
+            type: object
+          community:
+            description: |-
+              Community is the SNMP community string for SNMPv2c.
+              Ignored for SNMPv3. Acts as a simple shared password in SNMPv2c.
+            type: string
+          engineID:
+            description: |-
+              EngineID is the unique identifier of the remote SNMP engine.
+              Used in SNMPv3 for secure communication and context identification.
+            type: string
+          privacy:
+            description: |-
+              Privacy contains the encryption protocol and password for securing SNMPv3 messages.
+              Required if SecurityLevel is "auth-priv".
+            properties:
+              password:
+                description: Password is the encryption password for SNMPv3.
+                minLength: 1
+                type: string
+              protocol:
+                description: Protocol specifies the privacy (encryption) protocol.
+                enum:
+                  - cbc-des
+                  - cfb128-aes-128
+                  - cfb128-aes-192
+                  - cfb128-aes-256
+                type: string
+            type: object
+          securityLevel:
+            description: |-
+              SecurityLevel defines the security level for SNMPv3 communication.
+              Required for SNMPv3 only.
+              Supported values:
+              - "no-auth-no-priv": no authentication, no privacy
+              - "auth-no-priv": authentication only
+              - "auth-priv": authentication and privacy (encryption)
+            enum:
+              - no-auth-no-priv
+              - auth-no-priv
+              - auth-priv
+            type: string
+          supportInformPDU:
+            description: If true the destination supports Inform PDUs.
+            type: boolean
+          user:
+            description: |-
+              User is the SNMPv3 username used for authentication and privacy.
+              Required for SNMPv3 when using "auth-no-priv" or "auth-priv" levels.
+            type: string
+          version:
+            description: |-
+              Version specifies the SNMP protocol version to use for trap messages.
+              Supported values: "v1", "v2c", "v3".
+            enum:
+              - v1
+              - v2c
+              - v3
+            type: string
+        type: object
+      status:
+        description: ClusterDestinationStatus defines the observed state of ClusterDestination
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}
