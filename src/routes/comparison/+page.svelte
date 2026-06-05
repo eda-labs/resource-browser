@@ -105,15 +105,20 @@
 		return versions.length > 0 ? versions[versions.length - 1] : '';
 	}
 
+	function resolveRelease(name: string): EdaRelease | null {
+		return releasesConfig.releases.find((r) => r.name === name) ?? null;
+	}
+
 	async function loadSourceVersions(preferred?: string) {
-		if (!browser || !sourceRelease) {
+		const release = sourceReleaseName ? resolveRelease(sourceReleaseName) : null;
+		if (!browser || !release) {
 			sourceVersions = [];
 			sourceVersion = '';
 			return;
 		}
 		sourceVersionsLoading = true;
 		try {
-			sourceVersions = await loadVersionsForRelease(sourceRelease, manifestCache);
+			sourceVersions = await loadVersionsForRelease(release, manifestCache);
 			sourceVersion = pickDefaultVersion(sourceVersions, preferred ?? sourceVersion);
 		} catch {
 			sourceVersions = [];
@@ -125,14 +130,15 @@
 	}
 
 	async function loadTargetVersions(preferred?: string) {
-		if (!browser || !targetRelease) {
+		const release = targetReleaseName ? resolveRelease(targetReleaseName) : null;
+		if (!browser || !release) {
 			targetVersions = [];
 			targetVersion = '';
 			return;
 		}
 		targetVersionsLoading = true;
 		try {
-			targetVersions = await loadVersionsForRelease(targetRelease, manifestCache);
+			targetVersions = await loadVersionsForRelease(release, manifestCache);
 			targetVersion = pickDefaultVersion(targetVersions, preferred ?? targetVersion);
 		} catch {
 			targetVersions = [];

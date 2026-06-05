@@ -300,7 +300,7 @@
 				<div class="homepage-release-picker">
 					{#if groupedReleases.length > 1}
 						<div
-							class="homepage-version-segmented"
+							class="homepage-release-picker__trains homepage-version-segmented"
 							role="tablist"
 							aria-label="Major version"
 						>
@@ -321,7 +321,7 @@
 					{/if}
 
 					<div
-						class="homepage-release-grid"
+						class="homepage-release-picker__releases homepage-release-grid"
 						role="listbox"
 						aria-label="EDA releases for {focusedMajorGroup}"
 					>
