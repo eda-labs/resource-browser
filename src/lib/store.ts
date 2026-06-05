@@ -32,3 +32,6 @@ function createSidebarStore() {
 }
 
 export const sidebarOpen = createSidebarStore();
+
+/** Mobile drawer open state (detail pages only; not persisted). */
+export const mobileSidebarOpen = writable(false);

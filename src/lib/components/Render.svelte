@@ -20,22 +20,24 @@
 
 	const borderColor =
 		type === 'status'
-			? 'border-green-400 dark:border-green-700'
-			: 'border-gray-300 dark:border-gray-600';
+			? 'border-emerald-300 dark:border-emerald-800'
+			: 'border-slate-200 dark:border-slate-600';
 </script>
 
 {#if showType}
-	<p class="mb-0 py-1 text-sm text-gray-900 dark:text-gray-200">{type.toUpperCase()}</p>
+	<p class="mb-0 py-1 text-sm font-medium text-slate-700 dark:text-slate-300">{type.toUpperCase()}</p>
 {/if}
-<div class="relative isolate overflow-x-hidden">
-	<ul class="ml-2 border-l px-3 dark:bg-gray-800 {borderColor}">
-		<li
-			class="px-1 pt-1.5 text-sm leading-relaxed font-light whitespace-normal text-gray-600 dark:text-gray-300"
-		>
-			{desc}
-		</li>
+<div class="relative isolate overflow-x-hidden rounded-lg">
+	<ul class="ml-1 border-l px-2 sm:ml-2 sm:px-3 {borderColor}">
+		{#if desc}
+			<li
+				class="px-1 pt-1.5 text-sm leading-relaxed whitespace-normal text-slate-600 dark:text-slate-400"
+			>
+				{desc}
+			</li>
+		{/if}
 		{#if 'properties' in scope}
-			<div class="font-fira text-sm">
+			<div class="font-fira text-sm leading-relaxed">
 				{#each Object.entries(scope.properties) as [key, folder]}
 					{@const requiredList = 'required' in scope ? scope.required : []}
 					<Tree

@@ -154,10 +154,10 @@
 </script>
 
 <div
-	class="homepage-welcome min-h-full bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100"
+	class="homepage-welcome page-shell min-h-full bg-gray-50 text-gray-900 dark:text-gray-100"
 >
 	<header
-		class="homepage-topbar sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
+		class="homepage-topbar app-mobile-header sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-blue-900/40 dark:bg-[#0a1e38]/92 dark:backdrop-blur-md"
 	>
 		<div class="homepage-topbar-inner">
 			<div class="homepage-brand">
@@ -216,8 +216,8 @@
 						placeholder="Search {$crdMetaStore.length > 0 ? $crdMetaStore.length + '+' : '500+'} CRDs by name, kind, or group…"
 						class="homepage-search-field text-slate-900 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
 						autocomplete="off"
-						aria-expanded={showSearchResults}
 						aria-controls="homepage-search-results"
+						aria-autocomplete="list"
 					/>
 					<kbd
 						class="homepage-kbd hidden border-slate-200 bg-slate-100 text-slate-500 sm:inline dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400"
@@ -294,7 +294,7 @@
 
 		<div class="homepage-workspace">
 			<section
-				class="homepage-panel homepage-releases-panel border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+				class="homepage-panel homepage-releases-panel border-slate-200 bg-white dark:border-blue-900/40"
 				aria-labelledby="releases-heading"
 			>
 				<div
@@ -362,7 +362,7 @@
 			</section>
 
 			<aside
-				class="homepage-panel homepage-actions-panel border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+				class="homepage-panel homepage-actions-panel border-slate-200 bg-white dark:border-blue-900/40"
 				aria-labelledby="actions-heading"
 			>
 				<div

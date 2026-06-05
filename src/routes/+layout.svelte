@@ -24,14 +24,20 @@
 </script>
 
 {#if $isDetailPage}
-	<div class="flex h-screen overflow-hidden bg-white pt-14 md:pt-16 dark:bg-slate-900">
-		<Sidebar />
-		<div class="flex-1 overflow-y-auto bg-white px-3 pb-16 md:px-4 dark:bg-slate-900">
-			{@render children()}
+	<div class="page-shell flex min-h-[100dvh] flex-col bg-gray-50 lg:h-screen lg:overflow-hidden">
+		<div class="flex min-h-0 flex-1 flex-col lg:flex-row lg:overflow-hidden">
+			<Sidebar />
+			<div
+				class="page-shell min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 px-3 pt-14 pb-[max(4rem,env(safe-area-inset-bottom))] sm:pt-16 md:px-4"
+			>
+				{@render children()}
+			</div>
 		</div>
 	</div>
 {:else}
-	<div class="h-screen w-full overflow-y-auto bg-white dark:bg-slate-900">
+	<div
+		class="page-shell min-h-[100dvh] w-full overflow-x-hidden overflow-y-auto bg-gray-50 pb-[env(safe-area-inset-bottom)]"
+	>
 		{@render children()}
 	</div>
 {/if}

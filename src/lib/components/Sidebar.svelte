@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { writable, derived } from 'svelte/store';
-	import { sidebarOpen } from '$lib/store';
+	import { sidebarOpen, mobileSidebarOpen } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import yaml from 'js-yaml';
@@ -20,8 +20,6 @@
 	// Filter for resource type: 'all' | 'state' | 'config'
 	export const resourceTypeFilter = writable<'all' | 'state' | 'config'>('all');
 
-	// Mobile menu state
-	let isMobileMenuOpen = false;
 	// Desktop sidebar state (from store) — auto-subscribed via `$sidebarOpen`
 	let resourceListEl: HTMLElement | null = null;
 	let sidebarThumbEl: HTMLElement | null = null;
@@ -157,8 +155,11 @@
 				goto(`/?browse=true&release=${$selectedRelease.name}`);
 			}
 		}
-		// Close mobile menu after navigation
-		isMobileMenuOpen = false;
+		mobileSidebarOpen.set(false);
+	}
+
+	function closeMobileDrawer() {
+		mobileSidebarOpen.set(false);
 	}
 
 	function isPreferredVersionDeprecated(resDef: CrdResource) {
@@ -166,14 +167,6 @@
 		if (!manifestEntry.versions || manifestEntry.versions.length === 0) return false;
 		// Only show DEPRECATED if every available version is deprecated (i.e. no newer version exists)
 		return manifestEntry.versions.every((v) => v.deprecated);
-	}
-
-	function toggleMobileMenu() {
-		isMobileMenuOpen = !isMobileMenuOpen;
-	}
-
-	function closeMobileMenu() {
-		isMobileMenuOpen = false;
 	}
 
 	function handleListScroll() {
@@ -219,56 +212,48 @@
 	});
 </script>
 
-<!-- Hamburger Button (Mobile Only) -->
-<button
-	on:click={toggleMobileMenu}
-	class="fixed top-2 left-2 z-[60] rounded-lg border border-gray-200 bg-white p-2 shadow-lg transition-all hover:bg-gray-50 lg:hidden dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-	aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
->
-	<svg
-		class="h-5 w-5 text-gray-700 dark:text-gray-200"
-		fill="none"
-		stroke="currentColor"
-		viewBox="0 0 24 24"
-	>
-		{#if isMobileMenuOpen}
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-		{:else}
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-		{/if}
-	</svg>
-</button>
-
-<!-- (removed mini logo) -->
-
 <!-- Overlay (Mobile Only) -->
-{#if isMobileMenuOpen}
+{#if $mobileSidebarOpen}
 	<div
-		class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
-		on:click={closeMobileMenu}
-		on:keydown={(e) => e.key === 'Escape' && closeMobileMenu()}
+		class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+		on:click={closeMobileDrawer}
+		on:keydown={(e) => e.key === 'Escape' && closeMobileDrawer()}
 		role="button"
 		tabindex="0"
+		aria-label="Close navigation"
 	></div>
 {/if}
 
 <!-- Sidebar -->
 <div
-	class="fixed inset-y-0 left-0 z-[50] flex w-72 flex-col border-r border-gray-200 bg-white shadow-xl transition-transform duration-300 ease-in-out
-	       lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:w-64 xl:w-72
-	       dark:border-gray-700 dark:bg-gray-900
-	       {isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+	class="app-sidebar surface-sidebar fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-xl transition-transform duration-300 ease-in-out
+	       lg:sticky lg:top-16 lg:z-auto lg:h-[calc(100dvh-4rem)] lg:w-64 xl:w-72
+	       dark:border-blue-900/40
+	       {$mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
 	       {$sidebarOpen ? 'lg:translate-x-0' : 'lg:-translate-x-full'}"
 >
 	<!-- Header -->
-	<div class="relative border-b border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+	<div class="relative border-b border-slate-200 bg-slate-50 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] dark:border-blue-900/30 dark:bg-[#0c2340]/60">
+		<!-- Mobile close -->
+		<button
+			type="button"
+			class="absolute top-[max(0.5rem,env(safe-area-inset-top))] right-2 inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+			on:click={closeMobileDrawer}
+			aria-label="Close navigation"
+		>
+			<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+			</svg>
+		</button>
+
 		<!-- Desktop toggle -->
 		<button
-			class="absolute top-2 right-2 hidden items-center justify-center rounded-md border border-gray-200 bg-white p-1.5 shadow-sm transition-all hover:bg-gray-50 lg:inline-flex dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+			type="button"
+			class="absolute top-2 right-2 hidden min-h-9 min-w-9 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition-all hover:bg-slate-50 lg:inline-flex dark:border-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700"
 			on:click={() => sidebarOpen.toggle()}
 			aria-label={$sidebarOpen ? 'Collapse sidebar' : 'Open sidebar'}
 		>
-			<svg class="h-4 w-4 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<svg class="h-4 w-4 text-slate-700 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				{#if $sidebarOpen}
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 				{:else}
@@ -279,14 +264,14 @@
 
 		<!-- Release Selector -->
 		<div class="mb-3">
-			<label for="release-select" class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300">
+			<label for="release-select" class="mb-1.5 block text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400">
 				Release
 			</label>
 			<select
 				id="release-select"
 				on:change={handleReleaseChange}
 				value={$selectedRelease.name}
-				class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-all hover:border-cyan-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:border-gray-500"
+				class="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
 			>
 				{#each releasesConfig.releases as release}
 					<option value={release.name}>{release.label}{release.default ? ' (Default)' : ''}</option>
@@ -298,27 +283,31 @@
 		<div class="space-y-2">
 			<div class="relative">
 				<input
-					type="text"
+					type="search"
 					bind:value={$resourceSearch}
-					placeholder="Search resources..."
-					class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pl-9 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 transition-all hover:border-cyan-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:hover:border-gray-500"
+					placeholder="Search by kind, name, or API group…"
+					class="min-h-11 w-full rounded-lg border border-slate-200 bg-white py-2.5 pr-3 pl-9 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
 				/>
-				<svg class="absolute top-2.5 left-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
 				</svg>
 			</div>
 
 			<!-- Resource Type Filter -->
-			<select
-				id="resource-type-filter"
-				bind:value={$resourceTypeFilter}
-				class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-all hover:border-cyan-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:border-gray-500"
-				aria-label="Filter resources"
-			>
-				<option value="all">All Resources</option>
-				<option value="state">State Resources</option>
-				<option value="config">Config Resources</option>
-			</select>
+			<div class="flex items-center gap-1.5 overflow-x-auto pb-0.5" role="group" aria-label="Resource type filter">
+				{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
+					<button
+						type="button"
+						on:click={() => resourceTypeFilter.set(chip.id as 'all' | 'state' | 'config')}
+						class="shrink-0 rounded-full border px-3 py-2 text-xs font-medium transition-colors
+						       {$resourceTypeFilter === chip.id
+							? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-300'
+							: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'}"
+					>
+						{chip.label}
+					</button>
+				{/each}
+			</div>
 		</div>
 	</div>
 
@@ -328,20 +317,22 @@
 		bind:this={resourceListEl}
 		on:scroll={handleListScroll}
 	>
-		<div class="mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
-			{$resourceSearchFilter.length} resource{$resourceSearchFilter.length !== 1 ? 's' : ''}
+		<div class="mb-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+			<span class="tabular-nums">{$resourceSearchFilter.length}</span>
+			resource{$resourceSearchFilter.length !== 1 ? 's' : ''}
 		</div>
-		<div class="space-y-1">
+		<div class="space-y-0.5">
 			<!-- Custom scroll thumb -->
 			<div aria-hidden="true" class="sidebar-scroll-thumb" bind:this={sidebarThumbEl}></div>
 		{#each $resourceSearchFilter as resDef}
 			{@const isSelected = $page.url.pathname.startsWith(`/${resDef.name}/`)}
 			<button
+				type="button"
 				on:click={() => handleResourceClick(resDef.name, resDef)}
-				class="group w-full rounded-lg px-2.5 py-2 text-left transition-all
+				class="group min-h-11 w-full rounded-lg border px-2.5 py-2.5 text-left transition-colors
 				       {isSelected
-					? 'bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md'
-					: 'hover:bg-gray-100 dark:hover:bg-gray-800'}"
+					? 'border-blue-200 bg-blue-50/80 dark:border-blue-800 dark:bg-blue-900/20'
+					: 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60'}"
 			>
 				<div class="flex items-start justify-between gap-2">
 					<div class="min-w-0 flex-1">
@@ -349,42 +340,39 @@
 							<div
 								class="truncate text-sm font-semibold
 												{isSelected
-									? 'text-white'
-									: 'text-gray-900 group-hover:text-cyan-600 dark:text-white dark:group-hover:text-cyan-400'}"
+									? 'text-blue-700 dark:text-blue-300'
+									: 'text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400'}"
 							>
 								{resDef.name.split('.')[0]}
 							</div>
 							{#if isPreferredVersionDeprecated(resDef)}
 								<span
-									class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-semibold text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
+									class="rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-semibold text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
 									>DEPRECATED</span
 								>
 							{/if}
 						</div>
 						<div
-							class="truncate text-xs
-							{isSelected ? 'text-cyan-100' : 'text-gray-500 dark:text-gray-400'}"
+							class="truncate font-mono text-xs
+							{isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-500 dark:text-slate-400'}"
 						>
 							{resDef.name.split('.').slice(1).join('.')}
 						</div>
 						{#if resDef.versions.length > 1}
 							<div class="mt-0.5">
 								<span
-									class="inline-flex rounded px-1.5 py-0.5 text-[10px] font-medium
-								             {isSelected
-										? 'bg-white/20 text-white'
-										: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'}"
+									class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300"
 								>
-									{resDef.versions.length} versions
+									{getLatestVersion(resDef)}
 								</span>
 							</div>
 						{/if}
 					</div>
 					<svg
-						class="mt-0.5 h-4 w-4 flex-shrink-0
+						class="mt-0.5 h-4 w-4 flex-shrink-0 transition-transform
 						       {isSelected
-							? 'text-white'
-							: 'text-gray-400 group-hover:text-cyan-600 dark:group-hover:text-cyan-400'}"
+							? 'text-blue-500'
+							: 'text-slate-400 group-hover:translate-x-0.5 group-hover:text-blue-500'}"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"

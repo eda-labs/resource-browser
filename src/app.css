@@ -128,11 +128,16 @@
 	}
 
 	body {
-		@apply text-slate-900 antialiased bg-white dark:bg-slate-900 dark:text-slate-100;
+		@apply text-slate-900 antialiased bg-white dark:text-slate-100;
 		font-family: var(--font-nokia), 'Nunito', sans-serif;
 		min-height: 100vh;
 		/* Hide the document scrollbar so child containers manage scrolling */
 		overflow: hidden;
+	}
+
+	.dark body {
+		background: linear-gradient(160deg, #071428 0%, #0c2340 50%, #0e2d52 100%);
+		background-attachment: fixed;
 	}
 
 	/* Reduce CLS by stabilizing headline and hero typography metrics across font swap.
@@ -438,8 +443,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .has-header-img:has(.homepage-welcome) {
-		background-image: none !important;
-		background-color: #0f172a !important;
+		background-image: linear-gradient(160deg, #071428 0%, #0c2340 50%, #0e2d52 100%) !important;
+		background-color: transparent !important;
 		color: inherit;
 	}
 
@@ -454,7 +459,7 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 
 	.dark .homepage-welcome {
 		color: #f1f5f9;
-		background: #020617;
+		background: transparent;
 	}
 
 	.homepage-topbar {
@@ -467,8 +472,9 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-topbar {
-		border-bottom-color: #334155;
-		background: rgba(15, 23, 42, 0.95);
+		border-bottom-color: rgba(56, 100, 150, 0.3);
+		background: rgba(10, 30, 56, 0.92);
+		backdrop-filter: blur(8px);
 	}
 
 	.homepage-topbar-inner {
@@ -650,8 +656,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-search-input {
-		border-color: #334155;
-		background: #0f172a;
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.88);
 		box-shadow: none;
 	}
 
@@ -721,8 +727,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-results {
-		border-color: #334155;
-		background: #0f172a;
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.95);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 	}
 
@@ -875,8 +881,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-panel {
-		border-color: #334155;
-		background: #1e293b;
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.88);
 	}
 
 	.homepage-panel-header {
@@ -938,8 +944,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-version-segmented {
-		border-color: #475569;
-		background: #0f172a;
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(7, 20, 40, 0.6);
 	}
 
 	.homepage-version-segment {
@@ -1005,8 +1011,8 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-action-btn {
-		border-color: #334155;
-		background: #1e293b;
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.75);
 	}
 
 	.dark .homepage-action-btn:hover {
@@ -1043,7 +1049,7 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 	}
 
 	.dark .homepage-action-icon {
-		background: #0f172a;
+		background: rgba(7, 20, 40, 0.7);
 		color: #60a5fa;
 	}
 
@@ -1305,6 +1311,152 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 		border-color: #3b82f6;
 		background: #3b82f6;
 		box-shadow: 0 0 0 1px #3b82f6;
+	}
+
+	/* Dark mode page shells — transparent so body gradient shows through scroll areas */
+	.dark .page-shell {
+		background: transparent;
+	}
+
+	/* Semi-opaque surfaces that sit on the blue gradient */
+	.dark .surface-panel {
+		background: rgba(15, 42, 72, 0.88);
+		border-color: rgba(56, 100, 150, 0.35);
+	}
+
+	.dark .surface-header {
+		background: rgba(10, 30, 56, 0.92);
+		border-color: rgba(56, 100, 150, 0.3);
+		backdrop-filter: blur(8px);
+	}
+
+	.dark .surface-sidebar {
+		background: rgba(7, 20, 40, 0.94);
+		border-color: rgba(56, 100, 150, 0.35);
+		backdrop-filter: blur(10px);
+	}
+
+	/* Shared mobile header + safe areas */
+	.app-mobile-header {
+		padding-top: env(safe-area-inset-top, 0px);
+	}
+
+	@media (max-width: 639px) {
+		.homepage-main {
+			padding: 1rem 0.875rem 3rem;
+			gap: 1.25rem;
+		}
+
+		.homepage-topbar-inner {
+			min-height: 3.5rem;
+			padding-left: 0.875rem;
+			padding-right: 0.875rem;
+		}
+
+		.homepage-brand-title {
+			font-size: 0.8125rem;
+			max-width: 10rem;
+		}
+
+		.homepage-title {
+			font-size: 1.25rem;
+		}
+
+		.homepage-subtitle {
+			font-size: 0.875rem;
+			margin-top: 0.375rem;
+		}
+
+		.homepage-hero {
+			max-width: none;
+		}
+
+		.homepage-search-input {
+			padding: 0.75rem 1rem;
+		}
+
+		.homepage-search-field {
+			font-size: 1rem;
+		}
+
+		.homepage-results {
+			max-height: min(50vh, 20rem);
+		}
+
+		.homepage-result-row {
+			min-height: 2.75rem;
+			padding: 0.75rem;
+		}
+
+		.homepage-filter-chip {
+			min-height: 2.75rem;
+			padding: 0.5rem 1rem;
+			font-size: 0.8125rem;
+		}
+
+		.homepage-filters {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			padding-bottom: 0.125rem;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.homepage-version-segmented {
+			display: flex;
+			width: 100%;
+		}
+
+		.homepage-version-segment {
+			flex: 1;
+			min-height: 2.75rem;
+			padding: 0.5rem 0.75rem;
+		}
+
+		.homepage-release-grid {
+			grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+			max-height: none;
+		}
+
+		.homepage-release-btn {
+			min-height: 2.75rem;
+			padding: 0.625rem 0.5rem;
+		}
+
+		.homepage-actions-list {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0.5rem;
+			padding: 0.75rem;
+		}
+
+		.homepage-action-btn {
+			min-height: 2.75rem;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 0.75rem;
+		}
+
+		.homepage-action-btn.is-primary {
+			grid-column: 1 / -1;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.homepage-action-desc {
+			display: none;
+		}
+
+		.homepage-action-btn.is-primary .homepage-action-desc {
+			display: block;
+		}
+
+		.homepage-panel-header {
+			padding: 0.875rem 1rem;
+		}
+
+		.homepage-release-picker {
+			padding: 0.875rem 1rem 1rem;
+		}
 	}
 
 	.homepage-release-more {

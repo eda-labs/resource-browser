@@ -75,23 +75,23 @@
 
 </script>
 
-<div class="flex min-h-full flex-col bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+<div class="page-shell flex min-h-full flex-col bg-gray-50 text-gray-900 dark:text-gray-100">
 	<!-- Top bar -->
 	<header
-		class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
+		class="app-mobile-header surface-header sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-blue-900/40"
 	>
-		<div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
-			<div class="flex min-w-0 items-center gap-3">
+		<div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6">
+			<div class="flex min-w-0 items-center gap-2 sm:gap-3">
 				<a href="/" class="flex shrink-0 items-center gap-2 no-underline" on:click|preventDefault={onExitBrowse}>
 					<img
 						src="/images/eda.svg"
 						alt="Nokia EDA"
-						width="32"
-						height="32"
-						class="rounded"
+						width="28"
+						height="28"
+						class="h-7 w-7 rounded sm:h-8 sm:w-8"
 						loading="eager"
 					/>
-					<div class="hidden leading-tight sm:block">
+					<div class="hidden leading-tight md:block">
 						<div class="text-sm font-semibold text-blue-600 dark:text-blue-400">Nokia EDA</div>
 						<div class="text-xs text-slate-600 dark:text-slate-300">Resource Browser</div>
 					</div>
@@ -102,10 +102,10 @@
 				</h1>
 			</div>
 
-			<div class="flex items-center gap-2 sm:gap-3">
-				<div class="flex items-center gap-2">
+			<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+				<div class="flex items-center gap-1.5 sm:gap-2">
 					<span
-						class="hidden rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 sm:inline dark:bg-blue-900/30 dark:text-blue-300"
+						class="hidden rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 md:inline dark:bg-blue-900/30 dark:text-blue-300"
 					>
 						{selectedRelease.label}
 					</span>
@@ -113,7 +113,7 @@
 						value={selectedRelease.name}
 						on:change={handleReleaseSelect}
 						aria-label="Select EDA release"
-						class="max-w-[9rem] rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:max-w-none sm:px-3 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+						class="max-w-[8.5rem] min-h-11 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-900 shadow-sm transition-colors hover:border-blue-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:max-w-none sm:px-3 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
 					>
 						{#each allReleases as release}
 							<option value={release.name}>
@@ -126,9 +126,11 @@
 				<button
 					type="button"
 					on:click={onExitBrowse}
-					class="hidden items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 sm:inline-flex dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+					class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 sm:min-w-0 sm:px-3 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+					aria-label="Back to home"
 				>
-					← Home
+					<span class="sm:hidden" aria-hidden="true">←</span>
+					<span class="hidden sm:inline">← Home</span>
 				</button>
 			</div>
 		</div>
@@ -136,10 +138,10 @@
 
 	<!-- Toolbar -->
 	<div
-		class="sticky top-14 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm sm:top-16 dark:border-slate-700 dark:bg-slate-900/95"
+		class="surface-header sticky top-14 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm sm:top-16 dark:border-blue-900/40"
 	>
-		<div class="mx-auto max-w-7xl space-y-3 px-4 py-3 sm:px-6">
-			<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+		<div class="mx-auto max-w-7xl space-y-3 px-3 py-3 sm:px-6">
+			<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
 				<div class="relative min-w-0 flex-1">
 					<svg
 						class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
@@ -159,7 +161,7 @@
 						type="search"
 						bind:value={searchQuery}
 						placeholder="Search by kind, name, or API group…"
-						class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pr-4 pl-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
+						class="min-h-11 w-full rounded-lg border border-slate-200 bg-white py-2.5 pr-4 pl-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
 					/>
 				</div>
 				<div
@@ -170,15 +172,15 @@
 				</div>
 			</div>
 
-			<div class="flex flex-wrap items-center gap-2" role="group" aria-label="Resource type filter">
-				<span class="text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400"
+			<div class="flex items-center gap-2 overflow-x-auto pb-0.5" role="group" aria-label="Resource type filter">
+				<span class="shrink-0 text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400"
 					>Filter</span
 				>
 				{#each [{ id: 'all', label: 'All' }, { id: 'config', label: 'Config' }, { id: 'state', label: 'State' }] as chip}
 					<button
 						type="button"
 						on:click={() => (typeFilter = chip.id as typeof typeFilter)}
-						class="rounded-full border px-3 py-1 text-xs font-medium transition-colors
+						class="shrink-0 rounded-full border px-4 py-2 text-xs font-medium transition-colors
 						       {typeFilter === chip.id
 							? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-300'
 							: 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-500'}"
@@ -191,10 +193,10 @@
 	</div>
 
 	<!-- Main content -->
-	<main class="mx-auto w-full max-w-7xl flex-1 px-4 py-4 pb-16 sm:px-6 sm:py-6">
+	<main class="mx-auto w-full max-w-7xl flex-1 px-3 py-4 pb-[max(4rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-6">
 		{#if sortedResources.length === 0}
 			<div
-				class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-800"
+				class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center dark:border-blue-900/40 dark:bg-[#0f2a48]/88"
 			>
 				<p class="text-sm text-slate-500 dark:text-slate-400">No resources match your search or filter.</p>
 				<button
@@ -211,7 +213,7 @@
 		{:else}
 			<!-- Desktop table -->
 			<div
-				class="hidden overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm md:block dark:border-slate-700 dark:bg-slate-800"
+				class="hidden overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm md:block dark:border-blue-900/40 dark:bg-[#0f2a48]/88"
 			>
 				<table class="w-full text-left text-sm">
 					<thead>
@@ -312,18 +314,18 @@
 			</div>
 
 			<!-- Mobile list -->
-			<div class="space-y-2 md:hidden">
+			<div class="space-y-2.5 md:hidden">
 				{#each sortedResources as resDef (resDef.name)}
 					{@const latest = getLatestVersion(resDef)}
 					<button
 						type="button"
 						on:click={() => onResourceClick(resDef.name)}
-						class="w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-colors active:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:active:bg-slate-700"
+						class="min-h-[3.5rem] w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-colors active:border-blue-300 active:bg-blue-50/40 dark:border-blue-900/40 dark:bg-[#0f2a48]/88 dark:active:border-blue-500 dark:active:bg-[#123a5c]/90"
 					>
-						<div class="flex items-start justify-between gap-3">
+						<div class="flex items-center justify-between gap-3">
 							<div class="min-w-0 flex-1">
 								<div class="flex flex-wrap items-center gap-2">
-									<span class="text-sm font-semibold text-slate-900 dark:text-white">
+									<span class="text-base font-semibold text-slate-900 dark:text-white">
 										{displayKind(resDef)}
 									</span>
 									{#if isAllDeprecated(resDef)}
@@ -334,32 +336,30 @@
 										</span>
 									{/if}
 								</div>
-								<p class="mt-1 truncate font-mono text-xs text-slate-500 dark:text-slate-400">
+								<p class="mt-1 break-all font-mono text-xs leading-snug text-slate-500 dark:text-slate-400">
 									{displayGroup(resDef)}
 								</p>
+								{#if resDef.versions.length > 1}
+									<p class="mt-1 text-xs text-slate-400">{resDef.versions.length} versions</p>
+								{/if}
 							</div>
-							{#if latest}
-								<span
-									class="shrink-0 rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200"
-								>
-									{latest}
-								</span>
-							{/if}
+							<div class="flex shrink-0 flex-col items-end gap-1">
+								{#if latest}
+									<span
+										class="rounded-md bg-slate-100 px-2.5 py-1 font-mono text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+									>
+										{latest}
+									</span>
+								{/if}
+								<svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+								</svg>
+							</div>
 						</div>
 					</button>
 				{/each}
 			</div>
 		{/if}
 
-		<!-- Mobile back link -->
-		<div class="mt-6 text-center sm:hidden">
-			<button
-				type="button"
-				on:click={onExitBrowse}
-				class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
-			>
-				← Back to home
-			</button>
-		</div>
 	</main>
 </div>
