@@ -207,13 +207,22 @@
 		controller?.updateHighlight();
 	}
 
-	function toggleLayout() {
-		radialLayout = !radialLayout;
-		controller?.setRadial(radialLayout);
+	function selectRadialLayout() {
+		radialLayout = true;
+		controller?.setRadial(true);
+	}
+
+	function selectForceLayout() {
+		radialLayout = false;
+		controller?.setRadial(false);
 	}
 
 	function fitGraph() {
-		controller?.fitToScreen();
+		controller?.reflowLayout();
+	}
+
+	function showFullGraph() {
+		controller?.showFullExtent();
 	}
 
 	function zoomIn() {
@@ -230,7 +239,7 @@
 			sessionStorage.setItem(INSPECTOR_STORAGE_KEY, String(inspectorOpen));
 		}
 		requestAnimationFrame(() => {
-			controller?.fitToScreen();
+			controller?.reflowLayout();
 		});
 	}
 
@@ -336,7 +345,7 @@
 					type="button"
 					class="dep-map-btn"
 					class:dep-map-btn-active={radialLayout}
-					on:click={() => !radialLayout && toggleLayout()}
+					on:click={selectRadialLayout}
 					aria-pressed={radialLayout}
 				>
 					Radial
@@ -345,12 +354,13 @@
 					type="button"
 					class="dep-map-btn"
 					class:dep-map-btn-active={!radialLayout}
-					on:click={() => radialLayout && toggleLayout()}
+					on:click={selectForceLayout}
 					aria-pressed={!radialLayout}
 				>
 					Force
 				</button>
-				<button type="button" class="dep-map-btn" on:click={fitGraph}>Fit view</button>
+				<button type="button" class="dep-map-btn" on:click={fitGraph}>Fit</button>
+				<button type="button" class="dep-map-btn" on:click={showFullGraph}>Full</button>
 				<button type="button" class="dep-map-btn dep-map-btn-ghost" on:click={clearAll}>Reset</button>
 			</div>
 
@@ -743,6 +753,8 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
+		flex: 1;
+		min-height: 0;
 		gap: 0.5rem;
 		color: var(--dep-text);
 	}
@@ -946,11 +958,11 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.4rem 0.75rem;
-		padding: 0.4rem 0.75rem;
+		padding: 0.45rem 0.75rem;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.5rem;
 		background: var(--dep-panel);
-		font-size: 0.6875rem;
+		font-size: 0.75rem;
 		color: var(--dep-text-muted);
 		flex-shrink: 0;
 	}
@@ -992,6 +1004,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		flex: 1;
+		min-height: min(48vh, 28rem);
 		width: 100%;
 		max-width: 100%;
 		overflow-x: auto;
@@ -1001,18 +1015,35 @@
 		.dep-map-body {
 			flex-direction: row;
 			align-items: stretch;
+			min-height: min(52vh, 32rem);
+		}
+
+		.dep-map-body--panel-hidden {
+			min-height: min(56vh, 36rem);
 		}
 	}
 
 	.dep-map-canvas-wrap {
 		position: relative;
-		flex: 0 0 auto;
+		flex: 1 1 auto;
+		min-width: 0;
+		min-height: min(48vh, 28rem);
 		width: 100%;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
 		background: var(--dep-bg);
-		overflow: hidden;
+		overflow: auto;
 		isolation: isolate;
+	}
+
+	@media (min-width: 1024px) {
+		.dep-map-canvas-wrap {
+			min-height: min(52vh, 32rem);
+		}
+
+		.dep-map-body--panel-hidden .dep-map-canvas-wrap {
+			min-height: min(56vh, 36rem);
+		}
 	}
 
 	.dep-map-panel {
@@ -1025,14 +1056,17 @@
 		background: var(--dep-panel);
 		max-height: 100%;
 		overflow-y: auto;
+		position: relative;
+		z-index: 5;
+		flex-shrink: 0;
 	}
 
 	@media (min-width: 1024px) {
 		.dep-map-panel {
-			flex: 0 0 min(15rem, 20vw);
-			width: min(15rem, 20vw);
-			max-width: 15rem;
-			min-width: 13rem;
+			flex: 0 0 min(18rem, 22vw);
+			width: min(18rem, 22vw);
+			max-width: 20rem;
+			min-width: 14rem;
 		}
 	}
 
@@ -1071,6 +1105,8 @@
 	.dep-map-svg,
 	:global(svg.dep-map-svg-inner) {
 		display: block;
+		position: relative;
+		z-index: 1;
 	}
 
 	:global(.dep-map-svg .dep-node--hover) {
@@ -1486,8 +1522,8 @@
 	}
 
 	.dep-map-dot {
-		width: 0.55rem;
-		height: 0.55rem;
+		width: 0.65rem;
+		height: 0.65rem;
 		border-radius: 9999px;
 		flex-shrink: 0;
 	}
@@ -1502,8 +1538,8 @@
 
 	.dep-map-rel-swatch {
 		display: inline-block;
-		width: 0.85rem;
-		height: 0.18rem;
+		width: 1rem;
+		height: 0.22rem;
 		border-radius: 9999px;
 		flex-shrink: 0;
 	}

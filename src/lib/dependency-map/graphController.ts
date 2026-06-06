@@ -29,16 +29,16 @@ type SimLink = Omit<GraphLink, 'source' | 'target'> &
 		target: SimNode | string;
 	};
 
-const FOCUS_RADIUS = 18;
-const NODE_RADIUS = 12;
-const STATE_RADIUS = 10;
-const RING_GAP = 95;
-const INNER_RING = 88;
-const LABEL_MAX_CHARS = 16;
-const CANVAS_MIN_HEIGHT = 220;
-const FIT_PADDING_X = 56;
-const FIT_PADDING_TOP = 80;
-const FIT_PADDING_BOTTOM = 80;
+const FOCUS_RADIUS = 20;
+const NODE_RADIUS = 14;
+const STATE_RADIUS = 11;
+const RING_GAP = 100;
+const INNER_RING = 92;
+const LABEL_MAX_CHARS = 18;
+const CANVAS_MIN_HEIGHT = 360;
+const FIT_PADDING_X = 48;
+const FIT_PADDING_TOP = 64;
+const FIT_PADDING_BOTTOM = 64;
 
 export type GraphControllerOptions = {
 	container: HTMLDivElement;
@@ -60,6 +60,8 @@ export type GraphController = {
 	updateHighlight: () => void;
 	focusNode: (id: string) => void;
 	fitToScreen: () => void;
+	showFullExtent: () => void;
+	reflowLayout: () => void;
 	zoomIn: () => void;
 	zoomOut: () => void;
 	setRadial: (radial: boolean) => void;
@@ -263,6 +265,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	let width = 800;
 	let height = 600;
+	let viewportWidth = 800;
+	let viewportHeight = 600;
 	let palette = getGraphPalette(theme);
 	let simulation: Simulation<SimNode, SimLink> | null = null;
 	let zoomBehavior: ZoomBehavior<SVGSVGElement, unknown> | null = null;
@@ -310,7 +314,21 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		const parent = container.parentElement;
 		const parentWidth =
 			parent?.getBoundingClientRect().width ?? container.getBoundingClientRect().width;
-		width = Math.max(parentWidth, 1);
+		viewportWidth = Math.max(parentWidth, 1);
+		width = viewportWidth;
+	}
+
+	function measureViewportHeight() {
+		const rect = container.getBoundingClientRect();
+		const cssMin = Number.parseFloat(getComputedStyle(container).minHeight) || 0;
+		const fallback = Math.min(window.innerHeight * 0.48, 576);
+		viewportHeight = Math.max(
+			CANVAS_MIN_HEIGHT,
+			rect.height,
+			cssMin,
+			fallback
+		);
+		height = viewportHeight;
 	}
 
 	function updateSvgDimensions() {
@@ -321,46 +339,53 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			.style('height', `${height}px`);
 	}
 
-	function applyContentSize() {
-		const bounds = getNodeBounds();
-		if (!bounds) return;
-
-		const contentW = bounds.maxX - bounds.minX;
-		const contentH = bounds.maxY - bounds.minY;
+	function measureViewport() {
 		measureWidth();
-		const parentWidth =
-			container.parentElement?.getBoundingClientRect().width ?? width;
-		width = Math.max(width, contentW + FIT_PADDING_X * 2);
-		height = Math.max(CANVAS_MIN_HEIGHT, contentH + FIT_PADDING_TOP + FIT_PADDING_BOTTOM);
-		container.style.height = `${height}px`;
+		measureViewportHeight();
 		container.style.width = '100%';
-		container.style.minWidth = width > parentWidth + 2 ? `${width}px` : '';
-		updateSvgDimensions();
-	}
-
-	function measure() {
-		measureWidth();
-		height = CANVAS_MIN_HEIGHT;
-		container.style.height = `${height}px`;
+		container.style.height = `${viewportHeight}px`;
 		container.style.minWidth = '';
 		updateSvgDimensions();
 	}
 
+	function applyContentSize() {
+		const bounds = getNodeBounds();
+		if (!bounds) return;
+
+		measureWidth();
+		const contentW = bounds.maxX - bounds.minX + FIT_PADDING_X * 2;
+		const contentH = bounds.maxY - bounds.minY + FIT_PADDING_TOP + FIT_PADDING_BOTTOM;
+		width = Math.max(viewportWidth, contentW);
+		height = Math.max(viewportHeight, contentH);
+		container.style.minWidth = width > viewportWidth + 2 ? `${width}px` : '';
+		container.style.height = `${height}px`;
+		updateSvgDimensions();
+	}
+
+	function measure() {
+		measureViewport();
+	}
+
 	function reflowRadialPositions() {
 		const centerId = getCenterNodeId?.() ?? null;
-		const positions = computeRadialPositions(simNodes, simLinks, centerId, width, height);
+		const positions = computeRadialPositions(
+			simNodes,
+			simLinks,
+			centerId,
+			viewportWidth,
+			viewportHeight
+		);
 		applyPositions(positions, simNodes);
 		linkSel?.attr('d', linkPath);
 		nodeSel?.attr('transform', (d: SimNode) => `translate(${d.x ?? 0},${d.y ?? 0})`);
 	}
 
 	function finalizeLayoutSize() {
-		measureWidth();
-		applyContentSize();
+		measureViewport();
 		if (radialLayout && simNodes.length > 0) {
 			reflowRadialPositions();
-			applyContentSize();
 		}
+		applyContentSize();
 	}
 
 	function applyPositions(positions: Map<string, { x: number; y: number }>, nodes: SimNode[]) {
@@ -428,14 +453,14 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			})
 			.attr('stroke-opacity', (d: SimLink) => {
 				if (hoveredLinkId === d.id) return 1;
-				if (!highlight) return 0.72;
+				if (!highlight) return 0.78;
 				const s = endpointId(d.source);
 				const t = endpointId(d.target);
 				return highlight.isHighlightedEdge(s, t) ? 0.95 : 0.18;
 			})
 			.attr('stroke-width', (d: SimLink) => {
 				if (hoveredLinkId === d.id) return 2.75;
-				if (!highlight) return 1.35;
+				if (!highlight) return 1.5;
 				const s = endpointId(d.source);
 				const t = endpointId(d.target);
 				return highlight.isHighlightedEdge(s, t) ? 2.25 : 1;
@@ -482,9 +507,9 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		const { minX, minY } = bounds;
 		const dx = bounds.maxX - bounds.minX || 1;
 		const dy = bounds.maxY - bounds.minY || 1;
-		const availableW = width - FIT_PADDING_X * 2;
-		const availableH = height - FIT_PADDING_TOP - FIT_PADDING_BOTTOM;
-		const scale = Math.min(availableW / dx, availableH / dy, 2.2);
+		const availableW = viewportWidth - FIT_PADDING_X * 2;
+		const availableH = viewportHeight - FIT_PADDING_TOP - FIT_PADDING_BOTTOM;
+		const scale = Math.min(availableW / dx, availableH / dy, 2.5);
 		const tx = FIT_PADDING_X + (availableW - scale * dx) / 2 - scale * minX;
 		const ty = FIT_PADDING_TOP + (availableH - scale * dy) / 2 - scale * minY;
 		if (!Number.isFinite(scale) || !Number.isFinite(tx) || !Number.isFinite(ty)) return;
@@ -504,12 +529,17 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	function reflowForResize() {
 		if (simNodes.length === 0) return;
-		measureWidth();
-		if (radialLayout) {
-			reflowRadialPositions();
-		}
 		finalizeLayoutSize();
 		fitToScreen();
+	}
+
+	function showFullExtent() {
+		if (!zoomBehavior) return;
+		select(svg)
+			.transition()
+			.duration(450)
+			.ease((t) => 1 - Math.pow(1 - t, 3))
+			.call(zoomBehavior.transform, zoomIdentity);
 	}
 
 	function setupResizeObserver() {
@@ -530,8 +560,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		const node = simNodes.find((n) => n.id === id);
 		if (!node || !zoomBehavior || typeof node.x !== 'number' || typeof node.y !== 'number') return;
 		const scale = 1.35;
-		const tx = width / 2 - node.x * scale;
-		const ty = height / 2 - node.y * scale;
+		const tx = viewportWidth / 2 - node.x * scale;
+		const ty = viewportHeight / 2 - node.y * scale;
 		select(svg)
 			.transition()
 			.duration(450)
@@ -780,9 +810,9 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 				.append('text')
 				.attr('class', 'dep-node-label')
 				.attr('text-anchor', 'middle')
-				.attr('y', r + 16)
-				.attr('font-size', centerId && d.id === centerId ? '11px' : '10px')
-				.attr('font-weight', 600)
+				.attr('y', r + 18)
+				.attr('font-size', centerId && d.id === centerId ? '12px' : '11px')
+				.attr('font-weight', 700)
 				.attr('fill', palette.nodeLabel)
 				.text(label);
 
@@ -819,7 +849,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 						.strength(0.28)
 				)
 				.force('charge', forceManyBody().strength(-280))
-				.force('center', forceCenter(width / 2, height / 2))
+				.force('center', forceCenter(viewportWidth / 2, viewportHeight / 2))
 				.force('collision', forceCollide<SimNode>().radius((d) => nodeRadius(d, centerId) + 22))
 				.alphaDecay(0.045)
 				.velocityDecay(0.55);
@@ -854,6 +884,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		updateHighlight,
 		focusNode,
 		fitToScreen,
+		showFullExtent,
+		reflowLayout: reflowForResize,
 		zoomIn: () => zoomBy(1.28),
 		zoomOut: () => zoomBy(1 / 1.28),
 		setRadial(radial: boolean) {

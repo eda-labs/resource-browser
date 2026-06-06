@@ -883,6 +883,8 @@
 	:global(.dep-map-page--active) .dependency-map-graph-shell {
 		display: flex;
 		flex-direction: column;
+		flex: 1;
+		min-height: 0;
 		padding: 0.35rem 0.5rem 0.5rem;
 	}
 

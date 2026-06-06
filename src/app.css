@@ -3884,6 +3884,13 @@ html:not(.dark) .react-select__menu {
 .dep-map-page--active .spec-search-results-panel > .dependency-map-graph-shell {
 	display: flex;
 	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.dep-map-page--active .dep-map-root {
+	flex: 1;
+	min-height: 0;
 }
 
 .dep-map-page--active .dep-map-body {
@@ -3906,6 +3913,12 @@ html:not(.dark) .react-select__menu {
 .dep-map-svg-inner .dep-node-label {
 	font-family: 'NokiaPureText', ui-sans-serif, system-ui, sans-serif;
 	letter-spacing: -0.01em;
+	font-size: 11px;
+}
+
+.dep-map-svg-inner .dep-node--focus .dep-node-label {
+	font-size: 12px;
+	font-weight: 700;
 }
 
 .dep-map-svg-inner .dep-node--selected .dep-node-ring {
