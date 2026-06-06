@@ -6,13 +6,16 @@
 	import { page } from '$app/stores';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import PageCredits from '$lib/components/PageCredits.svelte';
+	import ResourceModal from '$lib/components/ResourceModal.svelte';
 	import releasesYaml from '$lib/releases.yaml?raw';
-	import type { EdaRelease, ReleasesConfig } from '$lib/structure';
-	import { fetchManifest, getManifestCache, prefetchManifest } from '$lib/manifest';
+	import type { CrdResource, EdaRelease, ReleasesConfig } from '$lib/structure';
+	import { fetchManifest, getManifestCache, prefetchManifest, type ManifestResource } from '$lib/manifest';
+	import { getLatestVersion } from '$lib/versions';
 	import {
 		validateBundle,
 		EXAMPLE_BUNDLE_YAML,
 		type BundleIssue,
+		type BundleResource,
 		type BundleValidationResult
 	} from '$lib/validate-bundle';
 	import YamlBundleEditor from '$lib/validate-bundle/YamlBundleEditor.svelte';
@@ -29,6 +32,10 @@
 	let highlightLine: number | null = null;
 	let rightTab: 'issues' | 'graph' | 'order' = 'issues';
 	let editorRef: YamlBundleEditor | undefined;
+	let manifestResources: ManifestResource[] = [];
+	let modalOpen = false;
+	let modalResource: CrdResource | null = null;
+	let modalVersion: string | null = null;
 
 	const manifestCache = getManifestCache();
 
@@ -71,6 +78,7 @@
 
 		try {
 			const manifest = (await fetchManifest(release.folder, manifestCache)) || [];
+			manifestResources = manifest;
 			result = await validateBundle({
 				yamlInput,
 				releaseFolder: release.folder,
@@ -104,6 +112,56 @@
 			highlightLine = issue.line;
 			editorRef?.focusLine(issue.line);
 		}
+	}
+
+	function findManifestEntry(kind: string, group: string): ManifestResource | undefined {
+		let entry = manifestResources.find((r) => r.kind === kind && (!r.group || r.group === group));
+		if (!entry) entry = manifestResources.find((r) => r.kind === kind);
+		if (!entry) {
+			entry = manifestResources.find((r) => {
+				const kindLower = kind.toLowerCase();
+				const resourceType = r.name?.toLowerCase().split('.')[0];
+				return resourceType === kindLower;
+			});
+		}
+		return entry;
+	}
+
+	function findBundleResourceForIssue(issue: BundleIssue): BundleResource | undefined {
+		if (!result) return undefined;
+		if (issue.docIndex !== undefined) {
+			return result.resources.find((r) => r.docIndex + 1 === issue.docIndex);
+		}
+		if (issue.resourceKind && issue.resourceName) {
+			return result.resources.find(
+				(r) => r.kind === issue.resourceKind && r.name === issue.resourceName
+			);
+		}
+		if (issue.resourceKind) {
+			return result.resources.find((r) => r.kind === issue.resourceKind);
+		}
+		return undefined;
+	}
+
+	function manifestEntryForIssue(issue: BundleIssue): ManifestResource | undefined {
+		const bundleRes = findBundleResourceForIssue(issue);
+		if (!bundleRes?.kind) return undefined;
+		return findManifestEntry(bundleRes.kind, bundleRes.group);
+	}
+
+	function openCrdSchemaModal(issue: BundleIssue, event: MouseEvent) {
+		event.stopPropagation();
+		const entry = manifestEntryForIssue(issue);
+		if (!entry || !release) return;
+		modalResource = entry as CrdResource;
+		modalVersion = getLatestVersion(entry);
+		modalOpen = true;
+	}
+
+	function closeCrdSchemaModal() {
+		modalOpen = false;
+		modalResource = null;
+		modalVersion = null;
 	}
 
 	function severityTone(severity: BundleIssue['severity']) {
@@ -275,28 +333,40 @@
 							<ul class="validate-bundle-issues" role="list">
 								{#each displayIssues as issue (issue.id)}
 									{@const tone = severityTone(issue.severity)}
+									{@const crdEntry = manifestEntryForIssue(issue)}
 									<li>
-										<button
-											type="button"
-											class="validate-bundle-issue {tone.row}"
-											on:click={() => jumpToIssue(issue)}
-										>
-											<div class="validate-bundle-issue-head">
-												<span class="validate-bundle-issue-badge {tone.badge}">{tone.label}</span>
-												{#if issue.resourceKind}
-													<span class="validate-bundle-issue-resource">
-														{issue.resourceKind}{issue.resourceName ? ` / ${issue.resourceName}` : ''}
-													</span>
+										<div class="validate-bundle-issue {tone.row}">
+											<button
+												type="button"
+												class="validate-bundle-issue-main"
+												on:click={() => jumpToIssue(issue)}
+											>
+												<div class="validate-bundle-issue-head">
+													<span class="validate-bundle-issue-badge {tone.badge}">{tone.label}</span>
+													{#if issue.resourceKind}
+														<span class="validate-bundle-issue-resource">
+															{issue.resourceKind}{issue.resourceName ? ` / ${issue.resourceName}` : ''}
+														</span>
+													{/if}
+													{#if issue.line}
+														<span class="validate-bundle-issue-line">Line {issue.line}</span>
+													{/if}
+												</div>
+												<p class="validate-bundle-issue-msg">{issue.message}</p>
+												{#if issue.fieldPath}
+													<p class="validate-bundle-issue-path">{issue.fieldPath}</p>
 												{/if}
-												{#if issue.line}
-													<span class="validate-bundle-issue-line">Line {issue.line}</span>
-												{/if}
-											</div>
-											<p class="validate-bundle-issue-msg">{issue.message}</p>
-											{#if issue.fieldPath}
-												<p class="validate-bundle-issue-path">{issue.fieldPath}</p>
+											</button>
+											{#if crdEntry}
+												<button
+													type="button"
+													class="validate-bundle-issue-schema-link"
+													on:click={(e) => openCrdSchemaModal(issue, e)}
+												>
+													View CRD schema →
+												</button>
 											{/if}
-										</button>
+										</div>
 									</li>
 								{/each}
 							</ul>
@@ -331,6 +401,17 @@
 		</div>
 	</div>
 </div>
+
+{#if release && modalResource}
+	<ResourceModal
+		open={modalOpen}
+		resourceDef={modalResource}
+		selectedRelease={release}
+		allReleases={releasesConfig.releases}
+		initialVersion={modalVersion}
+		onClose={closeCrdSchemaModal}
+	/>
+{/if}
 
 <style>
 	.validate-bundle-page {
@@ -477,15 +558,24 @@
 
 	.validate-bundle-issue {
 		width: 100%;
-		text-align: left;
 		border-radius: 0.5rem;
 		border-width: 1px;
 		padding: 0.625rem 0.75rem;
-		transition: ring 0.15s;
+		transition: box-shadow 0.15s;
 	}
 
 	.validate-bundle-issue:hover {
 		box-shadow: 0 0 0 2px rgb(59 130 246 / 0.25);
+	}
+
+	.validate-bundle-issue-main {
+		width: 100%;
+		text-align: left;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
 	}
 
 	.validate-bundle-issue-head {
@@ -527,6 +617,22 @@
 		font-family: ui-monospace, monospace;
 		font-size: 0.6875rem;
 		color: rgb(100 116 139);
+	}
+
+	.validate-bundle-issue-schema-link {
+		margin-top: 0.35rem;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: rgb(147 197 253);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.validate-bundle-issue-schema-link:hover {
+		color: rgb(191 219 254);
 	}
 
 	.validate-bundle-success {
