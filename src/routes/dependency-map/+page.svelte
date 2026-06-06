@@ -852,14 +852,10 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100dvh;
-		max-height: 100dvh;
-		overflow: hidden;
 	}
 
 	:global(.dep-map-page--active .spec-search-main) {
 		flex: 1;
-		min-height: 0;
-		overflow: hidden;
 		padding-bottom: 0.5rem;
 		gap: 0.5rem;
 	}
@@ -876,12 +872,9 @@
 	}
 
 	:global(.dep-map-page--active .spec-search-results-panel) {
-		flex: 1;
-		min-height: 0;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
-		overflow: hidden;
 	}
 
 	:global(.dep-map-page--active .dep-map-focus-banner) {
@@ -893,12 +886,9 @@
 	}
 
 	:global(.dep-map-page--active) .dependency-map-graph-shell {
-		flex: 1;
-		min-height: 0;
 		display: flex;
 		flex-direction: column;
 		padding: 0.35rem 0.5rem 0.5rem;
-		overflow: hidden;
 	}
 
 	@media (min-width: 768px) {

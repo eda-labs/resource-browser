@@ -742,8 +742,7 @@
 	.dep-map-root {
 		display: flex;
 		flex-direction: column;
-		flex: 1;
-		min-height: 0;
+		width: 100%;
 		gap: 0.5rem;
 		color: var(--dep-text);
 	}
@@ -993,9 +992,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		flex: 1;
-		min-height: 0;
-		overflow: hidden;
+		width: 100%;
+		max-width: 100%;
+		overflow-x: auto;
 	}
 
 	@media (min-width: 1024px) {
@@ -1007,9 +1006,7 @@
 
 	.dep-map-canvas-wrap {
 		position: relative;
-		flex: 1 1 auto;
-		min-width: 0;
-		min-height: 0;
+		flex: 0 0 auto;
 		width: 100%;
 		border: 1px solid var(--dep-panel-border);
 		border-radius: 0.75rem;
@@ -1074,8 +1071,6 @@
 	.dep-map-svg,
 	:global(svg.dep-map-svg-inner) {
 		display: block;
-		width: 100%;
-		height: 100%;
 	}
 
 	:global(.dep-map-svg .dep-node--hover) {

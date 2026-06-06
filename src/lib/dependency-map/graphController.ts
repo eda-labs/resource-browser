@@ -35,6 +35,10 @@ const STATE_RADIUS = 10;
 const RING_GAP = 95;
 const INNER_RING = 88;
 const LABEL_MAX_CHARS = 16;
+const CANVAS_MIN_HEIGHT = 220;
+const FIT_PADDING_X = 56;
+const FIT_PADDING_TOP = 80;
+const FIT_PADDING_BOTTOM = 80;
 
 export type GraphControllerOptions = {
 	container: HTMLDivElement;
@@ -282,15 +286,81 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		return palette.rel[rel] ?? palette.link;
 	}
 
-	function measure() {
-		const rect = container.getBoundingClientRect();
-		width = Math.max(rect.width, 1);
-		height = Math.max(rect.height, 1);
+	function getNodeBounds() {
+		if (simNodes.length === 0) return null;
+		const centerId = getCenterNodeId?.() ?? null;
+		const labelPad = 30;
+		let minX = Infinity;
+		let maxX = -Infinity;
+		let minY = Infinity;
+		let maxY = -Infinity;
+		for (const n of simNodes) {
+			const x = n.x ?? 0;
+			const y = n.y ?? 0;
+			const r = nodeRadius(n, centerId) + 6;
+			minX = Math.min(minX, x - r);
+			maxX = Math.max(maxX, x + r);
+			minY = Math.min(minY, y - r);
+			maxY = Math.max(maxY, y + r + labelPad);
+		}
+		return { minX, maxX, minY, maxY };
+	}
+
+	function measureWidth() {
+		const parent = container.parentElement;
+		const parentWidth =
+			parent?.getBoundingClientRect().width ?? container.getBoundingClientRect().width;
+		width = Math.max(parentWidth, 1);
+	}
+
+	function updateSvgDimensions() {
 		select(svg)
 			.attr('width', width)
 			.attr('height', height)
-			.style('width', '100%')
-			.style('height', '100%');
+			.style('width', `${width}px`)
+			.style('height', `${height}px`);
+	}
+
+	function applyContentSize() {
+		const bounds = getNodeBounds();
+		if (!bounds) return;
+
+		const contentW = bounds.maxX - bounds.minX;
+		const contentH = bounds.maxY - bounds.minY;
+		measureWidth();
+		const parentWidth =
+			container.parentElement?.getBoundingClientRect().width ?? width;
+		width = Math.max(width, contentW + FIT_PADDING_X * 2);
+		height = Math.max(CANVAS_MIN_HEIGHT, contentH + FIT_PADDING_TOP + FIT_PADDING_BOTTOM);
+		container.style.height = `${height}px`;
+		container.style.width = '100%';
+		container.style.minWidth = width > parentWidth + 2 ? `${width}px` : '';
+		updateSvgDimensions();
+	}
+
+	function measure() {
+		measureWidth();
+		height = CANVAS_MIN_HEIGHT;
+		container.style.height = `${height}px`;
+		container.style.minWidth = '';
+		updateSvgDimensions();
+	}
+
+	function reflowRadialPositions() {
+		const centerId = getCenterNodeId?.() ?? null;
+		const positions = computeRadialPositions(simNodes, simLinks, centerId, width, height);
+		applyPositions(positions, simNodes);
+		linkSel?.attr('d', linkPath);
+		nodeSel?.attr('transform', (d: SimNode) => `translate(${d.x ?? 0},${d.y ?? 0})`);
+	}
+
+	function finalizeLayoutSize() {
+		measureWidth();
+		applyContentSize();
+		if (radialLayout && simNodes.length > 0) {
+			reflowRadialPositions();
+			applyContentSize();
+		}
 	}
 
 	function applyPositions(positions: Map<string, { x: number; y: number }>, nodes: SimNode[]) {
@@ -407,31 +477,16 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	function fitToScreen() {
 		if (!zoomBehavior || simNodes.length === 0) return;
-		const paddingX = 56;
-		const paddingTop = 80;
-		const paddingBottom = 80;
-		const centerId = getCenterNodeId?.() ?? null;
-		const labelPad = 30;
-		let minX = Infinity;
-		let maxX = -Infinity;
-		let minY = Infinity;
-		let maxY = -Infinity;
-		for (const n of simNodes) {
-			const x = n.x ?? 0;
-			const y = n.y ?? 0;
-			const r = nodeRadius(n, centerId) + 6;
-			minX = Math.min(minX, x - r);
-			maxX = Math.max(maxX, x + r);
-			minY = Math.min(minY, y - r);
-			maxY = Math.max(maxY, y + r + labelPad);
-		}
-		const dx = maxX - minX || 1;
-		const dy = maxY - minY || 1;
-		const availableW = width - paddingX * 2;
-		const availableH = height - paddingTop - paddingBottom;
+		const bounds = getNodeBounds();
+		if (!bounds) return;
+		const { minX, minY } = bounds;
+		const dx = bounds.maxX - bounds.minX || 1;
+		const dy = bounds.maxY - bounds.minY || 1;
+		const availableW = width - FIT_PADDING_X * 2;
+		const availableH = height - FIT_PADDING_TOP - FIT_PADDING_BOTTOM;
 		const scale = Math.min(availableW / dx, availableH / dy, 2.2);
-		const tx = paddingX + (availableW - scale * dx) / 2 - scale * minX;
-		const ty = paddingTop + (availableH - scale * dy) / 2 - scale * minY;
+		const tx = FIT_PADDING_X + (availableW - scale * dx) / 2 - scale * minX;
+		const ty = FIT_PADDING_TOP + (availableH - scale * dy) / 2 - scale * minY;
 		if (!Number.isFinite(scale) || !Number.isFinite(tx) || !Number.isFinite(ty)) return;
 		select(svg)
 			.transition()
@@ -442,34 +497,33 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	function scheduleFitToScreen() {
 		requestAnimationFrame(() => {
-			measure();
+			finalizeLayoutSize();
 			requestAnimationFrame(() => fitToScreen());
 		});
 	}
 
 	function reflowForResize() {
 		if (simNodes.length === 0) return;
-		const centerId = getCenterNodeId?.() ?? null;
+		measureWidth();
 		if (radialLayout) {
-			const positions = computeRadialPositions(simNodes, simLinks, centerId, width, height);
-			applyPositions(positions, simNodes);
-			linkSel?.attr('d', linkPath);
-			nodeSel?.attr('transform', (d: SimNode) => `translate(${d.x ?? 0},${d.y ?? 0})`);
+			reflowRadialPositions();
 		}
-		scheduleFitToScreen();
+		finalizeLayoutSize();
+		fitToScreen();
 	}
 
 	function setupResizeObserver() {
 		resizeObserver?.disconnect();
+		const observeTarget = container.parentElement ?? container;
+		let lastObservedWidth = observeTarget.getBoundingClientRect().width;
 		resizeObserver = new ResizeObserver(() => {
-			const prevW = width;
-			const prevH = height;
-			measure();
-			if (Math.abs(prevW - width) > 2 || Math.abs(prevH - height) > 2) {
+			const newWidth = observeTarget.getBoundingClientRect().width;
+			if (Math.abs(newWidth - lastObservedWidth) > 2) {
+				lastObservedWidth = newWidth;
 				reflowForResize();
 			}
 		});
-		resizeObserver.observe(container);
+		resizeObserver.observe(observeTarget);
 	}
 
 	function focusNode(id: string) {
