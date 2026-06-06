@@ -231,7 +231,7 @@ export function validateDocument(ctx: ValidateDocContext): {
 	}
 
 	if (matchedVersionEntry.deprecated) {
-		warnings.push(
+		errors.push(
 			enrichError(
 				{
 					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is deprecated for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
@@ -243,6 +243,7 @@ export function validateDocument(ctx: ValidateDocContext): {
 				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
 			)
 		);
+		valid = false;
 	}
 
 	if (latestVersion && version !== latestVersion && !matchedVersionEntry.deprecated) {

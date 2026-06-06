@@ -123,9 +123,6 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 		if (!result.valid) valid = false;
 	}
 
-	const hardErrors = errors.filter((e) => e.keyword !== 'deprecated');
-	if (hardErrors.length > 0) valid = false;
-
 	const summary = buildSummary(parsed.docs.length, errors, warnings);
 
 	if (valid) {

@@ -18,16 +18,6 @@ export function getErrorTone(error: ErrorObject) {
 		};
 	}
 
-	if (msg.includes('deprecated')) {
-		return {
-			row: 'border border-amber-200 bg-amber-50/70 dark:border-amber-800 dark:bg-amber-900/20',
-			icon: 'text-amber-600 dark:text-amber-400',
-			text: 'text-amber-900 dark:text-amber-100',
-			path: 'text-amber-700 dark:text-amber-300',
-			iconType: 'warning' as const
-		};
-	}
-
 	if (error.keyword === 'enum') {
 		return {
 			row: 'border border-fuchsia-200 bg-fuchsia-50/70 dark:border-fuchsia-800 dark:bg-fuchsia-900/20',
@@ -148,7 +138,7 @@ export function buildSummary(totalDocs: number, errors: ErrorObject[], warnings:
 }
 
 export function isWarningEntry(error: ErrorObject) {
-	return error.keyword === 'warning' || error.keyword === 'deprecated';
+	return error.keyword === 'warning';
 }
 
 export function countErrors(items: ErrorObject[]) {

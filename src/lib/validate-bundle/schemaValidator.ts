@@ -13,11 +13,7 @@ function nextIssueId(): string {
 }
 
 function isWarningError(err: EnrichedError): boolean {
-	return (
-		err.keyword === 'warning' ||
-		err.keyword === 'deprecated' ||
-		(err.message || '').toLowerCase().includes('deprecated')
-	);
+	return err.keyword === 'warning';
 }
 
 function toBundleIssue(err: EnrichedError, resource?: BundleResource): BundleIssue {
