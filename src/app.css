@@ -3903,7 +3903,7 @@ html:not(.dark) .react-select__menu {
 }
 
 .dep-map-svg-inner :is(.dep-node-shape, .dep-node-ring) {
-	transition: opacity 0.18s ease, stroke-width 0.18s ease;
+	transition: opacity 0.18s ease, stroke-width 0.18s ease, filter 0.18s ease;
 }
 
 .dep-map-svg-inner .dep-node-label-group {
@@ -3912,19 +3912,36 @@ html:not(.dark) .react-select__menu {
 
 .dep-map-svg-inner .dep-node-label {
 	font-family: 'NokiaPureText', ui-sans-serif, system-ui, sans-serif;
-	letter-spacing: -0.01em;
-	font-size: 11px;
-}
-
-.dep-map-svg-inner .dep-node--focus .dep-node-label {
+	letter-spacing: -0.015em;
 	font-size: 12px;
 	font-weight: 700;
 }
 
+.dep-map-svg-inner .dep-node--focus .dep-node-label {
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.dep-map-svg-inner .dep-node--hover .dep-node-shape {
+	filter: url(#dep-node-shadow) drop-shadow(0 3px 8px rgba(15, 23, 42, 0.22));
+}
+
+.dark .dep-map-svg-inner .dep-node--hover .dep-node-shape {
+	filter: url(#dep-node-shadow) drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
+}
+
 .dep-map-svg-inner .dep-node--selected .dep-node-ring {
-	opacity: 1 !important;
+	opacity: 0.85 !important;
 }
 
 .dep-map-svg-inner .dep-node--focus .dep-node-ring {
-	opacity: 0.9 !important;
+	opacity: 0.95 !important;
+}
+
+.dep-map-svg-inner .dep-node--hover .dep-node-ring {
+	opacity: 0.7 !important;
+}
+
+.dep-map-svg-inner .dep-node-label-bg {
+	filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.08));
 }

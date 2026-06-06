@@ -1522,10 +1522,12 @@
 	}
 
 	.dep-map-dot {
-		width: 0.65rem;
-		height: 0.65rem;
+		width: 0.75rem;
+		height: 0.75rem;
 		border-radius: 9999px;
 		flex-shrink: 0;
+		border: 2px solid rgba(255, 255, 255, 0.85);
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 	}
 
 	.dep-map-dot-config {

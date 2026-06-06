@@ -5,7 +5,6 @@ import {
 	forceLink,
 	forceManyBody,
 	forceSimulation,
-	linkHorizontal,
 	select,
 	zoom,
 	zoomIdentity,
@@ -29,16 +28,17 @@ type SimLink = Omit<GraphLink, 'source' | 'target'> &
 		target: SimNode | string;
 	};
 
-const FOCUS_RADIUS = 20;
-const NODE_RADIUS = 14;
-const STATE_RADIUS = 11;
-const RING_GAP = 100;
-const INNER_RING = 92;
+const FOCUS_RADIUS = 26;
+const NODE_RADIUS = 18;
+const STATE_RADIUS = 15;
+const RING_GAP = 140;
+const INNER_RING = 120;
+const NODE_SEPARATION = 56;
 const LABEL_MAX_CHARS = 18;
 const CANVAS_MIN_HEIGHT = 360;
-const FIT_PADDING_X = 48;
-const FIT_PADDING_TOP = 64;
-const FIT_PADDING_BOTTOM = 64;
+const FIT_PADDING_X = 80;
+const FIT_PADDING_TOP = 96;
+const FIT_PADDING_BOTTOM = 80;
 
 export type GraphControllerOptions = {
 	container: HTMLDivElement;
@@ -116,13 +116,24 @@ function placeArc(
 	positions: Map<string, { x: number; y: number }>
 ) {
 	if (ids.length === 0) return;
-	const span = endAngle - startAngle;
+	const safeRadius = Math.max(radius, 48);
+	const minAngle = 2 * Math.asin(Math.min(1, NODE_SEPARATION / (2 * safeRadius)));
+	const neededSpan = minAngle * Math.max(ids.length - 1, 1);
+	let arcStart = startAngle;
+	let arcEnd = endAngle;
+	const baseSpan = arcEnd - arcStart;
+	if (neededSpan > baseSpan) {
+		const mid = (startAngle + endAngle) / 2;
+		arcStart = mid - neededSpan / 2;
+		arcEnd = mid + neededSpan / 2;
+	}
+	const span = arcEnd - arcStart;
 	ids.forEach((id, i) => {
 		const t = ids.length === 1 ? 0.5 : (i + 1) / (ids.length + 1);
-		const angle = startAngle + span * t;
+		const angle = arcStart + span * t;
 		positions.set(id, {
-			x: cx + radius * Math.cos(angle),
-			y: cy + radius * Math.sin(angle)
+			x: cx + safeRadius * Math.cos(angle),
+			y: cy + safeRadius * Math.sin(angle)
 		});
 	});
 }
@@ -140,14 +151,6 @@ function maxRingDepth(
 	return depths.length > 0 ? Math.max(...depths) : 1;
 }
 
-function radialScale(width: number, height: number, maxDepth: number): number {
-	const labelMargin = 36;
-	const available = Math.min(width, height) / 2 - labelMargin;
-	const baseMaxRadius = INNER_RING + Math.max(maxDepth - 1, 0) * RING_GAP + RING_GAP * 0.35;
-	if (baseMaxRadius <= 0) return 1;
-	return Math.min(1, available / baseMaxRadius);
-}
-
 function computeRadialPositions(
 	nodes: SimNode[],
 	links: SimLink[],
@@ -160,15 +163,16 @@ function computeRadialPositions(
 	const positions = new Map<string, { x: number; y: number }>();
 
 	if (!centerId || nodes.length === 0) {
-		const radius = Math.min(width, height) * 0.34;
-		const step = (2 * Math.PI) / Math.max(nodes.length, 1);
-		nodes.forEach((node, i) => {
-			const angle = i * step - Math.PI / 2;
-			positions.set(node.id, {
-				x: cx + radius * Math.cos(angle),
-				y: cy + radius * Math.sin(angle)
-			});
-		});
+		const radius = Math.max(INNER_RING, Math.min(width, height) * 0.38);
+		placeArc(
+			nodes.map((n) => n.id),
+			cx,
+			cy,
+			radius,
+			-Math.PI * 0.85,
+			Math.PI * 0.85,
+			positions
+		);
 		return positions;
 	}
 
@@ -201,31 +205,31 @@ function computeRadialPositions(
 		}
 	}
 
-	const scale = radialScale(width, height, maxRingDepth(upstreamByRing, downstreamByRing, bridgeByRing));
-	const innerRing = INNER_RING * scale;
-	const ringGap = RING_GAP * scale;
+	const innerRing = INNER_RING;
+	const ringGap = RING_GAP;
 
 	for (const [depth, ids] of upstreamByRing) {
 		const radius = innerRing + (depth - 1) * ringGap;
-		placeArc(ids, cx, cy, radius, Math.PI * 0.55, Math.PI * 1.45, positions);
+		placeArc(ids, cx, cy, radius, Math.PI * 0.52, Math.PI * 1.48, positions);
 	}
 
 	for (const [depth, ids] of downstreamByRing) {
 		const radius = innerRing + (depth - 1) * ringGap;
-		placeArc(ids, cx, cy, radius, -Math.PI * 0.45, Math.PI * 0.45, positions);
+		placeArc(ids, cx, cy, radius, -Math.PI * 0.48, Math.PI * 0.48, positions);
 	}
 
 	for (const [depth, ids] of bridgeByRing) {
-		const radius = innerRing + (depth - 1) * ringGap + ringGap * 0.35;
+		const radius = innerRing + (depth - 1) * ringGap + ringGap * 0.4;
 		const top = ids.filter((_, i) => i % 2 === 0);
 		const bottom = ids.filter((_, i) => i % 2 === 1);
-		placeArc(top, cx, cy, radius, -Math.PI * 0.12, Math.PI * 0.12, positions);
-		placeArc(bottom, cx, cy, radius, Math.PI * 0.88, Math.PI * 1.12, positions);
+		placeArc(top, cx, cy, radius, -Math.PI * 0.22, Math.PI * 0.22, positions);
+		placeArc(bottom, cx, cy, radius, Math.PI * 0.78, Math.PI * 1.22, positions);
 	}
 
 	if (orphan.length > 0) {
-		const radius = Math.min(width, height) * 0.42;
-		placeArc(orphan, cx, cy, radius, 0, 2 * Math.PI, positions);
+		const maxDepth = maxRingDepth(upstreamByRing, downstreamByRing, bridgeByRing);
+		const radius = innerRing + maxDepth * ringGap + ringGap * 0.65;
+		placeArc(orphan, cx, cy, radius, -Math.PI * 0.9, Math.PI * 0.9, positions);
 	}
 
 	return positions;
@@ -282,10 +286,6 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 	let hoveredNodeId: string | null = null;
 	let resizeObserver: ResizeObserver | null = null;
 
-	const linkGen = linkHorizontal<SimLink, SimNode>()
-		.x((d) => d.x ?? 0)
-		.y((d) => d.y ?? 0);
-
 	function relColor(rel: LinkRelation): string {
 		return palette.rel[rel] ?? palette.link;
 	}
@@ -293,7 +293,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 	function getNodeBounds() {
 		if (simNodes.length === 0) return null;
 		const centerId = getCenterNodeId?.() ?? null;
-		const labelPad = 30;
+		const labelPad = 42;
 		let minX = Infinity;
 		let maxX = -Infinity;
 		let minY = Infinity;
@@ -301,13 +301,31 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		for (const n of simNodes) {
 			const x = n.x ?? 0;
 			const y = n.y ?? 0;
-			const r = nodeRadius(n, centerId) + 6;
+			const r = nodeRadius(n, centerId) + 10;
 			minX = Math.min(minX, x - r);
 			maxX = Math.max(maxX, x + r);
 			minY = Math.min(minY, y - r);
 			maxY = Math.max(maxY, y + r + labelPad);
 		}
 		return { minX, maxX, minY, maxY };
+	}
+
+	function centerGraphInCanvas(targetW: number, targetH: number) {
+		const bounds = getNodeBounds();
+		if (!bounds || simNodes.length === 0) return;
+		const graphW = bounds.maxX - bounds.minX;
+		const graphH = bounds.maxY - bounds.minY;
+		const offsetX = (targetW - graphW) / 2 - bounds.minX;
+		const offsetY = (targetH - graphH) / 2 - bounds.minY;
+		if (Math.abs(offsetX) < 0.5 && Math.abs(offsetY) < 0.5) return;
+		for (const node of simNodes) {
+			node.x = (node.x ?? 0) + offsetX;
+			node.y = (node.y ?? 0) + offsetY;
+			if (radialLayout) {
+				node.fx = node.x;
+				node.fy = node.y;
+			}
+		}
 	}
 
 	function measureWidth() {
@@ -355,8 +373,11 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		measureWidth();
 		const contentW = bounds.maxX - bounds.minX + FIT_PADDING_X * 2;
 		const contentH = bounds.maxY - bounds.minY + FIT_PADDING_TOP + FIT_PADDING_BOTTOM;
-		width = Math.max(viewportWidth, contentW);
-		height = Math.max(viewportHeight, contentH);
+		const targetW = Math.max(viewportWidth, contentW);
+		const targetH = Math.max(viewportHeight, contentH);
+		centerGraphInCanvas(targetW, targetH);
+		width = targetW;
+		height = targetH;
 		container.style.minWidth = width > viewportWidth + 2 ? `${width}px` : '';
 		container.style.height = `${height}px`;
 		updateSvgDimensions();
@@ -368,13 +389,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 
 	function reflowRadialPositions() {
 		const centerId = getCenterNodeId?.() ?? null;
-		const positions = computeRadialPositions(
-			simNodes,
-			simLinks,
-			centerId,
-			viewportWidth,
-			viewportHeight
-		);
+		const positions = computeRadialPositions(simNodes, simLinks, centerId, width, height);
 		applyPositions(positions, simNodes);
 		linkSel?.attr('d', linkPath);
 		nodeSel?.attr('transform', (d: SimNode) => `translate(${d.x ?? 0},${d.y ?? 0})`);
@@ -410,25 +425,27 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 	}
 
 	function linkPath(d: SimLink): string {
-		const sx = (d.source as SimNode).x ?? 0;
-		const sy = (d.source as SimNode).y ?? 0;
-		const tx = (d.target as SimNode).x ?? 0;
-		const ty = (d.target as SimNode).y ?? 0;
+		const centerId = getCenterNodeId?.() ?? null;
+		const source = d.source as SimNode;
+		const target = d.target as SimNode;
+		const sx = source.x ?? 0;
+		const sy = source.y ?? 0;
+		const tx = target.x ?? 0;
+		const ty = target.y ?? 0;
 		const dx = tx - sx;
 		const dy = ty - sy;
 		const dist = Math.hypot(dx, dy) || 1;
-		const trim = 14;
-		const endX = tx - (dx / dist) * trim;
-		const endY = ty - (dy / dist) * trim;
-		const startX = sx + (dx / dist) * trim;
-		const startY = sy + (dy / dist) * trim;
-		return (
-			linkGen({
-				...d,
-				source: { ...(d.source as SimNode), x: startX, y: startY },
-				target: { ...(d.target as SimNode), x: endX, y: endY }
-			}) ?? ''
-		);
+		const trimStart = nodeRadius(source, centerId) + 5;
+		const trimEnd = nodeRadius(target, centerId) + 8;
+		const endX = tx - (dx / dist) * trimEnd;
+		const endY = ty - (dy / dist) * trimEnd;
+		const startX = sx + (dx / dist) * trimStart;
+		const startY = sy + (dy / dist) * trimStart;
+		const curve = Math.min(52, Math.max(14, dist * 0.14));
+		const sign = d.id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 2 === 0 ? 1 : -1;
+		const mx = (startX + endX) / 2 + (-dy / dist) * curve * sign;
+		const my = (startY + endY) / 2 + (dx / dist) * curve * sign;
+		return `M${startX},${startY} Q${mx},${my} ${endX},${endY}`;
 	}
 
 	function updateHighlight() {
@@ -453,14 +470,14 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			})
 			.attr('stroke-opacity', (d: SimLink) => {
 				if (hoveredLinkId === d.id) return 1;
-				if (!highlight) return 0.78;
+				if (!highlight) return 0.88;
 				const s = endpointId(d.source);
 				const t = endpointId(d.target);
 				return highlight.isHighlightedEdge(s, t) ? 0.95 : 0.18;
 			})
 			.attr('stroke-width', (d: SimLink) => {
 				if (hoveredLinkId === d.id) return 2.75;
-				if (!highlight) return 1.5;
+				if (!highlight) return 1.75;
 				const s = endpointId(d.source);
 				const t = endpointId(d.target);
 				return highlight.isHighlightedEdge(s, t) ? 2.25 : 1;
@@ -482,7 +499,17 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		nodeSel.select('.dep-node-ring').attr('opacity', (d: SimNode) => {
 			const isFocus = centerId && d.id === centerId;
 			const isSelected = selectedId === d.id;
-			return isFocus || isSelected || hoveredNodeId === d.id ? 1 : 0;
+			const isHovered = hoveredNodeId === d.id;
+			if (isFocus) return 0.95;
+			if (isSelected) return 0.85;
+			if (isHovered) return 0.7;
+			return 0;
+		});
+
+		nodeSel.select('.dep-node-shape').attr('stroke-width', (d: SimNode) => {
+			if (centerId && d.id === centerId) return 3;
+			if (selectedId === d.id || hoveredNodeId === d.id) return 2.75;
+			return 2.25;
 		});
 
 		nodeSel.select('.dep-node-label-group').attr('opacity', (d: SimNode) => {
@@ -509,7 +536,7 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		const dy = bounds.maxY - bounds.minY || 1;
 		const availableW = viewportWidth - FIT_PADDING_X * 2;
 		const availableH = viewportHeight - FIT_PADDING_TOP - FIT_PADDING_BOTTOM;
-		const scale = Math.min(availableW / dx, availableH / dy, 2.5);
+		const scale = Math.min(availableW / dx, availableH / dy, 3.2);
 		const tx = FIT_PADDING_X + (availableW - scale * dx) / 2 - scale * minX;
 		const ty = FIT_PADDING_TOP + (availableH - scale * dy) / 2 - scale * minY;
 		if (!Number.isFinite(scale) || !Number.isFinite(tx) || !Number.isFinite(ty)) return;
@@ -623,6 +650,16 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			.attr('d', 'M0,-4L8,0L0,4')
 			.attr('fill', palette.linkDim);
 
+		defs.selectAll('#dep-node-shadow').remove();
+		const shadow = defs.append('filter').attr('id', 'dep-node-shadow').attr('x', '-40%').attr('y', '-40%').attr('width', '180%').attr('height', '180%');
+		shadow
+			.append('feDropShadow')
+			.attr('dx', 0)
+			.attr('dy', 1.5)
+			.attr('stdDeviation', 2.5)
+			.attr('flood-color', theme === 'dark' ? '#020617' : '#0f172a')
+			.attr('flood-opacity', theme === 'dark' ? 0.42 : 0.16);
+
 		const gradients = defs.selectAll('#dep-node-gradients').data([0]);
 		const gradRoot = gradients.enter().append('g').attr('id', 'dep-node-gradients').merge(gradients);
 
@@ -679,10 +716,10 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 				.append('defs')
 				.append('pattern')
 				.attr('id', 'dep-grid-pattern')
-				.attr('width', 20)
-				.attr('height', 20)
+				.attr('width', 24)
+				.attr('height', 24)
 				.attr('patternUnits', 'userSpaceOnUse');
-			gridPattern.append('circle').attr('cx', 1).attr('cy', 1).attr('r', 1).attr('class', 'dep-grid-dot');
+			gridPattern.append('circle').attr('cx', 1.5).attr('cy', 1.5).attr('r', 1.15).attr('class', 'dep-grid-dot');
 
 			root.append('rect').attr('class', 'dep-map-bg').attr('width', '100%').attr('height', '100%');
 			root
@@ -763,11 +800,11 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 		nodeSel
 			.append('circle')
 			.attr('class', 'dep-node-ring')
-			.attr('r', (d: SimNode) => nodeRadius(d, centerId) + 5)
+			.attr('r', (d: SimNode) => nodeRadius(d, centerId) + 7)
 			.attr('fill', 'none')
 			.attr('stroke', palette.focusRing)
-			.attr('stroke-width', 2.5)
-			.attr('opacity', (d: SimNode) => (centerId && d.id === centerId ? 0.85 : 0));
+			.attr('stroke-width', 3)
+			.attr('opacity', (d: SimNode) => (centerId && d.id === centerId ? 0.9 : 0));
 
 		nodeSel
 			.append('circle')
@@ -775,7 +812,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			.attr('r', (d: SimNode) => nodeRadius(d, centerId))
 			.attr('fill', (d: SimNode) => `url(#dep-node-grad-${d.type === 'config' || d.type === 'state' ? d.type : 'other'})`)
 			.attr('stroke', palette.nodeStroke)
-			.attr('stroke-width', (d: SimNode) => (centerId && d.id === centerId ? 2.5 : 1.75))
+			.attr('stroke-width', (d: SimNode) => (centerId && d.id === centerId ? 3 : 2.25))
+			.attr('filter', 'url(#dep-node-shadow)')
 			.on('click', (_: unknown, d: SimNode) => {
 				const current = getSelectedId();
 				onSelect(d.id === current ? null : d.id);
@@ -810,8 +848,8 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 				.append('text')
 				.attr('class', 'dep-node-label')
 				.attr('text-anchor', 'middle')
-				.attr('y', r + 18)
-				.attr('font-size', centerId && d.id === centerId ? '12px' : '11px')
+				.attr('y', r + 22)
+				.attr('font-size', centerId && d.id === centerId ? '13px' : '12px')
 				.attr('font-weight', 700)
 				.attr('fill', palette.nodeLabel)
 				.text(label);
@@ -819,14 +857,14 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			const bbox = (text.node() as SVGTextElement).getBBox();
 			g.insert('rect', 'text')
 				.attr('class', 'dep-node-label-bg')
-				.attr('x', bbox.x - 4)
-				.attr('y', bbox.y - 2)
-				.attr('width', bbox.width + 8)
-				.attr('height', bbox.height + 4)
-				.attr('rx', 4)
+				.attr('x', bbox.x - 6)
+				.attr('y', bbox.y - 3)
+				.attr('width', bbox.width + 12)
+				.attr('height', bbox.height + 6)
+				.attr('rx', 5)
 				.attr('fill', palette.nodeLabelBg)
 				.attr('stroke', palette.panelBorder)
-				.attr('stroke-width', 0.75);
+				.attr('stroke-width', 1);
 		});
 
 		const positions = computeRadialPositions(simNodes, simLinks, centerId, width, height);
@@ -845,12 +883,12 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 					'link',
 					forceLink<SimNode, SimLink>(simLinks)
 						.id((d) => d.id)
-						.distance(110)
-						.strength(0.28)
+						.distance(150)
+						.strength(0.24)
 				)
-				.force('charge', forceManyBody().strength(-280))
+				.force('charge', forceManyBody().strength(-420))
 				.force('center', forceCenter(viewportWidth / 2, viewportHeight / 2))
-				.force('collision', forceCollide<SimNode>().radius((d) => nodeRadius(d, centerId) + 22))
+				.force('collision', forceCollide<SimNode>().radius((d) => nodeRadius(d, centerId) + 32))
 				.alphaDecay(0.045)
 				.velocityDecay(0.55);
 
