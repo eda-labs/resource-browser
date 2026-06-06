@@ -41,8 +41,11 @@ describe('resourceSearch', () => {
 		expect(results[0]?.kind).toBe('Interface');
 	});
 
-	it('includes Interface CRD within a small suggestion limit', () => {
-		const results = searchResources(sampleResources, 'interface', { limit: 8 });
+	it('returns all matching CRDs when no limit is set', () => {
+		const results = searchResources(sampleResources, 'interface');
 		expect(results.some((r) => r.kind === 'Interface')).toBe(true);
+		expect(results.length).toBe(
+			sampleResources.filter((r) => matchesResourceQuery(r, 'interface')).length
+		);
 	});
 });

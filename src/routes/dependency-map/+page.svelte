@@ -21,8 +21,6 @@
 	import type { CrdResource, EdaRelease, ReleasesConfig } from '$lib/structure';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
-	const MAX_SUGGESTIONS = 10;
-
 	const workflowSteps = [
 		{ num: 1, title: 'Search', desc: 'Find a CRD by kind or name' },
 		{ num: 2, title: 'Select', desc: 'Pick the resource to map' },
@@ -73,9 +71,7 @@
 			groupName(focusNodeId)
 		: '';
 
-	$: filteredResources = searchResources(manifestResources, resourceSearch, {
-		limit: MAX_SUGGESTIONS
-	});
+	$: filteredResources = searchResources(manifestResources, resourceSearch);
 
 	$: showSearchResults = searchFocused && resourceSearch.trim().length > 0;
 

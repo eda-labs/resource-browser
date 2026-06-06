@@ -87,8 +87,7 @@
 			if (resourceTypeFilter === 'config') return !resource.name.toLowerCase().includes('states');
 			return true;
 		}),
-		heroSearch,
-		{ limit: 8 }
+		heroSearch
 	);
 
 	$: showSearchResults = searchFocused && heroSearch.trim().length > 0;
