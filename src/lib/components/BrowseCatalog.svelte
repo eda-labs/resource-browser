@@ -9,6 +9,9 @@
 	export let allReleases: EdaRelease[] = [];
 	export let onReleaseChange: (release: EdaRelease) => void | Promise<void> = () => {};
 	export let onExitBrowse: () => void = () => {};
+	/** Open ResourceModal for this CRD name when catalog loads (from URL ?resource=) */
+	export let initialResourceName: string | null = null;
+	export let onResourceModalClose: (() => void) | undefined = undefined;
 
 	let searchQuery = '';
 	let typeFilter: 'all' | 'state' | 'config' = 'all';
@@ -19,6 +22,7 @@
 
 	let modalOpen = false;
 	let modalResource: CrdResource | null = null;
+	let openedInitialResource: string | null = null;
 
 	// Keep modal resource in sync when release/manifest reloads
 	$: if (modalOpen && modalResource) {
@@ -93,6 +97,24 @@
 	function closeResourceModal() {
 		modalOpen = false;
 		modalResource = null;
+		onResourceModalClose?.();
+	}
+
+	$: if (
+		initialResourceName &&
+		initialResourceName !== openedInitialResource &&
+		allResources.length > 0
+	) {
+		const res = allResources.find((r) => r.name === initialResourceName);
+		openedInitialResource = initialResourceName;
+		if (res) {
+			modalResource = res;
+			modalOpen = true;
+		}
+	}
+
+	$: if (!initialResourceName) {
+		openedInitialResource = null;
 	}
 </script>
 

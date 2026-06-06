@@ -21,7 +21,6 @@ import {
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
 	import { searchResources } from '$lib/resourceSearch';
-	import { getLatestVersion } from '$lib/versions';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 
@@ -257,6 +256,7 @@ import {
 
 	async function enterBrowseMode(release: EdaRelease) {
 		showBrowseMode = true;
+		previousBrowseRelease = release.name;
 		selectedRelease.set(release);
 		await loadCrdsForRelease(release);
 		goto(`/?browse=true&release=${release.name}`, { replaceState: true, keepFocus: true });
@@ -276,20 +276,27 @@ import {
 	}
 
 	async function handleHomeResourceClick(resourceName: string) {
-		// Ensure we have the manifest for the selected release and pick a version that exists in this release
-		const manifest = await loadCrdsForRelease($selectedRelease);
-		const resourceInRelease = (manifest || []).find((r: any) => r.name === resourceName);
-		if (resourceInRelease && resourceInRelease.versions && resourceInRelease.versions.length) {
-			const version = getLatestVersion(resourceInRelease);
-			if (!version) {
-				goto(`/?browse=true&release=${$selectedRelease.name}`);
-				return;
-			}
-			goto(`/${resourceName}/${version}?release=${$selectedRelease.name}`);
+		await loadCrdsForRelease($selectedRelease);
+		const resourceInRelease = $crdMetaStore.find((r) => r.name === resourceName);
+		showBrowseMode = true;
+		previousBrowseRelease = $selectedRelease.name;
+		const release = encodeURIComponent($selectedRelease.name);
+		if (resourceInRelease) {
+			goto(`/?browse=true&release=${release}&resource=${encodeURIComponent(resourceName)}`, {
+				keepFocus: true
+			});
 		} else {
-			// If not found, go to browse mode for the selected release
-			goto(`/?browse=true&release=${$selectedRelease.name}`);
+			goto(`/?browse=true&release=${release}`, { keepFocus: true });
 		}
+	}
+
+	function clearBrowseResourceFromUrl() {
+		if (!browser || !showBrowseMode) return;
+		const params = new URLSearchParams($page.url.search);
+		if (!params.has('resource')) return;
+		params.delete('resource');
+		const targetUrl = `/?${params.toString()}`;
+		goto(targetUrl, { replaceState: true, noScroll: true, keepFocus: true });
 	}
 	async function toggleDiff(version: string) {
 		if (showDiff && compareVersion === version) {
@@ -534,8 +541,10 @@ import {
 					allResources={$crdMetaStore}
 					selectedRelease={$selectedRelease}
 					allReleases={releasesConfig.releases}
+					initialResourceName={$page.url.searchParams.get('resource')}
 					onReleaseChange={handleBrowseReleaseChange}
 					onExitBrowse={exitBrowseMode}
+					onResourceModalClose={clearBrowseResourceFromUrl}
 				/>
 			{:else if loading}
 				<div class="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-800">
