@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Schema } from '$lib/structure';
 	import { getDescription, getScope, hashExistDeep, getDefault } from './functions';
+	import { getRequiredFields } from '$lib/schema/requiredFields';
 
 	import Tree from './Tree.svelte';
 
@@ -42,7 +43,7 @@
 		{#if 'properties' in scope}
 			<div class="font-fira text-sm leading-relaxed">
 				{#each Object.entries(scope.properties) as [key, folder]}
-					{@const requiredList = 'required' in scope ? scope.required : []}
+					{@const requiredList = getRequiredFields(scope)}
 					<Tree
 						{hash}
 						{source}

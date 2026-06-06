@@ -12,8 +12,10 @@
 		getMinimum,
 		getMaximum,
 		getMinItems,
-		getMaxItems
+		getMaxItems,
+		isExpandableSchema
 	} from './functions';
+	import { getRequiredFields } from '$lib/schema/requiredFields';
 	import EnumDisplay from './EnumDisplay.svelte';
 	import type { Schema } from '$lib/structure';
 
@@ -415,6 +417,9 @@
 					: ''}"
 				>{key}{#if requiredList.includes(key)}<sup
 						class="text-xs font-bold text-red-500 dark:text-red-400">*</sup
+					><span
+						class="ml-1 inline-flex items-center rounded border border-rose-200 bg-rose-50 px-1 py-0 text-[9px] font-semibold tracking-wide text-rose-700 uppercase dark:border-rose-800 dark:bg-rose-900/30 dark:text-rose-300"
+						>required</span
 					>{/if}</span
 			>
 			{#if 'type' in folder}
@@ -606,7 +611,7 @@
 				</li>
 			{/if}
 
-			{#if folder.type === 'object' || folder.type === 'array'}
+			{#if isExpandableSchema(folder)}
 				{@const props = propExist()}
 				{#if typeof props === 'object'}
 					{@const thisScope = getScope(folder)}
@@ -629,7 +634,7 @@
 						return arr;
 					})()}
 					{#each combinedKeys as subkey}
-						{@const requiredList = 'required' in thisScope ? thisScope.required : []}
+						{@const requiredList = getRequiredFields(thisScope)}
 						{@const existsHere =
 							'properties' in thisScope && subkey in (thisScope.properties || {})}
 						{@const subfolder = existsHere ? thisScope.properties[subkey] : null}

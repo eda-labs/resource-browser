@@ -1,5 +1,9 @@
 import type { ErrorObject, ValidateFunction } from 'ajv';
 import { getLatestVersion } from '$lib/versions';
+import {
+	collectMissingRequiredFields,
+	formatRequiredFieldMessage
+} from '$lib/schema/requiredFields';
 import { formatVersionLabel } from './formatErrors';
 import { formatLocationInfo, getFieldLocationInfo } from './parseDocuments';
 import type { EnrichedError, ManifestEntry, ParsedDocument } from './types';
@@ -32,6 +36,56 @@ function findResourceEntry(manifest: ManifestEntry[], kind: string, group: strin
 		});
 	}
 	return entry;
+}
+
+function ajvReportsRequired(errors: ErrorObject[] | null | undefined, instancePath: string): boolean {
+	return (errors || []).some(
+		(err) => err.keyword === 'required' && err.instancePath === instancePath
+	);
+}
+
+function enrichRequiredFieldErrors(
+	missing: ReturnType<typeof collectMissingRequiredFields>,
+	ctx: {
+		prefix: string;
+		section: 'spec' | 'status';
+		doc: ParsedDocument;
+		docIndex: number;
+		resourceLink?: { name: string; version: string };
+		ajvErrors?: ErrorObject[] | null;
+		keyword?: string;
+	}
+): EnrichedError[] {
+	const enriched: EnrichedError[] = [];
+	for (const item of missing) {
+		if (ajvReportsRequired(ctx.ajvErrors, item.instancePath)) continue;
+		const fieldLocationInfo = getFieldLocationInfo(
+			ctx.doc.rawText,
+			ctx.doc.startLine,
+			`/${ctx.section}${item.instancePath}`
+		);
+		const lineMatch = fieldLocationInfo.match(/Line\s+(\d+)/i);
+		const message = `${ctx.prefix}${ctx.section}.${item.path} is required${fieldLocationInfo}`;
+		enriched.push(
+			enrichError(
+				{
+					message,
+					instancePath: `/${ctx.section}${item.instancePath}`,
+					schemaPath: '#/required',
+					keyword: ctx.keyword || 'required',
+					params: { missingProperty: item.field }
+				} as ErrorObject,
+				{
+					docIndex: ctx.docIndex,
+					docPrefix: ctx.prefix,
+					locationInfo: fieldLocationInfo,
+					resourceLink: ctx.resourceLink,
+					line: lineMatch ? Number(lineMatch[1]) : undefined
+				}
+			)
+		);
+	}
+	return enriched;
 }
 
 function enrichError(
@@ -303,12 +357,19 @@ export function validateDocument(ctx: ValidateDocContext): {
 	if (parsedYaml.spec && spec) {
 		const validatorKey = `${schemaKey}::spec`;
 		const specValidator = ctx.getSpecValidator(validatorKey, spec);
-		if (!specValidator(parsedYaml.spec)) {
+		const specValid = specValidator(parsedYaml.spec);
+		const ajvSpecErrors = specValidator.errors || [];
+		if (!specValid) {
 			valid = false;
-			const docErrors = (specValidator.errors || []).map((err) => {
+			const docErrors = ajvSpecErrors.map((err) => {
 				let message = err.message || 'validation error';
-				if (err.keyword === 'required' && (spec as { required?: string[] }).required) {
-					message = `${message}. Required fields in spec: ${(spec as { required: string[] }).required.join(', ')}`;
+				if (err.keyword === 'required') {
+					const missingProperty = String(err.params?.missingProperty || '');
+					const pointerPath = err.instancePath.replace(/^\//, '').replace(/\//g, '.');
+					const fieldPath = [pointerPath, missingProperty].filter(Boolean).join('.');
+					message = fieldPath
+						? formatRequiredFieldMessage(`spec.${fieldPath}`)
+						: message;
 				}
 				if (err.keyword === 'enum') {
 					const allowedValues = err.params?.allowedValues;
@@ -325,7 +386,7 @@ export function validateDocument(ctx: ValidateDocContext): {
 				return enrichError(
 					{
 						...err,
-						message: `${prefix}spec${err.instancePath}: ${message}${fieldLocationInfo}`,
+						message: `${prefix}${message}${fieldLocationInfo}`,
 						instancePath: `/spec${err.instancePath}`,
 						resourceLink
 					} as ErrorObject,
@@ -339,6 +400,20 @@ export function validateDocument(ctx: ValidateDocContext): {
 				);
 			});
 			errors.push(...docErrors);
+		}
+
+		const missingRequired = collectMissingRequiredFields(parsedYaml.spec, spec);
+		const supplementalRequired = enrichRequiredFieldErrors(missingRequired, {
+			prefix,
+			section: 'spec',
+			doc,
+			docIndex: doc.index,
+			resourceLink,
+			ajvErrors: ajvSpecErrors
+		});
+		if (supplementalRequired.length > 0) {
+			valid = false;
+			errors.push(...supplementalRequired);
 		}
 	} else if (!parsedYaml.spec) {
 		if (isSpecRequired || spec) {

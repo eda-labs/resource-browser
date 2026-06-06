@@ -1,7 +1,25 @@
 import type { Schema } from '$lib/structure';
+import { hasObjectProperties, resolveObjectSchema } from '$lib/schema/requiredFields';
 
 export function getScope(resource: Schema) {
-	return resource.type === 'array' ? resource.items : resource;
+	const base = resource.type === 'array' ? resource.items : resource;
+	const resolved = resolveObjectSchema(base);
+	if (!resolved) return base;
+
+	return {
+		...(base as object),
+		properties: resolved.properties,
+		required: resolved.required,
+		type: 'type' in base ? base.type : 'object'
+	} as Schema;
+}
+
+export function isExpandableSchema(resource: Schema): boolean {
+	return (
+		resource.type === 'object' ||
+		resource.type === 'array' ||
+		hasObjectProperties(resource.type === 'array' ? resource.items : resource)
+	);
 }
 
 export function getDescription(resource: Schema) {

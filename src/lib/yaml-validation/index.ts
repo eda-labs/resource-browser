@@ -10,6 +10,14 @@ export * from './types';
 export * from './formatErrors';
 export * from './parseDocuments';
 export * from './schemaCache';
+export {
+	collectMissingRequiredFields,
+	formatRequiredFieldMessage,
+	getRequiredFields,
+	hasObjectProperties,
+	normalizeSchemaForAjv,
+	resolveObjectSchema
+} from '$lib/schema/requiredFields';
 
 function findResourceEntry(
 	manifest: ValidateYamlOptions['manifest'],

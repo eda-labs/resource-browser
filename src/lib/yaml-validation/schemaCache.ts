@@ -1,5 +1,6 @@
 import yaml from 'js-yaml';
 import type { ValidateFunction } from 'ajv';
+import { normalizeSchemaForAjv } from '$lib/schema/requiredFields';
 
 export type SchemaSections = {
 	spec?: unknown;
@@ -68,7 +69,7 @@ export function getOrCompileValidator(
 ): ValidateFunction {
 	const existing = validatorCache.get(cacheKey);
 	if (existing) return existing;
-	const validator = ajv.compile(schema);
+	const validator = ajv.compile(normalizeSchemaForAjv(schema));
 	validatorCache.set(cacheKey, validator);
 	return validator;
 }
