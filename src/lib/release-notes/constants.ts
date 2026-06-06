@@ -6,12 +6,6 @@ export const RISK_COLOR: Record<UpgradeRisk, string> = {
 	low: '#639922'
 };
 
-export const RISK_BG: Record<UpgradeRisk, string> = {
-	high: '#fcebeb',
-	medium: '#faeeda',
-	low: '#eaf3de'
-};
-
 export const TABS = [
 	'Overview',
 	'Breaking',
