@@ -2,7 +2,6 @@
   "toVer": "25.8.1",
   "fromVer": "25.4.2",
   "notes": {
-    "summary": "EDA 25.8.1 changes 0 new, 3 removed, and 19 modified CRDs compared to 25.4.2. 36 breaking changes require manifest updates.",
     "newResources": [],
     "removedResources": [
       {
@@ -29,7 +28,7 @@
             "field": "spec.trustBundle",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.trustBundle available on CertificateCheck; existing manifests remain valid."
           }
         ]
@@ -41,7 +40,7 @@
             "field": "spec.matchSetOptions",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.matchSetOptions available on CommunitySet; existing manifests remain valid."
           }
         ]
@@ -53,35 +52,35 @@
             "field": "spec.statisticsPerEntry",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.statisticsPerEntry available on ControlPlaneFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.description available on ControlPlaneFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.ipEntry.properties.log",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.ipEntry.properties.log available on ControlPlaneFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.macEntry.properties.log",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.macEntry.properties.log available on ControlPlaneFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.type.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.type.description available on ControlPlaneFilter; existing manifests remain valid."
           }
         ]
@@ -93,42 +92,42 @@
             "field": "spec.topology.properties.nodes.items.properties.chassisConfiguration.properties.pdType",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.topology.properties.nodes.items.properties.chassisConfiguration.properties.pdType available on CxCluster; existing manifests remain valid."
           },
           {
             "field": "spec.topology.properties.nodes.items.properties.chassisConfiguration.required",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "[\"chassisType\",\"macAddress\"]",
+            "after": "[\"chassisType\",\"macAddress\",\"pdType\"]",
             "networkBehavior": "Required on CxCluster changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "spec.topology.properties.nodes.items.properties.podSpec.properties.containerSpec.properties.lifecycle.properties.stopSignal",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.topology.properties.nodes.items.properties.podSpec.properties.containerSpec.properties.lifecycle.properties.stopSignal available on CxCluster; existing manifests remain valid."
           },
           {
             "field": "spec.topology.properties.nodes.items.properties.podSpec.properties.initContainers.items.properties.lifecycle.properties.stopSignal",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.topology.properties.nodes.items.properties.podSpec.properties.initContainers.items.properties.lifecycle.properties.stopSignal available on CxCluster; existing manifests remain valid."
           },
           {
             "field": "spec.topology.properties.nodes.items.properties.podSpec.properties.securityContext.properties.seLinuxChangePolicy",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.topology.properties.nodes.items.properties.podSpec.properties.securityContext.properties.seLinuxChangePolicy available on CxCluster; existing manifests remain valid."
           },
           {
             "field": "spec.topology.properties.nodes.items.properties.podSpec.properties.sidecars.items.properties.lifecycle.properties.stopSignal",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.topology.properties.nodes.items.properties.podSpec.properties.sidecars.items.properties.lifecycle.properties.stopSignal available on CxCluster; existing manifests remain valid."
           }
         ]
@@ -140,14 +139,14 @@
             "field": "spec.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.description available on DefaultInterface; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.bfd.properties.ttl available on DefaultInterface; existing manifests remain valid."
           }
         ]
@@ -159,7 +158,7 @@
             "field": "spec.nexthopGroup.properties.blackholeSendICMP",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nexthopGroup.properties.blackholeSendICMP available on DefaultStaticRoute; existing manifests remain valid."
           }
         ]
@@ -171,27 +170,27 @@
             "field": "spec.nodeSelectors",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nodeSelectors available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.nodeSelector",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.nodeSelector must remove this field before apply."
           },
           {
             "field": "spec.type",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.type must remove this field before apply."
           },
           {
             "field": "spec.version",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.version must remove this field before apply."
           },
@@ -199,118 +198,118 @@
             "field": "spec.canaries.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.canaries.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.checks.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.checks.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.checks.required",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.checks.required must remove this field before apply."
           },
           {
             "field": "spec.checks.properties.checks.description",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "\"Checks to run before (pre) and after (post) any image changes\"",
+            "after": "\"Checks to run before (pre) and after (post) any image changes.\\nIf none are specified, a default set of checks will be run.\"",
             "networkBehavior": "Description on DeployImage changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "spec.checks.properties.force.description",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "\"Do not prompt for user input, even if checks fail\"",
+            "after": "\"Ignore result of pre and post checks, do not prompt on failure.\"",
             "networkBehavior": "Description on DeployImage changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "spec.checks.properties.skip.description",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "\"Do not run any checks\"",
+            "after": "\"Do not run any checks pre or post image change.\"",
             "networkBehavior": "Description on DeployImage changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "spec.drains.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.drains.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.drains.properties.minimumWaitTimeSeconds",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.drains.properties.minimumWaitTimeSeconds available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.drains.properties.interfaceDisableSelectors",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.drains.properties.interfaceDisableSelectors must remove this field before apply."
           },
           {
             "field": "spec.drains.properties.minimumWaitTime",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.drains.properties.minimumWaitTime must remove this field before apply."
           },
           {
             "field": "spec.drains.properties.skip.description",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "\"Do not run any drains\"",
+            "after": "\"Do not run any drain operations. Nodes will be rebooted without attempting to gracefully drain them.\"",
             "networkBehavior": "Description on DeployImage changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "spec.nodeProfile.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nodeProfile.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.nodes.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nodes.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.prompt.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.prompt.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.tranches.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.tranches.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.tranches.items.properties.nodeSelectors",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.tranches.items.properties.nodeSelectors available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "spec.tranches.items.properties.nodeSelector",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing spec.tranches.items.properties.nodeSelector must remove this field before apply."
           },
@@ -318,48 +317,48 @@
             "field": "spec.tranches.items.properties.name.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.tranches.items.properties.name.description available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.details",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.details available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.firstNodeDrained",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.firstNodeDrained available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.firstNodeRebooted",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.firstNodeRebooted available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.lastNodeRebootRecovered",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.lastNodeRebootRecovered available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.lastNodeUndrained",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.lastNodeUndrained available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.id",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "DeployImage manifests referencing status.id must remove this field before apply."
           },
@@ -367,14 +366,14 @@
             "field": "status.result.enum",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.result.enum available on DeployImage; existing manifests remain valid."
           },
           {
             "field": "status.result.description",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "\"Aggregate result of the Flow\"",
+            "after": "\"Result is the overall result of the image operation.\\nIt can be one of the following values:\\n- \\\"Success\\\": All images were successfully deployed.\\n- \\\"Failed\\\": No images were successfully deployed.\\n- \\\"PartialSuccess\\\": Some images were successfully deployed, but not all.\"",
             "networkBehavior": "Description on DeployImage changed type or structure; validate existing values against the new schema."
           }
         ]
@@ -386,21 +385,21 @@
             "field": "spec.interSwitchLinks.properties.ipMTU",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.interSwitchLinks.properties.ipMTU available on Fabric; existing manifests remain valid."
           },
           {
             "field": "spec.overlayProtocol.properties.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.overlayProtocol.properties.bfd.properties.ttl available on Fabric; existing manifests remain valid."
           },
           {
             "field": "spec.underlayProtocol.properties.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.underlayProtocol.properties.bfd.properties.ttl available on Fabric; existing manifests remain valid."
           }
         ]
@@ -412,35 +411,35 @@
             "field": "spec.statisticsPerEntry",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.statisticsPerEntry available on Filter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.description available on Filter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.ipEntry.properties.log",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.ipEntry.properties.log available on Filter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.macEntry.properties.log",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.macEntry.properties.log available on Filter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.type.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.type.description available on Filter; existing manifests remain valid."
           }
         ]
@@ -452,28 +451,28 @@
             "field": "spec.ipv4Parameters",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.ipv4Parameters available on IRBInterface; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.bfd.properties.ttl available on IRBInterface; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.minEchoReceiveInterval.default",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Default on IRBInterface changed type or structure; validate existing values against the new schema."
+            "changeType": "default_changed",
+            "before": "1000000",
+            "after": "0",
+            "networkBehavior": "Default for spec.bfd.properties.minEchoReceiveInterval.default on IRBInterface changed; existing manifests without this field may behave differently."
           },
           {
             "field": "spec.bfd.properties.minEchoReceiveInterval.minimum",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "250000",
+            "after": "0",
             "networkBehavior": "Minimum on IRBInterface changed type or structure; validate existing values against the new schema."
           }
         ]
@@ -485,14 +484,14 @@
             "field": "spec.ipMTU",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.ipMTU available on ISL; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.bfd.properties.ttl available on ISL; existing manifests remain valid."
           }
         ]
@@ -504,28 +503,28 @@
             "field": "spec.statisticsPerEntry",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.statisticsPerEntry available on MirrorFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.description available on MirrorFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.ipEntry.properties.log",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.ipEntry.properties.log available on MirrorFilter; existing manifests remain valid."
           },
           {
             "field": "spec.entries.items.properties.type.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.entries.items.properties.type.description available on MirrorFilter; existing manifests remain valid."
           }
         ]
@@ -537,28 +536,28 @@
             "field": "spec.sources.properties.filters.items.properties.filter.properties.statisticsPerEntry",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.sources.properties.filters.items.properties.filter.properties.statisticsPerEntry available on Mirror; existing manifests remain valid."
           },
           {
             "field": "spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.description available on Mirror; existing manifests remain valid."
           },
           {
             "field": "spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.ipEntry.properties.log",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.ipEntry.properties.log available on Mirror; existing manifests remain valid."
           },
           {
             "field": "spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.type.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.type.description available on Mirror; existing manifests remain valid."
           }
         ]
@@ -570,55 +569,55 @@
             "field": "spec.count",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.count available on Ping; existing manifests remain valid."
           },
           {
             "field": "spec.nodeSelectors",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nodeSelectors available on Ping; existing manifests remain valid."
           },
           {
             "field": "spec.nodes",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nodes available on Ping; existing manifests remain valid."
           },
           {
             "field": "spec.timeoutSeconds",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.timeoutSeconds available on Ping; existing manifests remain valid."
           },
           {
             "field": "spec.node",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "Ping manifests referencing spec.node must remove this field before apply."
           },
           {
             "field": "spec.pingType",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "Ping manifests referencing spec.pingType must remove this field before apply."
           },
           {
             "field": "spec.pods",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "Ping manifests referencing spec.pods must remove this field before apply."
           },
           {
             "field": "spec.roles",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "Ping manifests referencing spec.roles must remove this field before apply."
           },
@@ -626,27 +625,27 @@
             "field": "spec.address.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.address.description available on Ping; existing manifests remain valid."
           },
           {
             "field": "spec.networkInstance.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.networkInstance.description available on Ping; existing manifests remain valid."
           },
           {
             "field": "status.details",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.details available on Ping; existing manifests remain valid."
           },
           {
             "field": "status.id",
             "changeType": "removed",
-            "before": "previous value",
+            "before": "",
             "after": "",
             "networkBehavior": "Ping manifests referencing status.id must remove this field before apply."
           },
@@ -654,22 +653,22 @@
             "field": "status.result.default",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field status.result.default available on Ping; existing manifests remain valid."
           },
           {
             "field": "status.result.description",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "\"Aggregate result of the Flow\"",
+            "after": "\"Result is the overall result of the ping operation.\\nIt can be one of the following values:\\n- \\\"Success\\\": All pings were successful.\\n- \\\"Failed\\\": No pings were successful.\\n- \\\"PartialSuccess\\\": Some pings were successful, but not all.\"",
             "networkBehavior": "Description on Ping changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "status.result.enum",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Enum on Ping changed type or structure; validate existing values against the new schema."
+            "changeType": "enum_removed",
+            "before": "[7 items]",
+            "after": "[\"Success\",\"Failed\",\"PartialSuccess\"]",
+            "networkBehavior": "Enum on Ping removed enum value(s); verify manifest values are still allowed."
           }
         ]
       },
@@ -680,49 +679,49 @@
             "field": "spec.defaultAction.properties.bgp.properties.communitySet",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.defaultAction.properties.bgp.properties.communitySet available on Policy; existing manifests remain valid."
           },
           {
             "field": "spec.defaultAction.properties.bgp.properties.med",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.defaultAction.properties.bgp.properties.med available on Policy; existing manifests remain valid."
           },
           {
             "field": "spec.defaultAction.properties.policyResult.enum",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Enum on Policy changed type or structure; validate existing values against the new schema."
+            "changeType": "enum_removed",
+            "before": "[\"accept\",\"reject\"]",
+            "after": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]",
+            "networkBehavior": "Enum on Policy removed enum value(s); verify manifest values are still allowed."
           },
           {
             "field": "spec.statement.items.properties.action.properties.bgp.properties.communitySet",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.statement.items.properties.action.properties.bgp.properties.communitySet available on Policy; existing manifests remain valid."
           },
           {
             "field": "spec.statement.items.properties.action.properties.bgp.properties.med",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.statement.items.properties.action.properties.bgp.properties.med available on Policy; existing manifests remain valid."
           },
           {
             "field": "spec.statement.items.properties.action.properties.policyResult.enum",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Enum on Policy changed type or structure; validate existing values against the new schema."
+            "changeType": "enum_removed",
+            "before": "[\"accept\",\"reject\"]",
+            "after": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]",
+            "networkBehavior": "Enum on Policy removed enum value(s); verify manifest values are still allowed."
           },
           {
             "field": "spec.statement.items.properties.match.properties.bgp.properties.asPathMatch",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.statement.items.properties.match.properties.bgp.properties.asPathMatch available on Policy; existing manifests remain valid."
           }
         ]
@@ -734,28 +733,28 @@
             "field": "spec.ipv4Parameters",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.ipv4Parameters available on RoutedInterface; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.bfd.properties.ttl available on RoutedInterface; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.minEchoReceiveInterval.default",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Default on RoutedInterface changed type or structure; validate existing values against the new schema."
+            "changeType": "default_changed",
+            "before": "1000000",
+            "after": "0",
+            "networkBehavior": "Default for spec.bfd.properties.minEchoReceiveInterval.default on RoutedInterface changed; existing manifests without this field may behave differently."
           },
           {
             "field": "spec.bfd.properties.minEchoReceiveInterval.minimum",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "250000",
+            "after": "0",
             "networkBehavior": "Minimum on RoutedInterface changed type or structure; validate existing values against the new schema."
           }
         ]
@@ -767,7 +766,7 @@
             "field": "spec.nexthopGroup.properties.blackholeSendICMP",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.nexthopGroup.properties.blackholeSendICMP available on StaticRoute; existing manifests remain valid."
           }
         ]
@@ -779,14 +778,14 @@
             "field": "spec.description",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.description available on SystemInterface; existing manifests remain valid."
           },
           {
             "field": "spec.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.bfd.properties.ttl available on SystemInterface; existing manifests remain valid."
           }
         ]
@@ -798,112 +797,112 @@
             "field": "spec.irbInterfaces.items.properties.spec.properties.ipv4Parameters",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.irbInterfaces.items.properties.spec.properties.ipv4Parameters available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Default on VirtualNetwork changed type or structure; validate existing values against the new schema."
+            "changeType": "default_changed",
+            "before": "1000000",
+            "after": "0",
+            "networkBehavior": "Default for spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default on VirtualNetwork changed; existing manifests without this field may behave differently."
           },
           {
             "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "250000",
+            "after": "0",
             "networkBehavior": "Minimum on VirtualNetwork changed type or structure; validate existing values against the new schema."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.bgp.properties.communitySet",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.bgp.properties.communitySet available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.bgp.properties.med",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.bgp.properties.med available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Enum on VirtualNetwork changed type or structure; validate existing values against the new schema."
+            "changeType": "enum_removed",
+            "before": "[\"accept\",\"reject\"]",
+            "after": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]",
+            "networkBehavior": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.bgp.properties.communitySet",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.bgp.properties.communitySet available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.bgp.properties.med",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.bgp.properties.med available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Enum on VirtualNetwork changed type or structure; validate existing values against the new schema."
+            "changeType": "enum_removed",
+            "before": "[\"accept\",\"reject\"]",
+            "after": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]",
+            "networkBehavior": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed."
           },
           {
             "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.bgp.properties.asPathMatch",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.bgp.properties.asPathMatch available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.protocols.properties.staticRoutes.items.properties.spec.properties.nexthopGroup.properties.blackholeSendICMP",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.protocols.properties.staticRoutes.items.properties.spec.properties.nexthopGroup.properties.blackholeSendICMP available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.routedInterfaces.items.properties.spec.properties.ipv4Parameters",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.routedInterfaces.items.properties.spec.properties.ipv4Parameters available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl",
             "changeType": "optional_added",
             "before": "",
-            "after": "updated value",
+            "after": "",
             "networkBehavior": "New optional field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl available on VirtualNetwork; existing manifests remain valid."
           },
           {
             "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default",
-            "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
-            "networkBehavior": "Default on VirtualNetwork changed type or structure; validate existing values against the new schema."
+            "changeType": "default_changed",
+            "before": "1000000",
+            "after": "0",
+            "networkBehavior": "Default for spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default on VirtualNetwork changed; existing manifests without this field may behave differently."
           },
           {
             "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum",
             "changeType": "type_change",
-            "before": "previous value",
-            "after": "updated value",
+            "before": "250000",
+            "after": "0",
             "networkBehavior": "Minimum on VirtualNetwork changed type or structure; validate existing values against the new schema."
           }
         ]
@@ -1576,6 +1575,7 @@
         "kind": "CPUUtilOverlay",
         "field": "resource",
         "description": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing CPUUtilOverlay resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing CPUUtilOverlay manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -1588,6 +1588,7 @@
         "kind": "DiskOverlay",
         "field": "resource",
         "description": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing DiskOverlay resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing DiskOverlay manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -1600,6 +1601,7 @@
         "kind": "MemoryOverlay",
         "field": "resource",
         "description": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing MemoryOverlay resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing MemoryOverlay manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -1612,411 +1614,216 @@
         "kind": "CxCluster",
         "field": "spec.topology.properties.nodes.items.properties.chassisConfiguration.required",
         "description": "Required on CxCluster changed type or structure; validate existing values against the new schema.",
+        "severity": "warning",
         "migrationSteps": [
           "Identify affected CxCluster resources in your cluster",
           "Update manifests to address spec.topology.properties.nodes.items.properties.chassisConfiguration.required",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# CxCluster — field spec.topology.properties.nodes.items.properties.chassisConfiguration.required (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# CxCluster — field spec.topology.properties.nodes.items.properties.chassisConfiguration.required (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "[\"chassisType\",\"macAddress\"]",
+        "yamlAfter": "[\"chassisType\",\"macAddress\",\"pdType\"]"
       },
       {
         "kind": "DeployImage",
         "field": "spec.nodeSelector",
         "description": "DeployImage manifests referencing spec.nodeSelector must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.nodeSelector",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.nodeSelector (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.nodeSelector (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.nodeSelector (before)\nspec:\n  nodeSelector: <previous>",
+        "yamlAfter": "# DeployImage — spec.nodeSelector (after)\nspec:\n  nodeSelector: <updated>"
       },
       {
         "kind": "DeployImage",
         "field": "spec.type",
         "description": "DeployImage manifests referencing spec.type must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.type",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.type (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.type (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.type (before)\nspec:\n  type: <previous>",
+        "yamlAfter": "# DeployImage — spec.type (after)\nspec:\n  type: <updated>"
       },
       {
         "kind": "DeployImage",
         "field": "spec.version",
         "description": "DeployImage manifests referencing spec.version must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.version",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.version (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.version (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.version (before)\nspec:\n  version: <previous>",
+        "yamlAfter": "# DeployImage — spec.version (after)\nspec:\n  version: <updated>"
       },
       {
         "kind": "DeployImage",
         "field": "spec.checks.required",
         "description": "DeployImage manifests referencing spec.checks.required must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.checks.required",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.checks.required (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.checks.required (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.checks.properties.checks.description",
-        "description": "Description on DeployImage changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.checks.properties.checks.description",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — field spec.checks.properties.checks.description (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.checks.properties.checks.description (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.checks.properties.force.description",
-        "description": "Description on DeployImage changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.checks.properties.force.description",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — field spec.checks.properties.force.description (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.checks.properties.force.description (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.checks.properties.skip.description",
-        "description": "Description on DeployImage changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.checks.properties.skip.description",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — field spec.checks.properties.skip.description (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.checks.properties.skip.description (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.checks.required (before)\nspec:\n  required: <previous>",
+        "yamlAfter": "# DeployImage — spec.checks.required (after)\nspec:\n  required: <updated>"
       },
       {
         "kind": "DeployImage",
         "field": "spec.drains.properties.interfaceDisableSelectors",
         "description": "DeployImage manifests referencing spec.drains.properties.interfaceDisableSelectors must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.drains.properties.interfaceDisableSelectors",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.drains.properties.interfaceDisableSelectors (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.drains.properties.interfaceDisableSelectors (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.drains.properties.interfaceDisableSelectors (before)\nspec:\n  interfaceDisableSelectors: <previous>",
+        "yamlAfter": "# DeployImage — spec.drains.properties.interfaceDisableSelectors (after)\nspec:\n  interfaceDisableSelectors: <updated>"
       },
       {
         "kind": "DeployImage",
         "field": "spec.drains.properties.minimumWaitTime",
         "description": "DeployImage manifests referencing spec.drains.properties.minimumWaitTime must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.drains.properties.minimumWaitTime",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.drains.properties.minimumWaitTime (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.drains.properties.minimumWaitTime (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.drains.properties.skip.description",
-        "description": "Description on DeployImage changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.drains.properties.skip.description",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — field spec.drains.properties.skip.description (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.drains.properties.skip.description (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.drains.properties.minimumWaitTime (before)\nspec:\n  minimumWaitTime: <previous>",
+        "yamlAfter": "# DeployImage — spec.drains.properties.minimumWaitTime (after)\nspec:\n  minimumWaitTime: <updated>"
       },
       {
         "kind": "DeployImage",
         "field": "spec.tranches.items.properties.nodeSelector",
         "description": "DeployImage manifests referencing spec.tranches.items.properties.nodeSelector must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected DeployImage resources in your cluster",
           "Update manifests to address spec.tranches.items.properties.nodeSelector",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# DeployImage — field spec.tranches.items.properties.nodeSelector (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field spec.tranches.items.properties.nodeSelector (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "DeployImage",
-        "field": "status.id",
-        "description": "DeployImage manifests referencing status.id must remove this field before apply.",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address status.id",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — field status.id (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field status.id (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "DeployImage",
-        "field": "status.result.description",
-        "description": "Description on DeployImage changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address status.result.description",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — field status.result.description (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# DeployImage — field status.result.description (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "IRBInterface",
-        "field": "spec.bfd.properties.minEchoReceiveInterval.default",
-        "description": "Default on IRBInterface changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected IRBInterface resources in your cluster",
-          "Update manifests to address spec.bfd.properties.minEchoReceiveInterval.default",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# IRBInterface — field spec.bfd.properties.minEchoReceiveInterval.default (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# IRBInterface — field spec.bfd.properties.minEchoReceiveInterval.default (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "IRBInterface",
-        "field": "spec.bfd.properties.minEchoReceiveInterval.minimum",
-        "description": "Minimum on IRBInterface changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected IRBInterface resources in your cluster",
-          "Update manifests to address spec.bfd.properties.minEchoReceiveInterval.minimum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# IRBInterface — field spec.bfd.properties.minEchoReceiveInterval.minimum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# IRBInterface — field spec.bfd.properties.minEchoReceiveInterval.minimum (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# DeployImage — spec.tranches.items.properties.nodeSelector (before)\nspec:\n  nodeSelector: <previous>",
+        "yamlAfter": "# DeployImage — spec.tranches.items.properties.nodeSelector (after)\nspec:\n  nodeSelector: <updated>"
       },
       {
         "kind": "Ping",
         "field": "spec.node",
         "description": "Ping manifests referencing spec.node must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected Ping resources in your cluster",
           "Update manifests to address spec.node",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# Ping — field spec.node (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field spec.node (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# Ping — spec.node (before)\nspec:\n  node: <previous>",
+        "yamlAfter": "# Ping — spec.node (after)\nspec:\n  node: <updated>"
       },
       {
         "kind": "Ping",
         "field": "spec.pingType",
         "description": "Ping manifests referencing spec.pingType must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected Ping resources in your cluster",
           "Update manifests to address spec.pingType",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# Ping — field spec.pingType (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field spec.pingType (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# Ping — spec.pingType (before)\nspec:\n  pingType: <previous>",
+        "yamlAfter": "# Ping — spec.pingType (after)\nspec:\n  pingType: <updated>"
       },
       {
         "kind": "Ping",
         "field": "spec.pods",
         "description": "Ping manifests referencing spec.pods must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected Ping resources in your cluster",
           "Update manifests to address spec.pods",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# Ping — field spec.pods (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field spec.pods (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# Ping — spec.pods (before)\nspec:\n  pods: <previous>",
+        "yamlAfter": "# Ping — spec.pods (after)\nspec:\n  pods: <updated>"
       },
       {
         "kind": "Ping",
         "field": "spec.roles",
         "description": "Ping manifests referencing spec.roles must remove this field before apply.",
+        "severity": "critical",
         "migrationSteps": [
           "Identify affected Ping resources in your cluster",
           "Update manifests to address spec.roles",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# Ping — field spec.roles (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field spec.roles (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "Ping",
-        "field": "status.id",
-        "description": "Ping manifests referencing status.id must remove this field before apply.",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address status.id",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — field status.id (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field status.id (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "Ping",
-        "field": "status.result.description",
-        "description": "Description on Ping changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address status.result.description",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — field status.result.description (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field status.result.description (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "Ping",
-        "field": "status.result.enum",
-        "description": "Enum on Ping changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address status.result.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — field status.result.enum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Ping — field status.result.enum (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "# Ping — spec.roles (before)\nspec:\n  roles: <previous>",
+        "yamlAfter": "# Ping — spec.roles (after)\nspec:\n  roles: <updated>"
       },
       {
         "kind": "Policy",
         "field": "spec.defaultAction.properties.policyResult.enum",
-        "description": "Enum on Policy changed type or structure; validate existing values against the new schema.",
+        "description": "Enum on Policy removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
         "migrationSteps": [
           "Identify affected Policy resources in your cluster",
           "Update manifests to address spec.defaultAction.properties.policyResult.enum",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# Policy — field spec.defaultAction.properties.policyResult.enum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Policy — field spec.defaultAction.properties.policyResult.enum (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "[\"accept\",\"reject\"]",
+        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
       },
       {
         "kind": "Policy",
         "field": "spec.statement.items.properties.action.properties.policyResult.enum",
-        "description": "Enum on Policy changed type or structure; validate existing values against the new schema.",
+        "description": "Enum on Policy removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
         "migrationSteps": [
           "Identify affected Policy resources in your cluster",
           "Update manifests to address spec.statement.items.properties.action.properties.policyResult.enum",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# Policy — field spec.statement.items.properties.action.properties.policyResult.enum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# Policy — field spec.statement.items.properties.action.properties.policyResult.enum (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "RoutedInterface",
-        "field": "spec.bfd.properties.minEchoReceiveInterval.default",
-        "description": "Default on RoutedInterface changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected RoutedInterface resources in your cluster",
-          "Update manifests to address spec.bfd.properties.minEchoReceiveInterval.default",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# RoutedInterface — field spec.bfd.properties.minEchoReceiveInterval.default (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# RoutedInterface — field spec.bfd.properties.minEchoReceiveInterval.default (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "RoutedInterface",
-        "field": "spec.bfd.properties.minEchoReceiveInterval.minimum",
-        "description": "Minimum on RoutedInterface changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected RoutedInterface resources in your cluster",
-          "Update manifests to address spec.bfd.properties.minEchoReceiveInterval.minimum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# RoutedInterface — field spec.bfd.properties.minEchoReceiveInterval.minimum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# RoutedInterface — field spec.bfd.properties.minEchoReceiveInterval.minimum (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default",
-        "description": "Default on VirtualNetwork changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# VirtualNetwork — field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# VirtualNetwork — field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum",
-        "description": "Minimum on VirtualNetwork changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# VirtualNetwork — field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# VirtualNetwork — field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "[\"accept\",\"reject\"]",
+        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
       },
       {
         "kind": "VirtualNetwork",
         "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum",
-        "description": "Enum on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
         "migrationSteps": [
           "Identify affected VirtualNetwork resources in your cluster",
           "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# VirtualNetwork — field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# VirtualNetwork — field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "[\"accept\",\"reject\"]",
+        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
       },
       {
         "kind": "VirtualNetwork",
         "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum",
-        "description": "Enum on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
         "migrationSteps": [
           "Identify affected VirtualNetwork resources in your cluster",
           "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum",
           "Validate against the target release schema before apply"
         ],
-        "yamlBefore": "# VirtualNetwork — field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# VirtualNetwork — field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default",
-        "description": "Default on VirtualNetwork changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# VirtualNetwork — field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# VirtualNetwork — field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.default (after)\nspec:\n  # ... updated manifest ..."
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum",
-        "description": "Minimum on VirtualNetwork changed type or structure; validate existing values against the new schema.",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# VirtualNetwork — field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum (before)\nspec:\n  # ... existing manifest ...",
-        "yamlAfter": "# VirtualNetwork — field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.minEchoReceiveInterval.minimum (after)\nspec:\n  # ... updated manifest ..."
+        "yamlBefore": "[\"accept\",\"reject\"]",
+        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
       }
     ],
-    "operationalImpact": "Before upgrading to 25.8.1, validate all manifests affected by 36 breaking change(s). Run the bundle validator against the 25.8.1 schema and schedule a maintenance window for controller restart.",
+    "totalBreakingCount": 19,
     "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.4.2 to 25.8.1 includes 36 breaking change(s) and/or cross-major schema shifts.",
-    "upgradeChecklist": [
-      "Run bundle validator against all manifests for 25.8.1 schema",
-      "Resolve 36 breaking change(s) in affected CRDs",
-      "Migrate 44 newly deprecated API version(s)",
-      "Stage upgrade in lab environment first",
-      "Apply during a maintenance window"
-    ],
+    "upgradeRiskJustification": "Upgrade from 25.4.2 to 25.8.1 includes 19 breaking change(s) including 3 removed CRD(s) and 16 spec field change(s).",
     "estimatedEffort": "High: >4h"
   },
-  "timestamp": 1780777121729,
+  "timestamp": 1780777424927,
   "source": "comparison"
 }

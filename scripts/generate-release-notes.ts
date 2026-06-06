@@ -139,7 +139,7 @@ async function main(): Promise<void> {
 			source: entry.source,
 			timestamp: entry.timestamp,
 			upgradeRisk: entry.notes.upgradeRisk,
-			breakingCount: entry.notes.breakingChanges.length
+			breakingCount: entry.notes.totalBreakingCount ?? entry.notes.breakingChanges.length
 		});
 	}
 

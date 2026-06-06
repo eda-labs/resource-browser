@@ -2,22 +2,16 @@
   "toVer": "25.8.2",
   "fromVer": "25.8.1",
   "notes": {
-    "summary": "EDA 25.8.2 changes 0 new, 0 removed, and 0 modified CRDs compared to 25.8.1. No breaking schema changes detected.",
     "newResources": [],
     "removedResources": [],
     "modifiedResources": [],
     "deprecated": [],
     "breakingChanges": [],
-    "operationalImpact": "Release 25.8.2 is a low-impact upgrade from 25.8.1 with no detected schema diffs.",
+    "totalBreakingCount": 0,
     "upgradeRisk": "low",
-    "upgradeRiskJustification": "Patch-level upgrade with 0 breaking change(s) — existing manifests likely apply cleanly.",
-    "upgradeChecklist": [
-      "Run bundle validator against all manifests for 25.8.2 schema",
-      "Stage upgrade in lab environment first",
-      "Apply during a maintenance window"
-    ],
+    "upgradeRiskJustification": "Patch-level upgrade with no breaking manifest changes detected.",
     "estimatedEffort": "Low: <1h"
   },
-  "timestamp": 1780777121565,
+  "timestamp": 1780777424778,
   "source": "comparison"
 }

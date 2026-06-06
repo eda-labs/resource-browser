@@ -2,7 +2,6 @@
   "toVer": "25.12.2",
   "fromVer": "25.12.1",
   "notes": {
-    "summary": "EDA 25.12.2 changes 0 new, 20 removed, and 0 modified CRDs compared to 25.12.1. 20 breaking changes require manifest updates.",
     "newResources": [],
     "removedResources": [
       {
@@ -113,6 +112,7 @@
         "kind": "Allocation",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Allocation resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing Allocation manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -125,6 +125,7 @@
         "kind": "applyallocations.netbox.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing applyallocations.netbox.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing applyallocations.netbox.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -137,6 +138,7 @@
         "kind": "ClusterIncident",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterIncident resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing ClusterIncident manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -149,6 +151,7 @@
         "kind": "ClusterInstance",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterInstance resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing ClusterInstance manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -161,6 +164,7 @@
         "kind": "ClusterProducer",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterProducer resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing ClusterProducer manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -173,6 +177,7 @@
         "kind": "creategithubissues.github.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing creategithubissues.github.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing creategithubissues.github.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -185,6 +190,7 @@
         "kind": "creategitlabissues.gitlab.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing creategitlabissues.gitlab.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing creategitlabissues.gitlab.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -197,6 +203,7 @@
         "kind": "Export",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Export resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing Export manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -209,6 +216,7 @@
         "kind": "githubactions.github.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubactions.github.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing githubactions.github.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -221,6 +229,7 @@
         "kind": "githubinstances.github.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubinstances.github.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing githubinstances.github.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -233,6 +242,7 @@
         "kind": "githubissues.github.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubissues.github.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing githubissues.github.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -245,6 +255,7 @@
         "kind": "gitlabinstances.gitlab.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabinstances.gitlab.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing gitlabinstances.gitlab.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -257,6 +268,7 @@
         "kind": "gitlabissues.gitlab.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabissues.gitlab.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing gitlabissues.gitlab.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -269,6 +281,7 @@
         "kind": "gitlabpipelines.gitlab.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabpipelines.gitlab.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing gitlabpipelines.gitlab.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -281,6 +294,7 @@
         "kind": "Incident",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Incident resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing Incident manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -293,6 +307,7 @@
         "kind": "Instance",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing Instance manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -305,6 +320,7 @@
         "kind": "Instance",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing Instance manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -317,6 +333,7 @@
         "kind": "Producer",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Producer resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing Producer manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -329,6 +346,7 @@
         "kind": "rungithubworkflows.github.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing rungithubworkflows.github.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing rungithubworkflows.github.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -341,6 +359,7 @@
         "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
         "field": "resource",
         "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources.",
+        "severity": "critical",
         "migrationSteps": [
           "Export existing rungitlabpipelines.gitlab.eda.nokia.com manifests",
           "Plan migration to replacement CRDs or decommission",
@@ -350,17 +369,11 @@
         "yamlAfter": "# Resource removed — delete or migrate before upgrade"
       }
     ],
-    "operationalImpact": "Before upgrading to 25.12.2, validate all manifests affected by 20 breaking change(s). Run the bundle validator against the 25.12.2 schema and schedule a maintenance window for controller restart.",
+    "totalBreakingCount": 20,
     "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.12.1 to 25.12.2 includes 20 breaking change(s) and/or cross-major schema shifts.",
-    "upgradeChecklist": [
-      "Run bundle validator against all manifests for 25.12.2 schema",
-      "Resolve 20 breaking change(s) in affected CRDs",
-      "Stage upgrade in lab environment first",
-      "Apply during a maintenance window"
-    ],
+    "upgradeRiskJustification": "Upgrade from 25.12.1 to 25.12.2 includes 20 breaking change(s) including 20 removed CRD(s).",
     "estimatedEffort": "High: >4h"
   },
-  "timestamp": 1780777121226,
+  "timestamp": 1780777424434,
   "source": "comparison"
 }

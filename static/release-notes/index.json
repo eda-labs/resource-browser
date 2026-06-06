@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-06T20:18:42.808Z",
+  "generatedAt": "2026-06-06T20:24:05.310Z",
   "latest": "26.4.2",
   "entries": [
     {
       "toVer": "26.4.2",
       "fromVer": "26.4.1",
       "source": "comparison",
-      "timestamp": 1780777120889,
+      "timestamp": 1780777424059,
       "upgradeRisk": "low",
       "breakingCount": 0
     },
@@ -14,15 +14,15 @@
       "toVer": "26.4.1",
       "fromVer": "25.12.3",
       "source": "comparison",
-      "timestamp": 1780777120979,
+      "timestamp": 1780777424155,
       "upgradeRisk": "high",
-      "breakingCount": 50
+      "breakingCount": 414
     },
     {
       "toVer": "25.12.3",
       "fromVer": "25.12.2",
       "source": "comparison",
-      "timestamp": 1780777121121,
+      "timestamp": 1780777424310,
       "upgradeRisk": "low",
       "breakingCount": 0
     },
@@ -30,7 +30,7 @@
       "toVer": "25.12.2",
       "fromVer": "25.12.1",
       "source": "comparison",
-      "timestamp": 1780777121226,
+      "timestamp": 1780777424434,
       "upgradeRisk": "high",
       "breakingCount": 20
     },
@@ -38,23 +38,23 @@
       "toVer": "25.12.1",
       "fromVer": "25.8.3",
       "source": "comparison",
-      "timestamp": 1780777121331,
+      "timestamp": 1780777424539,
       "upgradeRisk": "high",
-      "breakingCount": 46
+      "breakingCount": 6
     },
     {
       "toVer": "25.8.3",
       "fromVer": "25.8.2",
       "source": "comparison",
-      "timestamp": 1780777121451,
-      "upgradeRisk": "medium",
-      "breakingCount": 4
+      "timestamp": 1780777424658,
+      "upgradeRisk": "low",
+      "breakingCount": 0
     },
     {
       "toVer": "25.8.2",
       "fromVer": "25.8.1",
       "source": "comparison",
-      "timestamp": 1780777121565,
+      "timestamp": 1780777424778,
       "upgradeRisk": "low",
       "breakingCount": 0
     },
@@ -62,9 +62,9 @@
       "toVer": "25.8.1",
       "fromVer": "25.4.2",
       "source": "comparison",
-      "timestamp": 1780777121729,
+      "timestamp": 1780777424927,
       "upgradeRisk": "high",
-      "breakingCount": 36
+      "breakingCount": 19
     }
   ]
 }

@@ -17,15 +17,25 @@
 		TABS
 	} from '$lib/release-notes/constants';
 	import {
+		filterBreakingChanges,
+		filterModifiedResources,
+		filterNewResources,
+		groupBreakingByKind,
+		groupModifiedByKind
+	} from '$lib/release-notes/presentation';
+	import {
 		fetchAllReleaseNotes,
 		fetchReleaseNotesEntry,
 		fetchReleaseNotesIndex
 	} from '$lib/release-notes/loadStatic';
 	import type { ReleaseNotes, ReleaseNotesEntry } from '$lib/release-notes/types';
 	import releasesYaml from '$lib/releases.yaml?raw';
+
 	import type { ReleasesConfig } from '$lib/structure';
 
-	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	function breakingCount(notes: ReleaseNotes): number {
+		return notes.totalBreakingCount ?? notes.breakingChanges.length;
+	}
 
 	let releaseHistory: ReleaseNotesEntry[] = $state([]);
 	let selected: string | null = $state(null);
@@ -36,6 +46,13 @@
 	let injectOpen = $state(false);
 	let injectVersion = $state('');
 	let copiedCode: string | null = $state(null);
+	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+
+	let breakingFilter = $state('');
+	let breakingExpanded = $state<Record<string, boolean>>({});
+	let modifiedFilter = $state('');
+	let modifiedExpanded = $state<Record<string, boolean>>({});
+	let newFilter = $state('');
 	let deprecFilter = $state('');
 	let deprecExpanded = $state<Record<string, boolean>>({});
 
@@ -89,9 +106,9 @@
 		injectOpen = false;
 		injectVersion = '';
 
-		const breakingCount = entry.notes.breakingChanges.length;
+		const count = breakingCount(entry.notes);
 		showToast(
-			`Release ${version} loaded (${entry.source}) — ${breakingCount} breaking change${breakingCount !== 1 ? 's' : ''}`
+			`Release ${version} loaded (${entry.source}) — ${count} breaking change${count !== 1 ? 's' : ''}`
 		);
 	}
 
@@ -112,13 +129,29 @@
 			{ label: 'New', value: notes.newResources.length, color: '#639922' },
 			{ label: 'Removed', value: notes.removedResources.length, color: '#e24b4a' },
 			{ label: 'Modified', value: notes.modifiedResources.length, color: '#ef9f27' },
-			{ label: 'Breaking', value: notes.breakingChanges.length, color: '#e24b4a' },
+			{ label: 'Breaking', value: breakingCount(notes), color: '#e24b4a' },
 			{
 				label: 'Deprecated',
 				value: countDeprecatedApiVersions(notes.deprecated),
 				color: '#ef9f27'
 			}
 		];
+	}
+
+	function toggleBreakingKind(kind: string) {
+		breakingExpanded = { ...breakingExpanded, [kind]: !breakingExpanded[kind] };
+	}
+
+	function isBreakingExpanded(kind: string): boolean {
+		return breakingExpanded[kind] ?? true;
+	}
+
+	function toggleModifiedKind(kind: string) {
+		modifiedExpanded = { ...modifiedExpanded, [kind]: !modifiedExpanded[kind] };
+	}
+
+	function isModifiedExpanded(kind: string): boolean {
+		return modifiedExpanded[kind] ?? true;
 	}
 
 	function filteredDeprecated(notes: ReleaseNotes) {
@@ -223,6 +256,11 @@
 								activeTab = 0;
 								deprecFilter = '';
 								deprecExpanded = {};
+								breakingFilter = '';
+								breakingExpanded = {};
+								modifiedFilter = '';
+								modifiedExpanded = {};
+								newFilter = '';
 							}}
 						>
 							<span class="rn-timeline-dot" style:background={RISK_COLOR[risk]}></span>
@@ -242,9 +280,9 @@
 									<span class="rn-source-badge">mock</span>
 								{/if}
 							</div>
-							{#if entry.notes.breakingChanges.length > 0}
+							{#if breakingCount(entry.notes) > 0}
 								<div class="rn-timeline-breaking">
-									⚠ {entry.notes.breakingChanges.length} breaking
+									⚠ {breakingCount(entry.notes)} breaking
 								</div>
 							{/if}
 						</button>
@@ -267,13 +305,14 @@
 		<main class="rn-main">
 			{#if selectedEntry}
 				<div class="rn-main-inner">
-					{#if selectedEntry.notes.breakingChanges.length > 0}
+					{#if breakingCount(selectedEntry.notes) > 0}
 						<div class="rn-breaking-banner" role="alert">
 							<span class="rn-breaking-icon">⚠</span>
 							<div>
 								<strong
-									>{selectedEntry.notes.breakingChanges.length} breaking change{selectedEntry.notes
-										.breakingChanges.length !== 1
+									>{breakingCount(selectedEntry.notes)} breaking change{breakingCount(
+										selectedEntry.notes
+									) !== 1
 										? 's'
 										: ''}</strong
 								>
@@ -308,7 +347,7 @@
 					<div class="rn-tabs" role="tablist">
 						{#each TABS as tab, i (tab)}
 							{@const hasWarning =
-								(i === 1 && selectedEntry.notes.breakingChanges.length > 0) ||
+								(i === 1 && breakingCount(selectedEntry.notes) > 0) ||
 								(i === 2 && selectedEntry.notes.deprecated.length > 0)}
 							<button
 								type="button"
@@ -323,7 +362,7 @@
 								{#if hasWarning}
 									<span class="rn-tab-badge">
 										{i === 1
-											? selectedEntry.notes.breakingChanges.length
+											? breakingCount(selectedEntry.notes)
 											: countDeprecatedApiVersions(selectedEntry.notes.deprecated)}
 									</span>
 								{/if}
@@ -334,10 +373,6 @@
 					<!-- Tab panels -->
 					<div class="rn-tab-panel" role="tabpanel">
 						{#if activeTab === 0}
-							<div class="rn-card">
-								<div class="rn-card-label">Executive Summary</div>
-								<p class="rn-prose">{selectedEntry.notes.summary}</p>
-							</div>
 							<div class="rn-stats">
 								{#each statItems(selectedEntry.notes) as stat (stat.label)}
 									<div class="rn-stat">
@@ -346,82 +381,121 @@
 									</div>
 								{/each}
 							</div>
-							{#if selectedEntry.notes.operationalImpact}
-								<div class="rn-card rn-card--accent">
-									<div class="rn-card-label">Operational Impact</div>
-									<p class="rn-prose rn-prose--sm">{selectedEntry.notes.operationalImpact}</p>
-								</div>
-							{/if}
-							{#if selectedEntry.notes.upgradeChecklist.length > 0}
-								<div class="rn-checklist">
-									<div class="rn-card-label">Pre-upgrade checklist</div>
-									{#each selectedEntry.notes.upgradeChecklist as step, i (step)}
-										<div class="rn-checklist-item">
-											<span class="rn-checklist-num">{String(i + 1).padStart(2, '0')}</span>
-											<span>{step}</span>
-										</div>
-									{/each}
-								</div>
-							{/if}
 						{:else if activeTab === 1}
 							{#if selectedEntry.notes.breakingChanges.length === 0}
 								<div class="rn-empty">No breaking changes in this release ✓</div>
 							{:else}
-								{#each selectedEntry.notes.breakingChanges as b, i (i)}
-									<div class="rn-breaking-card">
-										<div class="rn-breaking-card-head">
-											<span class="rn-pill rn-pill--breaking">BREAKING</span>
-											<code class="rn-code-kind">{b.kind}</code>
-											<code class="rn-code-field">→ {b.field}</code>
-										</div>
-										<p class="rn-prose rn-prose--sm">{b.description}</p>
-										{#if b.migrationSteps.length > 0}
-											<div class="rn-migration">
-												<div class="rn-card-label">Migration steps</div>
-												{#each b.migrationSteps as step, j (j)}
-													<div class="rn-migration-step">
-														<span class="rn-migration-num">{j + 1}.</span>
-														<span>{step}</span>
-													</div>
-												{/each}
-											</div>
-										{/if}
-										{#if b.yamlBefore || b.yamlAfter}
-											<div class="rn-yaml-grid">
-												{#if b.yamlBefore}
-													<div>
-														<div class="rn-yaml-label rn-yaml-label--before">BEFORE</div>
-														<div class="rn-codeblock">
-															<pre>{b.yamlBefore}</pre>
-															<button
-																type="button"
-																class="rn-copy"
-																onclick={() => copyText(b.yamlBefore)}
-															>
-																{copiedCode === b.yamlBefore ? '✓ copied' : 'copy'}
-															</button>
-														</div>
-													</div>
-												{/if}
-												{#if b.yamlAfter}
-													<div>
-														<div class="rn-yaml-label rn-yaml-label--after">AFTER</div>
-														<div class="rn-codeblock">
-															<pre>{b.yamlAfter}</pre>
-															<button
-																type="button"
-																class="rn-copy"
-																onclick={() => copyText(b.yamlAfter)}
-															>
-																{copiedCode === b.yamlAfter ? '✓ copied' : 'copy'}
-															</button>
-														</div>
-													</div>
-												{/if}
-											</div>
-										{/if}
+								{@const filteredBreaking = filterBreakingChanges(
+									selectedEntry.notes.breakingChanges,
+									breakingFilter
+								)}
+								{@const groupedBreaking = groupBreakingByKind(filteredBreaking)}
+								<div class="rn-list-toolbar">
+									<div class="rn-list-summary">
+										<span class="rn-pill rn-pill--breaking">BREAKING</span>
+										<span class="rn-list-summary-text">
+											{breakingCount(selectedEntry.notes)} total · {groupedBreaking.length} kind{groupedBreaking.length !==
+											1
+												? 's'
+												: ''}
+										</span>
 									</div>
-								{/each}
+									<input
+										class="rn-list-search"
+										type="search"
+										placeholder="Filter by kind, field, or description…"
+										bind:value={breakingFilter}
+										aria-label="Filter breaking changes"
+									/>
+								</div>
+
+								{#if groupedBreaking.length === 0}
+									<div class="rn-empty">No breaking changes match your filter</div>
+								{:else}
+									<div class="rn-breaking-list">
+										{#each groupedBreaking as group (group.kind)}
+											<div class="rn-breaking-group">
+												<button
+													type="button"
+													class="rn-breaking-group-head"
+													aria-expanded={isBreakingExpanded(group.kind)}
+													onclick={() => toggleBreakingKind(group.kind)}
+												>
+													<span
+														class="rn-deprec-chevron"
+														class:rn-deprec-chevron--open={isBreakingExpanded(group.kind)}>▸</span
+													>
+													<code class="rn-code-kind">{group.kind}</code>
+													<span class="rn-muted">{group.items.length} change{group.items.length !== 1 ? 's' : ''}</span>
+												</button>
+
+												{#if isBreakingExpanded(group.kind)}
+													<div class="rn-breaking-group-body">
+														{#each group.items as b, i (`${group.kind}-${b.field}-${i}`)}
+															<div class="rn-breaking-card">
+																<div class="rn-breaking-card-head">
+																	<span class="rn-pill rn-pill--breaking">BREAKING</span>
+																	{#if b.severity === 'critical'}
+																		<span class="rn-pill rn-pill--critical">critical</span>
+																	{:else if b.severity === 'warning'}
+																		<span class="rn-pill rn-pill--warning">warning</span>
+																	{/if}
+																	<code class="rn-code-field">{b.field}</code>
+																</div>
+																<p class="rn-prose rn-prose--sm">{b.description}</p>
+																{#if b.migrationSteps.length > 0}
+																	<div class="rn-migration">
+																		<div class="rn-card-label">Migration steps</div>
+																		{#each b.migrationSteps as step, j (j)}
+																			<div class="rn-migration-step">
+																				<span class="rn-migration-num">{j + 1}.</span>
+																				<span>{step}</span>
+																			</div>
+																		{/each}
+																	</div>
+																{/if}
+																{#if b.yamlBefore || b.yamlAfter}
+																	<div class="rn-yaml-grid">
+																		{#if b.yamlBefore}
+																			<div>
+																				<div class="rn-yaml-label rn-yaml-label--before">BEFORE</div>
+																				<div class="rn-codeblock">
+																					<pre>{b.yamlBefore}</pre>
+																					<button
+																						type="button"
+																						class="rn-copy"
+																						onclick={() => copyText(b.yamlBefore)}
+																					>
+																						{copiedCode === b.yamlBefore ? '✓ copied' : 'copy'}
+																					</button>
+																				</div>
+																			</div>
+																		{/if}
+																		{#if b.yamlAfter}
+																			<div>
+																				<div class="rn-yaml-label rn-yaml-label--after">AFTER</div>
+																				<div class="rn-codeblock">
+																					<pre>{b.yamlAfter}</pre>
+																					<button
+																						type="button"
+																						class="rn-copy"
+																						onclick={() => copyText(b.yamlAfter)}
+																					>
+																						{copiedCode === b.yamlAfter ? '✓ copied' : 'copy'}
+																					</button>
+																				</div>
+																			</div>
+																		{/if}
+																	</div>
+																{/if}
+															</div>
+														{/each}
+													</div>
+												{/if}
+											</div>
+										{/each}
+									</div>
+								{/if}
 							{/if}
 						{:else if activeTab === 2}
 							{#if selectedEntry.notes.deprecated.length === 0}
@@ -531,61 +605,150 @@
 							{#if selectedEntry.notes.newResources.length === 0}
 								<div class="rn-empty">No new resources in this release</div>
 							{:else}
-								<div class="rn-new-grid">
-									{#each selectedEntry.notes.newResources as r, i (i)}
-										<div class="rn-new-card">
-											<div class="rn-new-card-head">
-												<code class="rn-code-new">{r.kind}</code>
-												<span class="rn-pill rn-pill--new">NEW</span>
-											</div>
-											<div class="rn-api-version">{r.apiVersion}</div>
-											<p class="rn-prose rn-prose--sm">{r.description}</p>
-										</div>
-									{/each}
+								{@const newItems = filterNewResources(
+									selectedEntry.notes.newResources,
+									newFilter
+								)}
+								<div class="rn-list-toolbar">
+									<div class="rn-list-summary">
+										<span class="rn-pill rn-pill--new">NEW</span>
+										<span class="rn-list-summary-text">
+											{selectedEntry.notes.newResources.length} CRD{selectedEntry.notes.newResources
+												.length !== 1
+												? 's'
+												: ''}
+										</span>
+									</div>
+									<input
+										class="rn-list-search"
+										type="search"
+										placeholder="Filter by kind or apiVersion…"
+										bind:value={newFilter}
+										aria-label="Filter new resources"
+									/>
 								</div>
+								{#if newItems.length === 0}
+									<div class="rn-empty">No new resources match your filter</div>
+								{:else}
+									<div class="rn-new-grid">
+										{#each newItems as r, i (`${r.kind}-${i}`)}
+											<div class="rn-new-card">
+												<div class="rn-new-card-head">
+													<code class="rn-code-new">{r.kind}</code>
+													<span class="rn-pill rn-pill--new">NEW</span>
+												</div>
+												<div class="rn-api-version">{r.apiVersion}</div>
+												<p class="rn-prose rn-prose--sm">{r.description}</p>
+											</div>
+										{/each}
+									</div>
+								{/if}
 							{/if}
 						{:else if activeTab === 4}
 							{#if selectedEntry.notes.modifiedResources.length === 0}
 								<div class="rn-empty">No field-level modifications in this release</div>
 							{:else}
-								{#each selectedEntry.notes.modifiedResources as r, i (i)}
-									<div class="rn-mod-group">
-										<div class="rn-mod-head">
-											<span>◈</span>
-											<code>{r.kind}</code>
-											<span class="rn-muted"
-												>{r.changes.length} change{r.changes.length !== 1 ? 's' : ''}</span
-											>
-										</div>
-										{#each r.changes as c, j (j)}
-											{@const col = CHANGE_COLORS[c.changeType] ?? '#888'}
-											<div class="rn-mod-change" style:border-left-color={col}>
-												<div class="rn-mod-change-head">
-													<code>{c.field}</code>
-													<span class="rn-pill" style:background="{col}22" style:color={col}>
-														{c.changeType.replace(/_/g, ' ')}
-													</span>
-													{#if HIGH_RISK_CHANGE_TYPES.has(c.changeType)}
-														<span class="rn-pill rn-pill--breaking">high risk</span>
-													{/if}
-												</div>
-												{#if c.before || c.after}
-													<div class="rn-mod-before-after">
-														{#if c.before}<span
-																>before: <code class="rn-val-before">{c.before}</code></span
-															>{/if}
-														{#if c.after}<span
-																>after: <code class="rn-val-after">{c.after}</code></span
-															>{/if}
+								{@const modifiedItems = groupModifiedByKind(
+									filterModifiedResources(selectedEntry.notes.modifiedResources, modifiedFilter)
+								)}
+								{@const totalChanges = selectedEntry.notes.modifiedResources.reduce(
+									(n, r) => n + r.changes.length,
+									0
+								)}
+								<div class="rn-list-toolbar">
+									<div class="rn-list-summary">
+										<span class="rn-pill rn-pill--modified">MODIFIED</span>
+										<span class="rn-list-summary-text">
+											{selectedEntry.notes.modifiedResources.length} CRD{selectedEntry.notes
+												.modifiedResources.length !== 1
+												? 's'
+												: ''} · {totalChanges} field change{totalChanges !== 1 ? 's' : ''}
+										</span>
+									</div>
+									<input
+										class="rn-list-search"
+										type="search"
+										placeholder="Filter by kind or field path…"
+										bind:value={modifiedFilter}
+										aria-label="Filter modified resources"
+									/>
+								</div>
+
+								{#if modifiedItems.length === 0}
+									<div class="rn-empty">No modifications match your filter</div>
+								{:else}
+									<div class="rn-mod-list">
+										{#each modifiedItems as r (r.kind)}
+											<div class="rn-mod-group">
+												<button
+													type="button"
+													class="rn-mod-head rn-mod-head--btn"
+													aria-expanded={isModifiedExpanded(r.kind)}
+													onclick={() => toggleModifiedKind(r.kind)}
+												>
+													<span
+														class="rn-deprec-chevron"
+														class:rn-deprec-chevron--open={isModifiedExpanded(r.kind)}>▸</span
+													>
+													<code>{r.kind}</code>
+													<span class="rn-muted"
+														>{r.changes.length} change{r.changes.length !== 1 ? 's' : ''}</span
+													>
+												</button>
+												{#if isModifiedExpanded(r.kind)}
+													<div class="rn-mod-table-wrap">
+														<table class="rn-mod-table">
+															<thead>
+																<tr>
+																	<th>Field</th>
+																	<th>Change</th>
+																	<th>Before</th>
+																	<th>After</th>
+																	<th>Impact</th>
+																</tr>
+															</thead>
+															<tbody>
+																{#each r.changes as c, j (`${r.kind}-${c.field}-${j}`)}
+																	{@const col = CHANGE_COLORS[c.changeType] ?? '#888'}
+																	<tr>
+																		<td><code>{c.field}</code></td>
+																		<td>
+																			<span
+																				class="rn-pill"
+																				style:background="{col}22"
+																				style:color={col}
+																			>
+																				{c.changeType.replace(/_/g, ' ')}
+																			</span>
+																			{#if HIGH_RISK_CHANGE_TYPES.has(c.changeType)}
+																				<span class="rn-pill rn-pill--breaking">high risk</span>
+																			{/if}
+																		</td>
+																		<td>
+																			{#if c.before}
+																				<code class="rn-val-before">{c.before}</code>
+																			{:else}
+																				<span class="rn-muted">—</span>
+																			{/if}
+																		</td>
+																		<td>
+																			{#if c.after}
+																				<code class="rn-val-after">{c.after}</code>
+																			{:else}
+																				<span class="rn-muted">—</span>
+																			{/if}
+																		</td>
+																		<td class="rn-mod-impact">{c.networkBehavior}</td>
+																	</tr>
+																{/each}
+															</tbody>
+														</table>
 													</div>
-												{/if}
-												{#if c.networkBehavior}
-													<p class="rn-muted rn-prose--sm">{c.networkBehavior}</p>
 												{/if}
 											</div>
 										{/each}
 									</div>
-								{/each}
+								{/if}
 							{/if}
 						{:else if activeTab === 5}
 							{@const risk = selectedEntry.notes.upgradeRisk}
@@ -609,17 +772,6 @@
 								<div class="rn-card">
 									<div class="rn-card-label">Estimated effort</div>
 									<div class="rn-effort">{selectedEntry.notes.estimatedEffort}</div>
-								</div>
-							{/if}
-							{#if selectedEntry.notes.upgradeChecklist.length > 0}
-								<div class="rn-card">
-									<div class="rn-card-label">Pre-upgrade steps</div>
-									{#each selectedEntry.notes.upgradeChecklist as step, i (step)}
-										<div class="rn-checklist-item">
-											<span class="rn-checklist-num">{i + 1}</span>
-											<span>{step}</span>
-										</div>
-									{/each}
 								</div>
 							{/if}
 						{/if}
@@ -650,9 +802,13 @@
 		--rn-border: #e2e8f0;
 		--rn-border-muted: #cbd5e1;
 		--rn-text: #0f172a;
+		--rn-heading: #0f172a;
 		--rn-text-muted: #64748b;
 		--rn-text-subtle: #94a3b8;
 		--rn-accent: #2563eb;
+		--rn-warning-fg: #ef9f27;
+		--rn-success-fg: #639922;
+		--rn-danger-fg: #e24b4a;
 		--rn-breaking-bg: #fef2f2;
 		--rn-breaking-border: rgb(226 75 74 / 0.35);
 		--rn-deprec-bg: #fffbeb;
@@ -693,42 +849,46 @@
 	:global(.dark) .rn-page {
 		--rn-bg: #0d1117;
 		--rn-bg-elevated: #161b22;
-		--rn-bg-surface: #161b22;
+		--rn-bg-surface: #1c2128;
 		--rn-bg-code: #0d1117;
-		--rn-border: #21262d;
-		--rn-border-muted: #30363d;
+		--rn-border: #30363d;
+		--rn-border-muted: #484f58;
 		--rn-text: #e6edf3;
-		--rn-text-muted: #7d8590;
-		--rn-text-subtle: #8b949e;
+		--rn-heading: #f0f6fc;
+		--rn-text-muted: #b1bac4;
+		--rn-text-subtle: #9da5ae;
 		--rn-accent: #58a6ff;
-		--rn-breaking-bg: #1a0a0a;
-		--rn-breaking-border: rgb(226 75 74 / 0.53);
-		--rn-deprec-bg: #16110a;
-		--rn-deprec-border: rgb(239 159 39 / 0.27);
-		--rn-new-bg: #0a160a;
-		--rn-new-border: rgb(99 153 34 / 0.27);
+		--rn-warning-fg: #ffa657;
+		--rn-success-fg: #7ee787;
+		--rn-danger-fg: #ff7b72;
+		--rn-breaking-bg: rgb(226 75 74 / 0.1);
+		--rn-breaking-border: rgb(226 75 74 / 0.45);
+		--rn-deprec-bg: rgb(239 159 39 / 0.08);
+		--rn-deprec-border: rgb(239 159 39 / 0.45);
+		--rn-new-bg: rgb(99 153 34 / 0.1);
+		--rn-new-border: rgb(99 153 34 / 0.35);
 		--rn-code-fg: #7ee787;
 		--rn-code-kind: #79c0ff;
 		--rn-code-new: #56d364;
 		--rn-tab-active: #58a6ff;
 		--rn-scroll-track: #161b22;
-		--rn-scroll-thumb: #30363d;
-		--rn-selected-bg: #161b22;
+		--rn-scroll-thumb: #484f58;
+		--rn-selected-bg: #21262d;
 		--rn-latest-bg: #1a3a1a;
 		--rn-latest-text: #56d364;
 		--rn-btn-primary: #1f6feb;
 		--rn-timeline-dot-ring: #0d1117;
 		--rn-prose: #e6edf3;
 		--rn-migration: #c9d1d9;
-		--rn-copy-border: #444;
-		--rn-copy-text: #aaa;
-		--rn-skeleton-sub: #4a4f57;
+		--rn-copy-border: #484f58;
+		--rn-copy-text: #b1bac4;
+		--rn-skeleton-sub: #6e7681;
 		--rn-risk-high-bg: rgb(226 75 74 / 0.15);
-		--rn-risk-high-fg: #e24b4a;
+		--rn-risk-high-fg: #ff7b72;
 		--rn-risk-medium-bg: rgb(239 159 39 / 0.15);
-		--rn-risk-medium-fg: #ef9f27;
+		--rn-risk-medium-fg: #ffa657;
 		--rn-risk-low-bg: rgb(99 153 34 / 0.15);
-		--rn-risk-low-fg: #639922;
+		--rn-risk-low-fg: #7ee787;
 	}
 
 	.rn-shell {
@@ -1209,12 +1369,27 @@
 
 	.rn-pill--breaking {
 		background: rgb(226 75 74 / 0.13);
-		color: #e24b4a;
+		color: var(--rn-danger-fg);
+	}
+
+	.rn-pill--critical {
+		background: rgb(226 75 74 / 0.2);
+		color: var(--rn-danger-fg);
+	}
+
+	.rn-pill--warning {
+		background: rgb(239 159 39 / 0.15);
+		color: var(--rn-warning-fg);
+	}
+
+	.rn-pill--modified {
+		background: rgb(239 159 39 / 0.13);
+		color: var(--rn-warning-fg);
 	}
 
 	.rn-pill--new {
 		background: rgb(99 153 34 / 0.13);
-		color: #639922;
+		color: var(--rn-success-fg);
 	}
 
 	.rn-code-kind {
@@ -1234,7 +1409,7 @@
 	}
 
 	.rn-code-warn {
-		color: #ef9f27;
+		color: var(--rn-warning-fg);
 		font-size: 12px;
 	}
 
@@ -1251,7 +1426,7 @@
 	}
 
 	.rn-migration-num {
-		color: #e24b4a;
+		color: var(--rn-danger-fg);
 		font-family: monospace;
 		font-size: 12px;
 		min-width: 16px;
@@ -1275,11 +1450,11 @@
 	}
 
 	.rn-yaml-label--before {
-		color: #e24b4a;
+		color: var(--rn-danger-fg);
 	}
 
 	.rn-yaml-label--after {
-		color: #639922;
+		color: var(--rn-success-fg);
 	}
 
 	.rn-codeblock {
@@ -1315,7 +1490,7 @@
 
 	.rn-pill--deprec {
 		background: rgb(239 159 39 / 0.13);
-		color: #ef9f27;
+		color: var(--rn-warning-fg);
 	}
 
 	.rn-deprec-toolbar {
@@ -1340,7 +1515,7 @@
 	}
 
 	.rn-deprec-summary-text strong {
-		color: #ef9f27;
+		color: var(--rn-warning-fg);
 		font-weight: 600;
 	}
 
@@ -1354,6 +1529,91 @@
 		padding: 8px 12px;
 		color: var(--rn-text);
 		font-size: 13px;
+	}
+
+	.rn-list-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	.rn-list-summary {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+
+	.rn-list-summary-text {
+		font-size: 13px;
+		color: var(--rn-text-muted);
+	}
+
+	.rn-list-search {
+		flex: 1;
+		min-width: 200px;
+		max-width: 360px;
+		background: var(--rn-bg);
+		border: 1px solid var(--rn-border-muted);
+		border-radius: 6px;
+		padding: 8px 12px;
+		color: var(--rn-text);
+		font-size: 13px;
+	}
+
+	.rn-breaking-list,
+	.rn-mod-list {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		max-height: min(70vh, 900px);
+		overflow-y: auto;
+		padding-right: 4px;
+	}
+
+	.rn-breaking-group {
+		background: var(--rn-breaking-bg);
+		border: 1px solid var(--rn-breaking-border);
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.rn-breaking-group-head {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 12px 14px;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		color: var(--rn-text);
+		text-align: left;
+	}
+
+	.rn-breaking-group-head code {
+		color: var(--rn-heading);
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.rn-breaking-group-head:hover {
+		background: rgb(226 75 74 / 0.06);
+	}
+
+	.rn-breaking-group-body {
+		padding: 0 10px 10px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		border-top: 1px solid var(--rn-breaking-border);
+	}
+
+	.rn-breaking-group-body .rn-breaking-card {
+		margin-bottom: 0;
 	}
 
 	.rn-deprec-list {
@@ -1381,7 +1641,7 @@
 		background: transparent;
 		border: none;
 		cursor: pointer;
-		color: inherit;
+		color: var(--rn-text);
 		text-align: left;
 	}
 
@@ -1390,7 +1650,7 @@
 	}
 
 	.rn-deprec-chevron {
-		color: var(--rn-text-subtle);
+		color: var(--rn-text-muted);
 		font-size: 12px;
 		transition: transform 0.15s ease;
 		flex-shrink: 0;
@@ -1411,7 +1671,7 @@
 	.rn-deprec-kind {
 		font-size: 14px;
 		font-weight: 600;
-		color: var(--rn-code-kind);
+		color: var(--rn-heading);
 	}
 
 	.rn-deprec-group {
@@ -1425,7 +1685,7 @@
 
 	.rn-deprec-count {
 		font-size: 11px;
-		color: var(--rn-text-subtle);
+		color: var(--rn-text-muted);
 		flex-shrink: 0;
 	}
 
@@ -1442,7 +1702,7 @@
 		font-size: 10px;
 		text-transform: uppercase;
 		letter-spacing: 0.8px;
-		color: var(--rn-text-subtle);
+		color: var(--rn-text-muted);
 		margin-bottom: 6px;
 	}
 
@@ -1459,7 +1719,7 @@
 		padding: 4px 8px;
 		border-radius: 6px;
 		border: 1px solid var(--rn-deprec-border);
-		background: var(--rn-bg);
+		background: var(--rn-bg-elevated);
 		font-size: 12px;
 	}
 
@@ -1474,7 +1734,7 @@
 	.rn-deprec-chip-val {
 		font-family: monospace;
 		font-size: 12px;
-		color: #ef9f27;
+		color: var(--rn-warning-fg);
 		background: transparent;
 		padding: 0;
 	}
@@ -1483,7 +1743,7 @@
 		font-size: 9px;
 		text-transform: uppercase;
 		font-weight: 600;
-		color: #ef9f27;
+		color: var(--rn-warning-fg);
 		background: rgb(239 159 39 / 0.15);
 		padding: 1px 5px;
 		border-radius: 3px;
@@ -1496,7 +1756,7 @@
 	.rn-deprec-recommended {
 		font-family: monospace;
 		font-size: 12px;
-		color: #639922;
+		color: var(--rn-success-fg);
 		background: transparent;
 	}
 
@@ -1546,13 +1806,76 @@
 	}
 
 	.rn-mod-group {
-		margin-bottom: 16px;
+		margin-bottom: 0;
+		background: var(--rn-bg-elevated);
+		border: 1px solid var(--rn-border);
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.rn-mod-head--btn {
+		width: 100%;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		color: var(--rn-text);
+		text-align: left;
+		padding: 12px 14px;
+	}
+
+	.rn-mod-head--btn code {
+		color: var(--rn-heading);
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.rn-mod-head--btn:hover {
+		background: rgb(37 99 235 / 0.04);
+	}
+
+	.rn-mod-table-wrap {
+		overflow-x: auto;
+		border-top: 1px solid var(--rn-border);
+	}
+
+	.rn-mod-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 12px;
+	}
+
+	.rn-mod-table th,
+	.rn-mod-table td {
+		padding: 8px 10px;
+		text-align: left;
+		vertical-align: top;
+		border-bottom: 1px solid var(--rn-border);
+	}
+
+	.rn-mod-table th {
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: var(--rn-text-subtle);
+		background: var(--rn-bg-surface);
+	}
+
+	.rn-mod-table code {
+		font-size: 11px;
+		word-break: break-all;
+		color: var(--rn-text);
+	}
+
+	.rn-mod-impact {
+		color: var(--rn-text-muted);
+		line-height: 1.45;
+		max-width: 280px;
 	}
 
 	.rn-mod-head {
 		font-size: 14px;
 		font-weight: 600;
-		color: var(--rn-code-kind);
+		color: var(--rn-heading);
 		margin-bottom: 8px;
 		display: flex;
 		align-items: center;
@@ -1585,11 +1908,11 @@
 	}
 
 	.rn-val-before {
-		color: #e24b4a;
+		color: var(--rn-danger-fg);
 	}
 
 	.rn-val-after {
-		color: #639922;
+		color: var(--rn-success-fg);
 	}
 
 	.rn-muted {

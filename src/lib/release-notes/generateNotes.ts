@@ -1,19 +1,17 @@
 import { generateBulkDiffReport, loadCrdsForRelease, loadVersionsForRelease } from '$lib/comparison/diffEngine';
-import { parseDiffLine } from '$lib/comparison/diffDetails';
+import {
+	detailsToFieldChanges,
+	isManifestBreakingChange
+} from '$lib/comparison/fieldChangeClassifier';
 import type { BulkDiffReport, CrdDiffEntry } from '$lib/comparison/types';
 import { fetchManifest, type ManifestResource } from '$lib/manifest';
 import type { CrdResource, EdaRelease } from '$lib/structure';
-import {
-	countNewlyDeprecatedApiVersions,
-	groupDeprecatedByResource,
-	type RawDeprecatedVersion
-} from './deprecation';
+import { groupDeprecatedByResource, type RawDeprecatedVersion } from './deprecation';
 import { generateMockNotes } from './mockNotes';
 import type {
 	BreakingChange,
 	DeprecatedItem,
 	FieldChange,
-	FieldChangeType,
 	ModifiedResource,
 	NewResource,
 	ReleaseNotes,
@@ -65,40 +63,10 @@ function computeUpgradeRisk(fromVer: string, toVer: string, breakingCount: numbe
 		if (fromVer.split('.')[1] !== toVer.split('.')[1]) return 'medium' as UpgradeRisk;
 		return 'low' as UpgradeRisk;
 	})();
-	if (breakingCount >= 5) return 'high';
+	if (breakingCount >= 20) return 'high';
+	if (breakingCount >= 5) return base === 'low' ? 'medium' : 'high';
 	if (breakingCount >= 2 && base === 'low') return 'medium';
 	return base;
-}
-
-function classifyChangeType(parsedType: 'add' | 'remove' | 'modify' | 'neutral', path: string): FieldChangeType {
-	if (parsedType === 'add') {
-		return path.includes('required') ? 'required_added' : 'optional_added';
-	}
-	if (parsedType === 'remove') return 'removed';
-	if (parsedType === 'modify') return 'type_change';
-	return 'added';
-}
-
-function fieldToHuman(field: string): string {
-	const leaf = field.split('.').pop() ?? field;
-	return leaf.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase());
-}
-
-function networkBehaviorForChange(changeType: FieldChangeType, field: string, kind: string): string {
-	const label = fieldToHuman(field.replace(/^spec\./, '').replace(/^status\./, 'status.'));
-	switch (changeType) {
-		case 'removed':
-			return `${kind} manifests referencing ${field} must remove this field before apply.`;
-		case 'required_added':
-			return `${kind} resources without ${field} will fail reconciliation — add the field to existing manifests.`;
-		case 'type_change':
-			return `${label} on ${kind} changed type or structure; validate existing values against the new schema.`;
-		case 'optional_added':
-		case 'added':
-			return `New optional field ${field} available on ${kind}; existing manifests remain valid.`;
-		default:
-			return `Field ${field} changed on ${kind} — review operational impact before upgrade.`;
-	}
 }
 
 function crdApiVersion(crd: CrdDiffEntry | CrdResource, version: string): string {
@@ -106,50 +74,65 @@ function crdApiVersion(crd: CrdDiffEntry | CrdResource, version: string): string
 	return `${group}/${version}`;
 }
 
-function detailsToChanges(details: string[]): FieldChange[] {
-	return details
-		.filter((d) => !d.startsWith('Not ') && !d.startsWith('No schema') && !d.startsWith('Present'))
-		.map((detail) => {
-			const parsed = parseDiffLine(detail);
-			const changeType = classifyChangeType(parsed.type, parsed.path);
-			return {
-				field: parsed.path,
-				changeType,
-				before: parsed.type === 'remove' || parsed.type === 'modify' ? 'previous value' : '',
-				after: parsed.type === 'add' || parsed.type === 'modify' ? 'updated value' : '',
-				networkBehavior: networkBehaviorForChange(changeType, parsed.path, '')
-			};
-		});
+function yamlSnippetForField(kind: string, field: string, phase: 'before' | 'after'): string {
+	const indent = field.startsWith('status.') ? 'status' : 'spec';
+	const leaf = field.split('.').pop() ?? field;
+	if (phase === 'before') {
+		return `# ${kind} — ${field} (before)\n${indent}:\n  ${leaf}: <previous>`;
+	}
+	return `# ${kind} — ${field} (after)\n${indent}:\n  ${leaf}: <updated>`;
 }
 
-function isBreakingChangeType(changeType: FieldChangeType): boolean {
-	return (
-		changeType === 'removed' ||
-		changeType === 'required_added' ||
-		changeType === 'type_change' ||
-		changeType === 'enum_removed'
-	);
-}
-
-function buildBreakingChanges(modifiedResources: ModifiedResource[]): BreakingChange[] {
+function buildBreakingChanges(
+	removedResources: RemovedResource[],
+	modifiedResources: ModifiedResource[]
+): BreakingChange[] {
 	const breaking: BreakingChange[] = [];
+
+	for (const resource of removedResources) {
+		breaking.push({
+			kind: resource.kind,
+			field: 'resource',
+			description: resource.reason,
+			severity: 'critical',
+			migrationSteps: [
+				`Export existing ${resource.kind} manifests`,
+				`Plan migration to replacement CRDs or decommission`,
+				`Remove ${resource.kind} resources before upgrading`
+			],
+			yamlBefore: `# ${resource.kind} resource\napiVersion: ${resource.apiVersion}\nkind: ${resource.kind}`,
+			yamlAfter: '# Resource removed — delete or migrate before upgrade'
+		});
+	}
+
 	for (const resource of modifiedResources) {
 		for (const change of resource.changes) {
-			if (!isBreakingChangeType(change.changeType)) continue;
+			if (!isManifestBreakingChange(change)) continue;
+			const severity =
+				change.changeType === 'removed' || change.changeType === 'required_added'
+					? 'critical'
+					: 'warning';
 			breaking.push({
 				kind: resource.kind,
 				field: change.field,
-				description: change.networkBehavior || `${resource.kind} field ${change.field} changed (${change.changeType}).`,
+				description:
+					change.networkBehavior ||
+					`${resource.kind} field ${change.field} changed (${change.changeType}).`,
+				severity,
 				migrationSteps: [
 					`Identify affected ${resource.kind} resources in your cluster`,
 					`Update manifests to address ${change.field}`,
 					`Validate against the target release schema before apply`
 				],
-				yamlBefore: `# ${resource.kind} — field ${change.field} (before)\nspec:\n  # ... existing manifest ...`,
-				yamlAfter: `# ${resource.kind} — field ${change.field} (after)\nspec:\n  # ... updated manifest ...`
+				yamlBefore:
+					change.before ||
+					yamlSnippetForField(resource.kind, change.field, 'before'),
+				yamlAfter:
+					change.after || yamlSnippetForField(resource.kind, change.field, 'after')
 			});
 		}
 	}
+
 	return breaking;
 }
 
@@ -241,84 +224,43 @@ export function reportToReleaseNotes(
 		}
 
 		if (entry.status === 'modified' && entry.hasDiff) {
-			const changes = detailsToChanges(entry.details).map((c) => ({
-				...c,
-				networkBehavior: networkBehaviorForChange(c.changeType, c.field, kind)
-			}));
+			const changes = detailsToFieldChanges(entry.details, kind);
 			if (changes.length > 0) {
 				modifiedResources.push({ kind, changes });
 			}
 		}
 	}
 
-	const breakingFromRemovals: BreakingChange[] = removedResources.map((r) => ({
-		kind: r.kind,
-		field: 'resource',
-		description: r.reason,
-		migrationSteps: [
-			`Export existing ${r.kind} manifests`,
-			`Plan migration to replacement CRDs or decommission`,
-			`Remove ${r.kind} resources before upgrading`
-		],
-		yamlBefore: `# ${r.kind} resource\napiVersion: ${r.apiVersion}\nkind: ${r.kind}`,
-		yamlAfter: '# Resource removed — delete or migrate before upgrade'
-	}));
-
-	const breakingChanges = [...breakingFromRemovals, ...buildBreakingChanges(modifiedResources)].slice(
-		0,
-		50
+	const breakingChanges = buildBreakingChanges(removedResources, modifiedResources);
+	const totalBreakingCount = breakingChanges.length;
+	const manifestBreakingFieldCount = modifiedResources.reduce(
+		(n, r) => n + r.changes.filter((c) => isManifestBreakingChange(c)).length,
+		0
 	);
 
-	const upgradeRisk = computeUpgradeRisk(fromVer, toVer, breakingChanges.length);
-	const modifiedFieldCount = modifiedResources.reduce((n, r) => n + r.changes.length, 0);
-
-	const summary =
-		`EDA ${toVer} changes ${newResources.length} new, ${removedResources.length} removed, and ${modifiedResources.length} modified CRDs compared to ${fromVer}.` +
-		(breakingChanges.length > 0
-			? ` ${breakingChanges.length} breaking change${breakingChanges.length !== 1 ? 's' : ''} require manifest updates.`
-			: ' No breaking schema changes detected.');
-
-	const operationalImpact =
-		breakingChanges.length > 0
-			? `Before upgrading to ${toVer}, validate all manifests affected by ${breakingChanges.length} breaking change(s). Run the bundle validator against the ${toVer} schema and schedule a maintenance window for controller restart.`
-			: newResources.length > 0 || modifiedFieldCount > 0
-				? `Release ${toVer} adds ${newResources.length} CRD(s) and ${modifiedFieldCount} field change(s). Existing manifests should apply cleanly; review new resources for adoption.`
-				: `Release ${toVer} is a low-impact upgrade from ${fromVer} with no detected schema diffs.`;
-
-	const upgradeChecklist = [
-		`Run bundle validator against all manifests for ${toVer} schema`,
-		...(breakingChanges.length > 0
-			? [`Resolve ${breakingChanges.length} breaking change(s) in affected CRDs`]
-			: []),
-		...(newResources.length > 0 ? [`Review ${newResources.length} new CRD(s) for adoption`] : []),
-		...(countNewlyDeprecatedApiVersions(deprecated) > 0
-			? [`Migrate ${countNewlyDeprecatedApiVersions(deprecated)} newly deprecated API version(s)`]
-			: []),
-		'Stage upgrade in lab environment first',
-		'Apply during a maintenance window'
-	];
+	const upgradeRisk = computeUpgradeRisk(fromVer, toVer, totalBreakingCount);
 
 	const estimatedEffort =
 		upgradeRisk === 'high' ? 'High: >4h' : upgradeRisk === 'medium' ? 'Medium: 1-4h' : 'Low: <1h';
 
 	const upgradeRiskJustification =
 		upgradeRisk === 'high'
-			? `Upgrade from ${fromVer} to ${toVer} includes ${breakingChanges.length} breaking change(s) and/or cross-major schema shifts.`
+			? `Upgrade from ${fromVer} to ${toVer} includes ${totalBreakingCount} breaking change(s)${removedResources.length > 0 ? ` including ${removedResources.length} removed CRD(s)` : ''}${manifestBreakingFieldCount > 0 ? ` and ${manifestBreakingFieldCount} spec field change(s)` : ''}.`
 			: upgradeRisk === 'medium'
-				? `Minor release upgrade with ${modifiedResources.length} modified CRD(s) and ${breakingChanges.length} breaking field change(s).`
-				: `Patch-level upgrade with ${breakingChanges.length} breaking change(s) — existing manifests likely apply cleanly.`;
+				? `Release upgrade with ${modifiedResources.length} modified CRD(s) and ${totalBreakingCount} breaking change(s).`
+				: totalBreakingCount > 0
+					? `Patch-level upgrade with ${totalBreakingCount} breaking change(s) — review affected manifests before apply.`
+					: `Patch-level upgrade with no breaking manifest changes detected.`;
 
 	return {
-		summary,
 		newResources,
 		removedResources,
 		modifiedResources,
 		deprecated,
 		breakingChanges,
-		operationalImpact,
+		totalBreakingCount,
 		upgradeRisk,
 		upgradeRiskJustification,
-		upgradeChecklist,
 		estimatedEffort
 	};
 }
@@ -382,10 +324,11 @@ export async function generateReleaseNotesForPair(
 			source: 'comparison'
 		};
 	} catch {
+		const mock = generateMockNotes(fromVer, toVer);
 		return {
 			toVer,
 			fromVer,
-			notes: generateMockNotes(fromVer, toVer),
+			notes: { ...mock, totalBreakingCount: mock.breakingChanges.length },
 			timestamp: Date.now(),
 			source: 'mock'
 		};

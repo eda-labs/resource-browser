@@ -7,6 +7,8 @@ export type ParsedDiffLine = {
 	path: string;
 	label: string;
 	raw: string;
+	before?: string;
+	after?: string;
 };
 
 export type DiffViewRow = {
@@ -28,6 +30,8 @@ export function parseDiffLine(detail: string): ParsedDiffLine {
 	let type: DiffLineType = 'neutral';
 	let path = raw;
 	let label = raw;
+	let before: string | undefined;
+	let after: string | undefined;
 
 	if (raw.startsWith('+')) {
 		type = 'add';
@@ -41,9 +45,17 @@ export function parseDiffLine(detail: string): ParsedDiffLine {
 		label = `− ${path}`;
 	} else if (raw.startsWith('~')) {
 		type = 'modify';
-		const m = raw.match(/^~\s*(?:Modified:\s*)?(.+)$/i);
-		path = m?.[1]?.trim() ?? raw.slice(1).trim();
-		label = `~ ${path}`;
+		const withValues = raw.match(/^~\s*(?:Modified:\s*)?(.+?) :: (.+) → (.+)$/);
+		if (withValues) {
+			path = withValues[1].trim();
+			before = withValues[2].trim();
+			after = withValues[3].trim();
+			label = `~ ${path}`;
+		} else {
+			const m = raw.match(/^~\s*(?:Modified:\s*)?(.+)$/i);
+			path = m?.[1]?.trim() ?? raw.slice(1).trim();
+			label = `~ ${path}`;
+		}
 	}
 
 	return {
@@ -51,7 +63,9 @@ export function parseDiffLine(detail: string): ParsedDiffLine {
 		section: detectSection(path),
 		path,
 		label,
-		raw
+		raw,
+		before,
+		after
 	};
 }
 

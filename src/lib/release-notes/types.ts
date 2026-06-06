@@ -55,22 +55,22 @@ export type BreakingChange = {
 	kind: string;
 	field: string;
 	description: string;
+	severity?: 'critical' | 'warning';
 	migrationSteps: string[];
 	yamlBefore: string;
 	yamlAfter: string;
 };
 
 export type ReleaseNotes = {
-	summary: string;
 	newResources: NewResource[];
 	removedResources: RemovedResource[];
 	modifiedResources: ModifiedResource[];
 	deprecated: DeprecatedItem[];
 	breakingChanges: BreakingChange[];
-	operationalImpact: string;
+	/** Full breaking count (breakingChanges may be grouped; use this for stats/risk). */
+	totalBreakingCount: number;
 	upgradeRisk: UpgradeRisk;
 	upgradeRiskJustification: string;
-	upgradeChecklist: string[];
 	estimatedEffort: string;
 };
 
