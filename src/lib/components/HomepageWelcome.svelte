@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import type { CrdResource, EdaRelease } from '$lib/structure';
+	import { searchResources } from '$lib/resourceSearch';
 	import { getLatestVersion } from '$lib/versions';
 	import type { Writable } from 'svelte/store';
 
@@ -80,18 +81,15 @@
 		}
 	];
 
-	$: filteredResources = $crdMetaStore
-		.filter((resource) => {
-			const query = heroSearch.trim().toLowerCase();
-			if (!query) return false;
-			const terms = query.split(/\s+/);
-			const haystack = `${resource.name} ${resource.kind} ${resource.group}`.toLowerCase();
-			if (!terms.every((term) => haystack.includes(term))) return false;
+	$: filteredResources = searchResources(
+		$crdMetaStore.filter((resource) => {
 			if (resourceTypeFilter === 'state') return resource.name.toLowerCase().includes('states');
 			if (resourceTypeFilter === 'config') return !resource.name.toLowerCase().includes('states');
 			return true;
-		})
-		.slice(0, 8);
+		}),
+		heroSearch,
+		{ limit: 8 }
+	);
 
 	$: showSearchResults = searchFocused && heroSearch.trim().length > 0;
 

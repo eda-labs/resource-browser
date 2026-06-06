@@ -20,6 +20,7 @@ import {
 	import yaml from 'js-yaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
+	import { searchResources } from '$lib/resourceSearch';
 	import { getLatestVersion } from '$lib/versions';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
@@ -32,16 +33,8 @@ import {
 	const resourceSearch = writable('');
 	const selectedRelease = writable<EdaRelease>(defaultRelease);
 	const releaseFolder = derived(selectedRelease, ($selectedRelease) => $selectedRelease.folder);
-	const resourceNameStore = derived(crdMetaStore, ($crdMetaStore) =>
-		$crdMetaStore.map((x) => x.name)
-	);
-	const resourceSearchFilter = derived(
-		[resourceSearch, resourceNameStore],
-		([$resourceSearch, $resourceNameStore]) => {
-			return $resourceNameStore.filter((x) =>
-				$resourceSearch.split(/\s+/).every((y) => x.includes(y.toLowerCase()))
-			);
-		}
+	const resourceSearchFilter = derived([resourceSearch, crdMetaStore], ([$resourceSearch, $crdMetaStore]) =>
+		searchResources($crdMetaStore, $resourceSearch).map((resource) => resource.name)
 	);
 	// Group releases by major version (e.g., 25 -> v25)
 	// Use numeric version comparison to ensure newest releases sort first (by major, minor, patch).

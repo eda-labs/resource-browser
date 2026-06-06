@@ -15,6 +15,7 @@
 	} from '$lib/dependency-map/buildGraph';
 	import type { BuildProgress, DependencyGraph, GraphNode } from '$lib/dependency-map/types';
 	import { fetchManifest } from '$lib/manifest';
+	import { searchResources } from '$lib/resourceSearch';
 	import { getLatestVersion } from '$lib/versions';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { CrdResource, EdaRelease, ReleasesConfig } from '$lib/structure';
@@ -72,15 +73,9 @@
 			groupName(focusNodeId)
 		: '';
 
-	$: filteredResources = manifestResources
-		.filter((resource) => {
-			const query = resourceSearch.trim().toLowerCase();
-			if (!query) return false;
-			const terms = query.split(/\s+/);
-			const haystack = `${resource.name} ${resource.kind} ${resource.group}`.toLowerCase();
-			return terms.every((term) => haystack.includes(term));
-		})
-		.slice(0, MAX_SUGGESTIONS);
+	$: filteredResources = searchResources(manifestResources, resourceSearch, {
+		limit: MAX_SUGGESTIONS
+	});
 
 	$: showSearchResults = searchFocused && resourceSearch.trim().length > 0;
 
