@@ -3,12 +3,7 @@
 	import { onMount } from 'svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import PageCredits from '$lib/components/PageCredits.svelte';
-	import { getManifestCache } from '$lib/manifest';
-	import {
-		buildConsecutivePairs,
-		generateReleaseNotesForPair,
-		sortReleasesByVersion
-	} from '$lib/release-notes/generateNotes';
+	import { sortReleasesByVersion } from '$lib/release-notes/generateNotes';
 	import {
 		CHANGE_COLORS,
 		HIGH_RISK_CHANGE_TYPES,
@@ -17,25 +12,26 @@
 		TAB_ICONS,
 		TABS
 	} from '$lib/release-notes/constants';
-	import type { ReleaseNotes, ReleaseNotesEntry, UpgradeRisk } from '$lib/release-notes/types';
+	import {
+		fetchAllReleaseNotes,
+		fetchReleaseNotesEntry,
+		fetchReleaseNotesIndex
+	} from '$lib/release-notes/loadStatic';
+	import type { ReleaseNotes, ReleaseNotesEntry } from '$lib/release-notes/types';
 	import releasesYaml from '$lib/releases.yaml?raw';
-	import type { EdaRelease, ReleasesConfig } from '$lib/structure';
+	import type { ReleasesConfig } from '$lib/structure';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 
 	let releaseHistory: ReleaseNotesEntry[] = $state([]);
-	let loadingMap: Record<string, boolean> = $state({});
 	let selected: string | null = $state(null);
 	let toast: string | null = $state(null);
 	let globalLoading = $state(true);
-	let loadingMsg = $state('Initialising release pipeline...');
+	let loadingMsg = $state('Loading release notes...');
 	let activeTab = $state(0);
 	let injectOpen = $state(false);
 	let injectVersion = $state('');
 	let copiedCode: string | null = $state(null);
-
-	const manifestCache = getManifestCache();
-	const yamlCache = new Map<string, string>();
 
 	const sortedReleases = sortReleasesByVersion(releasesConfig.releases);
 	const latestVersion =
@@ -54,60 +50,43 @@
 		}, 4000);
 	}
 
-	async function generateRelease(toRelease: EdaRelease, fromRelease: EdaRelease) {
-		const toVer = toRelease.name;
-		loadingMap = { ...loadingMap, [toVer]: true };
-		try {
-			const entry = await generateReleaseNotesForPair({
-				sourceRelease: fromRelease,
-				targetRelease: toRelease,
-				manifestCache,
-				yamlCache
-			});
-			releaseHistory = [
-				entry,
-				...releaseHistory.filter((e) => e.toVer !== toVer)
-			].sort((a, b) => b.toVer.localeCompare(a.toVer, undefined, { numeric: true }));
-			selected = toVer;
-			return entry;
-		} finally {
-			loadingMap = { ...loadingMap, [toVer]: false };
-		}
-	}
-
 	async function handleInject() {
 		const version = injectVersion.trim();
 		if (!version) return;
 
 		const release = releasesConfig.releases.find((r) => r.name === version);
 		if (!release) {
-			showToast(`Unknown release "${version}" — not in project release list`);
+			showToast('Release not found');
 			return;
 		}
 
-		const currentLatest = releaseHistory[0]?.toVer ?? latestVersion;
-		const fromRelease = releasesConfig.releases.find((r) => r.name === currentLatest);
-		if (!fromRelease) {
-			showToast(`Cannot resolve baseline release ${currentLatest}`);
+		if (releaseHistory.some((e) => e.toVer === version)) {
+			selected = version;
+			activeTab = 0;
+			injectOpen = false;
+			injectVersion = '';
+			showToast(`Release ${version} is already in the timeline`);
 			return;
 		}
 
-		if (version === currentLatest) {
-			showToast(`Release ${version} is already the latest in timeline`);
+		const entry = await fetchReleaseNotesEntry(version);
+		if (!entry) {
+			showToast('Regenerate release notes (npm run generate:release-notes)');
 			return;
 		}
 
-		showToast(`Processing release ${version}...`);
+		releaseHistory = [entry, ...releaseHistory].sort((a, b) =>
+			b.toVer.localeCompare(a.toVer, undefined, { numeric: true })
+		);
+		selected = version;
+		activeTab = 0;
 		injectOpen = false;
 		injectVersion = '';
 
-		const entry = await generateRelease(release, fromRelease);
-		if (entry) {
-			const breakingCount = entry.notes.breakingChanges.length;
-			showToast(
-				`Release ${version} processed (${entry.source}) — ${breakingCount} breaking change${breakingCount !== 1 ? 's' : ''} detected`
-			);
-		}
+		const breakingCount = entry.notes.breakingChanges.length;
+		showToast(
+			`Release ${version} loaded (${entry.source}) — ${breakingCount} breaking change${breakingCount !== 1 ? 's' : ''}`
+		);
 	}
 
 	function copyText(text: string) {
@@ -136,13 +115,18 @@
 
 	onMount(async () => {
 		globalLoading = true;
-		const pairs = buildConsecutivePairs(releasesConfig.releases);
-		loadingMsg = `Generating notes for ${pairs.length} release pairs...`;
+		loadingMsg = 'Loading release notes...';
 
-		await Promise.allSettled(pairs.map(({ from, to }) => generateRelease(to, from)));
+		const index = await fetchReleaseNotesIndex();
+		if (!index) {
+			showToast('Release notes missing — run npm run generate:release-notes');
+			globalLoading = false;
+			return;
+		}
 
+		releaseHistory = await fetchAllReleaseNotes(index);
 		globalLoading = false;
-		selected = latestVersion;
+		selected = index.latest || latestVersion;
 	});
 </script>
 
@@ -173,7 +157,7 @@
 					{#if injectOpen}
 						<div class="rn-inject-panel">
 							<div class="rn-inject-hint">
-								New version string (compared against {releaseHistory[0]?.toVer ?? latestVersion})
+								Load precomputed notes for a release in the project list
 							</div>
 							<div class="rn-inject-row">
 								<input
@@ -182,10 +166,10 @@
 									placeholder="e.g. 26.4.2"
 									onkeydown={(e) => e.key === 'Enter' && handleInject()}
 								/>
-								<button type="button" class="rn-inject-btn" onclick={handleInject}>Generate</button>
+								<button type="button" class="rn-inject-btn" onclick={handleInject}>Load</button>
 							</div>
 							<div class="rn-inject-note">
-								Computes schema diff against the latest timeline release using comparison data.
+								Notes are precomputed at build time from schema diffs. Regenerate if a file is missing.
 							</div>
 						</div>
 					{/if}
@@ -200,7 +184,6 @@
 					{#each releaseHistory as entry, i (entry.toVer)}
 						{@const risk = entry.notes.upgradeRisk}
 						{@const isSelected = selected === entry.toVer}
-						{@const isLoading = loadingMap[entry.toVer]}
 						<button
 							type="button"
 							class="rn-timeline-item"
@@ -210,11 +193,7 @@
 								activeTab = 0;
 							}}
 						>
-							<span
-								class="rn-timeline-dot"
-								class:rn-timeline-dot--loading={isLoading}
-								style:background={isLoading ? '#58a6ff' : RISK_COLOR[risk]}
-							></span>
+							<span class="rn-timeline-dot" style:background={RISK_COLOR[risk]}></span>
 							<div class="rn-timeline-version">
 								<span class:rn-timeline-version--active={isSelected}>{entry.toVer}</span>
 								{#if isNewEntry(entry, i)}
@@ -239,8 +218,8 @@
 						</button>
 					{/each}
 
-					{#if globalLoading && releaseHistory.length < releasesConfig.releases.length - 1}
-						{#each sortedReleases.slice(releaseHistory.length + 1, 5) as r (r.name)}
+					{#if globalLoading}
+						{#each sortedReleases.slice(0, 4) as r (r.name)}
 							<div class="rn-timeline-skeleton">
 								<span class="rn-timeline-dot rn-timeline-dot--skeleton"></span>
 								<div class="rn-skeleton-text">{r.name}</div>
@@ -716,10 +695,6 @@
 		height: 11px;
 		border-radius: 50%;
 		border: 2px solid #0d1117;
-	}
-
-	.rn-timeline-dot--loading {
-		animation: rn-pulse 1s infinite;
 	}
 
 	.rn-timeline-dot--skeleton {

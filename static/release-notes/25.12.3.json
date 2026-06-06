@@ -1,0 +1,23 @@
+{
+  "toVer": "25.12.3",
+  "fromVer": "25.12.2",
+  "notes": {
+    "summary": "EDA 25.12.3 changes 0 new, 0 removed, and 0 modified CRDs compared to 25.12.2. No breaking schema changes detected.",
+    "newResources": [],
+    "removedResources": [],
+    "modifiedResources": [],
+    "deprecated": [],
+    "breakingChanges": [],
+    "operationalImpact": "Release 25.12.3 is a low-impact upgrade from 25.12.2 with no detected schema diffs.",
+    "upgradeRisk": "low",
+    "upgradeRiskJustification": "Patch-level upgrade with 0 breaking change(s) — existing manifests likely apply cleanly.",
+    "upgradeChecklist": [
+      "Run bundle validator against all manifests for 25.12.3 schema",
+      "Stage upgrade in lab environment first",
+      "Apply during a maintenance window"
+    ],
+    "estimatedEffort": "Low: <1h"
+  },
+  "timestamp": 1780776369197,
+  "source": "comparison"
+}

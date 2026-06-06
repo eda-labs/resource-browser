@@ -36,6 +36,12 @@ const suppressCrdCheckLogs = (): Plugin => ({
 
 export default defineConfig({
 	plugins: [suppressCrdCheckLogs(), tailwindcss(), sveltekit(), devtoolsJson()],
+	build: {
+		rollupOptions: {
+			// Work around Rollup 4 literal deoptimization crash (ConditionalExpression + frozen arrays)
+			treeshake: false
+		}
+	},
 	test: {
 		projects: [
 			{

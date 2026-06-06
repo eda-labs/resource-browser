@@ -1,0 +1,133 @@
+{
+  "toVer": "26.4.2",
+  "fromVer": "26.4.1",
+  "notes": {
+    "summary": "EDA 26.4.2 changes 0 new, 0 removed, and 0 modified CRDs compared to 26.4.1. No breaking schema changes detected.",
+    "newResources": [],
+    "removedResources": [],
+    "modifiedResources": [],
+    "deprecated": [
+      {
+        "kind": "ClusterDestination",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "ClusterExport",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "ClusterExport",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "ClusterProducer",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "ClusterPublisher",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "ConnectAudit",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+      },
+      {
+        "kind": "ConnectInterface",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+      },
+      {
+        "kind": "ConnectPluginActionable",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+      },
+      {
+        "kind": "ConnectPluginHeartbeat",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+      },
+      {
+        "kind": "ConnectPlugin",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+      },
+      {
+        "kind": "Destination",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "Export",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "Export",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+      },
+      {
+        "kind": "",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+      },
+      {
+        "kind": "Producer",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v4.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "Publisher",
+        "field": "apiVersion v1alpha1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+      },
+      {
+        "kind": "",
+        "field": "apiVersion v1",
+        "removedInVersion": "TBD",
+        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+      }
+    ],
+    "breakingChanges": [],
+    "operationalImpact": "Release 26.4.2 is a low-impact upgrade from 26.4.1 with no detected schema diffs.",
+    "upgradeRisk": "low",
+    "upgradeRiskJustification": "Patch-level upgrade with 0 breaking change(s) — existing manifests likely apply cleanly.",
+    "upgradeChecklist": [
+      "Run bundle validator against all manifests for 26.4.2 schema",
+      "Migrate 18 newly deprecated API version(s)",
+      "Stage upgrade in lab environment first",
+      "Apply during a maintenance window"
+    ],
+    "estimatedEffort": "Low: <1h"
+  },
+  "timestamp": 1780776368954,
+  "source": "comparison"
+}

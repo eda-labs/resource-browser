@@ -1,0 +1,1216 @@
+{
+  "toVer": "25.12.1",
+  "fromVer": "25.8.3",
+  "notes": {
+    "summary": "EDA 25.12.1 changes 0 new, 2 removed, and 26 modified CRDs compared to 25.8.3. 46 breaking changes require manifest updates.",
+    "newResources": [],
+    "removedResources": [
+      {
+        "kind": "CxCluster",
+        "apiVersion": "cx.eda.nokia.com/v1alpha1",
+        "reason": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources."
+      },
+      {
+        "kind": "Monitor",
+        "apiVersion": "system.eda.nokia.com/v1alpha1",
+        "reason": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources."
+      }
+    ],
+    "modifiedResources": [
+      {
+        "kind": "Backend",
+        "changes": [
+          {
+            "field": "spec.ipMTU",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.ipMTU available on Backend; existing manifests remain valid."
+          },
+          {
+            "field": "spec.rocev2QoS.properties.ecnSlopeMinThresholdPercent.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Backend changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.rocev2QoS.properties.queueMaximumBurstSize.default",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Default on Backend changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "status.health.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Backend changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "Breakout",
+        "changes": [
+          {
+            "field": "spec.nodeSelector.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Breakout changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "BridgeInterface",
+        "changes": [
+          {
+            "field": "spec.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "CommunitySet",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.configuredName available on CommunitySet; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "ControlPlaneFilter",
+        "changes": [
+          {
+            "field": "spec.entries.items.properties.ipEntry.properties.dscp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.entries.items.properties.ipEntry.properties.dscp available on ControlPlaneFilter; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "DefaultInterface",
+        "changes": [
+          {
+            "field": "spec.subinterfaceIndex",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.subinterfaceIndex available on DefaultInterface; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on DefaultInterface changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "DefaultRouter",
+        "changes": [
+          {
+            "field": "spec.ecmp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.ecmp available on DefaultRouter; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "DeployImage",
+        "changes": [
+          {
+            "field": "spec.reconnectionTimeoutSeconds",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.reconnectionTimeoutSeconds available on DeployImage; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "EgressPolicy",
+        "changes": [
+          {
+            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "Fabric",
+        "changes": [
+          {
+            "field": "spec.borderLeafs.properties.routeLeaking.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.leafs.properties.routeLeaking.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.overlayProtocol.properties.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.routeLeaking.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.spines.properties.routeLeaking.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.superSpines.properties.routeLeaking.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.underlayProtocol.properties.ospf",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.underlayProtocol.properties.ospf available on Fabric; existing manifests remain valid."
+          },
+          {
+            "field": "spec.underlayProtocol.properties.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.underlayProtocol.properties.protocol.items.enum",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Enum on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.underlayProtocol.required",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Required on Fabric changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "status.health.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Fabric changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "Filter",
+        "changes": [
+          {
+            "field": "spec.entries.items.properties.ipEntry.properties.dscp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.entries.items.properties.ipEntry.properties.dscp available on Filter; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Interface",
+        "changes": [
+          {
+            "field": "spec.ethernet.properties.crcMonitor",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.ethernet.properties.crcMonitor available on Interface; existing manifests remain valid."
+          },
+          {
+            "field": "spec.ethernet.properties.loopbackMode",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.ethernet.properties.loopbackMode available on Interface; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "IRBInterface",
+        "changes": [
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on IRBInterface changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "ISL",
+        "changes": [
+          {
+            "field": "spec.ospf",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.ospf available on ISL; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on ISL changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "status.localInterface.properties.defaultInterface.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on ISL changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "status.remoteInterface.properties.defaultInterface.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on ISL changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "ManagementRouter",
+        "changes": [
+          {
+            "field": "spec.staticRoutes",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.staticRoutes available on ManagementRouter; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "MirrorFilter",
+        "changes": [
+          {
+            "field": "spec.entries.items.properties.ipEntry.properties.dscp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.entries.items.properties.ipEntry.properties.dscp available on MirrorFilter; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Mirror",
+        "changes": [
+          {
+            "field": "spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.ipEntry.properties.dscp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.ipEntry.properties.dscp available on Mirror; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Policy",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.configuredName available on Policy; existing manifests remain valid."
+          },
+          {
+            "field": "spec.defaultAction.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.defaultAction.properties.tags available on Policy; existing manifests remain valid."
+          },
+          {
+            "field": "spec.statement.items.properties.action.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.statement.items.properties.action.properties.tags available on Policy; existing manifests remain valid."
+          },
+          {
+            "field": "spec.statement.items.properties.match.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.statement.items.properties.match.properties.tags available on Policy; existing manifests remain valid."
+          },
+          {
+            "field": "spec.statement.items.properties.match.properties.protocol.enum",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Enum on Policy changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "PrefixSet",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.configuredName available on PrefixSet; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "RoutedInterface",
+        "changes": [
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on RoutedInterface changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.ipv4Parameters.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.ipv4Parameters.description available on RoutedInterface; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "RouteLookup",
+        "changes": [
+          {
+            "field": "status.results.items.properties.nextHops.items.properties.interfaces.items.properties.localAddress",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field status.results.items.properties.nextHops.items.properties.interfaces.items.properties.localAddress available on RouteLookup; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Router",
+        "changes": [
+          {
+            "field": "spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Router changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "SystemInterface",
+        "changes": [
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on SystemInterface changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "Threshold",
+        "changes": [
+          {
+            "field": "spec.field.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.generateOverlay.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.path.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.resource.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.resource.properties.group.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.resource.properties.kind.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.resource.properties.name.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "VirtualNetwork",
+        "changes": [
+          {
+            "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.tags available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.tags available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.tags available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Enum on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.spec.properties.ipv4Parameters.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "updated value",
+            "networkBehavior": "New optional field spec.routedInterfaces.items.properties.spec.properties.ipv4Parameters.description available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.vlans.items.properties.spec.properties.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.vlans.items.properties.spec.properties.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "VLAN",
+        "changes": [
+          {
+            "field": "spec.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "previous value",
+            "after": "updated value",
+            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      }
+    ],
+    "deprecated": [],
+    "breakingChanges": [
+      {
+        "kind": "CxCluster",
+        "field": "resource",
+        "description": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources.",
+        "migrationSteps": [
+          "Export existing CxCluster manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove CxCluster resources before upgrading"
+        ],
+        "yamlBefore": "# CxCluster resource\napiVersion: cx.eda.nokia.com/v1alpha1\nkind: CxCluster",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "Monitor",
+        "field": "resource",
+        "description": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources.",
+        "migrationSteps": [
+          "Export existing Monitor manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove Monitor resources before upgrading"
+        ],
+        "yamlBefore": "# Monitor resource\napiVersion: system.eda.nokia.com/v1alpha1\nkind: Monitor",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "Backend",
+        "field": "spec.rocev2QoS.properties.ecnSlopeMinThresholdPercent.description",
+        "description": "Description on Backend changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Backend resources in your cluster",
+          "Update manifests to address spec.rocev2QoS.properties.ecnSlopeMinThresholdPercent.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Backend — field spec.rocev2QoS.properties.ecnSlopeMinThresholdPercent.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Backend — field spec.rocev2QoS.properties.ecnSlopeMinThresholdPercent.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Backend",
+        "field": "spec.rocev2QoS.properties.queueMaximumBurstSize.default",
+        "description": "Default on Backend changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Backend resources in your cluster",
+          "Update manifests to address spec.rocev2QoS.properties.queueMaximumBurstSize.default",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Backend — field spec.rocev2QoS.properties.queueMaximumBurstSize.default (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Backend — field spec.rocev2QoS.properties.queueMaximumBurstSize.default (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Backend",
+        "field": "status.health.description",
+        "description": "Description on Backend changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Backend resources in your cluster",
+          "Update manifests to address status.health.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Backend — field status.health.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Backend — field status.health.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Breakout",
+        "field": "spec.nodeSelector.description",
+        "description": "Description on Breakout changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Breakout resources in your cluster",
+          "Update manifests to address spec.nodeSelector.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Breakout — field spec.nodeSelector.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Breakout — field spec.nodeSelector.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "BridgeInterface",
+        "field": "spec.uplink.properties.egress.description",
+        "description": "Description on BridgeInterface changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected BridgeInterface resources in your cluster",
+          "Update manifests to address spec.uplink.properties.egress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# BridgeInterface — field spec.uplink.properties.egress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# BridgeInterface — field spec.uplink.properties.egress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "BridgeInterface",
+        "field": "spec.uplink.properties.ingress.description",
+        "description": "Description on BridgeInterface changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected BridgeInterface resources in your cluster",
+          "Update manifests to address spec.uplink.properties.ingress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# BridgeInterface — field spec.uplink.properties.ingress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# BridgeInterface — field spec.uplink.properties.ingress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "DefaultInterface",
+        "field": "spec.bfd.properties.ttl.description",
+        "description": "Description on DefaultInterface changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected DefaultInterface resources in your cluster",
+          "Update manifests to address spec.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# DefaultInterface — field spec.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# DefaultInterface — field spec.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "EgressPolicy",
+        "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
+        "description": "Description on EgressPolicy changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected EgressPolicy resources in your cluster",
+          "Update manifests to address spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# EgressPolicy — field spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# EgressPolicy — field spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "EgressPolicy",
+        "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description",
+        "description": "Description on EgressPolicy changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected EgressPolicy resources in your cluster",
+          "Update manifests to address spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# EgressPolicy — field spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# EgressPolicy — field spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.borderLeafs.properties.routeLeaking.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.borderLeafs.properties.routeLeaking.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.borderLeafs.properties.routeLeaking.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.borderLeafs.properties.routeLeaking.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.leafs.properties.routeLeaking.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.leafs.properties.routeLeaking.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.leafs.properties.routeLeaking.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.leafs.properties.routeLeaking.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.overlayProtocol.properties.bfd.properties.ttl.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.overlayProtocol.properties.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.overlayProtocol.properties.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.overlayProtocol.properties.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.routeLeaking.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.routeLeaking.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.routeLeaking.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.routeLeaking.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.spines.properties.routeLeaking.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.spines.properties.routeLeaking.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.spines.properties.routeLeaking.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.spines.properties.routeLeaking.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.superSpines.properties.routeLeaking.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.superSpines.properties.routeLeaking.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.superSpines.properties.routeLeaking.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.superSpines.properties.routeLeaking.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.underlayProtocol.properties.bfd.properties.ttl.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.underlayProtocol.properties.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.underlayProtocol.properties.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.underlayProtocol.properties.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.underlayProtocol.properties.protocol.items.enum",
+        "description": "Enum on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.underlayProtocol.properties.protocol.items.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.underlayProtocol.properties.protocol.items.enum (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.underlayProtocol.properties.protocol.items.enum (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "spec.underlayProtocol.required",
+        "description": "Required on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address spec.underlayProtocol.required",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field spec.underlayProtocol.required (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field spec.underlayProtocol.required (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Fabric",
+        "field": "status.health.description",
+        "description": "Description on Fabric changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Fabric resources in your cluster",
+          "Update manifests to address status.health.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Fabric — field status.health.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Fabric — field status.health.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "IRBInterface",
+        "field": "spec.bfd.properties.ttl.description",
+        "description": "Description on IRBInterface changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected IRBInterface resources in your cluster",
+          "Update manifests to address spec.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# IRBInterface — field spec.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# IRBInterface — field spec.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "ISL",
+        "field": "spec.bfd.properties.ttl.description",
+        "description": "Description on ISL changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected ISL resources in your cluster",
+          "Update manifests to address spec.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# ISL — field spec.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# ISL — field spec.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "ISL",
+        "field": "status.localInterface.properties.defaultInterface.description",
+        "description": "Description on ISL changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected ISL resources in your cluster",
+          "Update manifests to address status.localInterface.properties.defaultInterface.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# ISL — field status.localInterface.properties.defaultInterface.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# ISL — field status.localInterface.properties.defaultInterface.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "ISL",
+        "field": "status.remoteInterface.properties.defaultInterface.description",
+        "description": "Description on ISL changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected ISL resources in your cluster",
+          "Update manifests to address status.remoteInterface.properties.defaultInterface.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# ISL — field status.remoteInterface.properties.defaultInterface.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# ISL — field status.remoteInterface.properties.defaultInterface.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Policy",
+        "field": "spec.statement.items.properties.match.properties.protocol.enum",
+        "description": "Enum on Policy changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Policy resources in your cluster",
+          "Update manifests to address spec.statement.items.properties.match.properties.protocol.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Policy — field spec.statement.items.properties.match.properties.protocol.enum (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Policy — field spec.statement.items.properties.match.properties.protocol.enum (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "RoutedInterface",
+        "field": "spec.bfd.properties.ttl.description",
+        "description": "Description on RoutedInterface changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected RoutedInterface resources in your cluster",
+          "Update manifests to address spec.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# RoutedInterface — field spec.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# RoutedInterface — field spec.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Router",
+        "field": "spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+        "description": "Description on Router changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Router resources in your cluster",
+          "Update manifests to address spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Router — field spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Router — field spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "SystemInterface",
+        "field": "spec.bfd.properties.ttl.description",
+        "description": "Description on SystemInterface changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected SystemInterface resources in your cluster",
+          "Update manifests to address spec.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# SystemInterface — field spec.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# SystemInterface — field spec.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.field.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.field.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.field.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.field.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.generateOverlay.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.generateOverlay.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.generateOverlay.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.generateOverlay.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.path.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.path.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.path.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.path.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.resource.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.resource.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.resource.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.resource.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.resource.properties.group.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.resource.properties.group.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.resource.properties.group.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.resource.properties.group.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.resource.properties.kind.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.resource.properties.kind.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.resource.properties.kind.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.resource.properties.kind.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "Threshold",
+        "field": "spec.resource.properties.name.description",
+        "description": "Description on Threshold changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected Threshold resources in your cluster",
+          "Update manifests to address spec.resource.properties.name.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Threshold — field spec.resource.properties.name.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# Threshold — field spec.resource.properties.name.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.ingress.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.ingress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.ingress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.ingress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
+        "description": "Enum on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.routers.items.properties.spec.properties.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.routers.items.properties.spec.properties.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.routers.items.properties.spec.properties.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.routers.items.properties.spec.properties.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.vlans.items.properties.spec.properties.uplink.properties.egress.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.vlans.items.properties.spec.properties.uplink.properties.egress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.vlans.items.properties.spec.properties.uplink.properties.egress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.vlans.items.properties.spec.properties.uplink.properties.egress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.vlans.items.properties.spec.properties.uplink.properties.ingress.description",
+        "description": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.vlans.items.properties.spec.properties.uplink.properties.ingress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VirtualNetwork — field spec.vlans.items.properties.spec.properties.uplink.properties.ingress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VirtualNetwork — field spec.vlans.items.properties.spec.properties.uplink.properties.ingress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VLAN",
+        "field": "spec.uplink.properties.egress.description",
+        "description": "Description on VLAN changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VLAN resources in your cluster",
+          "Update manifests to address spec.uplink.properties.egress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VLAN — field spec.uplink.properties.egress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VLAN — field spec.uplink.properties.egress.description (after)\nspec:\n  # ... updated manifest ..."
+      },
+      {
+        "kind": "VLAN",
+        "field": "spec.uplink.properties.ingress.description",
+        "description": "Description on VLAN changed type or structure; validate existing values against the new schema.",
+        "migrationSteps": [
+          "Identify affected VLAN resources in your cluster",
+          "Update manifests to address spec.uplink.properties.ingress.description",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# VLAN — field spec.uplink.properties.ingress.description (before)\nspec:\n  # ... existing manifest ...",
+        "yamlAfter": "# VLAN — field spec.uplink.properties.ingress.description (after)\nspec:\n  # ... updated manifest ..."
+      }
+    ],
+    "operationalImpact": "Before upgrading to 25.12.1, validate all manifests affected by 46 breaking change(s). Run the bundle validator against the 25.12.1 schema and schedule a maintenance window for controller restart.",
+    "upgradeRisk": "high",
+    "upgradeRiskJustification": "Upgrade from 25.8.3 to 25.12.1 includes 46 breaking change(s) and/or cross-major schema shifts.",
+    "upgradeChecklist": [
+      "Run bundle validator against all manifests for 25.12.1 schema",
+      "Resolve 46 breaking change(s) in affected CRDs",
+      "Stage upgrade in lab environment first",
+      "Apply during a maintenance window"
+    ],
+    "estimatedEffort": "High: >4h"
+  },
+  "timestamp": 1780776369419,
+  "source": "comparison"
+}

@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-06-06T20:09:41.341Z",
+  "latest": "26.4.2",
+  "entries": [
+    {
+      "toVer": "26.4.2",
+      "fromVer": "26.4.1",
+      "source": "comparison",
+      "timestamp": 1780776368954,
+      "upgradeRisk": "low",
+      "breakingCount": 0
+    },
+    {
+      "toVer": "26.4.1",
+      "fromVer": "25.12.3",
+      "source": "comparison",
+      "timestamp": 1780776369050,
+      "upgradeRisk": "high",
+      "breakingCount": 50
+    },
+    {
+      "toVer": "25.12.3",
+      "fromVer": "25.12.2",
+      "source": "comparison",
+      "timestamp": 1780776369197,
+      "upgradeRisk": "low",
+      "breakingCount": 0
+    },
+    {
+      "toVer": "25.12.2",
+      "fromVer": "25.12.1",
+      "source": "comparison",
+      "timestamp": 1780776369314,
+      "upgradeRisk": "high",
+      "breakingCount": 20
+    },
+    {
+      "toVer": "25.12.1",
+      "fromVer": "25.8.3",
+      "source": "comparison",
+      "timestamp": 1780776369419,
+      "upgradeRisk": "high",
+      "breakingCount": 46
+    },
+    {
+      "toVer": "25.8.3",
+      "fromVer": "25.8.2",
+      "source": "comparison",
+      "timestamp": 1780776369530,
+      "upgradeRisk": "medium",
+      "breakingCount": 4
+    },
+    {
+      "toVer": "25.8.2",
+      "fromVer": "25.8.1",
+      "source": "comparison",
+      "timestamp": 1780776369635,
+      "upgradeRisk": "low",
+      "breakingCount": 0
+    },
+    {
+      "toVer": "25.8.1",
+      "fromVer": "25.4.2",
+      "source": "comparison",
+      "timestamp": 1780776369771,
+      "upgradeRisk": "high",
+      "breakingCount": 36
+    }
+  ]
+}
