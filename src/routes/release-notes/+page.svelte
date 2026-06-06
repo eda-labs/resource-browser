@@ -5,6 +5,11 @@
 	import PageCredits from '$lib/components/PageCredits.svelte';
 	import { sortReleasesByVersion } from '$lib/release-notes/generateNotes';
 	import {
+		countDeprecatedApiVersions,
+		countNewlyDeprecatedApiVersions,
+		removedInLabel
+	} from '$lib/release-notes/deprecation';
+	import {
 		CHANGE_COLORS,
 		HIGH_RISK_CHANGE_TYPES,
 		RISK_COLOR,
@@ -31,6 +36,8 @@
 	let injectOpen = $state(false);
 	let injectVersion = $state('');
 	let copiedCode: string | null = $state(null);
+	let deprecFilter = $state('');
+	let deprecExpanded = $state<Record<string, boolean>>({});
 
 	const sortedReleases = sortReleasesByVersion(releasesConfig.releases);
 	const latestVersion =
@@ -106,8 +113,32 @@
 			{ label: 'Removed', value: notes.removedResources.length, color: '#e24b4a' },
 			{ label: 'Modified', value: notes.modifiedResources.length, color: '#ef9f27' },
 			{ label: 'Breaking', value: notes.breakingChanges.length, color: '#e24b4a' },
-			{ label: 'Deprecated', value: notes.deprecated.length, color: '#ef9f27' }
+			{
+				label: 'Deprecated',
+				value: countDeprecatedApiVersions(notes.deprecated),
+				color: '#ef9f27'
+			}
 		];
+	}
+
+	function filteredDeprecated(notes: ReleaseNotes) {
+		const q = deprecFilter.trim().toLowerCase();
+		if (!q) return notes.deprecated;
+		return notes.deprecated.filter(
+			(d) =>
+				d.kind.toLowerCase().includes(q) ||
+				d.group.toLowerCase().includes(q) ||
+				d.crdName.toLowerCase().includes(q) ||
+				d.deprecatedVersions.some((v) => v.version.toLowerCase().includes(q))
+		);
+	}
+
+	function toggleDeprecKind(crdName: string) {
+		deprecExpanded = { ...deprecExpanded, [crdName]: !deprecExpanded[crdName] };
+	}
+
+	function isDeprecExpanded(crdName: string): boolean {
+		return deprecExpanded[crdName] ?? true;
 	}
 
 	const selectedEntry = $derived(releaseHistory.find((e) => e.toVer === selected) ?? null);
@@ -190,6 +221,8 @@
 							onclick={() => {
 								selected = entry.toVer;
 								activeTab = 0;
+								deprecFilter = '';
+								deprecExpanded = {};
 							}}
 						>
 							<span class="rn-timeline-dot" style:background={RISK_COLOR[risk]}></span>
@@ -291,7 +324,7 @@
 									<span class="rn-tab-badge">
 										{i === 1
 											? selectedEntry.notes.breakingChanges.length
-											: selectedEntry.notes.deprecated.length}
+											: countDeprecatedApiVersions(selectedEntry.notes.deprecated)}
 									</span>
 								{/if}
 							</button>
@@ -394,19 +427,105 @@
 							{#if selectedEntry.notes.deprecated.length === 0}
 								<div class="rn-empty">No deprecations in this release</div>
 							{:else}
-								<div class="rn-deprec-grid rn-deprec-head">
-									<span>Resource</span><span>Field</span><span>Removed in</span><span
-										>Migration</span
-									>
-								</div>
-								{#each selectedEntry.notes.deprecated as d, i (i)}
-									<div class="rn-deprec-grid rn-deprec-row">
-										<code class="rn-code-kind">{d.kind}</code>
-										<code class="rn-code-warn">{d.field}</code>
-										<span>{d.removedInVersion || 'TBD'}</span>
-										<span class="rn-muted">{d.migrationPath}</span>
+								{@const deprecItems = filteredDeprecated(selectedEntry.notes)}
+								{@const newCount = countNewlyDeprecatedApiVersions(selectedEntry.notes.deprecated)}
+								<div class="rn-deprec-toolbar">
+									<div class="rn-deprec-summary">
+										<span class="rn-pill rn-pill--deprec">DEPRECATED</span>
+										<span class="rn-deprec-summary-text">
+											{selectedEntry.notes.deprecated.length} resource{selectedEntry.notes
+												.deprecated.length !== 1
+												? 's'
+												: ''} · {countDeprecatedApiVersions(
+												selectedEntry.notes.deprecated
+											)} apiVersion{countDeprecatedApiVersions(
+												selectedEntry.notes.deprecated
+											) !== 1
+												? 's'
+												: ''}
+											{#if newCount > 0}
+												· <strong>{newCount} new in this release</strong>
+											{/if}
+										</span>
 									</div>
-								{/each}
+									<input
+										class="rn-deprec-search"
+										type="search"
+										placeholder="Filter by kind, group, or version…"
+										bind:value={deprecFilter}
+										aria-label="Filter deprecated resources"
+									/>
+								</div>
+
+								{#if deprecItems.length === 0}
+									<div class="rn-empty">No resources match your filter</div>
+								{:else}
+									<div class="rn-deprec-list">
+										{#each deprecItems as d (d.crdName)}
+											<div class="rn-deprec-card">
+												<button
+													type="button"
+													class="rn-deprec-card-head"
+													aria-expanded={isDeprecExpanded(d.crdName)}
+													onclick={() => toggleDeprecKind(d.crdName)}
+												>
+													<span
+														class="rn-deprec-chevron"
+														class:rn-deprec-chevron--open={isDeprecExpanded(d.crdName)}>▸</span
+													>
+													<div class="rn-deprec-card-title">
+														<span class="rn-deprec-kind">{d.kind}</span>
+														<span class="rn-deprec-group">{d.group}</span>
+													</div>
+													<span class="rn-deprec-count">
+														{d.deprecatedVersions.length} version{d.deprecatedVersions.length !==
+														1
+															? 's'
+															: ''}
+													</span>
+												</button>
+
+												{#if isDeprecExpanded(d.crdName)}
+													<div class="rn-deprec-card-body">
+														<div class="rn-deprec-versions">
+															<span class="rn-deprec-label">Deprecated apiVersions</span>
+															<div class="rn-deprec-chips">
+																{#each d.deprecatedVersions as v (v.apiVersion)}
+																	<span
+																		class="rn-deprec-chip"
+																		class:rn-deprec-chip--new={v.newInRelease}
+																	>
+																		<span class="rn-deprec-chip-key">apiVersion</span>
+																		<code class="rn-deprec-chip-val">{v.version}</code>
+																		{#if v.newInRelease}
+																			<span class="rn-deprec-chip-tag">new</span>
+																		{/if}
+																	</span>
+																{/each}
+															</div>
+														</div>
+
+														{#if d.recommendedApiVersion}
+															<div class="rn-deprec-row">
+																<span class="rn-deprec-label">Use instead</span>
+																<code class="rn-deprec-recommended">{d.recommendedApiVersion}</code>
+															</div>
+														{/if}
+
+														<div class="rn-deprec-row">
+															<span class="rn-deprec-label">Removed in</span>
+															<span class="rn-deprec-removed">
+																{removedInLabel(d.deprecatedVersions[0])}
+															</span>
+														</div>
+
+														<p class="rn-deprec-migration">{d.migrationPath}</p>
+													</div>
+												{/if}
+											</div>
+										{/each}
+									</div>
+								{/if}
 							{/if}
 						{:else if activeTab === 3}
 							{#if selectedEntry.notes.newResources.length === 0}
@@ -1194,29 +1313,203 @@
 		cursor: pointer;
 	}
 
-	.rn-deprec-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr 1fr;
-		gap: 8px;
-		align-items: start;
+	.rn-pill--deprec {
+		background: rgb(239 159 39 / 0.13);
+		color: #ef9f27;
 	}
 
-	.rn-deprec-head {
-		font-size: 11px;
+	.rn-deprec-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	.rn-deprec-summary {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+
+	.rn-deprec-summary-text {
+		font-size: 13px;
 		color: var(--rn-text-muted);
+	}
+
+	.rn-deprec-summary-text strong {
+		color: #ef9f27;
+		font-weight: 600;
+	}
+
+	.rn-deprec-search {
+		flex: 1;
+		min-width: 200px;
+		max-width: 320px;
+		background: var(--rn-bg);
+		border: 1px solid var(--rn-border-muted);
+		border-radius: 6px;
+		padding: 8px 12px;
+		color: var(--rn-text);
+		font-size: 13px;
+	}
+
+	.rn-deprec-list {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		max-height: min(70vh, 900px);
+		overflow-y: auto;
+		padding-right: 4px;
+	}
+
+	.rn-deprec-card {
+		background: var(--rn-deprec-bg);
+		border: 1px solid var(--rn-deprec-border);
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.rn-deprec-card-head {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 12px 14px;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		color: inherit;
+		text-align: left;
+	}
+
+	.rn-deprec-card-head:hover {
+		background: rgb(239 159 39 / 0.06);
+	}
+
+	.rn-deprec-chevron {
+		color: var(--rn-text-subtle);
+		font-size: 12px;
+		transition: transform 0.15s ease;
+		flex-shrink: 0;
+	}
+
+	.rn-deprec-chevron--open {
+		transform: rotate(90deg);
+	}
+
+	.rn-deprec-card-title {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.rn-deprec-kind {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--rn-code-kind);
+	}
+
+	.rn-deprec-group {
+		font-size: 11px;
+		font-family: monospace;
+		color: var(--rn-text-muted);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.rn-deprec-count {
+		font-size: 11px;
+		color: var(--rn-text-subtle);
+		flex-shrink: 0;
+	}
+
+	.rn-deprec-card-body {
+		padding: 0 14px 14px 36px;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		border-top: 1px solid var(--rn-deprec-border);
+	}
+
+	.rn-deprec-label {
+		display: block;
+		font-size: 10px;
 		text-transform: uppercase;
 		letter-spacing: 0.8px;
-		padding: 0 8px;
-		margin-bottom: 8px;
+		color: var(--rn-text-subtle);
+		margin-bottom: 6px;
+	}
+
+	.rn-deprec-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.rn-deprec-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 4px 8px;
+		border-radius: 6px;
+		border: 1px solid var(--rn-deprec-border);
+		background: var(--rn-bg);
+		font-size: 12px;
+	}
+
+	.rn-deprec-chip--new {
+		border-color: rgb(239 159 39 / 0.55);
+	}
+
+	.rn-deprec-chip-key {
+		color: var(--rn-text-muted);
+	}
+
+	.rn-deprec-chip-val {
+		font-family: monospace;
+		font-size: 12px;
+		color: #ef9f27;
+		background: transparent;
+		padding: 0;
+	}
+
+	.rn-deprec-chip-tag {
+		font-size: 9px;
+		text-transform: uppercase;
+		font-weight: 600;
+		color: #ef9f27;
+		background: rgb(239 159 39 / 0.15);
+		padding: 1px 5px;
+		border-radius: 3px;
 	}
 
 	.rn-deprec-row {
-		background: var(--rn-deprec-bg);
-		border: 1px solid var(--rn-deprec-border);
-		border-radius: 6px;
-		padding: 10px 8px;
-		margin-bottom: 8px;
+		font-size: 13px;
+	}
+
+	.rn-deprec-recommended {
+		font-family: monospace;
 		font-size: 12px;
+		color: #639922;
+		background: transparent;
+	}
+
+	.rn-deprec-removed {
+		color: var(--rn-text);
+		font-size: 13px;
+	}
+
+	.rn-deprec-migration {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.55;
+		color: var(--rn-migration);
 	}
 
 	.rn-new-grid {

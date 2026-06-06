@@ -9,111 +9,273 @@
     "deprecated": [
       {
         "kind": "ClusterDestination",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "remotewrite.eda.nokia.com",
+        "crdName": "clusterdestinations.remotewrite.eda.nokia.com",
+        "recommendedApiVersion": "remotewrite.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion remotewrite.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ClusterExport",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "nats.eda.nokia.com",
+        "crdName": "clusterexports.nats.eda.nokia.com",
+        "recommendedApiVersion": "nats.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion nats.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "nats.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ClusterExport",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "remotewrite.eda.nokia.com",
+        "crdName": "clusterexports.remotewrite.eda.nokia.com",
+        "recommendedApiVersion": "remotewrite.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion remotewrite.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ClusterProducer",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0 or a non-deprecated API version"
+        "group": "kafka.eda.nokia.com",
+        "crdName": "clusterproducers.kafka.eda.nokia.com",
+        "recommendedApiVersion": "kafka.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion kafka.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ClusterPublisher",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "nats.eda.nokia.com",
+        "crdName": "clusterpublishers.nats.eda.nokia.com",
+        "recommendedApiVersion": "nats.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion nats.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "nats.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ConnectAudit",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+        "group": "connect.eda.nokia.com",
+        "crdName": "connectaudits.connect.eda.nokia.com",
+        "recommendedApiVersion": "connect.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion connect.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "connect.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ConnectInterface",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
-      },
-      {
-        "kind": "ConnectPluginActionable",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
-      },
-      {
-        "kind": "ConnectPluginHeartbeat",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+        "group": "connect.eda.nokia.com",
+        "crdName": "connectinterfaces.connect.eda.nokia.com",
+        "recommendedApiVersion": "connect.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion connect.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "connect.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ConnectPlugin",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0+25.8.1 or a non-deprecated API version"
+        "group": "connect.eda.nokia.com",
+        "crdName": "connectplugins.connect.eda.nokia.com",
+        "recommendedApiVersion": "connect.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion connect.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "connect.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "ConnectPluginActionable",
+        "group": "connect.eda.nokia.com",
+        "crdName": "connectpluginactionables.connect.eda.nokia.com",
+        "recommendedApiVersion": "connect.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion connect.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "connect.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "ConnectPluginHeartbeat",
+        "group": "connect.eda.nokia.com",
+        "crdName": "connectpluginheartbeats.connect.eda.nokia.com",
+        "recommendedApiVersion": "connect.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion connect.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "connect.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Destination",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "remotewrite.eda.nokia.com",
+        "crdName": "destinations.remotewrite.eda.nokia.com",
+        "recommendedApiVersion": "remotewrite.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion remotewrite.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Export",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "nats.eda.nokia.com",
+        "crdName": "exports.nats.eda.nokia.com",
+        "recommendedApiVersion": "nats.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion nats.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "nats.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Export",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "remotewrite.eda.nokia.com",
+        "crdName": "exports.remotewrite.eda.nokia.com",
+        "recommendedApiVersion": "remotewrite.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion remotewrite.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "nsxplugininstances",
+        "group": "nsx.eda.nokia.com",
+        "crdName": "nsxplugininstances.nsx.eda.nokia.com",
+        "recommendedApiVersion": "nsx.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion nsx.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "nsx.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "nutanixplugininstances",
+        "group": "nutanix.eda.nokia.com",
+        "crdName": "nutanixplugininstances.nutanix.eda.nokia.com",
+        "recommendedApiVersion": "nutanix.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion nutanix.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "nutanix.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Producer",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v4.0.0 or a non-deprecated API version"
+        "group": "kafka.eda.nokia.com",
+        "crdName": "producers.kafka.eda.nokia.com",
+        "recommendedApiVersion": "kafka.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion kafka.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Publisher",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v2.0.0 or a non-deprecated API version"
+        "group": "nats.eda.nokia.com",
+        "crdName": "publishers.nats.eda.nokia.com",
+        "recommendedApiVersion": "nats.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion nats.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "nats.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "vmwareplugininstances",
+        "group": "vmware.eda.nokia.com",
+        "crdName": "vmwareplugininstances.vmware.eda.nokia.com",
+        "recommendedApiVersion": "vmware.eda.nokia.com/v2",
+        "migrationPath": "Update manifests to apiVersion vmware.eda.nokia.com/v2 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1",
+            "apiVersion": "vmware.eda.nokia.com/v1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       }
     ],
     "breakingChanges": [],
@@ -128,6 +290,6 @@
     ],
     "estimatedEffort": "Low: <1h"
   },
-  "timestamp": 1780776368954,
+  "timestamp": 1780777120889,
   "source": "comparison"
 }

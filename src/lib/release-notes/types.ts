@@ -35,10 +35,19 @@ export type ModifiedResource = {
 	changes: FieldChange[];
 };
 
+export type DeprecatedApiVersion = {
+	version: string;
+	apiVersion: string;
+	removedInVersion?: string;
+	newInRelease: boolean;
+};
+
 export type DeprecatedItem = {
 	kind: string;
-	field: string;
-	removedInVersion: string;
+	group: string;
+	crdName: string;
+	deprecatedVersions: DeprecatedApiVersion[];
+	recommendedApiVersion?: string;
 	migrationPath: string;
 };
 

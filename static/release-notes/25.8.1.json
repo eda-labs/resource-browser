@@ -912,267 +912,663 @@
     "deprecated": [
       {
         "kind": "AggregateRoute",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
-      },
-      {
-        "kind": "BGPGroupDeployment",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "aggregateroutes.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "BGPGroup",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgpgroups.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "BGPGroupDeployment",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgpgroupdeployments.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "bgpgroupstates",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgpgroupstates.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "BGPPeer",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgppeers.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
-      },
-      {
-        "kind": "BridgeDomainDeployment",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "kind": "bgppeerstates",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgppeerstates.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "BridgeDomain",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgedomains.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "BridgeDomainDeployment",
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgedomaindeployments.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "bridgedomainstates",
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgedomainstates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "BridgeInterface",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgeinterfaces.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "bridgeinterfacestates",
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgeinterfacestates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "CheckDefaultBgpPeers",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "checkdefaultbgppeerss.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "DefaultAggregateRoute",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
-      },
-      {
-        "kind": "DefaultBGPGroupDeployment",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultaggregateroutes.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "DefaultBGPGroup",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultbgpgroups.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "DefaultBGPGroupDeployment",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultbgpgroupdeployments.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "DefaultBGPPeer",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
-      },
-      {
-        "kind": "DefaultRouteReflectorClient",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultbgppeers.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "DefaultRouteReflector",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultroutereflectors.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "DefaultRouteReflectorClient",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultroutereflectorclients.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "DefaultStaticRoute",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultstaticroutes.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "DHCPRelay",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "dhcprelays.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "EdgePing",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "group": "services.eda.nokia.com",
+        "crdName": "edgepings.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "EgressPolicy",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "qos.eda.nokia.com",
+        "crdName": "egresspolicys.qos.eda.nokia.com",
+        "recommendedApiVersion": "qos.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion qos.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "qos.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "ForwardingClass",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "qos.eda.nokia.com",
+        "crdName": "forwardingclasss.qos.eda.nokia.com",
+        "recommendedApiVersion": "qos.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion qos.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "qos.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "IngressPolicy",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "qos.eda.nokia.com",
+        "crdName": "ingresspolicys.qos.eda.nokia.com",
+        "recommendedApiVersion": "qos.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion qos.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "qos.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "IRBInterface",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "irbinterfaces.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "irbinterfacestates",
+        "group": "services.eda.nokia.com",
+        "crdName": "irbinterfacestates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "PolicyAttachment",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "qos.eda.nokia.com",
+        "crdName": "policyattachments.qos.eda.nokia.com",
+        "recommendedApiVersion": "qos.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion qos.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "qos.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "PolicyDeployment",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "qos.eda.nokia.com",
+        "crdName": "policydeployments.qos.eda.nokia.com",
+        "recommendedApiVersion": "qos.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion qos.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "qos.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Queue",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "qos.eda.nokia.com",
+        "crdName": "queues.qos.eda.nokia.com",
+        "recommendedApiVersion": "qos.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion qos.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "qos.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "RoutedInterface",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "routedinterfaces.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
-      },
-      {
-        "kind": "RouterDeployment",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
-      },
-      {
-        "kind": "RouteReflectorClient",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
-      },
-      {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
-      },
-      {
-        "kind": "RouteReflector",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
-      },
-      {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "routedinterfacestates",
+        "group": "services.eda.nokia.com",
+        "crdName": "routedinterfacestates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "Router",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "routers.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "RouterDeployment",
+        "group": "services.eda.nokia.com",
+        "crdName": "routerdeployments.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "RouteReflector",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "routereflectors.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "RouteReflectorClient",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "routereflectorclients.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "routereflectorclientstates",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "routereflectorclientstates.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "routereflectorstates",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "routereflectorstates.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
+      },
+      {
+        "kind": "routerstates",
+        "group": "services.eda.nokia.com",
+        "crdName": "routerstates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "StateConfig",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "stateconfigs.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "StaticRoute",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "protocols.eda.nokia.com",
+        "crdName": "staticroutes.protocols.eda.nokia.com",
+        "recommendedApiVersion": "protocols.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion protocols.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "VirtualNetwork",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "virtualnetworks.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "virtualnetworkstates",
+        "group": "services.eda.nokia.com",
+        "crdName": "virtualnetworkstates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
         "kind": "VLAN",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Migrate to appVersion v3.0.2+25.4.3 or a non-deprecated API version"
+        "group": "services.eda.nokia.com",
+        "crdName": "vlans.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       },
       {
-        "kind": "",
-        "field": "apiVersion v1alpha1",
-        "removedInVersion": "TBD",
-        "migrationPath": "Adopt a non-deprecated API version listed in the catalog"
+        "kind": "vlanstates",
+        "group": "services.eda.nokia.com",
+        "crdName": "vlanstates.services.eda.nokia.com",
+        "recommendedApiVersion": "services.eda.nokia.com/v1",
+        "migrationPath": "Update manifests to apiVersion services.eda.nokia.com/v1 (available in the catalog)",
+        "deprecatedVersions": [
+          {
+            "version": "v1alpha1",
+            "apiVersion": "services.eda.nokia.com/v1alpha1",
+            "removedInVersion": "Next major release",
+            "newInRelease": true
+          }
+        ]
       }
     ],
     "breakingChanges": [
@@ -1621,6 +2017,6 @@
     ],
     "estimatedEffort": "High: >4h"
   },
-  "timestamp": 1780776369771,
+  "timestamp": 1780777121729,
   "source": "comparison"
 }

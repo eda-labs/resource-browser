@@ -84,6 +84,8 @@ async function loadExistingEntry(toVer: string): Promise<ReleaseNotesEntry | nul
 async function main(): Promise<void> {
 	setupStaticFetch();
 
+	const force = process.argv.includes('--force');
+
 	const raw = await fs.readFile(RELEASES_PATH, 'utf8');
 	const config = yaml.load(raw) as ReleasesConfig;
 	if (!config?.releases?.length) {
@@ -101,7 +103,12 @@ async function main(): Promise<void> {
 
 	for (const { from, to } of pairs) {
 		const existing = await loadExistingEntry(to.name);
-		if (existing && existing.fromVer === from.name && existing.toVer === to.name) {
+		if (
+			!force &&
+			existing &&
+			existing.fromVer === from.name &&
+			existing.toVer === to.name
+		) {
 			console.log(`Skipping ${to.name} (precomputed, pair unchanged)`);
 			indexEntries.push({
 				toVer: existing.toVer,

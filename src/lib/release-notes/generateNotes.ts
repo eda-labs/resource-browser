@@ -3,6 +3,11 @@ import { parseDiffLine } from '$lib/comparison/diffDetails';
 import type { BulkDiffReport, CrdDiffEntry } from '$lib/comparison/types';
 import { fetchManifest, type ManifestResource } from '$lib/manifest';
 import type { CrdResource, EdaRelease } from '$lib/structure';
+import {
+	countNewlyDeprecatedApiVersions,
+	groupDeprecatedByResource,
+	type RawDeprecatedVersion
+} from './deprecation';
 import { generateMockNotes } from './mockNotes';
 import type {
 	BreakingChange,
@@ -166,23 +171,35 @@ async function findNewlyDeprecated(
 		}
 	}
 
-	const items: DeprecatedItem[] = [];
+	const grouped = new Map<
+		string,
+		{ resource: ManifestResource; versions: RawDeprecatedVersion[] }
+	>();
+
 	for (const resource of targetManifest) {
+		const newlyDeprecated: RawDeprecatedVersion[] = [];
+
 		for (const v of resource.versions ?? []) {
 			if (!v.deprecated) continue;
 			const key = `${resource.name}:${v.name}`;
-			if (sourceDeprecated.has(key)) continue;
-			items.push({
-				kind: resource.kind ?? resource.name,
-				field: `apiVersion ${v.name}`,
-				removedInVersion: 'TBD',
-				migrationPath: v.appVersion
-					? `Migrate to appVersion ${v.appVersion} or a non-deprecated API version`
-					: 'Adopt a non-deprecated API version listed in the catalog'
-			});
+			if (!sourceDeprecated.has(key)) {
+				newlyDeprecated.push({ versionName: v.name, newInRelease: true });
+			}
 		}
+
+		if (newlyDeprecated.length === 0) continue;
+
+		const allDeprecated: RawDeprecatedVersion[] = (resource.versions ?? [])
+			.filter((v) => v.deprecated)
+			.map((v) => ({
+				versionName: v.name,
+				newInRelease: !sourceDeprecated.has(`${resource.name}:${v.name}`)
+			}));
+
+		grouped.set(resource.name, { resource, versions: allDeprecated });
 	}
-	return items;
+
+	return groupDeprecatedByResource(Array.from(grouped.values()));
 }
 
 export function reportToReleaseNotes(
@@ -274,7 +291,9 @@ export function reportToReleaseNotes(
 			? [`Resolve ${breakingChanges.length} breaking change(s) in affected CRDs`]
 			: []),
 		...(newResources.length > 0 ? [`Review ${newResources.length} new CRD(s) for adoption`] : []),
-		...(deprecated.length > 0 ? [`Migrate ${deprecated.length} newly deprecated API version(s)`] : []),
+		...(countNewlyDeprecatedApiVersions(deprecated) > 0
+			? [`Migrate ${countNewlyDeprecatedApiVersions(deprecated)} newly deprecated API version(s)`]
+			: []),
 		'Stage upgrade in lab environment first',
 		'Apply during a maintenance window'
 	];
