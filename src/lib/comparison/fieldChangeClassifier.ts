@@ -1,7 +1,7 @@
 import { parseDiffLine, type ParsedDiffLine } from './diffDetails';
 import type { FieldChange, FieldChangeType } from '$lib/release-notes/types';
 
-const NOISE_PREFIXES = ['Not ', 'No schema', 'Present in'];
+const NOISE_PREFIXES = ['Not ', 'No schema', 'Present in', 'API version '];
 
 /** OpenAPI / JSON Schema metadata segments — not user manifest fields. */
 const SCHEMA_META_LEAVES = new Set([

@@ -24,7 +24,7 @@
 	export let searchRegex = true;
 	export let effectiveSearch = '';
 	export let onToggleStatusFilter: (status: DiffStatus) => void = () => {};
-	export let onToggleCrdExpand: (name: string) => void = () => {};
+	export let onToggleCrdExpand: (name: string, version: string) => void = () => {};
 	export let onExpandAll: () => void = () => {};
 	export let onCollapseAll: () => void = () => {};
 	export let onSearchInput: () => void = () => {};
@@ -32,10 +32,14 @@
 	export let onToggleSearchRegex: () => void = () => {};
 	export let onViewCrd: (crd: CrdDiffEntry) => void = () => {};
 
-	function handleCardHeaderKeydown(event: KeyboardEvent, crdName: string) {
+	function crdEntryKey(crd: CrdDiffEntry): string {
+		return `${crd.name}:${crd.version}`;
+	}
+
+	function handleCardHeaderKeydown(event: KeyboardEvent, crd: CrdDiffEntry) {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
-			onToggleCrdExpand(crdName);
+			onToggleCrdExpand(crd.name, crd.version);
 		}
 	}
 
@@ -58,7 +62,8 @@
 	})).filter((s) => s.crds.length > 0);
 
 	$: allExpanded =
-		filteredCrds.length > 0 && expandedCrdNames.length === filteredCrds.length;
+		filteredCrds.length > 0 &&
+		filteredCrds.every((crd) => expandedCrdNames.includes(crdEntryKey(crd)));
 
 	function sectionIcon(icon: string): string {
 		if (icon === 'plus') {
@@ -200,22 +205,20 @@
 					</header>
 
 					<div class="comparison-results__cards">
-						{#each section.crds as crd (crd.name)}
+						{#each section.crds as crd (crdEntryKey(crd))}
 							{@const linkCtx = resourceLinkContext(
 								crd,
 								sourceReleaseName,
-								targetReleaseName,
-								sourceVersion,
-								targetVersion
+								targetReleaseName
 							)}
-							{@const expanded = expandedCrdNames.includes(crd.name)}
+							{@const expanded = expandedCrdNames.includes(crdEntryKey(crd))}
 							<article class="comparison-crd-card" class:comparison-crd-card--expanded={expanded}>
 								<div
 									role="button"
 									tabindex="0"
 									class="comparison-crd-card__header"
-									on:click={() => onToggleCrdExpand(crd.name)}
-									on:keydown={(event) => handleCardHeaderKeydown(event, crd.name)}
+									on:click={() => onToggleCrdExpand(crd.name, crd.version)}
+									on:keydown={(event) => handleCardHeaderKeydown(event, crd)}
 									aria-expanded={expanded}
 								>
 									<svg
@@ -233,6 +236,7 @@
 											{crd.status.charAt(0).toUpperCase() + crd.status.slice(1)}
 										</span>
 										<span class="comparison-crd-card__kind">{crd.kind}</span>
+										<span class="comparison-crd-card__version">{crd.version}</span>
 									</div>
 									<div class="comparison-crd-card__name font-mono">
 										{#if linkCtx}
@@ -277,8 +281,8 @@
 										{#if crd.status === 'modified' && crd.details.length > 0}
 											<SchemaDiffPanel
 												details={crd.details}
-												sourceLabel="{report.sourceRelease} ({report.sourceVersion})"
-												targetLabel="{report.targetRelease} ({report.targetVersion})"
+												sourceLabel="{report.sourceRelease} ({crd.version})"
+												targetLabel="{report.targetRelease} ({crd.version})"
 												searchQuery={effectiveSearch}
 												{searchRegex}
 											/>

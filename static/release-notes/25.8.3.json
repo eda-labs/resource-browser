@@ -6,7 +6,21 @@
     "removedResources": [],
     "modifiedResources": [
       {
+        "kind": "CheckDefaultBgpPeers",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "status.id",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "CheckDefaultBgpPeers manifests referencing status.id must remove this field before apply."
+          }
+        ]
+      },
+      {
         "kind": "CheckInterfaces",
+        "apiVersion": "interfaces.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "status.id",
@@ -19,6 +33,7 @@
       },
       {
         "kind": "CliPlugin",
+        "apiVersion": "environment.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "status.id",
@@ -30,7 +45,21 @@
         ]
       },
       {
+        "kind": "EdgePing",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "status.id",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "EdgePing manifests referencing status.id must remove this field before apply."
+          }
+        ]
+      },
+      {
         "kind": "SetupEnv",
+        "apiVersion": "environment.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "status.id",
@@ -43,6 +72,7 @@
       },
       {
         "kind": "TechSupport",
+        "apiVersion": "oam.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "status.failedNodes",
@@ -68,6 +98,6 @@
     "upgradeRiskJustification": "Patch-level upgrade with no breaking manifest changes detected.",
     "estimatedEffort": "Low: <1h"
   },
-  "timestamp": 1780777424658,
+  "timestamp": 1780777992855,
   "source": "comparison"
 }

@@ -2,22 +2,284 @@
   "toVer": "25.12.1",
   "fromVer": "25.8.3",
   "notes": {
-    "newResources": [],
+    "newResources": [
+      {
+        "kind": "alarmdefinitions.core.eda.nokia.com",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "description": "New alarmdefinitions.core.eda.nokia.com CRD introduced in EDA 25.12.1 (core.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Allocation",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New Allocation CRD introduced in EDA 25.12.1 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "applyallocations.netbox.eda.nokia.com",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New applyallocations.netbox.eda.nokia.com CRD introduced in EDA 25.12.1 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterIncident",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New ClusterIncident CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterInstance",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New ClusterInstance CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterProducer",
+        "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "description": "New ClusterProducer CRD introduced in EDA 25.12.1 (kafka.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "creategithubissues.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New creategithubissues.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "creategitlabissues.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New creategitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "defaultmtus.siteinfo.eda.nokia.com",
+        "apiVersion": "siteinfo.eda.nokia.com/v1alpha1",
+        "description": "New defaultmtus.siteinfo.eda.nokia.com CRD introduced in EDA 25.12.1 (siteinfo.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "defaultospfareadeployments.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New defaultospfareadeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "defaultospfareas.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New defaultospfareas.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "defaultospfinstancedeployments.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New defaultospfinstancedeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "defaultospfinstances.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New defaultospfinstances.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "defaultospfinterfaces.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New defaultospfinterfaces.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "prom.eda.nokia.com/v1alpha1",
+        "description": "New Export CRD introduced in EDA 25.12.1 (prom.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "githubactions.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New githubactions.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "githubinstances.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New githubinstances.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "githubissues.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New githubissues.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "gitlabinstances.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New gitlabinstances.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "gitlabissues.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New gitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "gitlabpipelines.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New gitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Incident",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New Incident CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Instance",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New Instance CRD introduced in EDA 25.12.1 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Instance",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New Instance CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "networktopologies.topologies.eda.nokia.com",
+        "apiVersion": "topologies.eda.nokia.com/v1alpha1",
+        "description": "New networktopologies.topologies.eda.nokia.com CRD introduced in EDA 25.12.1 (topologies.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ospfareadeployments.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New ospfareadeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ospfareas.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New ospfareas.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ospfinstancedeployments.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New ospfinstancedeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ospfinstances.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New ospfinstances.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ospfinterfaces.protocols.eda.nokia.com",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New ospfinterfaces.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Producer",
+        "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "description": "New Producer CRD introduced in EDA 25.12.1 (kafka.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "routetraces.routing.eda.nokia.com",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "description": "New routetraces.routing.eda.nokia.com CRD introduced in EDA 25.12.1 (routing.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "rungithubworkflows.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New rungithubworkflows.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New rungitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "systemloadbalancers.siteinfo.eda.nokia.com",
+        "apiVersion": "siteinfo.eda.nokia.com/v1alpha1",
+        "description": "New systemloadbalancers.siteinfo.eda.nokia.com CRD introduced in EDA 25.12.1 (siteinfo.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "tagsetdeployments.routingpolicies.eda.nokia.com",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "description": "New tagsetdeployments.routingpolicies.eda.nokia.com CRD introduced in EDA 25.12.1 (routingpolicies.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "tagsets.routingpolicies.eda.nokia.com",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "description": "New tagsets.routingpolicies.eda.nokia.com CRD introduced in EDA 25.12.1 (routingpolicies.eda.nokia.com/v1alpha1)."
+      }
+    ],
     "removedResources": [
       {
         "kind": "CxCluster",
         "apiVersion": "cx.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources using cx.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "Monitor",
         "apiVersion": "system.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources using system.eda.nokia.com/v1alpha1."
       }
     ],
     "modifiedResources": [
       {
+        "kind": "Alarm",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.additionalText",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.additionalText available on Alarm; existing manifests remain valid."
+          },
+          {
+            "field": "spec.targetsAffected",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.targetsAffected available on Alarm; existing manifests remain valid."
+          },
+          {
+            "field": "spec.jsPath.items",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.jsPath.items available on Alarm; existing manifests remain valid."
+          },
+          {
+            "field": "spec.jsPath.type",
+            "changeType": "type_change",
+            "before": "\"string\"",
+            "after": "\"array\"",
+            "networkBehavior": "Type on Alarm changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.parentAlarm.items",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.parentAlarm.items available on Alarm; existing manifests remain valid."
+          },
+          {
+            "field": "spec.parentAlarm.type",
+            "changeType": "type_change",
+            "before": "\"string\"",
+            "after": "\"array\"",
+            "networkBehavior": "Type on Alarm changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "AppInstaller",
+        "apiVersion": "appstore.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.dryRun",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.dryRun available on AppInstaller; existing manifests remain valid."
+          },
+          {
+            "field": "spec.apps.items.properties.appSettings.type",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.apps.items.properties.appSettings.type available on AppInstaller; existing manifests remain valid."
+          },
+          {
+            "field": "spec.apps.items.properties.appSettings.description",
+            "changeType": "type_change",
+            "before": "\"AppSettings defines a list of variables and their value. Only variables that are customised need to be mentioned.\\nIf AppSettings are not again mentioned on upgrade, values will remain as is.\"",
+            "after": "\"AppSettings defines a list of variables and their value. Only variables that are customized need to be mentioned.\\nIf AppSettings are not again mentioned on upgrade, values will remain as is.\"",
+            "networkBehavior": "Description on AppInstaller changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
         "kind": "Backend",
+        "apiVersion": "aifabrics.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ipMTU",
@@ -50,7 +312,21 @@
         ]
       },
       {
+        "kind": "BGPGroup",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.configuredName available on BGPGroup; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "Breakout",
+        "apiVersion": "interfaces.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.nodeSelector.description",
@@ -62,7 +338,41 @@
         ]
       },
       {
+        "kind": "BridgeDomain",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.configuredName available on BridgeDomain; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "BridgeInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "BridgeInterface",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.uplink.properties.egress.description",
@@ -82,6 +392,7 @@
       },
       {
         "kind": "CommunitySet",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.configuredName",
@@ -94,6 +405,7 @@
       },
       {
         "kind": "ControlPlaneFilter",
+        "apiVersion": "filters.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.entries.items.properties.ipEntry.properties.dscp",
@@ -105,7 +417,41 @@
         ]
       },
       {
+        "kind": "DefaultBGPGroup",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.configuredName available on DefaultBGPGroup; existing manifests remain valid."
+          },
+          {
+            "field": "spec.rtc",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.rtc available on DefaultBGPGroup; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "DefaultBGPPeer",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.rtc",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.rtc available on DefaultBGPPeer; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "DefaultInterface",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.subinterfaceIndex",
@@ -124,7 +470,34 @@
         ]
       },
       {
+        "kind": "DefaultRouteReflectorClient",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.rtc",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.rtc available on DefaultRouteReflectorClient; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "DefaultRouteReflector",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.rtc",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.rtc available on DefaultRouteReflector; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "DefaultRouter",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ecmp",
@@ -136,7 +509,21 @@
         ]
       },
       {
+        "kind": "DefaultStaticRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.configuredName available on DefaultStaticRoute; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "DeployImage",
+        "apiVersion": "os.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.reconnectionTimeoutSeconds",
@@ -149,6 +536,7 @@
       },
       {
         "kind": "EgressPolicy",
+        "apiVersion": "qos.eda.nokia.com/v1",
         "changes": [
           {
             "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
@@ -167,7 +555,48 @@
         ]
       },
       {
+        "kind": "EgressPolicy",
+        "apiVersion": "qos.eda.nokia.com/v1alpha1",
+        "changes": [
+          {
+            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
+            "changeType": "type_change",
+            "before": "\"The mininum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.\"",
+            "after": "\"The minimum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.\"",
+            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description",
+            "changeType": "type_change",
+            "before": "\"The mininum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.\"",
+            "after": "\"The minimum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.\"",
+            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "EngineConfig",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.aiEngine",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.aiEngine available on EngineConfig; existing manifests remain valid."
+          },
+          {
+            "field": "spec.internalCertDuration",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.internalCertDuration available on EngineConfig; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "Fabric",
+        "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.borderLeafs.properties.routeLeaking.description",
@@ -250,6 +679,7 @@
       },
       {
         "kind": "Filter",
+        "apiVersion": "filters.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.entries.items.properties.ipEntry.properties.dscp",
@@ -261,7 +691,104 @@
         ]
       },
       {
+        "kind": "IndexAllocationPool",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.segments.items.properties.allocations.items.properties.poolInstance",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocations.items.properties.poolInstance available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.allocations.items.properties.value.maximum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocations.items.properties.value.maximum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.allocations.items.properties.value.minimum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocations.items.properties.value.minimum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.reservations.items.properties.end.maximum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.reservations.items.properties.end.maximum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.reservations.items.properties.end.minimum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.reservations.items.properties.end.minimum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.reservations.items.properties.start.maximum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.reservations.items.properties.start.maximum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.reservations.items.properties.start.minimum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.reservations.items.properties.start.minimum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.size.maximum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.size.maximum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.size.minimum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.size.minimum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.start.maximum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.start.maximum available on IndexAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.start.minimum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.start.minimum available on IndexAllocationPool; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "IngressPolicy",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.classifier.properties.entries.items.properties.ipEntry.properties.dscp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.classifier.properties.entries.items.properties.ipEntry.properties.dscp available on IngressPolicy; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "Interface",
+        "apiVersion": "interfaces.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ethernet.properties.crcMonitor",
@@ -280,7 +807,68 @@
         ]
       },
       {
+        "kind": "IPAllocationPool",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.segments.items.properties.allocations.items.properties.poolInstance",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocations.items.properties.poolInstance available on IPAllocationPool; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "IPInSubnetAllocationPool",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.segments.items.properties.allocations.items.properties.poolInstance",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocations.items.properties.poolInstance available on IPInSubnetAllocationPool; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "IRBInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
+            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
+            "networkBehavior": "Description on IRBInterface changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.evpnRouteAdvertisementType.properties.rfc9135SymmetricMode",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.evpnRouteAdvertisementType.properties.rfc9135SymmetricMode available on IRBInterface; existing manifests remain valid."
+          },
+          {
+            "field": "spec.ipv4Parameters.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.ipv4Parameters.description available on IRBInterface; existing manifests remain valid."
+          },
+          {
+            "field": "spec.ipv6RouterAdvertisement.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.ipv6RouterAdvertisement.description available on IRBInterface; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "IRBInterface",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.bfd.properties.ttl.description",
@@ -293,6 +881,7 @@
       },
       {
         "kind": "ISL",
+        "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ospf",
@@ -326,6 +915,7 @@
       },
       {
         "kind": "ManagementRouter",
+        "apiVersion": "bootstrap.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.staticRoutes",
@@ -337,7 +927,49 @@
         ]
       },
       {
+        "kind": "Manifest",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.components.items.properties.panel",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.components.items.properties.panel available on Manifest; existing manifests remain valid."
+          },
+          {
+            "field": "spec.components.items.properties.crd.properties.ai",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.components.items.properties.crd.properties.ai available on Manifest; existing manifests remain valid."
+          },
+          {
+            "field": "spec.requirements.items.properties.appName.description",
+            "changeType": "type_change",
+            "before": "\"The name of an application that this Manifest depends on.\"",
+            "after": "\"The name of an application that this Manifest depends on.\\nDeprecated: use appId instead.\"",
+            "networkBehavior": "Description on Manifest changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.requirements.items.properties.vendor.description",
+            "changeType": "type_change",
+            "before": "\"The vendor of an application that this Manifest depends on.\"",
+            "after": "\"The vendor of an application that this Manifest depends on.\\nDeprecated: use appId instead.\"",
+            "networkBehavior": "Description on Manifest changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.requirements.items.required",
+            "changeType": "type_change",
+            "before": "[\"appName\",\"vendor\",\"version\"]",
+            "after": "[\"version\"]",
+            "networkBehavior": "Required on Manifest changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
         "kind": "MirrorFilter",
+        "apiVersion": "filters.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.entries.items.properties.ipEntry.properties.dscp",
@@ -350,6 +982,7 @@
       },
       {
         "kind": "Mirror",
+        "apiVersion": "oam.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.sources.properties.filters.items.properties.filter.properties.entries.items.properties.ipEntry.properties.dscp",
@@ -361,7 +994,21 @@
         ]
       },
       {
+        "kind": "Namespace",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.bootstrap",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bootstrap available on Namespace; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "Policy",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.configuredName",
@@ -402,6 +1049,7 @@
       },
       {
         "kind": "PrefixSet",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.configuredName",
@@ -413,7 +1061,62 @@
         ]
       },
       {
+        "kind": "Registry",
+        "apiVersion": "appstore.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.authSecretRef.description",
+            "changeType": "type_change",
+            "before": "\"AuthSecretRef is the authentication secret reference, used for authentication.\\nMust be in the same namespace as the catalog.\"",
+            "after": "\"AuthSecretRef is the authentication secret reference, used for authentication.\\nMust be in the same namespace as the registry.\"",
+            "networkBehavior": "Description on Registry changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.mirror.description",
+            "changeType": "type_change",
+            "before": "\"Mirror registry of the original remote registry.\\nApp store will use the mirror instead of the original registry that is referenced by a catalog.\"",
+            "after": "\"Mirror registry of the original remote registry.\\nApp store will use the mirror instead of the original registry that is referenced by a registry.\"",
+            "networkBehavior": "Description on Registry changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.title.description",
+            "changeType": "type_change",
+            "before": "\"Title is an UI-friendly name for the catalog.\"",
+            "after": "\"Title is an UI-friendly name for the registry.\"",
+            "networkBehavior": "Description on Registry changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
         "kind": "RoutedInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.hostRoutePopulate",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.hostRoutePopulate available on RoutedInterface; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
+            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
+            "networkBehavior": "Description on RoutedInterface changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.ipv6RouterAdvertisement.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.ipv6RouterAdvertisement.description available on RoutedInterface; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "RoutedInterface",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.bfd.properties.ttl.description",
@@ -433,6 +1136,7 @@
       },
       {
         "kind": "RouteLookup",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "status.results.items.properties.nextHops.items.properties.interfaces.items.properties.localAddress",
@@ -445,6 +1149,62 @@
       },
       {
         "kind": "Router",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.configuredName available on Router; existing manifests remain valid."
+          },
+          {
+            "field": "spec.ecmp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.ecmp available on Router; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bgp.properties.exportPolicy",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bgp.properties.exportPolicy available on Router; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bgp.properties.importPolicy",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bgp.properties.importPolicy available on Router; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+            "changeType": "type_change",
+            "before": "\"When not set the ES is used in an all active mode. This references the ToppNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.\"",
+            "after": "\"When not set the ES is used in an all active mode. This references the TopoNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.\"",
+            "networkBehavior": "Description on Router changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.ipLoadBalancing.description",
+            "changeType": "type_change",
+            "before": "\"IPv4 or IPv6 prefix. Active routes in the FIB that exactly match this prefix or that are longer matches of this prefix are provided with resilient-hash programming.\"",
+            "after": "\"Resilient Hashing configuration.\"",
+            "networkBehavior": "Description on Router changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "status.ospfInstances",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field status.ospfInstances available on Router; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Router",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
@@ -456,7 +1216,61 @@
         ]
       },
       {
+        "kind": "SimNode",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.productionAddress",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.productionAddress available on SimNode; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "StaticRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.configuredName available on StaticRoute; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "SubnetAllocationPool",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.segments.items.properties.allocations.items.properties.poolInstance",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocations.items.properties.poolInstance available on SubnetAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.subnetLength.maximum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.subnetLength.maximum available on SubnetAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.subnetLength.minimum",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.subnetLength.minimum available on SubnetAllocationPool; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "SystemInterface",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.bfd.properties.ttl.description",
@@ -469,6 +1283,7 @@
       },
       {
         "kind": "Threshold",
+        "apiVersion": "oam.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.field.description",
@@ -522,7 +1337,475 @@
         ]
       },
       {
+        "kind": "TopoNode",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.npp.properties.mode.description",
+            "changeType": "type_change",
+            "before": "\"The mode in which this TopoNode is functioning.\\n\\\"normal\\\" (the default)\\n   indicates that NPP is expecting an endpoint to exist, and will accept and confirm changes only if the endpoint\\n   accepts them.\\n\\\"maintenance\\\"\\n   indicates that no changes will be accepted for the TopoNode, irrespective if the endpoint is up and reachable.\\n   The exception is if an upgrade is occuring, in which case changes will be accepted.\\n\\\"null\\\"\\n\\t  indicates that changes will be accepted from CRs and no NPP will be spun up. NPP validation will not occur.\\n   This may be useful in playground mode to avoid spinning up of 1000s of NPPs.\\n\\\"emulate\\\"\\n   indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation\\n   still occurs.  If no IP address is present, we also run in emulate mode.\"",
+            "after": "\"The mode in which this TopoNode is functioning.\\n\\\"normal\\\" (the default)\\n   indicates that NPP is expecting an endpoint to exist, and will accept and confirm changes only if the endpoint\\n   accepts them.\\n\\\"maintenance\\\"\\n   indicates that no changes will be accepted for the TopoNode, irrespective if the endpoint is up and reachable.\\n   The exception is if an upgrade is occuring, in which case changes will be accepted.\\n\\\"null\\\"\\n\\t  indicates that changes will be accepted from CRs and no NPP will be spun up. NPP validation will not occur.\\n   This may be useful in playground mode to avoid spinning up of 1000s of NPPs.\\n\\\"emulate\\\"\\n   indicates that changes will be accepted at the NPP level, without pushing them to a endpoint. NPP validation\\n   still occurs.  If no IP address is present, we also run in emulate mode.\\n\\\"monitor\\\"\\n   indicates that state will be collectd but config will not be pushed to a endpoint. NPP validation still occurs.\"",
+            "networkBehavior": "Description on TopoNode changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.npp.properties.mode.enum",
+            "changeType": "enum_removed",
+            "before": "[\"normal\",\"maintenance\",\"null\",\"emulate\"]",
+            "after": "[5 items]",
+            "networkBehavior": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed."
+          }
+        ]
+      },
+      {
         "kind": "VirtualNetwork",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.bridgeDomains.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeDomains.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeDomains.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeDomains.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeDomains.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeDomains.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeDomains.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeDomains.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeInterfaces.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeInterfaces.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeInterfaces.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeInterfaces.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeInterfaces.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.bridgeInterfaces.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.irbInterfaces.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.irbInterfaces.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.irbInterfaces.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
+            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.spec.properties.evpnRouteAdvertisementType.properties.rfc9135SymmetricMode",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.irbInterfaces.items.properties.spec.properties.evpnRouteAdvertisementType.properties.rfc9135SymmetricMode available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.spec.properties.ipv4Parameters.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.irbInterfaces.items.properties.spec.properties.ipv4Parameters.description available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.irbInterfaces.items.properties.spec.properties.ipv6RouterAdvertisement.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.irbInterfaces.items.properties.spec.properties.ipv6RouterAdvertisement.description available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.ospf",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.ospf available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpGroups.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpGroups.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpGroups.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpGroups.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpGroups.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpGroups.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpGroups.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpGroups.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpPeers.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpPeers.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpPeers.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpPeers.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.bgp.properties.bgpPeers.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.bgp.properties.bgpPeers.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.tags available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.tags available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.tags",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.tags available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
+            "changeType": "enum_removed",
+            "before": "[15 items]",
+            "after": "[17 items]",
+            "networkBehavior": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.routingPolicies.properties.prefixSets.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.staticRoutes.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.staticRoutes.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.staticRoutes.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.staticRoutes.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.staticRoutes.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.staticRoutes.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.protocols.properties.staticRoutes.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.protocols.properties.staticRoutes.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routedInterfaces.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routedInterfaces.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routedInterfaces.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.spec.properties.hostRoutePopulate",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routedInterfaces.items.properties.spec.properties.hostRoutePopulate available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.spec.properties.bfd.properties.ttl.description",
+            "changeType": "type_change",
+            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
+            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.routedInterfaces.items.properties.spec.properties.ipv6RouterAdvertisement.description",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routedInterfaces.items.properties.spec.properties.ipv6RouterAdvertisement.description available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.configuredName",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.spec.properties.configuredName available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.ecmp",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.spec.properties.ecmp available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.bgp.properties.exportPolicy",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.spec.properties.bgp.properties.exportPolicy available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.bgp.properties.importPolicy",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.routers.items.properties.spec.properties.bgp.properties.importPolicy available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
+            "changeType": "type_change",
+            "before": "\"When not set the ES is used in an all active mode. This references the ToppNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.\"",
+            "after": "\"When not set the ES is used in an all active mode. This references the TopoNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.routers.items.properties.spec.properties.ipLoadBalancing.description",
+            "changeType": "type_change",
+            "before": "\"IPv4 or IPv6 prefix. Active routes in the FIB that exactly match this prefix or that are longer matches of this prefix are provided with resilient-hash programming.\"",
+            "after": "\"Resilient Hashing configuration.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.vlans.items.properties.name.maxLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.vlans.items.properties.name.maxLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.vlans.items.properties.name.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.vlans.items.properties.name.minLength available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.vlans.items.properties.name.pattern",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.vlans.items.properties.name.pattern available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "spec.vlans.items.properties.spec.properties.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.vlans.items.properties.spec.properties.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "status.numOSPFInterfaces",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field status.numOSPFInterfaces available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "status.numOSPFInterfacesOperDown",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field status.numOSPFInterfacesOperDown available on VirtualNetwork; existing manifests remain valid."
+          },
+          {
+            "field": "status.nodes.description",
+            "changeType": "type_change",
+            "before": "\"List of Nodes on which the Router is deployed.\"",
+            "after": "\"List of Nodes on which the VNET is configured.\"",
+            "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "VirtualNetwork",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.bridgeInterfaces.items.properties.spec.properties.uplink.properties.egress.description",
@@ -626,6 +1909,27 @@
       },
       {
         "kind": "VLAN",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.uplink.properties.egress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
+          },
+          {
+            "field": "spec.uplink.properties.ingress.description",
+            "changeType": "type_change",
+            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
+            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
+            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "VLAN",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.uplink.properties.egress.description",
@@ -649,7 +1953,7 @@
       {
         "kind": "CxCluster",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources using cx.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing CxCluster manifests",
@@ -662,7 +1966,7 @@
       {
         "kind": "Monitor",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources using system.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Monitor manifests",
@@ -671,6 +1975,32 @@
         ],
         "yamlBefore": "# Monitor resource\napiVersion: system.eda.nokia.com/v1alpha1\nkind: Monitor",
         "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "Alarm",
+        "field": "spec.jsPath.type",
+        "description": "Type on Alarm changed type or structure; validate existing values against the new schema.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected Alarm resources in your cluster",
+          "Update manifests to address spec.jsPath.type",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "\"string\"",
+        "yamlAfter": "\"array\""
+      },
+      {
+        "kind": "Alarm",
+        "field": "spec.parentAlarm.type",
+        "description": "Type on Alarm changed type or structure; validate existing values against the new schema.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected Alarm resources in your cluster",
+          "Update manifests to address spec.parentAlarm.type",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "\"string\"",
+        "yamlAfter": "\"array\""
       },
       {
         "kind": "Fabric",
@@ -699,6 +2029,19 @@
         "yamlAfter": "[\"protocol\"]"
       },
       {
+        "kind": "Manifest",
+        "field": "spec.requirements.items.required",
+        "description": "Required on Manifest changed type or structure; validate existing values against the new schema.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected Manifest resources in your cluster",
+          "Update manifests to address spec.requirements.items.required",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[\"appName\",\"vendor\",\"version\"]",
+        "yamlAfter": "[\"version\"]"
+      },
+      {
         "kind": "Policy",
         "field": "spec.statement.items.properties.match.properties.protocol.enum",
         "description": "Enum on Policy removed enum value(s); verify manifest values are still allowed.",
@@ -706,6 +2049,32 @@
         "migrationSteps": [
           "Identify affected Policy resources in your cluster",
           "Update manifests to address spec.statement.items.properties.match.properties.protocol.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[15 items]",
+        "yamlAfter": "[17 items]"
+      },
+      {
+        "kind": "TopoNode",
+        "field": "spec.npp.properties.mode.enum",
+        "description": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected TopoNode resources in your cluster",
+          "Update manifests to address spec.npp.properties.mode.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[\"normal\",\"maintenance\",\"null\",\"emulate\"]",
+        "yamlAfter": "[5 items]"
+      },
+      {
+        "kind": "VirtualNetwork",
+        "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
+        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected VirtualNetwork resources in your cluster",
+          "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
           "Validate against the target release schema before apply"
         ],
         "yamlBefore": "[15 items]",
@@ -725,11 +2094,11 @@
         "yamlAfter": "[17 items]"
       }
     ],
-    "totalBreakingCount": 6,
+    "totalBreakingCount": 11,
     "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.8.3 to 25.12.1 includes 6 breaking change(s) including 2 removed CRD(s) and 4 spec field change(s).",
+    "upgradeRiskJustification": "Upgrade from 25.8.3 to 25.12.1 includes 11 breaking change(s) including 2 removed CRD(s) and 9 spec field change(s).",
     "estimatedEffort": "High: >4h"
   },
-  "timestamp": 1780777424539,
+  "timestamp": 1780777992654,
   "source": "comparison"
 }

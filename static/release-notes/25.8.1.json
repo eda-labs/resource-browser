@@ -2,27 +2,289 @@
   "toVer": "25.8.1",
   "fromVer": "25.4.2",
   "notes": {
-    "newResources": [],
+    "newResources": [
+      {
+        "kind": "AggregateRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for AggregateRoute in EDA 25.8.1."
+      },
+      {
+        "kind": "BGPGroupDeployment",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for BGPGroupDeployment in EDA 25.8.1."
+      },
+      {
+        "kind": "BGPGroup",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for BGPGroup in EDA 25.8.1."
+      },
+      {
+        "kind": "BGPPeer",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for BGPPeer in EDA 25.8.1."
+      },
+      {
+        "kind": "BridgeDomainDeployment",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for BridgeDomainDeployment in EDA 25.8.1."
+      },
+      {
+        "kind": "BridgeDomain",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for BridgeDomain in EDA 25.8.1."
+      },
+      {
+        "kind": "BridgeInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for BridgeInterface in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultAggregateRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultAggregateRoute in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultBGPGroupDeployment",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultBGPGroupDeployment in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultBGPGroup",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultBGPGroup in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultBGPPeer",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultBGPPeer in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultRouteReflectorClient",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultRouteReflectorClient in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultRouteReflector",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultRouteReflector in EDA 25.8.1."
+      },
+      {
+        "kind": "DefaultStaticRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultStaticRoute in EDA 25.8.1."
+      },
+      {
+        "kind": "DHCPRelay",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for DHCPRelay in EDA 25.8.1."
+      },
+      {
+        "kind": "EgressPolicy",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "description": "New qos.eda.nokia.com/v1 apiVersion for EgressPolicy in EDA 25.8.1."
+      },
+      {
+        "kind": "ForwardingClass",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "description": "New qos.eda.nokia.com/v1 apiVersion for ForwardingClass in EDA 25.8.1."
+      },
+      {
+        "kind": "IngressPolicy",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "description": "New qos.eda.nokia.com/v1 apiVersion for IngressPolicy in EDA 25.8.1."
+      },
+      {
+        "kind": "IRBInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for IRBInterface in EDA 25.8.1."
+      },
+      {
+        "kind": "PolicyAttachment",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "description": "New qos.eda.nokia.com/v1 apiVersion for PolicyAttachment in EDA 25.8.1."
+      },
+      {
+        "kind": "PolicyDeployment",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "description": "New qos.eda.nokia.com/v1 apiVersion for PolicyDeployment in EDA 25.8.1."
+      },
+      {
+        "kind": "Queue",
+        "apiVersion": "qos.eda.nokia.com/v1",
+        "description": "New qos.eda.nokia.com/v1 apiVersion for Queue in EDA 25.8.1."
+      },
+      {
+        "kind": "RoutedInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for RoutedInterface in EDA 25.8.1."
+      },
+      {
+        "kind": "RouterDeployment",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for RouterDeployment in EDA 25.8.1."
+      },
+      {
+        "kind": "RouteReflectorClient",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for RouteReflectorClient in EDA 25.8.1."
+      },
+      {
+        "kind": "RouteReflector",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for RouteReflector in EDA 25.8.1."
+      },
+      {
+        "kind": "Router",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for Router in EDA 25.8.1."
+      },
+      {
+        "kind": "StateConfig",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for StateConfig in EDA 25.8.1."
+      },
+      {
+        "kind": "StaticRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New protocols.eda.nokia.com/v1 apiVersion for StaticRoute in EDA 25.8.1."
+      },
+      {
+        "kind": "VirtualNetwork",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for VirtualNetwork in EDA 25.8.1."
+      },
+      {
+        "kind": "VLAN",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New services.eda.nokia.com/v1 apiVersion for VLAN in EDA 25.8.1."
+      },
+      {
+        "kind": "AppInstaller",
+        "apiVersion": "appstore.eda.nokia.com/v1",
+        "description": "New AppInstaller CRD introduced in EDA 25.8.1 (appstore.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ASPathSetDeployment",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "description": "New ASPathSetDeployment CRD introduced in EDA 25.8.1 (routingpolicies.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ASPathSet",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "description": "New ASPathSet CRD introduced in EDA 25.8.1 (routingpolicies.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "AttachmentLookup",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "description": "New AttachmentLookup CRD introduced in EDA 25.8.1 (routing.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "CheckDefaultBgpPeers",
+        "apiVersion": "protocols.eda.nokia.com/v1",
+        "description": "New CheckDefaultBgpPeers CRD introduced in EDA 25.8.1 (protocols.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "CheckDefaultBgpPeers",
+        "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+        "description": "New CheckDefaultBgpPeers CRD introduced in EDA 25.8.1 (protocols.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "CheckInterfaces",
+        "apiVersion": "interfaces.eda.nokia.com/v1alpha1",
+        "description": "New CheckInterfaces CRD introduced in EDA 25.8.1 (interfaces.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "CliPlugin",
+        "apiVersion": "environment.eda.nokia.com/v1alpha1",
+        "description": "New CliPlugin CRD introduced in EDA 25.8.1 (environment.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "EdgePing",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "description": "New EdgePing CRD introduced in EDA 25.8.1 (services.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "EdgePing",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
+        "description": "New EdgePing CRD introduced in EDA 25.8.1 (services.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "IslPing",
+        "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
+        "description": "New IslPing CRD introduced in EDA 25.8.1 (fabrics.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "RouteLookup",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "description": "New RouteLookup CRD introduced in EDA 25.8.1 (routing.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "SetupEnv",
+        "apiVersion": "environment.eda.nokia.com/v1alpha1",
+        "description": "New SetupEnv CRD introduced in EDA 25.8.1 (environment.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "SimLink",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "description": "New SimLink CRD introduced in EDA 25.8.1 (core.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "SimNode",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "description": "New SimNode CRD introduced in EDA 25.8.1 (core.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "TechSupport",
+        "apiVersion": "oam.eda.nokia.com/v1alpha1",
+        "description": "New TechSupport CRD introduced in EDA 25.8.1 (oam.eda.nokia.com/v1alpha1)."
+      }
+    ],
     "removedResources": [
       {
         "kind": "CPUUtilOverlay",
         "apiVersion": "topologies.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing CPUUtilOverlay resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing CPUUtilOverlay resources using topologies.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "DiskOverlay",
         "apiVersion": "topologies.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing DiskOverlay resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing DiskOverlay resources using topologies.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "MemoryOverlay",
         "apiVersion": "topologies.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing MemoryOverlay resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing MemoryOverlay resources using topologies.eda.nokia.com/v1alpha1."
+      },
+      {
+        "kind": "SimLink",
+        "apiVersion": "test.eda.nokia.com/v1",
+        "reason": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing SimLink resources using test.eda.nokia.com/v1."
+      },
+      {
+        "kind": "SimNode",
+        "apiVersion": "test.eda.nokia.com/v1",
+        "reason": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing SimNode resources using test.eda.nokia.com/v1."
+      },
+      {
+        "kind": "simtopologies.core.eda.nokia.com",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "reason": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing simtopologies.core.eda.nokia.com resources using core.eda.nokia.com/v1."
+      },
+      {
+        "kind": "simtoponodes.core.eda.nokia.com",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "reason": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing simtoponodes.core.eda.nokia.com resources using core.eda.nokia.com/v1."
+      },
+      {
+        "kind": "topologies.core.eda.nokia.com",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "reason": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing topologies.core.eda.nokia.com resources using core.eda.nokia.com/v1."
       }
     ],
     "modifiedResources": [
       {
         "kind": "CertificateCheck",
+        "apiVersion": "certcheck.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.trustBundle",
@@ -35,6 +297,7 @@
       },
       {
         "kind": "CommunitySet",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.matchSetOptions",
@@ -47,6 +310,7 @@
       },
       {
         "kind": "ControlPlaneFilter",
+        "apiVersion": "filters.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.statisticsPerEntry",
@@ -87,6 +351,7 @@
       },
       {
         "kind": "CxCluster",
+        "apiVersion": "cx.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.topology.properties.nodes.items.properties.chassisConfiguration.properties.pdType",
@@ -134,6 +399,7 @@
       },
       {
         "kind": "DefaultInterface",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.description",
@@ -153,6 +419,7 @@
       },
       {
         "kind": "DefaultStaticRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.nexthopGroup.properties.blackholeSendICMP",
@@ -165,6 +432,7 @@
       },
       {
         "kind": "DeployImage",
+        "apiVersion": "os.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.nodeSelectors",
@@ -379,7 +647,28 @@
         ]
       },
       {
+        "kind": "EngineConfig",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.cluster.properties.external.properties.relaxDomainNameEnforcement",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.cluster.properties.external.properties.relaxDomainNameEnforcement available on EngineConfig; existing manifests remain valid."
+          },
+          {
+            "field": "spec.python.properties.local-script-dir.description",
+            "changeType": "type_change",
+            "before": "\"Override path to use for the Python interpreter to read scripts from\"",
+            "after": "\"Override path to use for the Python interpreter to read scripts from.\\nLocalScriptDir is deprecated.\"",
+            "networkBehavior": "Description on EngineConfig changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
         "kind": "Fabric",
+        "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.interSwitchLinks.properties.ipMTU",
@@ -406,6 +695,7 @@
       },
       {
         "kind": "Filter",
+        "apiVersion": "filters.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.statisticsPerEntry",
@@ -445,7 +735,61 @@
         ]
       },
       {
+        "kind": "GlobalConfig",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.dhcp.properties.relaxDomainNameEnforcement",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.dhcp.properties.relaxDomainNameEnforcement available on GlobalConfig; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "IPAllocationPool",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.segments.items.properties.allocateBroadcastAddress",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocateBroadcastAddress available on IPAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.allocateNetworkAddress",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocateNetworkAddress available on IPAllocationPool; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "IPInSubnetAllocationPool",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.segments.items.properties.allocateBroadcastAddress",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocateBroadcastAddress available on IPInSubnetAllocationPool; existing manifests remain valid."
+          },
+          {
+            "field": "spec.segments.items.properties.allocateNetworkAddress",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.segments.items.properties.allocateNetworkAddress available on IPInSubnetAllocationPool; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "IRBInterface",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ipv4Parameters",
@@ -479,6 +823,7 @@
       },
       {
         "kind": "ISL",
+        "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ipMTU",
@@ -497,7 +842,49 @@
         ]
       },
       {
+        "kind": "Manifest",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.appInfo.properties.changelog",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.appInfo.properties.changelog available on Manifest; existing manifests remain valid."
+          },
+          {
+            "field": "spec.appInfo.properties.support",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.appInfo.properties.support available on Manifest; existing manifests remain valid."
+          },
+          {
+            "field": "spec.components.items.properties.crd.properties.names",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.components.items.properties.crd.properties.names available on Manifest; existing manifests remain valid."
+          },
+          {
+            "field": "spec.components.items.properties.crd.properties.resourceType.default",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Manifest manifests referencing spec.components.items.properties.crd.properties.resourceType.default must remove this field before apply."
+          },
+          {
+            "field": "spec.requirements.items.properties.appId",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.requirements.items.properties.appId available on Manifest; existing manifests remain valid."
+          }
+        ]
+      },
+      {
         "kind": "MirrorFilter",
+        "apiVersion": "filters.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.statisticsPerEntry",
@@ -531,6 +918,7 @@
       },
       {
         "kind": "Mirror",
+        "apiVersion": "oam.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.sources.properties.filters.items.properties.filter.properties.statisticsPerEntry",
@@ -563,7 +951,35 @@
         ]
       },
       {
+        "kind": "NodeProfile",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.onboardingPassword.default",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.onboardingPassword.default available on NodeProfile; existing manifests remain valid."
+          },
+          {
+            "field": "spec.onboardingUsername.default",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.onboardingUsername.default available on NodeProfile; existing manifests remain valid."
+          },
+          {
+            "field": "spec.operatingSystem.enum",
+            "changeType": "enum_removed",
+            "before": "[\"srl\",\"sros\",\"nxos\"]",
+            "after": "[7 items]",
+            "networkBehavior": "Enum on NodeProfile removed enum value(s); verify manifest values are still allowed."
+          }
+        ]
+      },
+      {
         "kind": "Ping",
+        "apiVersion": "oam.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.count",
@@ -674,6 +1090,7 @@
       },
       {
         "kind": "Policy",
+        "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.defaultAction.properties.bgp.properties.communitySet",
@@ -728,6 +1145,7 @@
       },
       {
         "kind": "RoutedInterface",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.ipv4Parameters",
@@ -761,6 +1179,7 @@
       },
       {
         "kind": "StaticRoute",
+        "apiVersion": "protocols.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.nexthopGroup.properties.blackholeSendICMP",
@@ -773,6 +1192,7 @@
       },
       {
         "kind": "SystemInterface",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.description",
@@ -791,7 +1211,35 @@
         ]
       },
       {
+        "kind": "TopoNode",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.component.items.properties.kind.enum",
+            "changeType": "enum_removed",
+            "before": "[7 items]",
+            "after": "[8 items]",
+            "networkBehavior": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed."
+          },
+          {
+            "field": "spec.operatingSystem.enum",
+            "changeType": "enum_removed",
+            "before": "[\"srl\",\"sros\",\"nxos\"]",
+            "after": "[7 items]",
+            "networkBehavior": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed."
+          },
+          {
+            "field": "spec.systemInterface.description",
+            "changeType": "type_change",
+            "before": "\"Name of the Interface resource representing the primary loopback on the TopoNode.\"",
+            "after": "\"Deprecated: Name of the Interface resource representing the primary loopback on the TopoNode, this field will be removed in the future version.\"",
+            "networkBehavior": "Description on TopoNode changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
         "kind": "VirtualNetwork",
+        "apiVersion": "services.eda.nokia.com/v1alpha1",
         "changes": [
           {
             "field": "spec.irbInterfaces.items.properties.spec.properties.ipv4Parameters",
@@ -904,6 +1352,67 @@
             "before": "250000",
             "after": "0",
             "networkBehavior": "Minimum on VirtualNetwork changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "WorkflowDefinition",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.namespaced",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.namespaced available on WorkflowDefinition; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Workflow",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "status.duration",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Workflow manifests referencing status.duration must remove this field before apply."
+          },
+          {
+            "field": "status.errors",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Workflow manifests referencing status.errors must remove this field before apply."
+          },
+          {
+            "field": "status.id",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Workflow manifests referencing status.id must remove this field before apply."
+          },
+          {
+            "field": "status.result",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Workflow manifests referencing status.result must remove this field before apply."
+          },
+          {
+            "field": "status.stages",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Workflow manifests referencing status.stages must remove this field before apply."
+          },
+          {
+            "field": "status.subflowswaitingforinput",
+            "changeType": "removed",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Workflow manifests referencing status.subflowswaitingforinput must remove this field before apply."
           }
         ]
       }
@@ -1574,7 +2083,7 @@
       {
         "kind": "CPUUtilOverlay",
         "field": "resource",
-        "description": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing CPUUtilOverlay resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing CPUUtilOverlay resources using topologies.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing CPUUtilOverlay manifests",
@@ -1587,7 +2096,7 @@
       {
         "kind": "DiskOverlay",
         "field": "resource",
-        "description": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing DiskOverlay resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing DiskOverlay resources using topologies.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing DiskOverlay manifests",
@@ -1600,7 +2109,7 @@
       {
         "kind": "MemoryOverlay",
         "field": "resource",
-        "description": "Removed from the EDA 25.8.1 catalog — migrate or decommission existing MemoryOverlay resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing MemoryOverlay resources using topologies.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing MemoryOverlay manifests",
@@ -1608,6 +2117,71 @@
           "Remove MemoryOverlay resources before upgrading"
         ],
         "yamlBefore": "# MemoryOverlay resource\napiVersion: topologies.eda.nokia.com/v1alpha1\nkind: MemoryOverlay",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "SimLink",
+        "field": "resource",
+        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing SimLink resources using test.eda.nokia.com/v1.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Export existing SimLink manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove SimLink resources before upgrading"
+        ],
+        "yamlBefore": "# SimLink resource\napiVersion: test.eda.nokia.com/v1\nkind: SimLink",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "SimNode",
+        "field": "resource",
+        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing SimNode resources using test.eda.nokia.com/v1.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Export existing SimNode manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove SimNode resources before upgrading"
+        ],
+        "yamlBefore": "# SimNode resource\napiVersion: test.eda.nokia.com/v1\nkind: SimNode",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "simtopologies.core.eda.nokia.com",
+        "field": "resource",
+        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing simtopologies.core.eda.nokia.com resources using core.eda.nokia.com/v1.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Export existing simtopologies.core.eda.nokia.com manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove simtopologies.core.eda.nokia.com resources before upgrading"
+        ],
+        "yamlBefore": "# simtopologies.core.eda.nokia.com resource\napiVersion: core.eda.nokia.com/v1\nkind: simtopologies.core.eda.nokia.com",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "simtoponodes.core.eda.nokia.com",
+        "field": "resource",
+        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing simtoponodes.core.eda.nokia.com resources using core.eda.nokia.com/v1.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Export existing simtoponodes.core.eda.nokia.com manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove simtoponodes.core.eda.nokia.com resources before upgrading"
+        ],
+        "yamlBefore": "# simtoponodes.core.eda.nokia.com resource\napiVersion: core.eda.nokia.com/v1\nkind: simtoponodes.core.eda.nokia.com",
+        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
+      },
+      {
+        "kind": "topologies.core.eda.nokia.com",
+        "field": "resource",
+        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing topologies.core.eda.nokia.com resources using core.eda.nokia.com/v1.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Export existing topologies.core.eda.nokia.com manifests",
+          "Plan migration to replacement CRDs or decommission",
+          "Remove topologies.core.eda.nokia.com resources before upgrading"
+        ],
+        "yamlBefore": "# topologies.core.eda.nokia.com resource\napiVersion: core.eda.nokia.com/v1\nkind: topologies.core.eda.nokia.com",
         "yamlAfter": "# Resource removed — delete or migrate before upgrade"
       },
       {
@@ -1715,6 +2289,19 @@
         "yamlAfter": "# DeployImage — spec.tranches.items.properties.nodeSelector (after)\nspec:\n  nodeSelector: <updated>"
       },
       {
+        "kind": "NodeProfile",
+        "field": "spec.operatingSystem.enum",
+        "description": "Enum on NodeProfile removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected NodeProfile resources in your cluster",
+          "Update manifests to address spec.operatingSystem.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[\"srl\",\"sros\",\"nxos\"]",
+        "yamlAfter": "[7 items]"
+      },
+      {
         "kind": "Ping",
         "field": "spec.node",
         "description": "Ping manifests referencing spec.node must remove this field before apply.",
@@ -1793,6 +2380,32 @@
         "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
       },
       {
+        "kind": "TopoNode",
+        "field": "spec.component.items.properties.kind.enum",
+        "description": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected TopoNode resources in your cluster",
+          "Update manifests to address spec.component.items.properties.kind.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[7 items]",
+        "yamlAfter": "[8 items]"
+      },
+      {
+        "kind": "TopoNode",
+        "field": "spec.operatingSystem.enum",
+        "description": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected TopoNode resources in your cluster",
+          "Update manifests to address spec.operatingSystem.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[\"srl\",\"sros\",\"nxos\"]",
+        "yamlAfter": "[7 items]"
+      },
+      {
         "kind": "VirtualNetwork",
         "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum",
         "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
@@ -1819,11 +2432,11 @@
         "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
       }
     ],
-    "totalBreakingCount": 19,
+    "totalBreakingCount": 27,
     "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.4.2 to 25.8.1 includes 19 breaking change(s) including 3 removed CRD(s) and 16 spec field change(s).",
+    "upgradeRiskJustification": "Upgrade from 25.4.2 to 25.8.1 includes 27 breaking change(s) including 8 removed CRD(s) and 19 spec field change(s).",
     "estimatedEffort": "High: >4h"
   },
-  "timestamp": 1780777424927,
+  "timestamp": 1780777993179,
   "source": "comparison"
 }

@@ -11,28 +11,31 @@ import { reportToReleaseNotes } from './generateNotes';
 
 const fixtureReport: BulkDiffReport = {
 	sourceRelease: 'EDA 25.12.3',
-	sourceVersion: 'v1alpha1',
+	sourceVersion: 'all',
 	targetRelease: 'EDA 26.4.1',
-	targetVersion: 'v2',
+	targetVersion: 'all',
 	generatedAt: '2026-01-01T00:00:00.000Z',
 	crds: [
 		{
 			name: 'widgets.eda.nokia.com',
 			kind: 'Widget',
+			version: 'v1',
 			status: 'added',
 			hasDiff: true,
-			details: ['Present in target only']
+			details: ['API version v1 present in target only']
 		},
 		{
 			name: 'legacy.eda.nokia.com',
 			kind: 'Legacy',
+			version: 'v1',
 			status: 'removed',
 			hasDiff: true,
-			details: ['Present in source only']
+			details: ['API version v1 present in source only']
 		},
 		{
 			name: 'bgppeers.protocols.eda.nokia.com',
 			kind: 'BGPPeer',
+			version: 'v2',
 			status: 'modified',
 			hasDiff: true,
 			details: [
@@ -48,6 +51,7 @@ const fixtureReport: BulkDiffReport = {
 		{
 			name: 'unchanged.eda.nokia.com',
 			kind: 'Stable',
+			version: 'v1',
 			status: 'unchanged',
 			hasDiff: false,
 			details: ['No schema changes']
@@ -55,6 +59,7 @@ const fixtureReport: BulkDiffReport = {
 		{
 			name: 'states.eda.nokia.com',
 			kind: 'State',
+			version: 'v1',
 			status: 'modified',
 			hasDiff: true,
 			details: ['+ Added: spec.hidden']
@@ -89,7 +94,7 @@ describe('fieldChangeClassifier', () => {
 
 describe('reportToReleaseNotes', () => {
 	it('maps bulk diff report counts to release notes structure', () => {
-		const notes = reportToReleaseNotes(fixtureReport, '25.12.3', '26.4.1', 'v2', [
+		const notes = reportToReleaseNotes(fixtureReport, '25.12.3', '26.4.1', [
 			{
 				name: 'widgets.eda.nokia.com',
 				kind: 'Widget',
@@ -112,6 +117,7 @@ describe('reportToReleaseNotes', () => {
 		expect(notes.removedResources).toHaveLength(1);
 		expect(notes.modifiedResources).toHaveLength(1);
 		expect(notes.modifiedResources[0].kind).toBe('BGPPeer');
+		expect(notes.modifiedResources[0].apiVersion).toBe('protocols.eda.nokia.com/v2');
 		expect(notes.modifiedResources[0].changes).toHaveLength(6);
 
 		const breakingFields = notes.breakingChanges.filter((b) => b.field !== 'resource');

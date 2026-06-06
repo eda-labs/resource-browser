@@ -68,13 +68,14 @@
 	$: activeStep = report ? 3 : generating ? 2 : 1;
 	$: effectiveSearch = searchRegex ? debouncedSearch : searchQuery;
 
+	$: versionFilter =
+		sourceVersion && targetVersion && sourceVersion === targetVersion ? sourceVersion : undefined;
+
 	$: canCompare =
 		!!sourceRelease &&
 		!!targetRelease &&
-		!!sourceVersion &&
-		!!targetVersion &&
 		!generating &&
-		!(sourceReleaseName === targetReleaseName && sourceVersion === targetVersion);
+		sourceReleaseName !== targetReleaseName;
 
 	$: hintText = compareHint(
 		canCompare,
@@ -188,10 +189,11 @@
 		}
 	}
 
-	function toggleCrdExpand(name: string) {
-		expandedCrdNames = expandedCrdNames.includes(name)
-			? expandedCrdNames.filter((n) => n !== name)
-			: [...expandedCrdNames, name];
+	function toggleCrdExpand(name: string, version: string) {
+		const key = `${name}:${version}`;
+		expandedCrdNames = expandedCrdNames.includes(key)
+			? expandedCrdNames.filter((n) => n !== key)
+			: [...expandedCrdNames, key];
 	}
 
 	function swapReleases() {
@@ -214,12 +216,12 @@
 	}
 
 	async function runComparison() {
-		if (!browser || !sourceRelease || !targetRelease || !sourceVersion || !targetVersion) {
-			compareError = 'Select source and target releases with API versions.';
+		if (!browser || !sourceRelease || !targetRelease) {
+			compareError = 'Select source and target releases.';
 			return;
 		}
-		if (sourceReleaseName === targetReleaseName && sourceVersion === targetVersion) {
-			compareError = 'Source and target must differ.';
+		if (sourceReleaseName === targetReleaseName) {
+			compareError = 'Source and target releases must differ.';
 			return;
 		}
 
@@ -232,14 +234,11 @@
 		expandedCrdNames = [];
 
 		try {
-			const crdMeta = await loadCrdsForRelease(sourceRelease, manifestCache);
-			progressTotal = crdMeta.filter((c) => !c.name.includes('states')).length;
+			progressTotal = 0;
 			report = await generateBulkDiffReport({
 				sourceRelease,
 				targetRelease,
-				sourceVersion,
-				targetVersion,
-				crdMeta,
+				versionFilter,
 				manifestCache,
 				yamlCache,
 				onProgress: (pct, current, total) => {
@@ -257,13 +256,7 @@
 	}
 
 	async function openCrdModal(crd: CrdDiffEntry) {
-		const ctx = resourceLinkContext(
-			crd,
-			sourceReleaseName,
-			targetReleaseName,
-			sourceVersion,
-			targetVersion
-		);
+		const ctx = resourceLinkContext(crd, sourceReleaseName, targetReleaseName);
 		if (!ctx) return;
 
 		const release = releasesConfig.releases.find((r) => r.name === ctx.releaseName);
@@ -474,7 +467,7 @@
 								!c.name.includes('states') &&
 								matchesSearch(c, effectiveSearch, searchRegex)
 						)
-						.map((c) => c.name);
+						.map((c) => `${c.name}:${c.version}`);
 				}}
 				onCollapseAll={() => {
 					expandedCrdNames = [];

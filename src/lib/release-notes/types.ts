@@ -32,6 +32,7 @@ export type FieldChange = {
 
 export type ModifiedResource = {
 	kind: string;
+	apiVersion?: string;
 	changes: FieldChange[];
 };
 

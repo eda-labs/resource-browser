@@ -1,4 +1,4 @@
-import { generateBulkDiffReport, loadCrdsForRelease, loadVersionsForRelease } from '$lib/comparison/diffEngine';
+import { generateBulkDiffReport, loadCrdsForRelease } from '$lib/comparison/diffEngine';
 import {
 	detailsToFieldChanges,
 	isManifestBreakingChange
@@ -48,11 +48,6 @@ export function buildConsecutivePairs(
 		pairs.push({ to: sorted[i], from: sorted[i + 1] });
 	}
 	return pairs;
-}
-
-function pickDefaultVersion(versions: string[], preferred?: string): string {
-	if (preferred && versions.includes(preferred)) return preferred;
-	return versions.length > 0 ? versions[versions.length - 1] : '';
 }
 
 function computeUpgradeRisk(fromVer: string, toVer: string, breakingCount: number): UpgradeRisk {
@@ -185,11 +180,18 @@ async function findNewlyDeprecated(
 	return groupDeprecatedByResource(Array.from(grouped.values()));
 }
 
+function crdExistedInSource(report: BulkDiffReport, crdName: string): boolean {
+	return report.crds.some(
+		(entry) =>
+			entry.name === crdName &&
+			(entry.status === 'removed' || entry.status === 'modified' || entry.status === 'unchanged')
+	);
+}
+
 export function reportToReleaseNotes(
 	report: BulkDiffReport,
 	fromVer: string,
 	toVer: string,
-	targetVersion: string,
 	crdMeta: CrdResource[],
 	deprecated: DeprecatedItem[] = []
 ): ReleaseNotes {
@@ -201,15 +203,20 @@ export function reportToReleaseNotes(
 
 	for (const entry of report.crds) {
 		if (entry.name.includes('states')) continue;
+		if (entry.status === 'not-in-either' || entry.status === 'error') continue;
 
 		const meta = crdByName.get(entry.name);
 		const kind = entry.kind || meta?.kind || entry.name;
+		const apiVersion = meta ? crdApiVersion(meta, entry.version) : `eda.nokia.com/${entry.version}`;
 
 		if (entry.status === 'added') {
+			const existedInSource = crdExistedInSource(report, entry.name);
 			newResources.push({
 				kind,
-				apiVersion: meta ? crdApiVersion(meta, targetVersion) : `eda.nokia.com/${targetVersion}`,
-				description: `New ${kind} CRD introduced in EDA ${toVer}.`
+				apiVersion,
+				description: existedInSource
+					? `New ${apiVersion} apiVersion for ${kind} in EDA ${toVer}.`
+					: `New ${kind} CRD introduced in EDA ${toVer} (${apiVersion}).`
 			});
 			continue;
 		}
@@ -217,8 +224,8 @@ export function reportToReleaseNotes(
 		if (entry.status === 'removed') {
 			removedResources.push({
 				kind,
-				apiVersion: meta ? crdApiVersion(meta, report.sourceVersion) : `eda.nokia.com/${report.sourceVersion}`,
-				reason: `Removed from the EDA ${toVer} catalog — migrate or decommission existing ${kind} resources.`
+				apiVersion,
+				reason: `API version ${entry.version} removed from the EDA ${toVer} catalog — migrate or decommission existing ${kind} resources using ${apiVersion}.`
 			});
 			continue;
 		}
@@ -226,7 +233,7 @@ export function reportToReleaseNotes(
 		if (entry.status === 'modified' && entry.hasDiff) {
 			const changes = detailsToFieldChanges(entry.details, kind);
 			if (changes.length > 0) {
-				modifiedResources.push({ kind, changes });
+				modifiedResources.push({ kind, apiVersion, changes });
 			}
 		}
 	}
@@ -281,26 +288,19 @@ export async function generateReleaseNotesForPair(
 	const toVer = targetRelease.name;
 
 	try {
-		const [sourceVersions, targetVersions, crdMeta] = await Promise.all([
-			loadVersionsForRelease(sourceRelease, manifestCache),
-			loadVersionsForRelease(targetRelease, manifestCache),
-			loadCrdsForRelease(sourceRelease, manifestCache)
+		const [sourceCrds, targetCrds] = await Promise.all([
+			loadCrdsForRelease(sourceRelease, manifestCache),
+			loadCrdsForRelease(targetRelease, manifestCache)
 		]);
 
-		const sourceVersion = pickDefaultVersion(sourceVersions);
-		const targetVersion = pickDefaultVersion(targetVersions);
-
-		if (!sourceVersion || !targetVersion || crdMeta.length === 0) {
-			throw new Error('Missing version or CRD metadata');
+		if (sourceCrds.length === 0 && targetCrds.length === 0) {
+			throw new Error('Missing CRD metadata');
 		}
 
 		const [report, deprecated] = await Promise.all([
 			generateBulkDiffReport({
 				sourceRelease,
 				targetRelease,
-				sourceVersion,
-				targetVersion,
-				crdMeta,
 				manifestCache,
 				yamlCache,
 				onProgress: (pct) => onProgress?.(pct)
@@ -316,10 +316,14 @@ export async function generateReleaseNotesForPair(
 			throw new Error('Comparison produced no usable data');
 		}
 
+		const crdMeta = [...sourceCrds, ...targetCrds].filter(
+			(crd, index, all) => all.findIndex((c) => c.name === crd.name) === index
+		);
+
 		return {
 			toVer,
 			fromVer,
-			notes: reportToReleaseNotes(report, fromVer, toVer, targetVersion, crdMeta, deprecated),
+			notes: reportToReleaseNotes(report, fromVer, toVer, crdMeta, deprecated),
 			timestamp: Date.now(),
 			source: 'comparison'
 		};

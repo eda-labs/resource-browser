@@ -2,9 +2,523 @@
   "toVer": "26.4.2",
   "fromVer": "26.4.1",
   "notes": {
-    "newResources": [],
+    "newResources": [
+      {
+        "kind": "ClusterProducer",
+        "apiVersion": "kafka.eda.nokia.com/v1",
+        "description": "New kafka.eda.nokia.com/v1 apiVersion for ClusterProducer in EDA 26.4.2."
+      },
+      {
+        "kind": "Producer",
+        "apiVersion": "kafka.eda.nokia.com/v1",
+        "description": "New kafka.eda.nokia.com/v1 apiVersion for Producer in EDA 26.4.2."
+      },
+      {
+        "kind": "Allocation",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New Allocation CRD introduced in EDA 26.4.2 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "applyallocations.netbox.eda.nokia.com",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New applyallocations.netbox.eda.nokia.com CRD introduced in EDA 26.4.2 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "applytopologies.netbox.eda.nokia.com",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New applytopologies.netbox.eda.nokia.com CRD introduced in EDA 26.4.2 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clusterconsumers.kafkaimporter.eda.nokia.com",
+        "apiVersion": "kafkaimporter.eda.nokia.com/v1alpha1",
+        "description": "New clusterconsumers.kafkaimporter.eda.nokia.com CRD introduced in EDA 26.4.2 (kafkaimporter.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterDestination",
+        "apiVersion": "remotewrite.eda.nokia.com/v1",
+        "description": "New ClusterDestination CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ClusterDestination",
+        "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+        "description": "New ClusterDestination CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clusterdestinations.snmp.eda.nokia.com",
+        "apiVersion": "snmp.eda.nokia.com/v1alpha1",
+        "description": "New clusterdestinations.snmp.eda.nokia.com CRD introduced in EDA 26.4.2 (snmp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterExport",
+        "apiVersion": "influxdb.eda.nokia.com/v1alpha1",
+        "description": "New ClusterExport CRD introduced in EDA 26.4.2 (influxdb.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterExport",
+        "apiVersion": "nats.eda.nokia.com/v1",
+        "description": "New ClusterExport CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ClusterExport",
+        "apiVersion": "nats.eda.nokia.com/v1alpha1",
+        "description": "New ClusterExport CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterExport",
+        "apiVersion": "remotewrite.eda.nokia.com/v1",
+        "description": "New ClusterExport CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ClusterExport",
+        "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+        "description": "New ClusterExport CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustergithubactions.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New clustergithubactions.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustergithubinstances.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New clustergithubinstances.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustergithubissues.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New clustergithubissues.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustergitlabinstances.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New clustergitlabinstances.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustergitlabissues.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New clustergitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustergitlabpipelines.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New clustergitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterIncident",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New ClusterIncident CRD introduced in EDA 26.4.2 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterInstance",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New ClusterInstance CRD introduced in EDA 26.4.2 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterMetricExport",
+        "apiVersion": "otlp.eda.nokia.com/v1alpha1",
+        "description": "New ClusterMetricExport CRD introduced in EDA 26.4.2 (otlp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterNotifier",
+        "apiVersion": "notifiers.eda.nokia.com/v1",
+        "description": "New ClusterNotifier CRD introduced in EDA 26.4.2 (notifiers.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ClusterPager",
+        "apiVersion": "pagers.eda.nokia.com/v1alpha1",
+        "description": "New ClusterPager CRD introduced in EDA 26.4.2 (pagers.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterProvider",
+        "apiVersion": "notifiers.eda.nokia.com/v1",
+        "description": "New ClusterProvider CRD introduced in EDA 26.4.2 (notifiers.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ClusterPublisher",
+        "apiVersion": "nats.eda.nokia.com/v1",
+        "description": "New ClusterPublisher CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ClusterPublisher",
+        "apiVersion": "nats.eda.nokia.com/v1alpha1",
+        "description": "New ClusterPublisher CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterReceiver",
+        "apiVersion": "otlp.eda.nokia.com/v1alpha1",
+        "description": "New ClusterReceiver CRD introduced in EDA 26.4.2 (otlp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ClusterServer",
+        "apiVersion": "influxdb.eda.nokia.com/v1alpha1",
+        "description": "New ClusterServer CRD introduced in EDA 26.4.2 (influxdb.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clusterstandardouts.stdout.eda.nokia.com",
+        "apiVersion": "stdout.eda.nokia.com/v1alpha1",
+        "description": "New clusterstandardouts.stdout.eda.nokia.com CRD introduced in EDA 26.4.2 (stdout.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustersubscribers.natsimporter.eda.nokia.com",
+        "apiVersion": "natsimporter.eda.nokia.com/v1alpha1",
+        "description": "New clustersubscribers.natsimporter.eda.nokia.com CRD introduced in EDA 26.4.2 (natsimporter.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "clustertrapgroups.snmp.eda.nokia.com",
+        "apiVersion": "snmp.eda.nokia.com/v1alpha1",
+        "description": "New clustertrapgroups.snmp.eda.nokia.com CRD introduced in EDA 26.4.2 (snmp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "ConnectAudit",
+        "apiVersion": "connect.eda.nokia.com/v1",
+        "description": "New ConnectAudit CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ConnectAudit",
+        "apiVersion": "connect.eda.nokia.com/v2",
+        "description": "New ConnectAudit CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "ConnectInterface",
+        "apiVersion": "connect.eda.nokia.com/v1",
+        "description": "New ConnectInterface CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ConnectInterface",
+        "apiVersion": "connect.eda.nokia.com/v2",
+        "description": "New ConnectInterface CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "ConnectPluginActionable",
+        "apiVersion": "connect.eda.nokia.com/v1",
+        "description": "New ConnectPluginActionable CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ConnectPluginActionable",
+        "apiVersion": "connect.eda.nokia.com/v2",
+        "description": "New ConnectPluginActionable CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "ConnectPluginHeartbeat",
+        "apiVersion": "connect.eda.nokia.com/v1",
+        "description": "New ConnectPluginHeartbeat CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ConnectPluginHeartbeat",
+        "apiVersion": "connect.eda.nokia.com/v2",
+        "description": "New ConnectPluginHeartbeat CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "ConnectPlugin",
+        "apiVersion": "connect.eda.nokia.com/v1",
+        "description": "New ConnectPlugin CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "ConnectPlugin",
+        "apiVersion": "connect.eda.nokia.com/v2",
+        "description": "New ConnectPlugin CRD introduced in EDA 26.4.2 (connect.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "consumers.kafkaimporter.eda.nokia.com",
+        "apiVersion": "kafkaimporter.eda.nokia.com/v1alpha1",
+        "description": "New consumers.kafkaimporter.eda.nokia.com CRD introduced in EDA 26.4.2 (kafkaimporter.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "creategithubissues.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New creategithubissues.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "creategitlabissues.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New creategitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Destination",
+        "apiVersion": "remotewrite.eda.nokia.com/v1",
+        "description": "New Destination CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Destination",
+        "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+        "description": "New Destination CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "destinations.snmp.eda.nokia.com",
+        "apiVersion": "snmp.eda.nokia.com/v1alpha1",
+        "description": "New destinations.snmp.eda.nokia.com CRD introduced in EDA 26.4.2 (snmp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "influxdb.eda.nokia.com/v1alpha1",
+        "description": "New Export CRD introduced in EDA 26.4.2 (influxdb.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "nats.eda.nokia.com/v1",
+        "description": "New Export CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "nats.eda.nokia.com/v1alpha1",
+        "description": "New Export CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "remotewrite.eda.nokia.com/v1",
+        "description": "New Export CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "remotewrite.eda.nokia.com/v1alpha1",
+        "description": "New Export CRD introduced in EDA 26.4.2 (remotewrite.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "githubactions.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New githubactions.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "githubinstances.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New githubinstances.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "githubissues.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New githubissues.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "gitlabinstances.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New gitlabinstances.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "gitlabissues.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New gitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "gitlabpipelines.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New gitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Incident",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New Incident CRD introduced in EDA 26.4.2 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Instance",
+        "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "description": "New Instance CRD introduced in EDA 26.4.2 (netbox.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Instance",
+        "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "description": "New Instance CRD introduced in EDA 26.4.2 (snow.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "MetricExport",
+        "apiVersion": "otlp.eda.nokia.com/v1alpha1",
+        "description": "New MetricExport CRD introduced in EDA 26.4.2 (otlp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Notifier",
+        "apiVersion": "notifiers.eda.nokia.com/v1",
+        "description": "New Notifier CRD introduced in EDA 26.4.2 (notifiers.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "nsxplugininstances.nsx.eda.nokia.com",
+        "apiVersion": "nsx.eda.nokia.com/v1",
+        "description": "New nsxplugininstances.nsx.eda.nokia.com CRD introduced in EDA 26.4.2 (nsx.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "nsxplugininstances.nsx.eda.nokia.com",
+        "apiVersion": "nsx.eda.nokia.com/v2",
+        "description": "New nsxplugininstances.nsx.eda.nokia.com CRD introduced in EDA 26.4.2 (nsx.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "nutanixplugininstances.nutanix.eda.nokia.com",
+        "apiVersion": "nutanix.eda.nokia.com/v1",
+        "description": "New nutanixplugininstances.nutanix.eda.nokia.com CRD introduced in EDA 26.4.2 (nutanix.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "nutanixplugininstances.nutanix.eda.nokia.com",
+        "apiVersion": "nutanix.eda.nokia.com/v2",
+        "description": "New nutanixplugininstances.nutanix.eda.nokia.com CRD introduced in EDA 26.4.2 (nutanix.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "Pager",
+        "apiVersion": "pagers.eda.nokia.com/v1alpha1",
+        "description": "New Pager CRD introduced in EDA 26.4.2 (pagers.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Provider",
+        "apiVersion": "notifiers.eda.nokia.com/v1",
+        "description": "New Provider CRD introduced in EDA 26.4.2 (notifiers.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Publisher",
+        "apiVersion": "nats.eda.nokia.com/v1",
+        "description": "New Publisher CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "Publisher",
+        "apiVersion": "nats.eda.nokia.com/v1alpha1",
+        "description": "New Publisher CRD introduced in EDA 26.4.2 (nats.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Receiver",
+        "apiVersion": "otlp.eda.nokia.com/v1alpha1",
+        "description": "New Receiver CRD introduced in EDA 26.4.2 (otlp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "rungithubworkflows.github.eda.nokia.com",
+        "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "description": "New rungithubworkflows.github.eda.nokia.com CRD introduced in EDA 26.4.2 (github.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
+        "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "description": "New rungitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 26.4.2 (gitlab.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Server",
+        "apiVersion": "influxdb.eda.nokia.com/v1alpha1",
+        "description": "New Server CRD introduced in EDA 26.4.2 (influxdb.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "sflows.flowsampling.eda.nokia.com",
+        "apiVersion": "flowsampling.eda.nokia.com/v1alpha1",
+        "description": "New sflows.flowsampling.eda.nokia.com CRD introduced in EDA 26.4.2 (flowsampling.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "standardouts.stdout.eda.nokia.com",
+        "apiVersion": "stdout.eda.nokia.com/v1alpha1",
+        "description": "New standardouts.stdout.eda.nokia.com CRD introduced in EDA 26.4.2 (stdout.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "subscribers.natsimporter.eda.nokia.com",
+        "apiVersion": "natsimporter.eda.nokia.com/v1alpha1",
+        "description": "New subscribers.natsimporter.eda.nokia.com CRD introduced in EDA 26.4.2 (natsimporter.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "trapgroups.snmp.eda.nokia.com",
+        "apiVersion": "snmp.eda.nokia.com/v1alpha1",
+        "description": "New trapgroups.snmp.eda.nokia.com CRD introduced in EDA 26.4.2 (snmp.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "vmwareedamanagedbridgedomains.vmware.eda.nokia.com",
+        "apiVersion": "vmware.eda.nokia.com/v2",
+        "description": "New vmwareedamanagedbridgedomains.vmware.eda.nokia.com CRD introduced in EDA 26.4.2 (vmware.eda.nokia.com/v2)."
+      },
+      {
+        "kind": "vmwareplugininstances.vmware.eda.nokia.com",
+        "apiVersion": "vmware.eda.nokia.com/v1",
+        "description": "New vmwareplugininstances.vmware.eda.nokia.com CRD introduced in EDA 26.4.2 (vmware.eda.nokia.com/v1)."
+      },
+      {
+        "kind": "vmwareplugininstances.vmware.eda.nokia.com",
+        "apiVersion": "vmware.eda.nokia.com/v2",
+        "description": "New vmwareplugininstances.vmware.eda.nokia.com CRD introduced in EDA 26.4.2 (vmware.eda.nokia.com/v2)."
+      }
+    ],
     "removedResources": [],
-    "modifiedResources": [],
+    "modifiedResources": [
+      {
+        "kind": "ClusterProducer",
+        "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "changes": [
+          {
+            "field": "spec.brokers.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.brokers.minLength available on ClusterProducer; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "EngineConfig",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.vCluster.properties.vcluster-coredns",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.vCluster.properties.vcluster-coredns available on EngineConfig; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "prom.eda.nokia.com/v1alpha1",
+        "changes": [
+          {
+            "field": "spec.group.pattern",
+            "changeType": "type_change",
+            "before": "\"^[a-zA-Z0-9._~-]+$\"",
+            "after": "\"^[a-zA-Z0-9._~-]$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-]$|^[a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$\"",
+            "networkBehavior": "Pattern on Export changed type or structure; validate existing values against the new schema."
+          }
+        ]
+      },
+      {
+        "kind": "Init",
+        "apiVersion": "bootstrap.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.mgmt.properties.interface.required",
+            "changeType": "required_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "Init resources without spec.mgmt.properties.interface.required will fail reconciliation — add the field to existing manifests."
+          },
+          {
+            "field": "spec.mgmt.properties.interface.properties.interfaceSelectors.minItems",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.mgmt.properties.interface.properties.interfaceSelectors.minItems available on Init; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "mcpprompttemplates.ai.core.eda.nokia.com",
+        "apiVersion": "ai.core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.content.items.required",
+            "changeType": "required_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "mcpprompttemplates.ai.core.eda.nokia.com resources without spec.content.items.required will fail reconciliation — add the field to existing manifests."
+          },
+          {
+            "field": "spec.content.items.x-kubernetes-validations",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.content.items.x-kubernetes-validations available on mcpprompttemplates.ai.core.eda.nokia.com; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "Producer",
+        "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "changes": [
+          {
+            "field": "spec.brokers.minLength",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field spec.brokers.minLength available on Producer; existing manifests remain valid."
+          }
+        ]
+      }
+    ],
     "deprecated": [
       {
         "kind": "ClusterDestination",
@@ -277,12 +791,39 @@
         ]
       }
     ],
-    "breakingChanges": [],
-    "totalBreakingCount": 0,
-    "upgradeRisk": "low",
-    "upgradeRiskJustification": "Patch-level upgrade with no breaking manifest changes detected.",
-    "estimatedEffort": "Low: <1h"
+    "breakingChanges": [
+      {
+        "kind": "Init",
+        "field": "spec.mgmt.properties.interface.required",
+        "description": "Init resources without spec.mgmt.properties.interface.required will fail reconciliation — add the field to existing manifests.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Identify affected Init resources in your cluster",
+          "Update manifests to address spec.mgmt.properties.interface.required",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# Init — spec.mgmt.properties.interface.required (before)\nspec:\n  required: <previous>",
+        "yamlAfter": "# Init — spec.mgmt.properties.interface.required (after)\nspec:\n  required: <updated>"
+      },
+      {
+        "kind": "mcpprompttemplates.ai.core.eda.nokia.com",
+        "field": "spec.content.items.required",
+        "description": "mcpprompttemplates.ai.core.eda.nokia.com resources without spec.content.items.required will fail reconciliation — add the field to existing manifests.",
+        "severity": "critical",
+        "migrationSteps": [
+          "Identify affected mcpprompttemplates.ai.core.eda.nokia.com resources in your cluster",
+          "Update manifests to address spec.content.items.required",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "# mcpprompttemplates.ai.core.eda.nokia.com — spec.content.items.required (before)\nspec:\n  required: <previous>",
+        "yamlAfter": "# mcpprompttemplates.ai.core.eda.nokia.com — spec.content.items.required (after)\nspec:\n  required: <updated>"
+      }
+    ],
+    "totalBreakingCount": 2,
+    "upgradeRisk": "medium",
+    "upgradeRiskJustification": "Release upgrade with 6 modified CRD(s) and 2 breaking change(s).",
+    "estimatedEffort": "Medium: 1-4h"
   },
-  "timestamp": 1780777424059,
+  "timestamp": 1780777991798,
   "source": "comparison"
 }

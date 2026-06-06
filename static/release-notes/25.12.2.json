@@ -2,116 +2,174 @@
   "toVer": "25.12.2",
   "fromVer": "25.12.1",
   "notes": {
-    "newResources": [],
+    "newResources": [
+      {
+        "kind": "ftpservers.management.eda.nokia.com",
+        "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "description": "New ftpservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "grpcservers.management.eda.nokia.com",
+        "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "description": "New grpcservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "httpservers.management.eda.nokia.com",
+        "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "description": "New httpservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "locators.support.eda.nokia.com",
+        "apiVersion": "support.eda.nokia.com/v1alpha1",
+        "description": "New locators.support.eda.nokia.com CRD introduced in EDA 25.12.2 (support.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "sshservers.management.eda.nokia.com",
+        "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "description": "New sshservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "systempings.routing.eda.nokia.com",
+        "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "description": "New systempings.routing.eda.nokia.com CRD introduced in EDA 25.12.2 (routing.eda.nokia.com/v1alpha1)."
+      }
+    ],
     "removedResources": [
       {
         "kind": "Allocation",
         "apiVersion": "netbox.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Allocation resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Allocation resources using netbox.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "applyallocations.netbox.eda.nokia.com",
         "apiVersion": "netbox.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing applyallocations.netbox.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing applyallocations.netbox.eda.nokia.com resources using netbox.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "ClusterIncident",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterIncident resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterIncident resources using snow.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "ClusterInstance",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterInstance resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterInstance resources using snow.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "ClusterProducer",
         "apiVersion": "kafka.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterProducer resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterProducer resources using kafka.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "creategithubissues.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing creategithubissues.github.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing creategithubissues.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "creategitlabissues.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing creategitlabissues.gitlab.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing creategitlabissues.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "Export",
         "apiVersion": "prom.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Export resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Export resources using prom.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "githubactions.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubactions.github.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubactions.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "githubinstances.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubinstances.github.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubinstances.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "githubissues.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubissues.github.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubissues.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "gitlabinstances.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabinstances.gitlab.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabinstances.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "gitlabissues.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabissues.gitlab.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabissues.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "gitlabpipelines.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabpipelines.gitlab.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "Incident",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Incident resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Incident resources using snow.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "Instance",
         "apiVersion": "netbox.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources using netbox.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "Instance",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources using snow.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "Producer",
         "apiVersion": "kafka.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Producer resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Producer resources using kafka.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "rungithubworkflows.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing rungithubworkflows.github.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungithubworkflows.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1."
       },
       {
         "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
-        "reason": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources."
+        "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1."
       }
     ],
-    "modifiedResources": [],
+    "modifiedResources": [
+      {
+        "kind": "BridgeInterface",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "status.uplinks",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field status.uplinks available on BridgeInterface; existing manifests remain valid."
+          }
+        ]
+      },
+      {
+        "kind": "VLAN",
+        "apiVersion": "services.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "status.uplinks",
+            "changeType": "optional_added",
+            "before": "",
+            "after": "",
+            "networkBehavior": "New optional field status.uplinks available on VLAN; existing manifests remain valid."
+          }
+        ]
+      }
+    ],
     "deprecated": [],
     "breakingChanges": [
       {
         "kind": "Allocation",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Allocation resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Allocation resources using netbox.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Allocation manifests",
@@ -124,7 +182,7 @@
       {
         "kind": "applyallocations.netbox.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing applyallocations.netbox.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing applyallocations.netbox.eda.nokia.com resources using netbox.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing applyallocations.netbox.eda.nokia.com manifests",
@@ -137,7 +195,7 @@
       {
         "kind": "ClusterIncident",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterIncident resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterIncident resources using snow.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing ClusterIncident manifests",
@@ -150,7 +208,7 @@
       {
         "kind": "ClusterInstance",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterInstance resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterInstance resources using snow.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing ClusterInstance manifests",
@@ -163,7 +221,7 @@
       {
         "kind": "ClusterProducer",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterProducer resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterProducer resources using kafka.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing ClusterProducer manifests",
@@ -176,7 +234,7 @@
       {
         "kind": "creategithubissues.github.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing creategithubissues.github.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing creategithubissues.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing creategithubissues.github.eda.nokia.com manifests",
@@ -189,7 +247,7 @@
       {
         "kind": "creategitlabissues.gitlab.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing creategitlabissues.gitlab.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing creategitlabissues.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing creategitlabissues.gitlab.eda.nokia.com manifests",
@@ -202,7 +260,7 @@
       {
         "kind": "Export",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Export resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Export resources using prom.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Export manifests",
@@ -215,7 +273,7 @@
       {
         "kind": "githubactions.github.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubactions.github.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubactions.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing githubactions.github.eda.nokia.com manifests",
@@ -228,7 +286,7 @@
       {
         "kind": "githubinstances.github.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubinstances.github.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubinstances.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing githubinstances.github.eda.nokia.com manifests",
@@ -241,7 +299,7 @@
       {
         "kind": "githubissues.github.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing githubissues.github.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubissues.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing githubissues.github.eda.nokia.com manifests",
@@ -254,7 +312,7 @@
       {
         "kind": "gitlabinstances.gitlab.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabinstances.gitlab.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabinstances.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing gitlabinstances.gitlab.eda.nokia.com manifests",
@@ -267,7 +325,7 @@
       {
         "kind": "gitlabissues.gitlab.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabissues.gitlab.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabissues.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing gitlabissues.gitlab.eda.nokia.com manifests",
@@ -280,7 +338,7 @@
       {
         "kind": "gitlabpipelines.gitlab.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabpipelines.gitlab.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing gitlabpipelines.gitlab.eda.nokia.com manifests",
@@ -293,7 +351,7 @@
       {
         "kind": "Incident",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Incident resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Incident resources using snow.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Incident manifests",
@@ -306,7 +364,7 @@
       {
         "kind": "Instance",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources using netbox.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Instance manifests",
@@ -319,7 +377,7 @@
       {
         "kind": "Instance",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources using snow.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Instance manifests",
@@ -332,7 +390,7 @@
       {
         "kind": "Producer",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing Producer resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Producer resources using kafka.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing Producer manifests",
@@ -345,7 +403,7 @@
       {
         "kind": "rungithubworkflows.github.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing rungithubworkflows.github.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungithubworkflows.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing rungithubworkflows.github.eda.nokia.com manifests",
@@ -358,7 +416,7 @@
       {
         "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
         "field": "resource",
-        "description": "Removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources.",
+        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
         "severity": "critical",
         "migrationSteps": [
           "Export existing rungitlabpipelines.gitlab.eda.nokia.com manifests",
@@ -374,6 +432,6 @@
     "upgradeRiskJustification": "Upgrade from 25.12.1 to 25.12.2 includes 20 breaking change(s) including 20 removed CRD(s).",
     "estimatedEffort": "High: >4h"
   },
-  "timestamp": 1780777424434,
+  "timestamp": 1780777992479,
   "source": "comparison"
 }

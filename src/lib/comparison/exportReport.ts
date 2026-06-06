@@ -22,7 +22,7 @@ export function downloadBulkDiffReport(
 	} else if (format === 'text') {
 		const lines: string[] = [header, 'CRDs:\n'];
 		for (const c of report.crds) {
-			lines.push(`- ${c.name} (${c.kind}) [${c.status}]`);
+			lines.push(`- ${c.name} (${c.kind}, ${c.version}) [${c.status}]`);
 			for (const d of c.details) {
 				lines.push(`    ${d}`);
 			}
@@ -39,7 +39,7 @@ export function downloadBulkDiffReport(
 		md.push(`**Total CRDs:** ${report.crds.length}`);
 		md.push('\n---\n');
 		for (const c of report.crds) {
-			md.push(`## ${c.name} (${c.kind})`);
+			md.push(`## ${c.name} (${c.kind}, ${c.version})`);
 			md.push(`- Status: **${c.status}**`);
 			if (c.details.length > 0) {
 				md.push('\n**Details:**');
@@ -56,14 +56,18 @@ export function downloadBulkDiffReport(
 		mimeType = 'text/markdown';
 	} else if (format === 'csv') {
 		const rows: string[] = [];
-		rows.push(['name', 'kind', 'status', 'detail'].map(escapeCsv).join(','));
+		rows.push(['name', 'kind', 'version', 'status', 'detail'].map(escapeCsv).join(','));
 		for (const c of report.crds) {
 			if (c.details.length > 0) {
 				for (const d of c.details) {
-					rows.push([escapeCsv(c.name), escapeCsv(c.kind), escapeCsv(c.status), escapeCsv(d)].join(','));
+					rows.push(
+						[escapeCsv(c.name), escapeCsv(c.kind), escapeCsv(c.version), escapeCsv(c.status), escapeCsv(d)].join(',')
+					);
 				}
 			} else {
-				rows.push([escapeCsv(c.name), escapeCsv(c.kind), escapeCsv(c.status), escapeCsv('')].join(','));
+				rows.push(
+					[escapeCsv(c.name), escapeCsv(c.kind), escapeCsv(c.version), escapeCsv(c.status), escapeCsv('')].join(',')
+				);
 			}
 		}
 		content = rows.join('\n');

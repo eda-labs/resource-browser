@@ -8,9 +8,7 @@ export type ResourceLinkContext = {
 export function resourceLinkContext(
 	crd: CrdDiffEntry,
 	sourceReleaseName: string,
-	targetReleaseName: string,
-	sourceVersion: string,
-	targetVersion: string
+	targetReleaseName: string
 ): ResourceLinkContext | null {
 	if (crd.status === 'not-in-either' || crd.status === 'error') return null;
 
@@ -20,30 +18,16 @@ export function resourceLinkContext(
 				? targetReleaseName
 				: sourceReleaseName
 			: sourceReleaseName;
-	const version =
-		crd.status === 'added'
-			? targetVersion
-			: crd.status === 'removed'
-				? sourceVersion
-				: sourceVersion;
 
-	return { releaseName, version };
+	return { releaseName, version: crd.version };
 }
 
 export function resourceDetailHref(
 	crd: CrdDiffEntry,
 	sourceReleaseName: string,
-	targetReleaseName: string,
-	sourceVersion: string,
-	targetVersion: string
+	targetReleaseName: string
 ): string | null {
-	const ctx = resourceLinkContext(
-		crd,
-		sourceReleaseName,
-		targetReleaseName,
-		sourceVersion,
-		targetVersion
-	);
+	const ctx = resourceLinkContext(crd, sourceReleaseName, targetReleaseName);
 	if (!ctx) return null;
 	return `/${crd.name}/${ctx.version}?release=${encodeURIComponent(ctx.releaseName)}`;
 }

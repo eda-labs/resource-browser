@@ -2,16 +2,86 @@
   "toVer": "25.12.3",
   "fromVer": "25.12.2",
   "notes": {
-    "newResources": [],
+    "newResources": [
+      {
+        "kind": "ClusterProducer",
+        "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "description": "New ClusterProducer CRD introduced in EDA 25.12.3 (kafka.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Export",
+        "apiVersion": "prom.eda.nokia.com/v1alpha1",
+        "description": "New Export CRD introduced in EDA 25.12.3 (prom.eda.nokia.com/v1alpha1)."
+      },
+      {
+        "kind": "Producer",
+        "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "description": "New Producer CRD introduced in EDA 25.12.3 (kafka.eda.nokia.com/v1alpha1)."
+      }
+    ],
     "removedResources": [],
-    "modifiedResources": [],
+    "modifiedResources": [
+      {
+        "kind": "NodeProfile",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.dhcp.properties.dhcp6Options.items.properties.option.enum",
+            "changeType": "enum_removed",
+            "before": "[\"59-BootfileUrl\"]",
+            "after": "[\"59-BootfileUrl\",\"56-NTPServers\"]",
+            "networkBehavior": "Enum on NodeProfile removed enum value(s); verify manifest values are still allowed."
+          }
+        ]
+      },
+      {
+        "kind": "TargetNode",
+        "apiVersion": "core.eda.nokia.com/v1",
+        "changes": [
+          {
+            "field": "spec.dhcp6.properties.options.items.properties.option.enum",
+            "changeType": "enum_removed",
+            "before": "[\"59-BootfileUrl\"]",
+            "after": "[\"59-BootfileUrl\",\"56-NTPServers\"]",
+            "networkBehavior": "Enum on TargetNode removed enum value(s); verify manifest values are still allowed."
+          }
+        ]
+      }
+    ],
     "deprecated": [],
-    "breakingChanges": [],
-    "totalBreakingCount": 0,
-    "upgradeRisk": "low",
-    "upgradeRiskJustification": "Patch-level upgrade with no breaking manifest changes detected.",
-    "estimatedEffort": "Low: <1h"
+    "breakingChanges": [
+      {
+        "kind": "NodeProfile",
+        "field": "spec.dhcp.properties.dhcp6Options.items.properties.option.enum",
+        "description": "Enum on NodeProfile removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected NodeProfile resources in your cluster",
+          "Update manifests to address spec.dhcp.properties.dhcp6Options.items.properties.option.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[\"59-BootfileUrl\"]",
+        "yamlAfter": "[\"59-BootfileUrl\",\"56-NTPServers\"]"
+      },
+      {
+        "kind": "TargetNode",
+        "field": "spec.dhcp6.properties.options.items.properties.option.enum",
+        "description": "Enum on TargetNode removed enum value(s); verify manifest values are still allowed.",
+        "severity": "warning",
+        "migrationSteps": [
+          "Identify affected TargetNode resources in your cluster",
+          "Update manifests to address spec.dhcp6.properties.options.items.properties.option.enum",
+          "Validate against the target release schema before apply"
+        ],
+        "yamlBefore": "[\"59-BootfileUrl\"]",
+        "yamlAfter": "[\"59-BootfileUrl\",\"56-NTPServers\"]"
+      }
+    ],
+    "totalBreakingCount": 2,
+    "upgradeRisk": "medium",
+    "upgradeRiskJustification": "Release upgrade with 2 modified CRD(s) and 2 breaking change(s).",
+    "estimatedEffort": "Medium: 1-4h"
   },
-  "timestamp": 1780777424310,
+  "timestamp": 1780777992272,
   "source": "comparison"
 }

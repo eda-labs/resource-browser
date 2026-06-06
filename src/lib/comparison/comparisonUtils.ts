@@ -56,7 +56,7 @@ export function matchesSearch(
 	const details = crd.details
 		? crd.details.map((d) => d.replace(/\b(spec|status)\./gi, '')).join(' ')
 		: '';
-	const hay = `${crd.name} ${details}`;
+	const hay = `${crd.name} ${crd.kind} ${crd.version} ${details}`;
 	if (searchRegex) {
 		try {
 			return new RegExp(q, 'i').test(hay);
@@ -88,10 +88,11 @@ export function compareHint(
 	if (generating) return 'Comparison in progress…';
 	if (sourceVersionsLoading || targetVersionsLoading) return 'Loading release manifests and API versions…';
 	if (canCompare) {
-		return `Ready — compare ${sourceReleaseLabel} (${sourceVersion}) → ${targetReleaseLabel} (${targetVersion}). Press Enter to run.`;
+		if (sourceVersion && targetVersion && sourceVersion === targetVersion) {
+			return `Ready — compare ${sourceReleaseLabel} → ${targetReleaseLabel} (${sourceVersion} only). Press Enter to run.`;
+		}
+		return `Ready — compare ${sourceReleaseLabel} → ${targetReleaseLabel} (all API versions paired by name). Press Enter to run.`;
 	}
-	if (!sourceVersion && !targetVersion) return 'Select both releases and API versions to enable comparison.';
-	if (!sourceVersion) return 'Choose a source API version to continue.';
-	if (!targetVersion) return 'Choose a target API version to continue.';
-	return 'Select both releases and API versions to compare.';
+	if (!sourceReleaseLabel || !targetReleaseLabel) return 'Select source and target releases to compare.';
+	return 'Choose different source and target releases to compare.';
 }
