@@ -10,7 +10,7 @@
 		countNewlyDeprecatedApiVersions,
 		removedInLabel
 	} from '$lib/release-notes/deprecation';
-	import { CHANGE_COLORS, RISK_COLOR, TABS } from '$lib/release-notes/constants';
+	import { CHANGE_COLORS, RISK_COLOR, TAB_ICONS, TABS } from '$lib/release-notes/constants';
 	import HighlightText from '$lib/release-notes/HighlightText.svelte';
 	import {
 		catalogBrowseHref,
@@ -200,6 +200,11 @@
 	function timelineStatPills(notes: ReleaseNotes) {
 		return [
 			{
+				label: 'new',
+				value: notes.newResources.length,
+				tone: 'new' as const
+			},
+			{
 				label: 'mod',
 				value: countOperationalChanges(notes),
 				tone: 'modified' as const
@@ -210,6 +215,34 @@
 				tone: 'deprecated' as const
 			}
 		].filter((p) => p.value > 0);
+	}
+
+	function overviewSummary(notes: ReleaseNotes, fromVer: string, toVer: string): string {
+		const parts: string[] = [];
+		if (notes.newResources.length > 0) {
+			parts.push(
+				`${notes.newResources.length} new CRD${notes.newResources.length !== 1 ? 's' : ''}`
+			);
+		}
+		if (notes.modifiedResources.length > 0) {
+			parts.push(
+				`${countOperationalChanges(notes)} spec change${countOperationalChanges(notes) !== 1 ? 's' : ''} across ${notes.modifiedResources.length} resource${notes.modifiedResources.length !== 1 ? 's' : ''}`
+			);
+		}
+		if (notes.deprecated.length > 0) {
+			parts.push(
+				`${countDeprecatedApiVersions(notes.deprecated)} deprecated apiVersion${countDeprecatedApiVersions(notes.deprecated) !== 1 ? 's' : ''}`
+			);
+		}
+		if (notes.removedResources.length > 0) {
+			parts.push(
+				`${notes.removedResources.length} removed resource${notes.removedResources.length !== 1 ? 's' : ''}`
+			);
+		}
+		if (parts.length === 0) {
+			return `No schema changes detected between EDA ${fromVer} and ${toVer}.`;
+		}
+		return `Upgrade from ${fromVer} to ${toVer}: ${parts.join(' · ')}.`;
 	}
 
 	const selectedEntry = $derived(releaseHistory.find((e) => e.toVer === selected) ?? null);
@@ -356,6 +389,8 @@
 						<div class="rn-tabs" role="tablist">
 							{#each TABS as tab, i (tab)}
 								{@const deprecN = countDeprecatedApiVersions(selectedEntry.notes.deprecated)}
+								{@const newN = selectedEntry.notes.newResources.length}
+								{@const modN = selectedEntry.notes.modifiedResources.length}
 								<button
 									type="button"
 									role="tab"
@@ -364,9 +399,14 @@
 									aria-selected={activeTab === i}
 									onclick={() => (activeTab = i)}
 								>
+									<span class="rn-tab-icon" aria-hidden="true">{TAB_ICONS[i]}</span>
 									{tab}
 									{#if i === 1 && deprecN > 0}
 										<span class="rn-tab-count rn-tab-count--warn">{deprecN}</span>
+									{:else if i === 2 && newN > 0}
+										<span class="rn-tab-count rn-tab-count--new">{newN}</span>
+									{:else if i === 3 && modN > 0}
+										<span class="rn-tab-count rn-tab-count--mod">{modN}</span>
 									{/if}
 								</button>
 							{/each}
@@ -378,6 +418,13 @@
 							{#if activeTab === 0}
 								{@const stats = statItems(selectedEntry.notes)}
 								{@const sparkHeights = statSparkHeights(stats.map((s) => s.value))}
+								<p class="rn-overview-summary">
+									{overviewSummary(
+										selectedEntry.notes,
+										selectedEntry.fromVer,
+										selectedEntry.toVer
+									)}
+								</p>
 								<div class="rn-stat-grid">
 									{#each stats as stat, i (stat.label)}
 										<button
@@ -393,13 +440,39 @@
 											<span class="rn-stat-label">{stat.label}</span>
 											<span class="rn-stat-spark" aria-hidden="true">
 												<span
-													class="rn-stat-spark-bar"
+													class="rn-stat-spark-bar rn-stat-spark-bar--{stat.tone}"
 													style:height="{sparkHeights[i]}%"
 												></span>
 											</span>
 										</button>
 									{/each}
 								</div>
+								{#if selectedEntry.notes.removedResources.length > 0}
+									<section class="rn-removed-section">
+										<h3 class="rn-section-label">Removed resources</h3>
+										<ul class="rn-removed-list">
+											{#each selectedEntry.notes.removedResources as r (`${r.kind}-${r.apiVersion}`)}
+												<li class="rn-removed-item">
+													<span
+														class="text-[15px] font-semibold text-slate-900 dark:text-slate-100"
+														>{r.kind}</span
+													>
+													<span
+														class="font-mono text-[13px] text-slate-500 dark:text-slate-400"
+														>{r.apiVersion}</span
+													>
+													{#if r.reason}
+														<p
+															class="mb-0 mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300"
+														>
+															{r.reason}
+														</p>
+													{/if}
+												</li>
+											{/each}
+										</ul>
+									</section>
+								{/if}
 								<div class="rn-overview-actions">
 									<a
 										class="rn-btn rn-btn--secondary"

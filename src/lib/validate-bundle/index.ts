@@ -1,7 +1,5 @@
 import { parseBundleResources } from './parser';
 import { validateBundleSchema } from './schemaValidator';
-import { validateCrossReferences } from './crossRefValidator';
-import { computeApplyOrder, buildGraphNodes } from './ordering';
 import { validateEdaRules } from './edaRules';
 import type {
 	BundleIssue,
@@ -12,7 +10,6 @@ import type {
 
 export * from './types';
 export { EXAMPLE_BUNDLE_YAML } from './exampleBundle';
-export { kindColor } from './kindColors';
 
 function buildSummary(issues: BundleIssue[], resourceCount: number): BundleValidationSummary {
 	return {
@@ -31,9 +28,7 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 			valid: true,
 			issues: [],
 			summary: { resourceCount: 0, errorCount: 0, warningCount: 0, infoCount: 0 },
-			resources: [],
-			graph: { nodes: [], edges: [] },
-			applyOrder: []
+			resources: []
 		};
 	}
 
@@ -50,9 +45,7 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 			valid: false,
 			issues: [issue],
 			summary: buildSummary([issue], 0),
-			resources: [],
-			graph: { nodes: [], edges: [] },
-			applyOrder: []
+			resources: []
 		};
 	}
 
@@ -65,15 +58,9 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 		releaseLabel,
 		manifest
 	);
-	const crossRef = validateCrossReferences(resources);
 	const edaIssues = validateEdaRules(resources, releaseLabel);
-	const { applyOrder, issues: orderingIssues } = computeApplyOrder(
-		resources,
-		crossRef.edges,
-		crossRef.refs
-	);
 
-	const issues = [...schemaIssues, ...crossRef.issues, ...edaIssues, ...orderingIssues];
+	const issues = [...schemaIssues, ...edaIssues];
 	const summary = buildSummary(issues, resources.length);
 	const valid = summary.errorCount === 0;
 
@@ -81,8 +68,6 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 		valid,
 		issues,
 		summary,
-		resources,
-		graph: { nodes: buildGraphNodes(resources), edges: crossRef.edges },
-		applyOrder
+		resources
 	};
 }

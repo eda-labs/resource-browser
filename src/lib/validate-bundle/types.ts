@@ -2,7 +2,7 @@ import type { ParsedDocument } from '$lib/yaml-validation/types';
 
 export type IssueSeverity = 'error' | 'warning' | 'info';
 
-export type IssueCategory = 'schema' | 'cross-ref' | 'ordering' | 'eda';
+export type IssueCategory = 'schema' | 'eda';
 
 export type BundleIssue = {
 	id: string;
@@ -29,31 +29,6 @@ export type BundleResource = {
 	doc: ParsedDocument;
 };
 
-export type BundleGraphNode = {
-	id: string;
-	kind: string;
-	name: string;
-	namespace: string;
-	docIndex: number;
-};
-
-export type BundleGraphEdge = {
-	id: string;
-	source: string;
-	target: string;
-	field: string;
-	external: boolean;
-};
-
-export type ApplyOrderEntry = {
-	order: number;
-	resourceId: string;
-	kind: string;
-	name: string;
-	namespace: string;
-	docIndex: number;
-};
-
 export type BundleValidationSummary = {
 	resourceCount: number;
 	errorCount: number;
@@ -66,8 +41,6 @@ export type BundleValidationResult = {
 	issues: BundleIssue[];
 	summary: BundleValidationSummary;
 	resources: BundleResource[];
-	graph: { nodes: BundleGraphNode[]; edges: BundleGraphEdge[] };
-	applyOrder: ApplyOrderEntry[];
 };
 
 export type ValidateBundleOptions = {

@@ -253,6 +253,15 @@ html.dark .release-notes-page .rn-timeline-pill--deprecated {
 	background: rgba(234, 179, 8, 0.25);
 }
 
+.release-notes-page .rn-timeline-pill--new {
+	background: #dcfce7;
+	color: var(--rn-success);
+}
+
+html.dark .release-notes-page .rn-timeline-pill--new {
+	background: rgba(22, 163, 74, 0.25);
+}
+
 .release-notes-page .rn-timeline-skeleton {
 	position: relative;
 	padding: 10px 12px 10px 32px;
@@ -533,10 +542,34 @@ html.dark .release-notes-page .rn-tab--active {
 	background: var(--rn-warning);
 }
 
-/* Stat grid — Apple Health style */
+.release-notes-page .rn-tab-icon {
+	font-size: 12px;
+	opacity: 0.75;
+}
+
+.release-notes-page .rn-tab--active .rn-tab-icon {
+	opacity: 1;
+}
+
+.release-notes-page .rn-tab-count--new {
+	background: var(--rn-success);
+}
+
+.release-notes-page .rn-tab-count--mod {
+	background: var(--rn-warning);
+}
+
+.release-notes-page .rn-overview-summary {
+	margin: 0 0 20px;
+	font-size: 15px;
+	line-height: 1.6;
+	color: var(--rn-text-secondary);
+}
+
+/* Stat grid — four change categories */
 .release-notes-page .rn-stat-grid {
 	display: grid;
-	grid-template-columns: repeat(5, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	gap: 1px;
 	background: var(--rn-border);
 	border: 1px solid var(--rn-border);
@@ -590,8 +623,47 @@ html.dark .release-notes-page .rn-tab--active {
 	transition: height 0.3s ease, opacity 0.18s ease;
 }
 
+.release-notes-page .rn-stat-spark-bar--new {
+	background: linear-gradient(180deg, var(--rn-success), rgba(22, 163, 74, 0.35));
+}
+
+.release-notes-page .rn-stat-spark-bar--removed {
+	background: linear-gradient(180deg, var(--rn-danger), rgba(220, 38, 38, 0.35));
+}
+
+.release-notes-page .rn-stat-spark-bar--modified,
+.release-notes-page .rn-stat-spark-bar--deprecated {
+	background: linear-gradient(180deg, var(--rn-warning), rgba(217, 119, 6, 0.35));
+}
+
 .release-notes-page .rn-stat-cell--interactive:hover .rn-stat-spark-bar {
 	opacity: 0.85;
+}
+
+.release-notes-page .rn-removed-section {
+	margin-top: 20px;
+	padding: 16px 18px;
+	background: var(--rn-bg-elevated);
+	border: 1px solid var(--rn-border);
+	border-left: 4px solid var(--rn-danger);
+	border-radius: var(--rn-radius);
+	box-shadow: var(--rn-shadow);
+}
+
+.release-notes-page .rn-removed-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.release-notes-page .rn-removed-item {
+	padding: 10px 12px;
+	border-radius: var(--rn-radius-sm);
+	background: var(--rn-bg-surface);
+	border: 1px solid var(--rn-border);
 }
 
 .release-notes-page .rn-overview-actions {

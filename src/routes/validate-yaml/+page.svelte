@@ -19,7 +19,6 @@
 		type BundleValidationResult
 	} from '$lib/validate-bundle';
 	import YamlBundleEditor from '$lib/validate-bundle/YamlBundleEditor.svelte';
-	import BundleDependencyGraph from '$lib/validate-bundle/BundleDependencyGraph.svelte';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 
@@ -30,7 +29,6 @@
 	let isValidating = false;
 	let clientReady = false;
 	let highlightLine: number | null = null;
-	let rightTab: 'issues' | 'graph' | 'order' = 'issues';
 	let editorRef: YamlBundleEditor | undefined;
 	let manifestResources: ManifestResource[] = [];
 	let modalOpen = false;
@@ -98,9 +96,7 @@
 					}
 				],
 				summary: { resourceCount: 0, errorCount: 1, warningCount: 0, infoCount: 0 },
-				resources: [],
-				graph: { nodes: [], edges: [] },
-				applyOrder: []
+				resources: []
 			};
 		} finally {
 			isValidating = false;
@@ -205,7 +201,7 @@
 	<title>EDA Resource Browser | YAML Bundle Validator</title>
 	<meta
 		name="description"
-		content="Validate multi-document Nokia EDA YAML bundles — schema checks, cross-resource references, apply order, and dependency graph."
+		content="Validate multi-document Nokia EDA YAML bundles — per-resource CRD schema checks and EDA manifest rules."
 	/>
 </svelte:head>
 
@@ -214,13 +210,13 @@
 
 	<div class="validate-bundle-main">
 		<section class="validate-bundle-hero" aria-labelledby="validate-bundle-heading">
-			<p class="homepage-hero-kicker">Multi-resource validation</p>
+			<p class="homepage-hero-kicker">Per-resource validation</p>
 			<h1 id="validate-bundle-heading" class="homepage-title text-slate-100">
 				YAML Bundle Validator
 			</h1>
 			<p class="homepage-subtitle text-slate-400">
 				Paste or upload multiple Kubernetes-style manifests (<code class="text-slate-300">---</code>
-				separated) and validate them as a group against Nokia EDA CRD schemas.
+				separated). Each document is validated independently against Nokia EDA CRD schemas.
 			</p>
 		</section>
 
@@ -261,11 +257,11 @@
 
 			{#if result}
 				<div class="validate-bundle-stats" role="status" aria-live="polite">
-					<span>{result.summary.resourceCount} resources</span>
-					<span class="text-red-400">{result.summary.errorCount} errors</span>
-					<span class="text-amber-400">{result.summary.warningCount} warnings</span>
+					<span>{result.summary.resourceCount} document{result.summary.resourceCount !== 1 ? 's' : ''}</span>
+					<span class="text-red-400">{result.summary.errorCount} error{result.summary.errorCount !== 1 ? 's' : ''}</span>
+					<span class="text-amber-400">{result.summary.warningCount} warning{result.summary.warningCount !== 1 ? 's' : ''}</span>
 					{#if result.valid}
-						<span class="text-green-400">Valid bundle</span>
+						<span class="text-green-400">All documents valid</span>
 					{/if}
 				</div>
 			{/if}
@@ -283,114 +279,65 @@
 			</div>
 
 			<div class="validate-bundle-panel validate-bundle-panel--results spec-search-results-panel">
-				<div class="validate-bundle-tabs" role="tablist" aria-label="Validation results">
-					<button
-						type="button"
-						role="tab"
-						aria-selected={rightTab === 'issues'}
-						class="validate-bundle-tab"
-						class:validate-bundle-tab--active={rightTab === 'issues'}
-						on:click={() => (rightTab = 'issues')}
-					>
-						Issues
-						{#if result && result.summary.errorCount + result.summary.warningCount > 0}
-							<span class="validate-bundle-tab-badge">{result.summary.errorCount + result.summary.warningCount}</span>
-						{/if}
-					</button>
-					<button
-						type="button"
-						role="tab"
-						aria-selected={rightTab === 'graph'}
-						class="validate-bundle-tab"
-						class:validate-bundle-tab--active={rightTab === 'graph'}
-						on:click={() => (rightTab = 'graph')}
-					>
-						Dependency Graph
-					</button>
-					<button
-						type="button"
-						role="tab"
-						aria-selected={rightTab === 'order'}
-						class="validate-bundle-tab"
-						class:validate-bundle-tab--active={rightTab === 'order'}
-						on:click={() => (rightTab = 'order')}
-					>
-						Apply Order
-					</button>
+				<div class="validate-bundle-results-header">
+					<h2 class="validate-bundle-results-title">Issues</h2>
+					{#if result && result.summary.errorCount + result.summary.warningCount > 0}
+						<span class="validate-bundle-results-badge">
+							{result.summary.errorCount + result.summary.warningCount}
+						</span>
+					{/if}
 				</div>
 
-				<div class="validate-bundle-tab-body">
-					{#if rightTab === 'issues'}
-						{#if !result}
-							<div class="spec-search-empty">
-								<p class="text-sm text-slate-400">Paste YAML and validate to see issues.</p>
-							</div>
-						{:else if displayIssues.length === 0}
-							<div class="validate-bundle-success">
-								<p>All {result.summary.resourceCount} resources passed validation.</p>
-							</div>
-						{:else}
-							<ul class="validate-bundle-issues" role="list">
-								{#each displayIssues as issue (issue.id)}
-									{@const tone = severityTone(issue.severity)}
-									{@const crdEntry = manifestEntryForIssue(issue)}
-									<li>
-										<div class="validate-bundle-issue {tone.row}">
+				<div class="validate-bundle-results-body">
+					{#if !result}
+						<div class="spec-search-empty">
+							<p class="text-sm text-slate-400">Paste YAML and validate to see issues.</p>
+						</div>
+					{:else if displayIssues.length === 0}
+						<div class="validate-bundle-success">
+							<p>All {result.summary.resourceCount} document{result.summary.resourceCount !== 1 ? 's' : ''} passed validation.</p>
+						</div>
+					{:else}
+						<ul class="validate-bundle-issues" role="list">
+							{#each displayIssues as issue (issue.id)}
+								{@const tone = severityTone(issue.severity)}
+								{@const crdEntry = manifestEntryForIssue(issue)}
+								<li>
+									<div class="validate-bundle-issue {tone.row}">
+										<button
+											type="button"
+											class="validate-bundle-issue-main"
+											on:click={() => jumpToIssue(issue)}
+										>
+											<div class="validate-bundle-issue-head">
+												<span class="validate-bundle-issue-badge {tone.badge}">{tone.label}</span>
+												{#if issue.resourceKind}
+													<span class="validate-bundle-issue-resource">
+														{issue.resourceKind}{issue.resourceName ? ` / ${issue.resourceName}` : ''}
+													</span>
+												{/if}
+												{#if issue.line}
+													<span class="validate-bundle-issue-line">Line {issue.line}</span>
+												{/if}
+											</div>
+											<p class="validate-bundle-issue-msg">{issue.message}</p>
+											{#if issue.fieldPath}
+												<p class="validate-bundle-issue-path">{issue.fieldPath}</p>
+											{/if}
+										</button>
+										{#if crdEntry}
 											<button
 												type="button"
-												class="validate-bundle-issue-main"
-												on:click={() => jumpToIssue(issue)}
+												class="validate-bundle-issue-schema-link"
+												on:click={(e) => openCrdSchemaModal(issue, e)}
 											>
-												<div class="validate-bundle-issue-head">
-													<span class="validate-bundle-issue-badge {tone.badge}">{tone.label}</span>
-													{#if issue.resourceKind}
-														<span class="validate-bundle-issue-resource">
-															{issue.resourceKind}{issue.resourceName ? ` / ${issue.resourceName}` : ''}
-														</span>
-													{/if}
-													{#if issue.line}
-														<span class="validate-bundle-issue-line">Line {issue.line}</span>
-													{/if}
-												</div>
-												<p class="validate-bundle-issue-msg">{issue.message}</p>
-												{#if issue.fieldPath}
-													<p class="validate-bundle-issue-path">{issue.fieldPath}</p>
-												{/if}
+												View CRD schema →
 											</button>
-											{#if crdEntry}
-												<button
-													type="button"
-													class="validate-bundle-issue-schema-link"
-													on:click={(e) => openCrdSchemaModal(issue, e)}
-												>
-													View CRD schema →
-												</button>
-											{/if}
-										</div>
-									</li>
-								{/each}
-							</ul>
-						{/if}
-					{:else if rightTab === 'graph'}
-						<BundleDependencyGraph nodes={result?.graph.nodes ?? []} edges={result?.graph.edges ?? []} />
-					{:else}
-						{#if !result || result.applyOrder.length === 0}
-							<div class="spec-search-empty">
-								<p class="text-sm text-slate-400">Apply order appears after validation.</p>
-							</div>
-						{:else}
-							<ol class="validate-bundle-order">
-								{#each result.applyOrder as entry (entry.resourceId)}
-									<li>
-										<span class="validate-bundle-order-num">{entry.order}</span>
-										<div>
-											<p class="validate-bundle-order-kind">{entry.kind}</p>
-											<p class="validate-bundle-order-name">{entry.namespace}/{entry.name}</p>
-										</div>
-									</li>
-								{/each}
-							</ol>
-						{/if}
+										{/if}
+									</div>
+								</li>
+							{/each}
+						</ul>
 					{/if}
 				</div>
 			</div>
@@ -509,39 +456,32 @@
 		color: rgb(100 116 139);
 	}
 
-	.validate-bundle-tabs {
+	.validate-bundle-results-header {
 		display: flex;
-		gap: 0.25rem;
-		padding: 0.5rem;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1rem;
 		border-bottom: 1px solid rgb(51 65 85);
 	}
 
-	.validate-bundle-tab {
-		flex: 1;
-		border-radius: 0.375rem;
-		padding: 0.5rem 0.75rem;
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: rgb(148 163 184);
-		background: transparent;
-		border: 0;
-	}
-
-	.validate-bundle-tab--active {
-		background: rgb(30 41 59);
+	.validate-bundle-results-title {
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: 700;
 		color: rgb(248 250 252);
 	}
 
-	.validate-bundle-tab-badge {
-		margin-left: 0.35rem;
+	.validate-bundle-results-badge {
 		border-radius: 9999px;
 		background: rgb(239 68 68);
-		padding: 0 0.35rem;
+		padding: 0 0.4rem;
 		font-size: 0.625rem;
+		font-weight: 700;
 		color: white;
+		line-height: 1.25rem;
 	}
 
-	.validate-bundle-tab-body {
+	.validate-bundle-results-body {
 		flex: 1;
 		overflow: auto;
 		padding: 0.75rem;
@@ -642,50 +582,5 @@
 		padding: 1rem;
 		color: rgb(134 239 172);
 		font-size: 0.875rem;
-	}
-
-	.validate-bundle-order {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.validate-bundle-order li {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		border-radius: 0.5rem;
-		border: 1px solid rgb(51 65 85);
-		background: rgb(30 41 59 / 0.5);
-		padding: 0.625rem 0.75rem;
-	}
-
-	.validate-bundle-order-num {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 1.75rem;
-		height: 1.75rem;
-		border-radius: 9999px;
-		background: rgb(37 99 235);
-		font-size: 0.8125rem;
-		font-weight: 700;
-		color: white;
-		flex-shrink: 0;
-	}
-
-	.validate-bundle-order-kind {
-		font-size: 0.8125rem;
-		font-weight: 700;
-		color: rgb(248 250 252);
-	}
-
-	.validate-bundle-order-name {
-		font-size: 0.75rem;
-		color: rgb(148 163 184);
-		font-family: ui-monospace, monospace;
 	}
 </style>

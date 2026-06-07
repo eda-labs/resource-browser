@@ -1,4 +1,4 @@
-/** Realistic three-resource bundle: Topology → TopoNode → Interface with cross-refs. */
+/** Example three-document bundle for per-resource schema validation. */
 export const EXAMPLE_BUNDLE_YAML = `apiVersion: topologies.eda.nokia.com/v1
 kind: Topology
 metadata:

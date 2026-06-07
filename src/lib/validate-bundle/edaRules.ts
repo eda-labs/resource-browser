@@ -23,16 +23,6 @@ export function validateEdaRules(
 	issueCounter = 0;
 	const issues: BundleIssue[] = [];
 
-	const namespaces = new Set(resources.map((r) => r.namespace));
-	if (namespaces.size > 1) {
-		issues.push({
-			id: nextIssueId(),
-			severity: 'warning',
-			category: 'eda',
-			message: `Multiple namespaces in bundle: ${[...namespaces].join(', ')} — ensure this is intentional`
-		});
-	}
-
 	for (const res of resources) {
 		const metadata = (res.data.metadata || {}) as Record<string, unknown>;
 		const labels = (metadata.labels || {}) as Record<string, string>;
