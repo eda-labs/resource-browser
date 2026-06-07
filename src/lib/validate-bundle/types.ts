@@ -2,10 +2,26 @@ import type { ParsedDocument } from '$lib/yaml-validation/types';
 
 export type IssueSeverity = 'error' | 'warning' | 'info';
 
-export type IssueCategory = 'schema' | 'eda';
+export type IssueCategory = 'schema' | 'eda' | 'kubernetes';
 
 /** Sub-type for EDA manifest rules not covered by CRD schema validation. */
-export type EdaIssueRule = 'spec-with-status' | 'required-namespace';
+export type EdaIssueRule = never;
+
+/** Sub-type for standard Kubernetes manifest requirements. */
+export type K8sIssueRule =
+	| 'required-apiVersion'
+	| 'invalid-apiVersion-format'
+	| 'required-kind'
+	| 'invalid-root'
+	| 'invalid-metadata-type'
+	| 'required-metadata-name'
+	| 'invalid-metadata-name'
+	| 'required-metadata-namespace'
+	| 'invalid-metadata-namespace'
+	| 'invalid-label-key'
+	| 'invalid-label-value'
+	| 'invalid-annotation-key'
+	| 'spec-with-status';
 
 export type BundleIssue = {
 	id: string;
@@ -13,7 +29,7 @@ export type BundleIssue = {
 	message: string;
 	category: IssueCategory;
 	/** EDA rule identifier when category is `eda`. */
-	rule?: EdaIssueRule;
+	rule?: EdaIssueRule | K8sIssueRule;
 	resourceName?: string;
 	resourceKind?: string;
 	docIndex?: number;

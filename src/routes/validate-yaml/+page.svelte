@@ -215,6 +215,7 @@
 			return 'Schema';
 		}
 		if (issue.category === 'eda') return 'EDA · Manifest';
+		if (issue.category === 'kubernetes') return 'Kubernetes';
 		return null;
 	}
 

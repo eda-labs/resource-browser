@@ -42,13 +42,19 @@ spec:
 		const booleanIssues = result.issues.filter((i) => i.message.includes('lowercase true or false'));
 		expect(booleanIssues.length).toBe(3);
 
-		const namespaceIssues = result.issues.filter((i) => i.message.includes('metadata.namespace'));
+		const namespaceIssues = result.issues.filter(
+			(i) => i.category === 'kubernetes' && i.message.includes('metadata.namespace')
+		);
 		expect(namespaceIssues.length).toBe(3);
 
-		const apiVersionIssues = result.issues.filter((i) => i.message.includes("Missing required 'apiVersion'"));
+		const apiVersionIssues = result.issues.filter(
+			(i) => i.category === 'kubernetes' && i.message.includes("Missing required 'apiVersion'")
+		);
 		expect(apiVersionIssues.length).toBe(3);
 
-		const kindIssues = result.issues.filter((i) => i.message.includes("Missing required 'kind'"));
+		const kindIssues = result.issues.filter(
+			(i) => i.category === 'kubernetes' && i.message.includes("Missing required 'kind'")
+		);
 		expect(kindIssues.length).toBe(3);
 
 		expect(result.issues.length).toBeGreaterThanOrEqual(12);
