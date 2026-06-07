@@ -14,6 +14,7 @@
 	import {
 		validateBundle,
 		formatYamlBundle,
+		formatFixSummary,
 		EXAMPLE_BUNDLE_YAML,
 		type BundleIssue,
 		type BundleResource,
@@ -59,15 +60,25 @@
 		}, 3000);
 	}
 
-	function handleFormatYaml() {
-		const formatResult = formatYamlBundle(yamlInput);
+	async function handleFormatYaml() {
+		if (!release) {
+			showToast('Select a release to apply schema fixes');
+			return;
+		}
+
+		const manifest = (await fetchManifest(release.folder, manifestCache)) || [];
+		const formatResult = await formatYamlBundle(yamlInput, {
+			releaseFolder: release.folder,
+			manifest
+		});
 		if (!formatResult.ok) {
 			showToast(formatResult.message);
 			return;
 		}
 		yamlInput = formatResult.formatted;
+		const docLabel = `document${formatResult.docCount !== 1 ? 's' : ''}`;
 		showToast(
-			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}`
+			`Formatted ${formatResult.docCount} ${docLabel}${formatFixSummary(formatResult.fixes)}`
 		);
 		void runValidation();
 	}
@@ -250,7 +261,7 @@
 				YAML Bundle Validator
 			</h1>
 			<p class="homepage-subtitle text-slate-400">
-				Paste or upload multiple Kubernetes-style manifests (<code class="text-slate-300">---</code>
+				Paste multiple Kubernetes-style manifests (<code class="text-slate-300">---</code>
 				separated). Each document is validated against Nokia EDA CRD schemas — required fields,
 				types, deprecated API versions, and unknown fields only.
 			</p>

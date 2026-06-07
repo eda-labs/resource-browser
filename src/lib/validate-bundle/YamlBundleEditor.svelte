@@ -61,21 +61,6 @@
 			>
 				{formatLabel}
 			</button>
-			<label class="yaml-toolbar-btn yaml-upload-btn">
-				<input
-					type="file"
-					accept=".yaml,.yml,text/yaml"
-					class="sr-only"
-					on:change={(e) => {
-						const file = (e.currentTarget as HTMLInputElement).files?.[0];
-						if (!file) return;
-						void file.text().then((text) => {
-							value = text;
-						});
-					}}
-				/>
-				Upload
-			</label>
 		</div>
 	</div>
 
@@ -167,11 +152,6 @@
 	.yaml-toolbar-btn:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
-	}
-
-	.yaml-upload-btn {
-		display: inline-flex;
-		align-items: center;
 	}
 
 	.yaml-editor-body {
