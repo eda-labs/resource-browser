@@ -1,7 +1,9 @@
+deprecated: true
+deprecationWarning: This version is deprecated and will no longer be supported in the next version.
 name: v1alpha1
 schema:
   openAPIV3Schema:
-    description: Export is the Schema for the exports API
+    description: ClusterExport is the Schema for the clusterexports API
     properties:
       apiVersion:
         description: |-
@@ -21,30 +23,32 @@ schema:
       metadata:
         type: object
       spec:
-        description: ExportSpec defines the desired state of Export
+        description: ClusterExportSpec defines the desired state of ClusterExport
         properties:
-          exports:
-            description: Exports is the list of metrics and their sources to be exposed to Prometheus
+          destinations:
+            description: List of remote destination names where metrics will be written.
             items:
-              description: Metric defines a metric to be exported
+              type: string
+            type: array
+          exports:
+            description: |-
+              List of metrics and their sources to be written to a remote server.
+              Metrics will be sent using the Prometheus remote write protocol.
+            items:
               properties:
                 fields:
-                  description: An optional set of fields to be exposed by this export.
+                  description: Optional set of fields to be exposed by this export.
                   items:
                     type: string
                   type: array
+                interval:
+                  description: Period defines the frequency at which the metric is polled.
+                  type: string
                 labels:
-                  description: |-
-                    Labels allows to add labels to the generated metrics,
-                    either statically (predefined set of label/value) or
-                    dynamically based on a path+field
-                    retrieved from EDB.
+                  description: Allows adding static or dynamic labels to the metrics.
                   properties:
                     dynamic:
-                      description: |-
-                        DynamicLabels defines a list of dynamic labels to add to the metrics.
-                        The only supported dynamic source is a path+field from SA.
-                        The regex and replacement are used to extract the Label value from SA response.
+                      description: List of dynamic labels to add to the metrics, based on a state DB path.
                       items:
                         properties:
                           field:
@@ -62,14 +66,12 @@ schema:
                         type: object
                       type: array
                     static:
-                      description: |-
-                        StaticLabels defines a list of static labels and values to
-                        be added to the default labels of the generated metric.
+                      description: List of static labels to add to the metrics.
                       items:
                         properties:
                           name:
                             description: Label name.
-                            pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
+                            pattern: '[a-zA-Z_][a-zA-Z0-9_]*'
                             type: string
                           value:
                             description: Label value.
@@ -78,41 +80,33 @@ schema:
                       type: array
                   type: object
                 mappings:
-                  description: |-
-                    Mappings are a set of rules used to map metrics values to values
-                    that can be ingested by Prometheus, e.g: DOWN->1, UP->2
+                  description: Rules for mapping metric values (e.g., DOWN -> 1, UP -> 2).
                   items:
                     properties:
                       destination:
-                        description: |-
-                          Destination defines the new value.
-                          It can be a regular expression with replacement groups.
-                          Its data type must be convertible to a float64.
+                        description: The new value for the mapped source (must convert to float64).
                         pattern: ^-?\d+(\.\d+)?([eE][+-]?\d+)?$
                         type: string
                       source:
-                        description: |-
-                          Source defines the value to be mapped.
-                          It can be a regular expression with capture groups.
+                        description: The value to be mapped (supports regex with capture groups).
                         type: string
                     type: object
                   type: array
                 metricName:
-                  description: metric name renaming regex and replacement
+                  description: Regex and replacement for renaming the metric name.
                   properties:
                     regex:
-                      description: A regular expression to be applied to the metric name
+                      description: Regular expression for the metric name transformation.
                       type: string
                     replacement:
-                      description: A regular expression replacement to be applied to the metric name
+                      description: Replacement string for the transformed metric name.
                       type: string
                   type: object
+                mode:
+                  description: 'Mode defines how the metric is collected: periodic, on-change, or periodic-on-change.'
+                  type: string
                 path:
                   description: The state DB path to export, in the format '.namespace.node.srl.interface'
-                  type: string
-                prefix:
-                  description: An optional prefix to add to all metrics exposed by this export, for example 'interface'
-                  pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
                   type: string
                 resource:
                   description: |-
@@ -145,22 +139,18 @@ schema:
                       type: string
                   type: object
                 where:
-                  description: A where clause to use for the query, e.g. 'oper-state = down'. You can omit enclosing parentheses.
+                  description: Condition for filtering the metric (e.g., 'oper-state = down').
                   type: string
               type: object
             type: array
-          group:
-            description: Metric group, defines the collector the metrics belong to.
-            pattern: ^[a-zA-Z0-9._~-]$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-]$|^[a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$
-            type: string
         required:
           - exports
         type: object
       status:
-        description: ExportStatus defines the observed state of Export
+        description: ClusterExportStatus defines the observed state of ClusterExport
         type: object
     type: object
 served: true
-storage: true
+storage: false
 subresources:
   status: {}

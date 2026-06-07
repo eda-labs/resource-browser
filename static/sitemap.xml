@@ -253,6 +253,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/allocations.netbox.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/analyzealarms.interfaces.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -337,7 +343,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/applyallocations.netbox.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/applytopologies.netbox.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/applytopologies.netbox.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2539,7 +2557,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterconsumers.kafkaimporter.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterdestinations.remotewrite.eda.nokia.com/v1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterdestinations.remotewrite.eda.nokia.com/v1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2551,7 +2581,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterdestinations.remotewrite.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterdestinations.snmp.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterdestinations.snmp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2629,7 +2671,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterexports.influxdb.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterexports.nats.eda.nokia.com/v1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterexports.nats.eda.nokia.com/v1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2641,7 +2695,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterexports.nats.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterexports.remotewrite.eda.nokia.com/v1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterexports.remotewrite.eda.nokia.com/v1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2653,7 +2719,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterexports.remotewrite.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clustergithubactions.github.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clustergithubactions.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2665,7 +2743,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clustergithubinstances.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clustergithubissues.github.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clustergithubissues.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2677,13 +2767,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clustergitlabinstances.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clustergitlabissues.gitlab.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clustergitlabissues.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clustergitlabpipelines.gitlab.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clustergitlabpipelines.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2701,6 +2809,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterincidents.snow.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterinstances.snow.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -2713,7 +2827,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterinstances.snow.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clustermetricexports.otlp.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clustermetricexports.otlp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2725,13 +2851,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusternotifiers.notifiers.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterpagers.pagers.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterpagers.pagers.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterproducers.kafka.eda.nokia.com/v1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterproducers.kafka.eda.nokia.com/v1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2779,7 +2923,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterproviders.notifiers.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterpublishers.nats.eda.nokia.com/v1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterpublishers.nats.eda.nokia.com/v1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2791,7 +2947,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterpublishers.nats.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterreceivers.otlp.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterreceivers.otlp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2857,7 +3025,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterservers.influxdb.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clusterstandardouts.stdout.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clusterstandardouts.stdout.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2869,7 +3049,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/clustersubscribers.natsimporter.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/clustertrapgroups.snmp.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/clustertrapgroups.snmp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3271,7 +3463,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/connectaudits.connect.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/connectaudits.connect.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/connectaudits.connect.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3283,7 +3487,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/connectinterfaces.connect.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/connectinterfaces.connect.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/connectinterfaces.connect.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3295,7 +3511,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/connectpluginactionables.connect.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/connectpluginactionables.connect.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/connectpluginactionables.connect.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3307,7 +3535,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/connectpluginheartbeats.connect.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/connectpluginheartbeats.connect.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/connectpluginheartbeats.connect.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3319,13 +3559,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/connectplugins.connect.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/connectplugins.connect.eda.nokia.com/v2</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/connectplugins.connect.eda.nokia.com/v2?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/consumers.kafkaimporter.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/consumers.kafkaimporter.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3547,6 +3805,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/creategithubissues.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/creategitlabissues.gitlab.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -3554,6 +3818,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/creategitlabissues.gitlab.eda.nokia.com/v1alpha1?release=25.12.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/creategitlabissues.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5059,13 +5329,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/destinations.remotewrite.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/destinations.remotewrite.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/destinations.remotewrite.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/destinations.snmp.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/destinations.snmp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6217,13 +6505,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/exports.influxdb.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/exports.nats.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/exports.nats.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/exports.nats.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/exports.nats.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6259,7 +6565,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/exports.remotewrite.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/exports.remotewrite.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/exports.remotewrite.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6871,6 +7189,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/githubactions.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/githubinstances.github.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -6878,6 +7202,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/githubinstances.github.eda.nokia.com/v1alpha1?release=25.12.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/githubinstances.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6895,6 +7225,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/githubissues.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/gitlabinstances.gitlab.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -6902,6 +7238,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/gitlabinstances.gitlab.eda.nokia.com/v1alpha1?release=25.12.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/gitlabinstances.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6919,6 +7261,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/gitlabissues.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/gitlabpipelines.gitlab.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -6926,6 +7274,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/gitlabpipelines.gitlab.eda.nokia.com/v1alpha1?release=25.12.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/gitlabpipelines.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7219,6 +7573,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/incidents.snow.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/indexallocationpools.core.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -7465,6 +7825,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/instances.netbox.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/instances.snow.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -7472,6 +7838,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/instances.snow.eda.nokia.com/v1alpha1?release=25.12.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/instances.snow.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8863,6 +9235,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/metricexports.otlp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/microsegmentationpolicies.microsegmentation.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -9937,13 +10315,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/notifiers.notifiers.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/nsxplugininstances.nsx.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/nsxplugininstances.nsx.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/nsxplugininstances.nsx.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/nsxplugininstances.nsx.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -10087,7 +10483,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/nutanixplugininstances.nutanix.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/nutanixplugininstances.nutanix.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/nutanixplugininstances.nutanix.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -10430,6 +10838,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/pagers.pagers.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/pagers.pagers.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -11113,6 +11527,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/producers.kafka.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/producers.kafka.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -11155,13 +11575,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/providers.notifiers.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/publishers.nats.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/publishers.nats.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/publishers.nats.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/publishers.nats.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -11282,6 +11720,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/receivers.otlp.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/receivers.otlp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -12571,6 +13015,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/rungithubworkflows.github.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/rungitlabpipelines.gitlab.eda.nokia.com/v1alpha1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -12578,6 +13028,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/rungitlabpipelines.gitlab.eda.nokia.com/v1alpha1?release=25.12.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/rungitlabpipelines.gitlab.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -12649,6 +13105,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/servers.influxdb.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/setupenvs.environment.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -12715,7 +13177,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/sflows.flowsampling.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/sflowstates.flowsampling.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/sflowstates.flowsampling.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -12944,6 +13418,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/standardouts.stdout.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/standardouts.stdout.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -13232,6 +13712,12 @@
   </url>
   <url>
     <loc>https://resource-browser-92y.pages.dev/subscribers.natsimporter.eda.nokia.com/v1alpha1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/subscribers.natsimporter.eda.nokia.com/v1alpha1?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -14431,6 +14917,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/trapgroups.snmp.eda.nokia.com/v1alpha1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/udpproxies.core.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -15031,13 +15523,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/vmwareedamanagedbridgedomains.vmware.eda.nokia.com/v2?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/vmwareplugininstances.vmware.eda.nokia.com/v1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://resource-browser-92y.pages.dev/vmwareplugininstances.vmware.eda.nokia.com/v1?release=26.4.1</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://resource-browser-92y.pages.dev/vmwareplugininstances.vmware.eda.nokia.com/v2</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://resource-browser-92y.pages.dev/vmwareplugininstances.vmware.eda.nokia.com/v2?release=26.4.1</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

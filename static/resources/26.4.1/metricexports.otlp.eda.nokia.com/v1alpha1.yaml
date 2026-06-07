@@ -1,7 +1,7 @@
 name: v1alpha1
 schema:
   openAPIV3Schema:
-    description: Export is the Schema for the exports API
+    description: MetricExport is the Schema for the metricexports API
     properties:
       apiVersion:
         description: |-
@@ -21,34 +21,23 @@ schema:
       metadata:
         type: object
       spec:
-        description: ExportSpec defines the desired state of Export
+        description: MetricExportSpec defines the desired state of MetricExport
         properties:
           exports:
-            description: Exports is the list of metrics and their sources to be exposed to Prometheus
+            description: |-
+              List of metrics and their sources to be written to a remote server.
+              Metrics will be sent using the Prometheus remote write protocol.
             items:
-              description: Metric defines a metric to be exported
               properties:
-                fields:
-                  description: An optional set of fields to be exposed by this export.
-                  items:
-                    type: string
-                  type: array
-                labels:
-                  description: |-
-                    Labels allows to add labels to the generated metrics,
-                    either statically (predefined set of label/value) or
-                    dynamically based on a path+field
-                    retrieved from EDB.
+                attributes:
+                  description: Allows adding static or dynamic attributes to the metrics.
                   properties:
                     dynamic:
-                      description: |-
-                        DynamicLabels defines a list of dynamic labels to add to the metrics.
-                        The only supported dynamic source is a path+field from SA.
-                        The regex and replacement are used to extract the Label value from SA response.
+                      description: List of dynamic attributes to add to the metrics, based on a state DB path.
                       items:
                         properties:
                           field:
-                            description: The field name to add as a label
+                            description: The field name to add as a attribute
                             type: string
                           path:
                             description: The state DB path to export, in the format '.node.srl.interface'
@@ -62,102 +51,117 @@ schema:
                         type: object
                       type: array
                     static:
-                      description: |-
-                        StaticLabels defines a list of static labels and values to
-                        be added to the default labels of the generated metric.
+                      description: List of static attributes to add to the metrics.
                       items:
                         properties:
+                          metricAttribute:
+                            description: Metric Attribute
+                            type: boolean
                           name:
-                            description: Label name.
-                            pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
+                            description: Attribute name.
+                            pattern: '[a-zA-Z_][a-zA-Z0-9_]*'
                             type: string
                           value:
-                            description: Label value.
+                            description: Attribute value.
                             type: string
                         type: object
                       type: array
                   type: object
+                fields:
+                  description: Optional set of fields to be exposed by this export.
+                  items:
+                    properties:
+                      name:
+                        description: The name of the field.
+                        type: string
+                      type:
+                        default: Gauge
+                        description: The type of the field.
+                        enum:
+                          - Gauge
+                          - Sum
+                        type: string
+                    type: object
+                  type: array
+                interval:
+                  description: Period defines the frequency at which the metric is polled.
+                  type: string
                 mappings:
-                  description: |-
-                    Mappings are a set of rules used to map metrics values to values
-                    that can be ingested by Prometheus, e.g: DOWN->1, UP->2
+                  description: Rules for mapping metric values (e.g., DOWN -> 1, UP -> 2).
                   items:
                     properties:
                       destination:
-                        description: |-
-                          Destination defines the new value.
-                          It can be a regular expression with replacement groups.
-                          Its data type must be convertible to a float64.
+                        description: The new value for the mapped source (must convert to float64).
                         pattern: ^-?\d+(\.\d+)?([eE][+-]?\d+)?$
                         type: string
                       source:
-                        description: |-
-                          Source defines the value to be mapped.
-                          It can be a regular expression with capture groups.
+                        description: The value to be mapped (supports regex with capture groups).
                         type: string
                     type: object
                   type: array
                 metricName:
-                  description: metric name renaming regex and replacement
+                  description: Regex and replacement for renaming the metric name.
                   properties:
                     regex:
-                      description: A regular expression to be applied to the metric name
+                      description: Regular expression for the metric name transformation.
                       type: string
                     replacement:
-                      description: A regular expression replacement to be applied to the metric name
+                      description: Replacement string for the transformed metric name.
                       type: string
                   type: object
-                path:
-                  description: The state DB path to export, in the format '.namespace.node.srl.interface'
+                mode:
+                  default: on-change
+                  description: 'Mode defines how the metric is collected: periodic, on-change, or periodic-on-change.'
+                  enum:
+                    - on-change
+                    - periodic
+                    - periodic-on-change
                   type: string
-                prefix:
-                  description: An optional prefix to add to all metrics exposed by this export, for example 'interface'
-                  pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
+                path:
+                  description: The state DB path to export, in the format '.node.srl.interface'
                   type: string
                 resource:
                   description: |-
                     A Custom resource to be used as a source for the metric.
-                    It will generate a metric with the CR labels and a value of 1.
+                    It will generate a metric with the CR attributes and a value of 1.
                   properties:
+                    attributes:
+                      description: |-
+                        List of attributes to include with the metric.
+                        Include all if not set.
+                      items:
+                        type: string
+                      type: array
                     group:
                       description: The CR group such as `core.eda.nokia.com`.
                       type: string
                     kind:
                       description: The CR kind such as `toponode`.
                       type: string
-                    labels:
-                      description: |-
-                        List of labels to include with the metric.
-                        Include all if not set.
-                      items:
-                        type: string
-                      type: array
                     name:
                       description: |-
                         CR name to be queried.
                         Get all of not set.
-                      type: string
-                    namespace:
-                      description: The CR namespace, it defaults to all if not specified.
                       type: string
                     version:
                       description: The CR version such as `v1` or `v1alpha1`.
                       type: string
                   type: object
                 where:
-                  description: A where clause to use for the query, e.g. 'oper-state = down'. You can omit enclosing parentheses.
+                  description: Condition for filtering the metric (e.g., 'oper-state = down').
                   type: string
               type: object
             type: array
-          group:
-            description: Metric group, defines the collector the metrics belong to.
-            pattern: ^[a-zA-Z0-9._~-]$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-]$|^[a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$|^[a-zA-Z0-9._~-][a-zA-Z0-9.~-][a-zA-Z0-9._~-]+$
-            type: string
+          receivers:
+            description: List of remote destination names where metrics will be written.
+            items:
+              type: string
+            type: array
         required:
           - exports
         type: object
       status:
-        description: ExportStatus defines the observed state of Export
+        description: MetricExportStatus defines the observed state of MetricExport
         type: object
     type: object
 served: true
