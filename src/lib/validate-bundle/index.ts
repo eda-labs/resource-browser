@@ -58,7 +58,7 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 		releaseLabel,
 		manifest
 	);
-	const edaIssues = validateEdaRules(resources, releaseLabel);
+	const edaIssues = validateEdaRules(resources);
 
 	const issues = [...schemaIssues, ...edaIssues];
 	const summary = buildSummary(issues, resources.length);

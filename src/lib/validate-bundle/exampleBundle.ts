@@ -4,8 +4,6 @@ kind: Topology
 metadata:
   name: lab-topology
   namespace: eda
-  labels:
-    app.eda.nokia.com/managed: "true"
 spec:
   enabled: true
   uiName: Lab Topology
@@ -18,8 +16,6 @@ kind: TopoNode
 metadata:
   name: leaf-01
   namespace: eda
-  labels:
-    app.eda.nokia.com/managed: "true"
 spec:
   platform: 7220 IXR-D3L
   operatingSystem: srl
@@ -32,8 +28,6 @@ kind: Interface
 metadata:
   name: ethernet-1-1
   namespace: eda
-  labels:
-    app.eda.nokia.com/managed: "true"
 spec:
   enabled: true
   type: Interface

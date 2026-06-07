@@ -184,10 +184,12 @@
 	}
 
 	function issueCategoryLabel(issue: BundleIssue): string | null {
-		if (issue.rule === 'recommended-label') return 'Recommended label';
-		if (issue.category === 'schema') return 'Schema';
-		if (issue.rule === 'deprecated-api-version') return 'Deprecated';
-		if (issue.category === 'eda') return 'EDA rule';
+		if (issue.category === 'schema') {
+			if (/\bdeprecated\b/i.test(issue.message)) return 'Schema · Deprecated';
+			if (issue.message.includes('Unknown field')) return 'Schema · Unknown field';
+			return 'Schema';
+		}
+		if (issue.category === 'eda') return 'EDA · Manifest';
 		return null;
 	}
 
@@ -224,7 +226,8 @@
 			</h1>
 			<p class="homepage-subtitle text-slate-400">
 				Paste or upload multiple Kubernetes-style manifests (<code class="text-slate-300">---</code>
-				separated). Each document is validated independently against Nokia EDA CRD schemas.
+				separated). Each document is validated against Nokia EDA CRD schemas — required fields,
+				types, deprecated API versions, and unknown fields only.
 			</p>
 		</section>
 
@@ -266,8 +269,12 @@
 			{#if result}
 				<div class="validate-bundle-stats" role="status" aria-live="polite">
 					<span>{result.summary.resourceCount} document{result.summary.resourceCount !== 1 ? 's' : ''}</span>
-					<span class="text-red-400">{result.summary.errorCount} error{result.summary.errorCount !== 1 ? 's' : ''}</span>
-					<span class="text-amber-400">{result.summary.warningCount} warning{result.summary.warningCount !== 1 ? 's' : ''}</span>
+					{#if result.summary.errorCount > 0}
+						<span class="text-red-400">{result.summary.errorCount} error{result.summary.errorCount !== 1 ? 's' : ''}</span>
+					{/if}
+					{#if result.summary.warningCount > 0}
+						<span class="text-amber-400">{result.summary.warningCount} warning{result.summary.warningCount !== 1 ? 's' : ''}</span>
+					{/if}
 					{#if result.valid}
 						<span class="text-green-400">All documents valid</span>
 					{/if}
