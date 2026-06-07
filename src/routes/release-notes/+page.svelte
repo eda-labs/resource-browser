@@ -201,7 +201,7 @@
 	/>
 </svelte:head>
 
-<div class="rn-page">
+<div class="rn-page release-notes-page">
 	<AppHeader fixed={false} />
 
 	<div class="rn-shell">
@@ -690,59 +690,53 @@
 														class="rn-deprec-chevron"
 														class:rn-deprec-chevron--open={isModifiedExpanded(r.kind)}>▸</span
 													>
-													<code>{r.kind}</code>
+													<code class="rn-code-kind">{r.kind}</code>
 													<span class="rn-muted"
 														>{r.changes.length} change{r.changes.length !== 1 ? 's' : ''}</span
 													>
 												</button>
 												{#if isModifiedExpanded(r.kind)}
-													<div class="rn-mod-table-wrap">
-														<table class="rn-mod-table">
-															<thead>
-																<tr>
-																	<th>Field</th>
-																	<th>Change</th>
-																	<th>Before</th>
-																	<th>After</th>
-																	<th>Impact</th>
-																</tr>
-															</thead>
-															<tbody>
-																{#each r.changes as c, j (`${r.kind}-${c.field}-${j}`)}
-																	{@const col = CHANGE_COLORS[c.changeType] ?? '#888'}
-																	<tr>
-																		<td><code>{c.field}</code></td>
-																		<td>
-																			<span
-																				class="rn-pill"
-																				style:background="{col}22"
-																				style:color={col}
-																			>
-																				{c.changeType.replace(/_/g, ' ')}
-																			</span>
-																			{#if HIGH_RISK_CHANGE_TYPES.has(c.changeType)}
-																				<span class="rn-pill rn-pill--breaking">high risk</span>
-																			{/if}
-																		</td>
-																		<td>
-																			{#if c.before}
-																				<code class="rn-val-before">{c.before}</code>
-																			{:else}
-																				<span class="rn-muted">—</span>
-																			{/if}
-																		</td>
-																		<td>
-																			{#if c.after}
-																				<code class="rn-val-after">{c.after}</code>
-																			{:else}
-																				<span class="rn-muted">—</span>
-																			{/if}
-																		</td>
-																		<td class="rn-mod-impact">{c.networkBehavior}</td>
-																	</tr>
-																{/each}
-															</tbody>
-														</table>
+													<div class="rn-mod-group-body">
+														{#each r.changes as c, j (`${r.kind}-${c.field}-${j}`)}
+															{@const col = CHANGE_COLORS[c.changeType] ?? '#888'}
+															<div class="rn-mod-change-card">
+																<div class="rn-mod-change-head">
+																	<code class="rn-mod-field">{c.field}</code>
+																	<span
+																		class="rn-mod-change-badge"
+																		style:background="{col}22"
+																		style:color={col}
+																		style:border-color="{col}66"
+																	>
+																		{c.changeType.replace(/_/g, ' ')}
+																	</span>
+																	{#if HIGH_RISK_CHANGE_TYPES.has(c.changeType)}
+																		<span class="rn-pill rn-pill--breaking">high risk</span>
+																	{/if}
+																</div>
+																<div class="rn-mod-values">
+																	<div class="rn-mod-val-row">
+																		<span class="rn-mod-val-label">Before</span>
+																		{#if c.before}
+																			<code class="rn-val-before">{c.before}</code>
+																		{:else}
+																			<span class="rn-muted">—</span>
+																		{/if}
+																	</div>
+																	<div class="rn-mod-val-row">
+																		<span class="rn-mod-val-label">After</span>
+																		{#if c.after}
+																			<code class="rn-val-after">{c.after}</code>
+																		{:else}
+																			<span class="rn-muted">—</span>
+																		{/if}
+																	</div>
+																</div>
+																{#if c.networkBehavior}
+																	<p class="rn-mod-impact-text">{c.networkBehavior}</p>
+																{/if}
+															</div>
+														{/each}
 													</div>
 												{/if}
 											</div>
@@ -863,7 +857,7 @@
 		--rn-danger-fg: #ff7b72;
 		--rn-breaking-bg: #161b22;
 		--rn-breaking-border: #8b3a3a;
-		--rn-deprec-bg: #161b22;
+		--rn-deprec-bg: #1c2128;
 		--rn-deprec-border: #6e5a1f;
 		--rn-new-bg: rgb(99 153 34 / 0.1);
 		--rn-new-border: rgb(99 153 34 / 0.35);

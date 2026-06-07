@@ -3945,3 +3945,317 @@ html:not(.dark) .react-select__menu {
 .dep-map-svg-inner .dep-node-label-bg {
 	filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.08));
 }
+
+/* ============================================
+   RELEASE NOTES — Deprecated & Modified tabs
+   Unscoped overrides (scoped Svelte CSS loses to
+   body Tailwind dark:text-* inheritance on buttons)
+   ============================================ */
+
+/* --- Deprecated tab --- */
+.release-notes-page .rn-deprec-card {
+	background: #ffffff;
+	border: 1px solid #f0d080;
+}
+
+html.dark .release-notes-page .rn-deprec-card {
+	background: #1c2128;
+	border-color: #6e5a1f;
+}
+
+.release-notes-page .rn-deprec-card-head {
+	color: #1f2328;
+}
+
+html.dark .release-notes-page .rn-deprec-card-head {
+	color: #f0f6fc;
+}
+
+.release-notes-page .rn-deprec-kind {
+	color: #1f2328;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.4;
+	word-break: break-word;
+}
+
+html.dark .release-notes-page .rn-deprec-kind {
+	color: #f0f6fc;
+}
+
+.release-notes-page .rn-deprec-group {
+	color: #656d76;
+	font-size: 13px;
+	font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+	line-height: 1.5;
+	word-break: break-all;
+}
+
+html.dark .release-notes-page .rn-deprec-group {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-deprec-count {
+	color: #656d76;
+	font-size: 13px;
+}
+
+html.dark .release-notes-page .rn-deprec-count {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-deprec-chevron {
+	color: #656d76;
+}
+
+html.dark .release-notes-page .rn-deprec-chevron {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-deprec-label {
+	color: #656d76;
+}
+
+html.dark .release-notes-page .rn-deprec-label {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-deprec-chip {
+	background: #f8fafc;
+	border: 1px solid #f0d080;
+	color: #424a53;
+}
+
+html.dark .release-notes-page .rn-deprec-chip {
+	background: #161b22;
+	border-color: #6e5a1f;
+	color: #e6edf3;
+}
+
+.release-notes-page .rn-deprec-chip-key {
+	color: #656d76;
+}
+
+html.dark .release-notes-page .rn-deprec-chip-key {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-deprec-chip-val {
+	color: #1f2328;
+	background: transparent;
+}
+
+html.dark .release-notes-page .rn-deprec-chip-val {
+	color: #f0f6fc;
+}
+
+.release-notes-page .rn-deprec-recommended {
+	color: #1a7f37;
+}
+
+html.dark .release-notes-page .rn-deprec-recommended {
+	color: #3fb950;
+}
+
+.release-notes-page .rn-deprec-removed {
+	color: #424a53;
+}
+
+html.dark .release-notes-page .rn-deprec-removed {
+	color: #e6edf3;
+}
+
+.release-notes-page .rn-deprec-migration {
+	width: 100%;
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	word-break: break-word;
+	color: #424a53;
+}
+
+html.dark .release-notes-page .rn-deprec-migration {
+	color: #e6edf3;
+}
+
+.release-notes-page .rn-deprec-summary-text {
+	color: #424a53;
+}
+
+html.dark .release-notes-page .rn-deprec-summary-text {
+	color: #e6edf3;
+}
+
+.release-notes-page .rn-deprec-card-body {
+	border-top-color: #f0d080;
+}
+
+html.dark .release-notes-page .rn-deprec-card-body {
+	border-top-color: #6e5a1f;
+}
+
+/* --- Modified tab (card layout) --- */
+.release-notes-page .rn-mod-group {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+}
+
+html.dark .release-notes-page .rn-mod-group {
+	background: #1c2128;
+	border-color: #30363d;
+}
+
+.release-notes-page .rn-mod-head--btn {
+	color: #1f2328;
+}
+
+html.dark .release-notes-page .rn-mod-head--btn {
+	color: #f0f6fc;
+}
+
+.release-notes-page .rn-mod-head--btn .rn-code-kind {
+	color: #1f2328;
+	font-size: 16px;
+	font-weight: 700;
+}
+
+html.dark .release-notes-page .rn-mod-head--btn .rn-code-kind {
+	color: #f0f6fc;
+}
+
+.release-notes-page .rn-mod-head--btn .rn-muted {
+	color: #656d76;
+}
+
+html.dark .release-notes-page .rn-mod-head--btn .rn-muted {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-mod-group-body {
+	padding: 12px 16px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	border-top: 1px solid #e2e8f0;
+}
+
+html.dark .release-notes-page .rn-mod-group-body {
+	border-top-color: #30363d;
+}
+
+.release-notes-page .rn-mod-change-card {
+	padding: 12px;
+	border-radius: 8px;
+	border: 1px solid #e2e8f0;
+	background: #f8fafc;
+}
+
+html.dark .release-notes-page .rn-mod-change-card {
+	border-color: #30363d;
+	background: #161b22;
+}
+
+.release-notes-page .rn-mod-change-head {
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.release-notes-page .rn-mod-field {
+	flex: 1;
+	min-width: 0;
+	font-size: 14px;
+	font-weight: 600;
+	word-break: break-all;
+	color: #1f2328;
+	background: transparent;
+}
+
+html.dark .release-notes-page .rn-mod-field {
+	color: #f0f6fc;
+}
+
+.release-notes-page .rn-mod-change-badge {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 3px 8px;
+	border-radius: 4px;
+	border: 1px solid;
+	text-transform: uppercase;
+	line-height: 1.3;
+	flex-shrink: 0;
+}
+
+.release-notes-page .rn-mod-values {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.release-notes-page .rn-mod-val-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 8px;
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.release-notes-page .rn-mod-val-label {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	min-width: 52px;
+	flex-shrink: 0;
+	color: #656d76;
+}
+
+html.dark .release-notes-page .rn-mod-val-label {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-val-before {
+	color: #cf222e;
+	font-size: 13px;
+	word-break: break-all;
+	background: transparent;
+}
+
+html.dark .release-notes-page .rn-val-before {
+	color: #ff7b72;
+}
+
+.release-notes-page .rn-val-after {
+	color: #1a7f37;
+	font-size: 13px;
+	word-break: break-all;
+	background: transparent;
+}
+
+html.dark .release-notes-page .rn-val-after {
+	color: #3fb950;
+}
+
+.release-notes-page .rn-mod-impact-text {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	color: #656d76;
+}
+
+html.dark .release-notes-page .rn-mod-impact-text {
+	color: #b1bac4;
+}
+
+.release-notes-page .rn-mod-group .rn-muted {
+	color: #656d76;
+	font-size: 13px;
+}
+
+html.dark .release-notes-page .rn-mod-group .rn-muted {
+	color: #b1bac4;
+}
