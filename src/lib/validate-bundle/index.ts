@@ -10,7 +10,15 @@ import type {
 
 export * from './types';
 export { EXAMPLE_BUNDLE_YAML } from './exampleBundle';
-export { formatYamlBundle } from './formatYaml';
+export {
+	formatYamlBundle,
+	fixDocumentData,
+	fixYamlDocuments,
+	formatFixSummary,
+	type FixKind,
+	type FixReport,
+	type FormatYamlOptions
+} from './formatYaml';
 
 function buildSummary(issues: BundleIssue[], resourceCount: number): BundleValidationSummary {
 	return {

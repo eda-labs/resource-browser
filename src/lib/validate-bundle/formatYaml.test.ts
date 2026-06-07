@@ -1,8 +1,56 @@
-import { describe, expect, it } from 'vitest';
-import { formatYamlBundle } from './formatYaml';
+import { describe, expect, it, vi } from 'vitest';
+import { fixDocumentData, formatFixSummary, formatYamlBundle } from './formatYaml';
+import type { SchemaSections } from '$lib/yaml-validation/schemaCache';
+import type { ManifestEntry } from '$lib/yaml-validation/types';
+
+const specSchema = {
+	type: 'object',
+	properties: {
+		operatingSystem: {
+			type: 'string',
+			enum: ['srl', 'sros', 'eos']
+		},
+		asNumber: {
+			type: 'string'
+		},
+		enabled: {
+			type: 'boolean'
+		}
+	}
+};
+
+const sections: SchemaSections = {
+	spec: specSchema,
+	isSpecRequired: true
+};
+
+vi.mock('$lib/yaml-validation/schemaCache', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('$lib/yaml-validation/schemaCache')>();
+	const mockSections: SchemaSections = {
+		spec: {
+			type: 'object',
+			properties: {
+				operatingSystem: { type: 'string', enum: ['srl', 'sros', 'eos'] },
+				asNumber: { type: 'string' },
+				enabled: { type: 'boolean' }
+			}
+		},
+		isSpecRequired: true
+	};
+	return {
+		...actual,
+		fetchSchemas: vi.fn(async (paths: string[]) => {
+			const map = new Map<string, SchemaSections>();
+			for (const path of paths) {
+				map.set(path, mockSections);
+			}
+			return map;
+		})
+	};
+});
 
 describe('formatYamlBundle', () => {
-	it('reformats messy indentation to 2-space CRD layout with apiVersion first', () => {
+	it('reformats messy indentation to 2-space CRD layout with apiVersion first', async () => {
 		const messy = `kind: Configlet
 apiVersion: config.eda.nokia.com/v1
 metadata:
@@ -12,11 +60,12 @@ spec:
     config: hello
 `;
 
-		const result = formatYamlBundle(messy);
+		const result = await formatYamlBundle(messy);
 		expect(result.ok).toBe(true);
 		if (!result.ok) return;
 
 		expect(result.docCount).toBe(1);
+		expect(result.fixes).toEqual([]);
 		expect(result.formatted).toMatch(/^apiVersion:/m);
 		expect(result.formatted.indexOf('apiVersion:')).toBeLessThan(result.formatted.indexOf('kind:'));
 		expect(result.formatted.indexOf('kind:')).toBeLessThan(result.formatted.indexOf('metadata:'));
@@ -26,7 +75,7 @@ spec:
 		expect(result.formatted).toMatch(/^ {2}namespace: eda$/m);
 	});
 
-	it('preserves multi-document separators', () => {
+	it('preserves multi-document separators', async () => {
 		const bundle = `kind: Topology
 apiVersion: topologies.eda.nokia.com/v1
 metadata:
@@ -38,7 +87,7 @@ metadata:
   name: leaf-01
 `;
 
-		const result = formatYamlBundle(bundle);
+		const result = await formatYamlBundle(bundle);
 		expect(result.ok).toBe(true);
 		if (!result.ok) return;
 
@@ -47,7 +96,7 @@ metadata:
 		expect(result.formatted.split('---\n')).toHaveLength(2);
 	});
 
-	it('returns error for unparseable YAML without mutating', () => {
+	it('returns error for unparseable YAML without mutating', async () => {
 		const bad = `apiVersion: v1
 kind: Config
 metadata:
@@ -55,13 +104,13 @@ metadata:
   namespace: eda
 `;
 
-		const result = formatYamlBundle(bad);
+		const result = await formatYamlBundle(bad);
 		expect(result.ok).toBe(false);
 		if (result.ok) return;
 		expect(result.message).toBe('Cannot auto-fix: fix syntax first');
 	});
 
-	it('orders metadata fields before spec and status', () => {
+	it('orders metadata fields before spec and status', async () => {
 		const yaml = `status:
   phase: Ready
 spec:
@@ -73,7 +122,7 @@ kind: Configlet
 apiVersion: config.eda.nokia.com/v1
 `;
 
-		const result = formatYamlBundle(yaml);
+		const result = await formatYamlBundle(yaml);
 		expect(result.ok).toBe(true);
 		if (!result.ok) return;
 
@@ -92,5 +141,116 @@ apiVersion: config.eda.nokia.com/v1
 		const nsPos = result.formatted.indexOf('  namespace: eda');
 		expect(namePos).toBeGreaterThan(-1);
 		expect(nsPos).toBeGreaterThan(namePos);
+	});
+});
+
+describe('fixDocumentData', () => {
+	it('fixes enum case mismatches to canonical schema values', () => {
+		const data = {
+			apiVersion: 'config.eda.nokia.com/v1',
+			kind: 'Configlet',
+			metadata: { name: 'test', namespace: 'eda' },
+			spec: { operatingSystem: 'SRL' }
+		};
+
+		const { data: fixed, fixes } = fixDocumentData(data, sections, 1);
+
+		expect((fixed.spec as Record<string, unknown>).operatingSystem).toBe('srl');
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0]).toMatchObject({
+			kind: 'enumCase',
+			path: 'spec.operatingSystem',
+			from: 'SRL',
+			to: 'srl',
+			docIndex: 1
+		});
+	});
+
+	it('coerces numeric values to strings when schema expects string', () => {
+		const data = {
+			apiVersion: 'config.eda.nokia.com/v1',
+			kind: 'Configlet',
+			metadata: { name: 'test', namespace: 'eda' },
+			spec: { asNumber: 65000 }
+		};
+
+		const { data: fixed, fixes } = fixDocumentData(data, sections, 1);
+
+		expect((fixed.spec as Record<string, unknown>).asNumber).toBe('65000');
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0]).toMatchObject({
+			kind: 'stringCoercion',
+			path: 'spec.asNumber',
+			from: 65000,
+			to: '65000'
+		});
+	});
+
+	it('does not guess enum values without a unique case-insensitive match', () => {
+		const data = {
+			spec: { operatingSystem: 'ios' }
+		};
+
+		const { data: fixed, fixes } = fixDocumentData(data, sections, 1);
+
+		expect((fixed.spec as Record<string, unknown>).operatingSystem).toBe('ios');
+		expect(fixes).toHaveLength(0);
+	});
+
+	it('coerces wrongly-cased boolean strings', () => {
+		const data = {
+			spec: { enabled: 'False' }
+		};
+
+		const { data: fixed, fixes } = fixDocumentData(data, sections, 1);
+
+		expect((fixed.spec as Record<string, unknown>).enabled).toBe(false);
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0].kind).toBe('booleanCoercion');
+	});
+});
+
+const manifest: ManifestEntry[] = [
+	{
+		name: 'configlets.config.eda.nokia.com',
+		kind: 'Configlet',
+		group: 'config.eda.nokia.com',
+		versions: [{ name: 'v1' }]
+	}
+];
+
+describe('formatYamlBundle auto-fix output', () => {
+	it('applies schema fixes and quotes coerced string fields in output', async () => {
+		const yaml = `apiVersion: config.eda.nokia.com/v1
+kind: Configlet
+metadata:
+  name: test
+  namespace: eda
+spec:
+  operatingSystem: SRL
+  asNumber: 65000
+`;
+
+		const result = await formatYamlBundle(yaml, {
+			releaseFolder: 'resources/26.4.2',
+			manifest
+		});
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+
+		expect(result.fixes).toHaveLength(2);
+		expect(result.formatted).toMatch(/operatingSystem: srl/);
+		expect(result.formatted).toMatch(/asNumber: ['"]65000['"]/);
+	});
+});
+
+describe('formatFixSummary', () => {
+	it('summarizes fix counts by category', () => {
+		const summary = formatFixSummary([
+			{ kind: 'enumCase', path: 'spec.os', from: 'SRL', to: 'srl', docIndex: 1 },
+			{ kind: 'enumCase', path: 'spec.type', from: 'EVPN', to: 'evpn', docIndex: 1 },
+			{ kind: 'stringCoercion', path: 'spec.port', from: 65000, to: '65000', docIndex: 2 }
+		]);
+		expect(summary).toBe(', fixed 3 issues (2 enum case, 1 string coercion)');
 	});
 });

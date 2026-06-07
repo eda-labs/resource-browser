@@ -14,7 +14,6 @@
 	import {
 		validateBundle,
 		formatYamlBundle,
-		formatFixSummary,
 		EXAMPLE_BUNDLE_YAML,
 		type BundleIssue,
 		type BundleResource,
@@ -60,25 +59,15 @@
 		}, 3000);
 	}
 
-	async function handleFormatYaml() {
-		if (!release) {
-			showToast('Select a release to apply schema fixes');
-			return;
-		}
-
-		const manifest = (await fetchManifest(release.folder, manifestCache)) || [];
-		const formatResult = await formatYamlBundle(yamlInput, {
-			releaseFolder: release.folder,
-			manifest
-		});
+	function handleFormatYaml() {
+		const formatResult = formatYamlBundle(yamlInput);
 		if (!formatResult.ok) {
 			showToast(formatResult.message);
 			return;
 		}
 		yamlInput = formatResult.formatted;
-		const docLabel = `document${formatResult.docCount !== 1 ? 's' : ''}`;
 		showToast(
-			`Formatted ${formatResult.docCount} ${docLabel}${formatFixSummary(formatResult.fixes)}`
+			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}`
 		);
 		void runValidation();
 	}
