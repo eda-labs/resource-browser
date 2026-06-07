@@ -1,6 +1,7 @@
 import { parseBundleResources } from './parser';
 import { validateBundleSchema } from './schemaValidator';
 import { validateEdaRules } from './edaRules';
+import { isK8sStructuralSchemaIssue, validateK8sRules } from './k8sRules';
 import type {
 	BundleIssue,
 	BundleValidationResult,
@@ -71,16 +72,13 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 		};
 	}
 
-	const schemaIssues = await validateBundleSchema(
-		yamlInput,
-		resources,
-		releaseFolder,
-		releaseLabel,
-		manifest
-	);
+	const k8sIssues = validateK8sRules(resources);
+	const schemaIssues = (
+		await validateBundleSchema(yamlInput, resources, releaseFolder, releaseLabel, manifest)
+	).filter((issue) => !isK8sStructuralSchemaIssue(issue));
 	const edaIssues = validateEdaRules(resources);
 
-	const issues = [...parseIssues, ...schemaIssues, ...edaIssues];
+	const issues = [...parseIssues, ...k8sIssues, ...schemaIssues, ...edaIssues];
 	const summary = buildSummary(issues, resources.length);
 	const valid = summary.errorCount === 0;
 
