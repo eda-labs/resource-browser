@@ -13,6 +13,7 @@
 	import { getLatestVersion } from '$lib/versions';
 	import {
 		validateBundle,
+		formatYamlBundle,
 		EXAMPLE_BUNDLE_YAML,
 		type BundleIssue,
 		type BundleResource,
@@ -34,6 +35,8 @@
 	let modalOpen = false;
 	let modalResource: CrdResource | null = null;
 	let modalVersion: string | null = null;
+	let toast: string | null = null;
+	let toastTimer: ReturnType<typeof setTimeout> | null = null;
 
 	const manifestCache = getManifestCache();
 
@@ -46,6 +49,28 @@
 	}
 
 	$: displayIssues = result?.issues ?? [];
+	$: hasParseError = result?.issues.some((i) => i.id === 'parse-1') ?? false;
+
+	function showToast(message: string) {
+		toast = message;
+		if (toastTimer) clearTimeout(toastTimer);
+		toastTimer = setTimeout(() => {
+			toast = null;
+		}, 3000);
+	}
+
+	function handleFormatYaml() {
+		const formatResult = formatYamlBundle(yamlInput);
+		if (!formatResult.ok) {
+			showToast(formatResult.message);
+			return;
+		}
+		yamlInput = formatResult.formatted;
+		showToast(
+			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}`
+		);
+		void runValidation();
+	}
 
 	function updateURL() {
 		if (!browser) return;
@@ -288,7 +313,9 @@
 					bind:this={editorRef}
 					bind:value={yamlInput}
 					{highlightLine}
+					{hasParseError}
 					on:validate={() => void runValidation()}
+					on:format={handleFormatYaml}
 				/>
 				<p class="validate-bundle-hint">Ctrl+Enter to validate · separate documents with ---</p>
 			</div>
@@ -367,6 +394,10 @@
 		</div>
 	</div>
 </div>
+
+{#if toast}
+	<div class="validate-bundle-toast" role="status">{toast}</div>
+{/if}
 
 {#if release && modalResource}
 	<ResourceModal
@@ -611,5 +642,21 @@
 		padding: 1rem;
 		color: rgb(134 239 172);
 		font-size: 0.875rem;
+	}
+
+	.validate-bundle-toast {
+		position: fixed;
+		bottom: 1.5rem;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 50;
+		border-radius: 0.5rem;
+		border: 1px solid rgb(71 85 105);
+		background: rgb(30 41 59);
+		padding: 0.625rem 1rem;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: rgb(226 232 240);
+		box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
 	}
 </style>

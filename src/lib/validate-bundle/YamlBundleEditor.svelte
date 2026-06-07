@@ -4,12 +4,16 @@
 
 	export let value = '';
 	export let highlightLine: number | null = null;
+	export let hasParseError = false;
 
 	let textareaEl: HTMLTextAreaElement | undefined;
 	let scrollTop = 0;
 	let scrollLeft = 0;
 
-	const dispatch = createEventDispatcher<{ validate: void }>();
+	const dispatch = createEventDispatcher<{ validate: void; format: void }>();
+
+	$: formatLabel = hasParseError ? 'Fix indentation' : 'Format manifests';
+	$: formatDisabled = !value.trim();
 
 	$: lines = value.split('\n');
 	$: lineCount = Math.max(lines.length, 1);
@@ -47,21 +51,32 @@
 <div class="yaml-editor-shell">
 	<div class="yaml-editor-toolbar">
 		<span class="yaml-editor-label">YAML bundle</span>
-		<label class="yaml-upload-btn">
-			<input
-				type="file"
-				accept=".yaml,.yml,text/yaml"
-				class="sr-only"
-				on:change={(e) => {
-					const file = (e.currentTarget as HTMLInputElement).files?.[0];
-					if (!file) return;
-					void file.text().then((text) => {
-						value = text;
-					});
-				}}
-			/>
-			Upload
-		</label>
+		<div class="yaml-editor-toolbar-actions">
+			<button
+				type="button"
+				class="yaml-toolbar-btn"
+				disabled={formatDisabled}
+				title="Re-indent YAML to standard CRD layout (2 spaces)"
+				on:click={() => dispatch('format')}
+			>
+				{formatLabel}
+			</button>
+			<label class="yaml-toolbar-btn yaml-upload-btn">
+				<input
+					type="file"
+					accept=".yaml,.yml,text/yaml"
+					class="sr-only"
+					on:change={(e) => {
+						const file = (e.currentTarget as HTMLInputElement).files?.[0];
+						if (!file) return;
+						void file.text().then((text) => {
+							value = text;
+						});
+					}}
+				/>
+				Upload
+			</label>
+		</div>
 	</div>
 
 	<div class="yaml-editor-body">
@@ -128,7 +143,13 @@
 		letter-spacing: 0.04em;
 	}
 
-	.yaml-upload-btn {
+	.yaml-editor-toolbar-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+	}
+
+	.yaml-toolbar-btn {
 		cursor: pointer;
 		border-radius: 0.375rem;
 		border: 1px solid rgb(71 85 105);
@@ -139,8 +160,18 @@
 		color: rgb(226 232 240);
 	}
 
-	.yaml-upload-btn:hover {
+	.yaml-toolbar-btn:hover:not(:disabled) {
 		background: rgb(51 65 85);
+	}
+
+	.yaml-toolbar-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.yaml-upload-btn {
+		display: inline-flex;
+		align-items: center;
 	}
 
 	.yaml-editor-body {

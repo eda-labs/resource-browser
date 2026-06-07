@@ -11,6 +11,7 @@ import type {
 
 export * from './types';
 export { EXAMPLE_BUNDLE_YAML } from './exampleBundle';
+export { formatYamlBundle } from './formatYaml';
 
 function buildSummary(issues: BundleIssue[], resourceCount: number): BundleValidationSummary {
 	return {
