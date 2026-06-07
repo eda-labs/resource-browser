@@ -33,10 +33,10 @@ export function validateEdaRules(
 		if (!hasEdaLabel && res.kind && res.kind !== 'List') {
 			issues.push({
 				id: nextIssueId(),
-				severity: 'error',
+				severity: 'warning',
 				category: 'eda',
-				rule: 'mandatory-label',
-				message: `Required EDA metadata label missing on ${res.kind} "${res.name}" — add a label under eda.nokia.com/* (e.g. app.eda.nokia.com/managed: "true")`,
+				rule: 'recommended-label',
+				message: `Recommended EDA metadata label missing on ${res.kind} "${res.name}" — add a label under eda.nokia.com/* (e.g. app.eda.nokia.com/managed: "true")`,
 				resourceName: res.name,
 				resourceKind: res.kind,
 				docIndex: res.docIndex + 1,

@@ -184,7 +184,7 @@
 	}
 
 	function issueCategoryLabel(issue: BundleIssue): string | null {
-		if (issue.rule === 'mandatory-label') return 'Mandatory label';
+		if (issue.rule === 'recommended-label') return 'Recommended label';
 		if (issue.category === 'schema') return 'Schema';
 		if (issue.rule === 'deprecated-api-version') return 'Deprecated';
 		if (issue.category === 'eda') return 'EDA rule';

@@ -4,9 +4,9 @@ export type IssueSeverity = 'error' | 'warning' | 'info';
 
 export type IssueCategory = 'schema' | 'eda';
 
-/** Sub-type for EDA manifest rules — distinguishes label requirements from schema required fields. */
+/** Sub-type for EDA manifest rules — distinguishes label guidance from schema required fields. */
 export type EdaIssueRule =
-	| 'mandatory-label'
+	| 'recommended-label'
 	| 'spec-with-status'
 	| 'api-group-pattern'
 	| 'deprecated-api-version'
