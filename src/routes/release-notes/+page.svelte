@@ -19,6 +19,7 @@
 	import HighlightText from '$lib/release-notes/HighlightText.svelte';
 	import {
 		breakingProductionImpact,
+		catalogBrowseHref,
 		changeRowKey,
 		comparisonPageHref,
 		displayNetworkBehavior,
@@ -28,12 +29,13 @@
 		filterNewResources,
 		groupBreakingByKind,
 		groupModifiedByOperationalArea,
+		groupNewResourcesByKind,
+		groupNewResourcesByOperationalArea,
 		humanizeFieldPath,
 		partitionFieldChanges,
 		sortBreakingChanges,
 		sortDeprecatedItems,
 		sortFieldChanges,
-		sortNewResources,
 		statSparkHeights,
 		type ListSortMode
 	} from '$lib/release-notes/presentation';
@@ -886,18 +888,22 @@
 										No new resources in this release
 									</div>
 								{:else}
-									{@const newItems = sortNewResources(
-										filterNewResources(selectedEntry.notes.newResources, newFilter),
+									{@const filteredNew = filterNewResources(
+										selectedEntry.notes.newResources,
+										newFilter
+									)}
+									{@const groupedNew = groupNewResourcesByKind(filteredNew)}
+									{@const newAreaGroups = groupNewResourcesByOperationalArea(
+										groupedNew,
 										newSort
 									)}
+									{@const newApiVersionCount = filteredNew.length}
 									<div class="rn-toolbar">
 										<div class="rn-toolbar-summary">
 											<span class="rn-badge rn-badge--new">New</span>
 											<span class="rn-toolbar-text">
-												{selectedEntry.notes.newResources.length} CRD{selectedEntry.notes
-													.newResources.length !== 1
-													? 's'
-													: ''}
+												{groupedNew.length} resource{groupedNew.length !== 1 ? 's' : ''} ·
+												{newApiVersionCount} apiVersion{newApiVersionCount !== 1 ? 's' : ''}
 											</span>
 										</div>
 										<div class="rn-toolbar-controls">
@@ -909,46 +915,93 @@
 											<input
 												class="rn-search"
 												type="search"
-												placeholder="Filter by kind or apiVersion…"
+												placeholder="Filter kind, group, apiVersion…"
 												bind:value={newFilter}
 												aria-label="Filter new resources"
 											/>
 										</div>
 									</div>
-									{#if newItems.length === 0}
+									{#if groupedNew.length === 0}
 										<div class="rn-empty">No new resources match your filter</div>
 									{:else}
-										<div class="rn-new-grid">
-											{#each newItems as r, i (`${r.kind}-${r.apiVersion}-${i}`)}
-												<div class="rn-card rn-new-card">
-													<div class="rn-new-card-head">
-														<button
-															type="button"
-															class="rn-kind-link rn-new-kind"
-															onclick={() => openKindModal(r.kind)}
-														>
-															<HighlightText text={r.kind} query={newFilter} />
-														</button>
-														<span class="rn-badge rn-badge--new">New</span>
-													</div>
-													<div class="rn-api-version-row">
-														<span class="rn-api-version">
-															<HighlightText text={r.apiVersion} query={newFilter} />
-														</span>
-														<button
-															type="button"
-															class="rn-chip-copy"
-															onclick={() => copyText(r.apiVersion, 'apiVersion')}
-														>
-															copy
-														</button>
-													</div>
-													<p class="rn-prose rn-prose--sm">
-														<HighlightText text={r.description} query={newFilter} />
-													</p>
+										{#each newAreaGroups as og (og.area)}
+											<section class="rn-area-section">
+												<h3 class="rn-area-title">
+													{og.area}
+													<span class="rn-area-count">{og.resources.length}</span>
+												</h3>
+												<div class="rn-new-list">
+													{#each og.resources as r (r.kind)}
+														<article class="rn-new-card">
+															<div class="rn-new-card-layout">
+																<div class="rn-new-card-main">
+																	<button
+																		type="button"
+																		class="rn-new-kind-btn"
+																		onclick={() =>
+																			openKindModal(r.kind, r.group, r.crdName)}
+																	>
+																		<span
+																			class="text-[17px] font-bold leading-snug text-slate-900 dark:text-slate-100"
+																		>
+																			<HighlightText text={r.kind} query={newFilter} />
+																		</span>
+																	</button>
+																	<span
+																		class="mt-0.5 block font-mono text-[13px] text-slate-500 dark:text-slate-400"
+																	>
+																		<HighlightText text={r.group} query={newFilter} />
+																	</span>
+																	<p
+																		class="mb-0 mt-2.5 text-[15px] leading-relaxed text-slate-700 dark:text-slate-200"
+																	>
+																		<HighlightText text={r.description} query={newFilter} />
+																	</p>
+																	<div class="rn-new-actions mt-3">
+																		<a
+																			class="rn-action-link"
+																			href={catalogBrowseHref(
+																				selectedEntry.toVer,
+																				r.crdName
+																			)}
+																		>
+																			Browse in catalog →
+																		</a>
+																	</div>
+																</div>
+
+																<div class="rn-new-card-aside">
+																	{#each r.apiVersions as v (v.apiVersion)}
+																		<span class="rn-new-version-pill">
+																			<span
+																				class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500"
+																				>apiVersion</span
+																			>
+																			<span
+																				class="font-mono text-[13px] font-semibold text-slate-900 dark:text-slate-100"
+																			>
+																				<HighlightText
+																					text={v.apiVersion}
+																					query={newFilter}
+																				/>
+																			</span>
+																			<button
+																				type="button"
+																				class="rn-chip-copy"
+																				onclick={() => copyText(v.apiVersion, 'apiVersion')}
+																			>
+																				copy
+																			</button>
+																			<span class="rn-badge rn-badge--new">NEW</span>
+																		</span>
+																	{/each}
+																</div>
+															</div>
+														</article>
+													{/each}
 												</div>
-											{/each}
-										</div>
+											</section>
+										{/each}
 									{/if}
 								{/if}
 							{:else if activeTab === 4}

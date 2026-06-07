@@ -14,6 +14,8 @@ export type NewResource = {
 	kind: string;
 	apiVersion: string;
 	description: string;
+	group?: string;
+	crdName?: string;
 };
 
 export type RemovedResource = {

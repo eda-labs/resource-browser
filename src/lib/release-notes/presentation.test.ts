@@ -1,15 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import {
 	breakingProductionImpact,
+	deriveGroupFromApiVersion,
 	displayNetworkBehavior,
 	filterDeprecatedItems,
 	groupModifiedByOperationalArea,
+	groupNewResourcesByKind,
+	groupNewResourcesByOperationalArea,
 	highlightSegments,
 	humanizeFieldPath,
 	inferOperationalArea,
 	isPresentationMetadataField,
 	partitionFieldChanges
 } from './presentation';
+import type { NewResource } from './types';
 import type { BreakingChange, FieldChange, ModifiedResource } from './types';
 
 describe('presentation', () => {
@@ -104,5 +108,40 @@ describe('presentation', () => {
 
 	it('infers BGP operational area from kind', () => {
 		expect(inferOperationalArea('BGPPeer', 'protocols.eda.nokia.com')).toBe('BGP');
+	});
+
+	it('derives API group from apiVersion string', () => {
+		expect(deriveGroupFromApiVersion('protocols.eda.nokia.com/v2')).toBe(
+			'protocols.eda.nokia.com'
+		);
+	});
+
+	it('merges duplicate kinds into one grouped resource with version chips', () => {
+		const items: NewResource[] = [
+			{
+				kind: 'BGPPeer',
+				apiVersion: 'protocols.eda.nokia.com/v1',
+				description: 'v1'
+			},
+			{
+				kind: 'BGPPeer',
+				apiVersion: 'protocols.eda.nokia.com/v2',
+				description: 'v2'
+			}
+		];
+		const grouped = groupNewResourcesByKind(items);
+		expect(grouped).toHaveLength(1);
+		expect(grouped[0].apiVersions).toHaveLength(2);
+		expect(grouped[0].group).toBe('protocols.eda.nokia.com');
+	});
+
+	it('groups new resources by operational area then kind', () => {
+		const grouped = groupNewResourcesByKind([
+			{ kind: 'FabricLink', apiVersion: 'topology.eda.nokia.com/v1', description: 'a' },
+			{ kind: 'BGPPeer', apiVersion: 'protocols.eda.nokia.com/v2', description: 'b' }
+		]);
+		const areas = groupNewResourcesByOperationalArea(grouped);
+		expect(areas.map((g) => g.area)).toEqual(['BGP', 'Topology']);
+		expect(areas[0].resources[0].kind).toBe('BGPPeer');
 	});
 });

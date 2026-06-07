@@ -296,6 +296,105 @@ export function sortDeprecatedItems(items: DeprecatedItem[], sort: ListSortMode)
 	}
 }
 
+export type GroupedNewResource = {
+	kind: string;
+	group: string;
+	crdName?: string;
+	apiVersions: Array<{ apiVersion: string; description: string }>;
+	description: string;
+};
+
+export function deriveGroupFromApiVersion(apiVersion: string): string {
+	const slash = apiVersion.indexOf('/');
+	return slash > 0 ? apiVersion.slice(0, slash) : apiVersion;
+}
+
+export function groupNewResourcesByKind(items: NewResource[]): GroupedNewResource[] {
+	const map = new Map<string, GroupedNewResource>();
+
+	for (const item of items) {
+		const group = item.group ?? deriveGroupFromApiVersion(item.apiVersion);
+		const existing = map.get(item.kind);
+
+		if (existing) {
+			if (!existing.apiVersions.some((v) => v.apiVersion === item.apiVersion)) {
+				existing.apiVersions.push({
+					apiVersion: item.apiVersion,
+					description: item.description
+				});
+			}
+			if (item.crdName && !existing.crdName) existing.crdName = item.crdName;
+			if (item.group && existing.group !== item.group) {
+				existing.group = item.group;
+			}
+		} else {
+			map.set(item.kind, {
+				kind: item.kind,
+				group,
+				crdName: item.crdName,
+				apiVersions: [{ apiVersion: item.apiVersion, description: item.description }],
+				description: item.description
+			});
+		}
+	}
+
+	return Array.from(map.values()).map((g) => {
+		const uniqueDescriptions = [...new Set(g.apiVersions.map((v) => v.description))];
+		return {
+			...g,
+			description: uniqueDescriptions.length === 1 ? uniqueDescriptions[0] : uniqueDescriptions[0],
+			apiVersions: [...g.apiVersions].sort((a, b) => a.apiVersion.localeCompare(b.apiVersion))
+		};
+	});
+}
+
+function sortGroupedNewResources(
+	items: GroupedNewResource[],
+	sort: ListSortMode
+): GroupedNewResource[] {
+	const sorted = [...items];
+	switch (sort) {
+		case 'kind-desc':
+			return sorted.sort((a, b) => b.kind.localeCompare(a.kind));
+		case 'change-type':
+			return sorted.sort(
+				(a, b) =>
+					(a.apiVersions[0]?.apiVersion ?? '').localeCompare(b.apiVersions[0]?.apiVersion ?? '') ||
+					a.kind.localeCompare(b.kind)
+			);
+		case 'severity':
+		case 'kind-asc':
+		default:
+			return sorted.sort((a, b) => a.kind.localeCompare(b.kind));
+	}
+}
+
+export function groupNewResourcesByOperationalArea(
+	items: GroupedNewResource[],
+	sort: ListSortMode = 'kind-asc'
+): Array<{ area: OperationalArea; resources: GroupedNewResource[] }> {
+	const sorted = sortGroupedNewResources(items, sort);
+	const buckets = new Map<OperationalArea, GroupedNewResource[]>();
+
+	for (const item of sorted) {
+		const area = inferOperationalArea(item.kind, item.group);
+		const list = buckets.get(area) ?? [];
+		list.push(item);
+		buckets.set(area, list);
+	}
+
+	return OPERATIONAL_AREA_ORDER.filter((area) => buckets.has(area)).map((area) => ({
+		area,
+		resources: buckets.get(area)!
+	}));
+}
+
+export function catalogBrowseHref(release: string, crdName?: string): string {
+	const params = new URLSearchParams({ browse: 'true', release });
+	if (crdName) params.set('resource', crdName);
+	return `/?${params.toString()}`;
+}
+
 export function sortNewResources(items: NewResource[], sort: ListSortMode): NewResource[] {
 	const sorted = [...items];
 	switch (sort) {
@@ -372,16 +471,18 @@ export function groupModifiedByKind(resources: ModifiedResource[]): ModifiedReso
 	return [...resources].sort((a, b) => a.kind.localeCompare(b.kind));
 }
 
-export function filterNewResources<T extends { kind: string; apiVersion: string; description?: string }>(
-	items: T[],
-	query: string
-): T[] {
+export function filterNewResources<
+	T extends { kind: string; apiVersion: string; description?: string; group?: string; crdName?: string }
+>(items: T[], query: string): T[] {
 	const q = query.trim().toLowerCase();
 	if (!q) return items;
 	return items.filter(
 		(r) =>
 			r.kind.toLowerCase().includes(q) ||
 			r.apiVersion.toLowerCase().includes(q) ||
+			deriveGroupFromApiVersion(r.apiVersion).toLowerCase().includes(q) ||
+			(r.group?.toLowerCase().includes(q) ?? false) ||
+			(r.crdName?.toLowerCase().includes(q) ?? false) ||
 			(r.description?.toLowerCase().includes(q) ?? false)
 	);
 }
