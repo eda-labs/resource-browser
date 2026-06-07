@@ -3955,58 +3955,26 @@ html:not(.dark) .react-select__menu {
 
 html.dark .release-notes-page button.rn-kind-link {
 	color: #60a5fa;
-	-webkit-text-fill-color: #60a5fa;
-}
-
-html.dark .release-notes-page .rn-deprec-kind {
-	color: #f1f5f9;
-	-webkit-text-fill-color: #f1f5f9;
-}
-
-html.dark .release-notes-page .rn-deprec-group {
-	color: #94a3b8;
-	-webkit-text-fill-color: #94a3b8;
-}
-
-html.dark .release-notes-page .rn-deprec-removed,
-html.dark .release-notes-page .rn-deprec-migration {
-	color: #cbd5e1;
-	-webkit-text-fill-color: #cbd5e1;
-}
-
-html.dark .release-notes-page .rn-action-chip-value {
-	color: #86efac;
-	-webkit-text-fill-color: #86efac;
-}
-
-html.dark .release-notes-page .rn-chip-value {
-	color: #f1f5f9;
-	-webkit-text-fill-color: #f1f5f9;
 }
 
 html.dark .release-notes-page .rn-group-kind {
 	color: #f1f5f9;
-	-webkit-text-fill-color: #f1f5f9;
 }
 
 html.dark .release-notes-page .rn-field-label,
 html.dark .release-notes-page .rn-field-name,
 html.dark .release-notes-page .rn-production-impact {
 	color: #f1f5f9;
-	-webkit-text-fill-color: #f1f5f9;
 }
 
 html.dark .release-notes-page .rn-impact {
 	color: #94a3b8;
-	-webkit-text-fill-color: #94a3b8;
 }
 
 html.dark .release-notes-page .rn-val-before {
 	color: #f87171;
-	-webkit-text-fill-color: #f87171;
 }
 
 html.dark .release-notes-page .rn-val-after {
 	color: #86efac;
-	-webkit-text-fill-color: #86efac;
 }

@@ -87,7 +87,6 @@
 
 	let deprecFilter = $state('');
 	let deprecSort = $state<ListSortMode>('severity');
-	let deprecRowExpanded = $state<Record<string, boolean>>({});
 
 	let modalOpen = $state(false);
 	let modalResource: CrdResource | null = $state(null);
@@ -120,7 +119,6 @@
 
 	function resetTabState() {
 		deprecFilter = '';
-		deprecRowExpanded = {};
 		breakingFilter = '';
 		breakingKindExpanded = {};
 		breakingRowExpanded = {};
@@ -788,105 +786,94 @@
 									{:else}
 										<div class="rn-deprec-list">
 											{#each deprecItems as d (d.crdName)}
-												{@const rowKey = d.crdName}
-												{@const expanded = isRowExpanded(deprecRowExpanded, rowKey)}
-												<article class="rn-card rn-deprec-item" class:rn-deprec-item--open={expanded}>
-													<div
-														class="rn-deprec-summary"
-														role="button"
-														tabindex="0"
-														aria-expanded={expanded}
-														onclick={() =>
-															(deprecRowExpanded = toggleRowExpanded(
-																deprecRowExpanded,
-																rowKey
-															))}
-														onkeydown={(e) =>
-															collapsibleKeydown(e, () =>
-																(deprecRowExpanded = toggleRowExpanded(
-																	deprecRowExpanded,
-																	rowKey
-																)))}
-													>
-														<span
-															class="rn-chevron"
-															class:rn-chevron--open={expanded}>›</span
-														>
-														<div class="rn-deprec-summary-body">
-															<div class="rn-deprec-item-header">
-																<button
-																	type="button"
-																	class="rn-kind-link rn-deprec-kind"
-																	onclick={(e) =>
-																		openKindModal(d.kind, d.group, d.crdName, e)}
+												<article class="rn-deprec-card">
+													<div class="rn-deprec-card-layout">
+														<div class="rn-deprec-card-main">
+															<button
+																type="button"
+																class="rn-deprec-kind-btn"
+																onclick={() =>
+																	openKindModal(d.kind, d.group, d.crdName)}
+															>
+																<span
+																	class="text-[17px] font-bold leading-snug text-slate-900 dark:text-slate-100"
 																>
 																	<HighlightText text={d.kind} query={deprecFilter} />
-																</button>
-																<span class="rn-deprec-group">
-																	<HighlightText text={d.group} query={deprecFilter} />
 																</span>
-															</div>
-
+															</button>
+															<span
+																class="mt-0.5 block font-mono text-[13px] text-slate-500 dark:text-slate-400"
+															>
+																<HighlightText text={d.group} query={deprecFilter} />
+															</span>
+															<p
+																class="rn-deprec-migration-oneline mb-0 mt-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300"
+															>
+																{d.migrationPath}
+															</p>
 															{#if d.recommendedApiVersion}
-																<div class="rn-action-chip-row">
+																<div class="rn-action-chip-row mt-3">
 																	<button
 																		type="button"
 																		class="rn-action-chip rn-action-chip--success"
-																		onclick={(e) => {
-																			e.stopPropagation();
+																		onclick={() =>
 																			copyText(
 																				d.recommendedApiVersion!,
 																				'recommended apiVersion'
-																			);
-																		}}
+																			)}
 																	>
 																		<span class="rn-action-chip-label">Migrate to</span>
-																		<span class="rn-action-chip-value"
+																		<span
+																			class="font-mono text-[13px] font-semibold text-green-700 dark:text-green-300"
 																			>{d.recommendedApiVersion}</span
 																		>
 																		<span class="rn-action-chip-action">copy</span>
 																	</button>
 																</div>
 															{/if}
+														</div>
 
-															<div class="rn-chip-row">
-																{#each d.deprecatedVersions as v (v.apiVersion)}
+														<div class="rn-deprec-card-aside">
+															{#each d.deprecatedVersions as v (v.apiVersion)}
+																<span
+																	class="rn-deprec-version-pill"
+																	class:rn-deprec-version-pill--new={v.newInRelease}
+																>
 																	<span
-																		class="rn-chip"
-																		class:rn-chip--highlight={v.newInRelease}
+																		class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500"
+																		>apiVersion</span
 																	>
-																		<span class="rn-chip-label">apiVersion</span>
-																		<span class="rn-chip-value">{v.version}</span>
-																		<button
-																			type="button"
-																			class="rn-chip-copy"
-																			onclick={(e) => {
-																				e.stopPropagation();
-																				copyText(v.apiVersion, 'apiVersion');
-																			}}
-																		>
-																			copy
-																		</button>
-																		{#if v.newInRelease}
-																			<span class="rn-badge rn-badge--new">new</span>
-																		{/if}
-																	</span>
-																{/each}
-															</div>
+																	<span
+																		class="font-mono text-[13px] font-semibold text-slate-900 dark:text-slate-100"
+																		>{v.version}</span
+																	>
+																	<button
+																		type="button"
+																		class="rn-chip-copy"
+																		onclick={() => copyText(v.apiVersion, 'apiVersion')}
+																	>
+																		copy
+																	</button>
+																	{#if v.newInRelease}
+																		<span class="rn-badge rn-badge--new">new</span>
+																	{/if}
+																</span>
+															{/each}
 														</div>
 													</div>
 
-													{#if expanded}
-														<div class="rn-deprec-detail">
-															<div class="rn-deprec-detail-row">
-																<div class="rn-section-label">Removed in</div>
-																<span class="rn-deprec-removed">
-																	{removedInLabel(d.deprecatedVersions[0])}
-																</span>
-															</div>
-															<p class="rn-deprec-migration">{d.migrationPath}</p>
-														</div>
-													{/if}
+													<details class="rn-deprec-details">
+														<summary
+															class="text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400"
+														>
+															Removal timeline
+														</summary>
+														<p
+															class="mt-2 mb-0 text-sm text-slate-600 dark:text-slate-300"
+														>
+															{removedInLabel(d.deprecatedVersions[0])}
+														</p>
+													</details>
 												</article>
 											{/each}
 										</div>
