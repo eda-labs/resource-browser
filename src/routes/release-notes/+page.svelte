@@ -13,7 +13,6 @@
 		CHANGE_COLORS,
 		HIGH_RISK_CHANGE_TYPES,
 		RISK_COLOR,
-		TAB_ICONS,
 		TABS
 	} from '$lib/release-notes/constants';
 	import {
@@ -73,6 +72,13 @@
 		}, 4000);
 	}
 
+	function collapsibleKeydown(e: KeyboardEvent, action: () => void) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			action();
+		}
+	}
+
 	async function handleInject() {
 		const version = injectVersion.trim();
 		if (!version) return;
@@ -126,14 +132,14 @@
 
 	function statItems(notes: ReleaseNotes) {
 		return [
-			{ label: 'New', value: notes.newResources.length, color: '#639922' },
-			{ label: 'Removed', value: notes.removedResources.length, color: '#e24b4a' },
-			{ label: 'Modified', value: notes.modifiedResources.length, color: '#ef9f27' },
-			{ label: 'Breaking', value: breakingCount(notes), color: '#e24b4a' },
+			{ label: 'New', value: notes.newResources.length, tone: 'new' as const },
+			{ label: 'Removed', value: notes.removedResources.length, tone: 'removed' as const },
+			{ label: 'Modified', value: notes.modifiedResources.length, tone: 'modified' as const },
+			{ label: 'Breaking', value: breakingCount(notes), tone: 'breaking' as const },
 			{
 				label: 'Deprecated',
 				value: countDeprecatedApiVersions(notes.deprecated),
-				color: '#ef9f27'
+				tone: 'deprecated' as const
 			}
 		];
 	}
@@ -171,7 +177,11 @@
 	}
 
 	function isDeprecExpanded(crdName: string): boolean {
-		return deprecExpanded[crdName] ?? true;
+		return deprecExpanded[crdName] ?? false;
+	}
+
+	function hasMigrationDetail(d: (typeof releaseHistory)[0]['notes']['deprecated'][0]): boolean {
+		return Boolean(d.recommendedApiVersion || d.migrationPath || d.deprecatedVersions.length > 0);
 	}
 
 	const selectedEntry = $derived(releaseHistory.find((e) => e.toVer === selected) ?? null);
@@ -201,11 +211,10 @@
 	/>
 </svelte:head>
 
-<div class="rn-page release-notes-page">
+<div class="release-notes-page">
 	<AppHeader fixed={false} />
 
 	<div class="rn-shell">
-		<!-- Sidebar -->
 		<aside class="rn-sidebar">
 			<div class="rn-sidebar-header">
 				<div class="rn-sidebar-kicker">Nokia EDA</div>
@@ -265,7 +274,10 @@
 						>
 							<span class="rn-timeline-dot" style:background={RISK_COLOR[risk]}></span>
 							<div class="rn-timeline-version">
-								<span class:rn-timeline-version--active={isSelected}>{entry.toVer}</span>
+								<span
+									class="rn-timeline-version-text"
+									class:rn-timeline-version-text--active={isSelected}>{entry.toVer}</span
+								>
 								{#if isNewEntry(entry, i)}
 									<span class="rn-tag rn-tag--new">NEW</span>
 								{/if}
@@ -274,15 +286,15 @@
 								{/if}
 							</div>
 							<div class="rn-timeline-meta">
-								from {entry.fromVer}
-								<span style:color={RISK_COLOR[risk]}>● {risk}</span>
+								{entry.fromVer} → {entry.toVer}
+								<span style:color={RISK_COLOR[risk]}> · {risk}</span>
 								{#if entry.source === 'mock'}
-									<span class="rn-source-badge">mock</span>
+									<span class="rn-source-badge">{entry.source}</span>
 								{/if}
 							</div>
 							{#if breakingCount(entry.notes) > 0}
 								<div class="rn-timeline-breaking">
-									⚠ {breakingCount(entry.notes)} breaking
+									{breakingCount(entry.notes)} breaking
 								</div>
 							{/if}
 						</button>
@@ -301,22 +313,21 @@
 			</div>
 		</aside>
 
-		<!-- Main -->
 		<main class="rn-main">
 			{#if selectedEntry}
 				<div class="rn-main-inner">
 					{#if breakingCount(selectedEntry.notes) > 0}
-						<div class="rn-breaking-banner" role="alert">
-							<span class="rn-breaking-icon">⚠</span>
+						<div class="rn-alert" role="alert">
+							<span class="rn-alert-icon">⚠</span>
 							<div>
-								<strong
-									>{breakingCount(selectedEntry.notes)} breaking change{breakingCount(
+								<span class="rn-alert-title">
+									{breakingCount(selectedEntry.notes)} breaking change{breakingCount(
 										selectedEntry.notes
 									) !== 1
 										? 's'
-										: ''}</strong
-								>
-								<span class="rn-breaking-sub">
+										: ''}
+								</span>
+								<span class="rn-alert-sub">
 									— existing manifests require updates before applying this release
 								</span>
 							</div>
@@ -324,76 +335,76 @@
 					{/if}
 
 					<header class="rn-header">
-						<div>
-							<div class="rn-header-row">
-								<h1>EDA {selectedEntry.toVer}</h1>
-								<span
-									class="rn-risk-badge rn-risk-badge--lg rn-risk-badge--{selectedEntry.notes.upgradeRisk}"
-								>
-									{selectedEntry.notes.upgradeRisk}
-								</span>
-								{#if selectedEntry.toVer === latestVersion}
-									<span class="rn-tag rn-tag--latest">latest</span>
-								{/if}
-							</div>
-							<p class="rn-header-sub">
-								Schema changes from {selectedEntry.fromVer} · {selectedEntry.notes.estimatedEffort}
-								· source: {selectedEntry.source}
-							</p>
+						<div class="rn-header-row">
+							<h1>EDA {selectedEntry.toVer}</h1>
+							<span class="rn-risk-badge rn-risk-badge--{selectedEntry.notes.upgradeRisk}">
+								{selectedEntry.notes.upgradeRisk}
+							</span>
+							{#if selectedEntry.toVer === latestVersion}
+								<span class="rn-tag rn-tag--latest">latest</span>
+							{/if}
+						</div>
+						<div class="rn-header-meta">
+							<span class="rn-version-path">
+								<span class="rn-version-path-from">{selectedEntry.fromVer}</span>
+								<span class="rn-version-arrow" aria-hidden="true">→</span>
+								<span class="rn-version-path-to">{selectedEntry.toVer}</span>
+							</span>
+							<span>{selectedEntry.notes.estimatedEffort}</span>
+							<span class="rn-source-badge">{selectedEntry.source}</span>
 						</div>
 					</header>
 
-					<!-- Tabs -->
-					<div class="rn-tabs" role="tablist">
-						{#each TABS as tab, i (tab)}
-							{@const hasWarning =
-								(i === 1 && breakingCount(selectedEntry.notes) > 0) ||
-								(i === 2 && selectedEntry.notes.deprecated.length > 0)}
-							<button
-								type="button"
-								role="tab"
-								class="rn-tab"
-								class:rn-tab--active={activeTab === i}
-								aria-selected={activeTab === i}
-								onclick={() => (activeTab = i)}
-							>
-								<span class="rn-tab-icon">{TAB_ICONS[i]}</span>
-								{tab}
-								{#if hasWarning}
-									<span class="rn-tab-badge">
-										{i === 1
-											? breakingCount(selectedEntry.notes)
-											: countDeprecatedApiVersions(selectedEntry.notes.deprecated)}
-									</span>
-								{/if}
-							</button>
-						{/each}
+					<div class="rn-tabs-wrap">
+						<div class="rn-tabs" role="tablist">
+							{#each TABS as tab, i (tab)}
+								{@const breakingN = breakingCount(selectedEntry.notes)}
+								{@const deprecN = countDeprecatedApiVersions(selectedEntry.notes.deprecated)}
+								<button
+									type="button"
+									role="tab"
+									class="rn-tab"
+									class:rn-tab--active={activeTab === i}
+									aria-selected={activeTab === i}
+									onclick={() => (activeTab = i)}
+								>
+									{tab}
+									{#if i === 1 && breakingN > 0}
+										<span class="rn-tab-count">{breakingN}</span>
+									{:else if i === 2 && deprecN > 0}
+										<span class="rn-tab-count rn-tab-count--warn">{deprecN}</span>
+									{/if}
+								</button>
+							{/each}
+						</div>
 					</div>
 
-					<!-- Tab panels -->
 					<div class="rn-tab-panel" role="tabpanel">
 						{#if activeTab === 0}
-							<div class="rn-stats">
+							<div class="rn-stat-grid">
 								{#each statItems(selectedEntry.notes) as stat (stat.label)}
-									<div class="rn-stat">
-										<span class="rn-stat-value" style:color={stat.color}>{stat.value}</span>
+									<div class="rn-stat-cell">
+										<span class="rn-stat-value rn-stat-value--{stat.tone}">{stat.value}</span>
 										<span class="rn-stat-label">{stat.label}</span>
 									</div>
 								{/each}
 							</div>
 						{:else if activeTab === 1}
 							{#if selectedEntry.notes.breakingChanges.length === 0}
-								<div class="rn-empty">No breaking changes in this release ✓</div>
+								<div class="rn-empty">
+									<span class="rn-empty-icon">✓</span>
+									No breaking changes in this release
+								</div>
 							{:else}
 								{@const filteredBreaking = filterBreakingChanges(
 									selectedEntry.notes.breakingChanges,
 									breakingFilter
 								)}
 								{@const groupedBreaking = groupBreakingByKind(filteredBreaking)}
-								<div class="rn-list-toolbar">
-									<div class="rn-list-summary">
-										<span class="rn-pill rn-pill--breaking">BREAKING</span>
-										<span class="rn-list-summary-text">
+								<div class="rn-toolbar">
+									<div class="rn-toolbar-summary">
+										<span class="rn-badge rn-badge--breaking">Breaking</span>
+										<span class="rn-toolbar-text">
 											{breakingCount(selectedEntry.notes)} total · {groupedBreaking.length} kind{groupedBreaking.length !==
 											1
 												? 's'
@@ -401,7 +412,7 @@
 										</span>
 									</div>
 									<input
-										class="rn-list-search"
+										class="rn-search"
 										type="search"
 										placeholder="Filter by kind, field, or description…"
 										bind:value={breakingFilter}
@@ -412,40 +423,47 @@
 								{#if groupedBreaking.length === 0}
 									<div class="rn-empty">No breaking changes match your filter</div>
 								{:else}
-									<div class="rn-breaking-list">
+									<div class="rn-group-list">
 										{#each groupedBreaking as group (group.kind)}
-											<div class="rn-breaking-group">
-												<button
-													type="button"
-													class="rn-breaking-group-head"
+											<div class="rn-card rn-group">
+												<div
+													class="rn-group-head"
+													role="button"
+													tabindex="0"
 													aria-expanded={isBreakingExpanded(group.kind)}
 													onclick={() => toggleBreakingKind(group.kind)}
+													onkeydown={(e) =>
+														collapsibleKeydown(e, () => toggleBreakingKind(group.kind))}
 												>
 													<span
-														class="rn-deprec-chevron"
-														class:rn-deprec-chevron--open={isBreakingExpanded(group.kind)}>▸</span
+														class="rn-chevron"
+														class:rn-chevron--open={isBreakingExpanded(group.kind)}>›</span
 													>
-													<code class="rn-code-kind">{group.kind}</code>
-													<span class="rn-muted">{group.items.length} change{group.items.length !== 1 ? 's' : ''}</span>
-												</button>
+													<span class="rn-group-kind">{group.kind}</span>
+													<span class="rn-group-count"
+														>{group.items.length} change{group.items.length !== 1
+															? 's'
+															: ''}</span
+													>
+												</div>
 
 												{#if isBreakingExpanded(group.kind)}
-													<div class="rn-breaking-group-body">
+													<div class="rn-group-body">
 														{#each group.items as b, i (`${group.kind}-${b.field}-${i}`)}
-															<div class="rn-breaking-card">
-																<div class="rn-breaking-card-head">
-																	<span class="rn-pill rn-pill--breaking">BREAKING</span>
+															<div class="rn-change-card">
+																<div class="rn-change-head">
+																	<span class="rn-badge rn-badge--breaking">Breaking</span>
 																	{#if b.severity === 'critical'}
-																		<span class="rn-pill rn-pill--critical">critical</span>
+																		<span class="rn-badge rn-badge--critical">critical</span>
 																	{:else if b.severity === 'warning'}
-																		<span class="rn-pill rn-pill--warning">warning</span>
+																		<span class="rn-badge rn-badge--warning">warning</span>
 																	{/if}
-																	<code class="rn-code-field">{b.field}</code>
+																	<span class="rn-field-name">{b.field}</span>
 																</div>
 																<p class="rn-prose rn-prose--sm">{b.description}</p>
 																{#if b.migrationSteps.length > 0}
 																	<div class="rn-migration">
-																		<div class="rn-card-label">Migration steps</div>
+																		<div class="rn-section-label">Migration steps</div>
 																		{#each b.migrationSteps as step, j (j)}
 																			<div class="rn-migration-step">
 																				<span class="rn-migration-num">{j + 1}.</span>
@@ -458,7 +476,7 @@
 																	<div class="rn-yaml-grid">
 																		{#if b.yamlBefore}
 																			<div>
-																				<div class="rn-yaml-label rn-yaml-label--before">BEFORE</div>
+																				<div class="rn-yaml-label rn-yaml-label--before">Before</div>
 																				<div class="rn-codeblock">
 																					<pre>{b.yamlBefore}</pre>
 																					<button
@@ -473,7 +491,7 @@
 																		{/if}
 																		{#if b.yamlAfter}
 																			<div>
-																				<div class="rn-yaml-label rn-yaml-label--after">AFTER</div>
+																				<div class="rn-yaml-label rn-yaml-label--after">After</div>
 																				<div class="rn-codeblock">
 																					<pre>{b.yamlAfter}</pre>
 																					<button
@@ -499,14 +517,17 @@
 							{/if}
 						{:else if activeTab === 2}
 							{#if selectedEntry.notes.deprecated.length === 0}
-								<div class="rn-empty">No deprecations in this release</div>
+								<div class="rn-empty">
+									<span class="rn-empty-icon">⊘</span>
+									No deprecations in this release
+								</div>
 							{:else}
 								{@const deprecItems = filteredDeprecated(selectedEntry.notes)}
 								{@const newCount = countNewlyDeprecatedApiVersions(selectedEntry.notes.deprecated)}
-								<div class="rn-deprec-toolbar">
-									<div class="rn-deprec-summary">
-										<span class="rn-pill rn-pill--deprec">DEPRECATED</span>
-										<span class="rn-deprec-summary-text">
+								<div class="rn-toolbar">
+									<div class="rn-toolbar-summary">
+										<span class="rn-badge rn-badge--deprec">Deprecated</span>
+										<span class="rn-toolbar-text">
 											{selectedEntry.notes.deprecated.length} resource{selectedEntry.notes
 												.deprecated.length !== 1
 												? 's'
@@ -523,7 +544,7 @@
 										</span>
 									</div>
 									<input
-										class="rn-deprec-search"
+										class="rn-search"
 										type="search"
 										placeholder="Filter by kind, group, or version…"
 										bind:value={deprecFilter}
@@ -536,83 +557,79 @@
 								{:else}
 									<div class="rn-deprec-list">
 										{#each deprecItems as d (d.crdName)}
-											<div class="rn-deprec-card">
-												<button
-													type="button"
-													class="rn-deprec-card-head"
-													aria-expanded={isDeprecExpanded(d.crdName)}
-													onclick={() => toggleDeprecKind(d.crdName)}
-												>
-													<span
-														class="rn-deprec-chevron"
-														class:rn-deprec-chevron--open={isDeprecExpanded(d.crdName)}>▸</span
+											<article class="rn-card rn-deprec-item">
+												<div class="rn-deprec-item-header">
+													<span class="rn-deprec-kind">{d.kind}</span>
+													<span class="rn-deprec-group">{d.group}</span>
+												</div>
+
+												<div class="rn-chip-row">
+													{#each d.deprecatedVersions as v (v.apiVersion)}
+														<span class="rn-chip" class:rn-chip--highlight={v.newInRelease}>
+															<span class="rn-chip-label">apiVersion</span>
+															<span class="rn-chip-value">{v.version}</span>
+															{#if v.newInRelease}
+																<span class="rn-badge rn-badge--new">new</span>
+															{/if}
+														</span>
+													{/each}
+												</div>
+
+												{#if hasMigrationDetail(d)}
+													<div
+														class="rn-collapsible-head"
+														role="button"
+														tabindex="0"
+														aria-expanded={isDeprecExpanded(d.crdName)}
+														onclick={() => toggleDeprecKind(d.crdName)}
+														onkeydown={(e) =>
+															collapsibleKeydown(e, () => toggleDeprecKind(d.crdName))}
 													>
-													<div class="rn-deprec-card-title">
-														<span class="rn-deprec-kind">{d.kind}</span>
-														<span class="rn-deprec-group">{d.group}</span>
+														<span
+															class="rn-chevron"
+															class:rn-chevron--open={isDeprecExpanded(d.crdName)}>›</span
+														>
+														<span>Migration guidance</span>
 													</div>
-													<span class="rn-deprec-count">
-														{d.deprecatedVersions.length} version{d.deprecatedVersions.length !==
-														1
-															? 's'
-															: ''}
-													</span>
-												</button>
 
-												{#if isDeprecExpanded(d.crdName)}
-													<div class="rn-deprec-card-body">
-														<div class="rn-deprec-versions">
-															<span class="rn-deprec-label">Deprecated apiVersions</span>
-															<div class="rn-deprec-chips">
-																{#each d.deprecatedVersions as v (v.apiVersion)}
-																	<span
-																		class="rn-deprec-chip"
-																		class:rn-deprec-chip--new={v.newInRelease}
-																	>
-																		<span class="rn-deprec-chip-key">apiVersion</span>
-																		<code class="rn-deprec-chip-val">{v.version}</code>
-																		{#if v.newInRelease}
-																			<span class="rn-deprec-chip-tag">new</span>
-																		{/if}
-																	</span>
-																{/each}
+													{#if isDeprecExpanded(d.crdName)}
+														<div class="rn-deprec-detail">
+															{#if d.recommendedApiVersion}
+																<div class="rn-deprec-detail-row">
+																	<div class="rn-section-label">Use instead</div>
+																	<span class="rn-deprec-recommended">{d.recommendedApiVersion}</span>
+																</div>
+															{/if}
+															<div class="rn-deprec-detail-row">
+																<div class="rn-section-label">Removed in</div>
+																<span class="rn-deprec-removed">
+																	{removedInLabel(d.deprecatedVersions[0])}
+																</span>
 															</div>
+															<p class="rn-deprec-migration">{d.migrationPath}</p>
 														</div>
-
-														{#if d.recommendedApiVersion}
-															<div class="rn-deprec-row">
-																<span class="rn-deprec-label">Use instead</span>
-																<code class="rn-deprec-recommended">{d.recommendedApiVersion}</code>
-															</div>
-														{/if}
-
-														<div class="rn-deprec-row">
-															<span class="rn-deprec-label">Removed in</span>
-															<span class="rn-deprec-removed">
-																{removedInLabel(d.deprecatedVersions[0])}
-															</span>
-														</div>
-
-														<p class="rn-deprec-migration">{d.migrationPath}</p>
-													</div>
+													{/if}
 												{/if}
-											</div>
+											</article>
 										{/each}
 									</div>
 								{/if}
 							{/if}
 						{:else if activeTab === 3}
 							{#if selectedEntry.notes.newResources.length === 0}
-								<div class="rn-empty">No new resources in this release</div>
+								<div class="rn-empty">
+									<span class="rn-empty-icon">✦</span>
+									No new resources in this release
+								</div>
 							{:else}
 								{@const newItems = filterNewResources(
 									selectedEntry.notes.newResources,
 									newFilter
 								)}
-								<div class="rn-list-toolbar">
-									<div class="rn-list-summary">
-										<span class="rn-pill rn-pill--new">NEW</span>
-										<span class="rn-list-summary-text">
+								<div class="rn-toolbar">
+									<div class="rn-toolbar-summary">
+										<span class="rn-badge rn-badge--new">New</span>
+										<span class="rn-toolbar-text">
 											{selectedEntry.notes.newResources.length} CRD{selectedEntry.notes.newResources
 												.length !== 1
 												? 's'
@@ -620,7 +637,7 @@
 										</span>
 									</div>
 									<input
-										class="rn-list-search"
+										class="rn-search"
 										type="search"
 										placeholder="Filter by kind or apiVersion…"
 										bind:value={newFilter}
@@ -632,10 +649,10 @@
 								{:else}
 									<div class="rn-new-grid">
 										{#each newItems as r, i (`${r.kind}-${i}`)}
-											<div class="rn-new-card">
+											<div class="rn-card rn-new-card">
 												<div class="rn-new-card-head">
-													<code class="rn-code-new">{r.kind}</code>
-													<span class="rn-pill rn-pill--new">NEW</span>
+													<span class="rn-new-kind">{r.kind}</span>
+													<span class="rn-badge rn-badge--new">New</span>
 												</div>
 												<div class="rn-api-version">{r.apiVersion}</div>
 												<p class="rn-prose rn-prose--sm">{r.description}</p>
@@ -646,7 +663,10 @@
 							{/if}
 						{:else if activeTab === 4}
 							{#if selectedEntry.notes.modifiedResources.length === 0}
-								<div class="rn-empty">No field-level modifications in this release</div>
+								<div class="rn-empty">
+									<span class="rn-empty-icon">✎</span>
+									No field-level modifications in this release
+								</div>
 							{:else}
 								{@const modifiedItems = groupModifiedByKind(
 									filterModifiedResources(selectedEntry.notes.modifiedResources, modifiedFilter)
@@ -655,10 +675,10 @@
 									(n, r) => n + r.changes.length,
 									0
 								)}
-								<div class="rn-list-toolbar">
-									<div class="rn-list-summary">
-										<span class="rn-pill rn-pill--modified">MODIFIED</span>
-										<span class="rn-list-summary-text">
+								<div class="rn-toolbar">
+									<div class="rn-toolbar-summary">
+										<span class="rn-badge rn-badge--modified">Modified</span>
+										<span class="rn-toolbar-text">
 											{selectedEntry.notes.modifiedResources.length} CRD{selectedEntry.notes
 												.modifiedResources.length !== 1
 												? 's'
@@ -666,7 +686,7 @@
 										</span>
 									</div>
 									<input
-										class="rn-list-search"
+										class="rn-search"
 										type="search"
 										placeholder="Filter by kind or field path…"
 										bind:value={modifiedFilter}
@@ -677,63 +697,66 @@
 								{#if modifiedItems.length === 0}
 									<div class="rn-empty">No modifications match your filter</div>
 								{:else}
-									<div class="rn-mod-list">
+									<div class="rn-group-list">
 										{#each modifiedItems as r (r.kind)}
-											<div class="rn-mod-group">
-												<button
-													type="button"
-													class="rn-mod-head rn-mod-head--btn"
+											<div class="rn-card rn-group">
+												<div
+													class="rn-group-head"
+													role="button"
+													tabindex="0"
 													aria-expanded={isModifiedExpanded(r.kind)}
 													onclick={() => toggleModifiedKind(r.kind)}
+													onkeydown={(e) =>
+														collapsibleKeydown(e, () => toggleModifiedKind(r.kind))}
 												>
 													<span
-														class="rn-deprec-chevron"
-														class:rn-deprec-chevron--open={isModifiedExpanded(r.kind)}>▸</span
+														class="rn-chevron"
+														class:rn-chevron--open={isModifiedExpanded(r.kind)}>›</span
 													>
-													<code class="rn-code-kind">{r.kind}</code>
-													<span class="rn-muted"
+													<span class="rn-group-kind">{r.kind}</span>
+													<span class="rn-group-count"
 														>{r.changes.length} change{r.changes.length !== 1 ? 's' : ''}</span
 													>
-												</button>
+												</div>
 												{#if isModifiedExpanded(r.kind)}
-													<div class="rn-mod-group-body">
+													<div class="rn-group-body">
 														{#each r.changes as c, j (`${r.kind}-${c.field}-${j}`)}
-															{@const col = CHANGE_COLORS[c.changeType] ?? '#888'}
-															<div class="rn-mod-change-card">
-																<div class="rn-mod-change-head">
-																	<code class="rn-mod-field">{c.field}</code>
+															{@const col = CHANGE_COLORS[c.changeType] ?? '#86868b'}
+															<div class="rn-change-card">
+																<div class="rn-change-head">
+																	<span class="rn-field-name">{c.field}</span>
 																	<span
-																		class="rn-mod-change-badge"
-																		style:background="{col}22"
+																		class="rn-change-type-badge"
+																		style:background="{col}18"
 																		style:color={col}
-																		style:border-color="{col}66"
+																		style:border-color="{col}55"
 																	>
 																		{c.changeType.replace(/_/g, ' ')}
 																	</span>
 																	{#if HIGH_RISK_CHANGE_TYPES.has(c.changeType)}
-																		<span class="rn-pill rn-pill--breaking">high risk</span>
+																		<span class="rn-badge rn-badge--breaking">high risk</span>
 																	{/if}
 																</div>
-																<div class="rn-mod-values">
-																	<div class="rn-mod-val-row">
-																		<span class="rn-mod-val-label">Before</span>
+																<div class="rn-values">
+																	<div class="rn-val-row">
+																		<span class="rn-val-label">Before</span>
 																		{#if c.before}
-																			<code class="rn-val-before">{c.before}</code>
+																			<span class="rn-val-before">{c.before}</span>
 																		{:else}
-																			<span class="rn-muted">—</span>
+																			<span class="rn-val-empty">—</span>
 																		{/if}
 																	</div>
-																	<div class="rn-mod-val-row">
-																		<span class="rn-mod-val-label">After</span>
+																	<div class="rn-val-row">
+																		<span class="rn-val-label">After</span>
 																		{#if c.after}
-																			<code class="rn-val-after">{c.after}</code>
+																			<span class="rn-val-after">{c.after}</span>
 																		{:else}
-																			<span class="rn-muted">—</span>
+																			<span class="rn-val-empty">—</span>
 																		{/if}
 																	</div>
 																</div>
 																{#if c.networkBehavior}
-																	<p class="rn-mod-impact-text">{c.networkBehavior}</p>
+																	<p class="rn-impact">{c.networkBehavior}</p>
 																{/if}
 															</div>
 														{/each}
@@ -746,25 +769,25 @@
 							{/if}
 						{:else if activeTab === 5}
 							{@const risk = selectedEntry.notes.upgradeRisk}
-							<div class="rn-risk-hero">
-								<div class="rn-risk-icon" style:color={RISK_COLOR[risk]}>◉</div>
+							<div class="rn-card rn-risk-hero">
+								<div class="rn-risk-ring" style:color={RISK_COLOR[risk]}>◉</div>
 								<div>
-									<div class="rn-card-label">Upgrade risk</div>
+									<div class="rn-section-label">Upgrade risk</div>
 									<div class="rn-risk-title" style:color={RISK_COLOR[risk]}>{risk}</div>
-									<div class="rn-muted">
+									<div class="rn-risk-sub">
 										{selectedEntry.fromVer} → {selectedEntry.toVer}
 									</div>
 								</div>
 							</div>
 							{#if selectedEntry.notes.upgradeRiskJustification}
-								<div class="rn-card">
-									<div class="rn-card-label">Justification</div>
-									<p class="rn-prose rn-prose--sm">{selectedEntry.notes.upgradeRiskJustification}</p>
+								<div class="rn-card rn-card-pad">
+									<div class="rn-section-label">Justification</div>
+									<p class="rn-prose">{selectedEntry.notes.upgradeRiskJustification}</p>
 								</div>
 							{/if}
 							{#if selectedEntry.notes.estimatedEffort}
-								<div class="rn-card">
-									<div class="rn-card-label">Estimated effort</div>
+								<div class="rn-card rn-card-pad">
+									<div class="rn-section-label">Estimated effort</div>
 									<div class="rn-effort">{selectedEntry.notes.estimatedEffort}</div>
 								</div>
 							{/if}
@@ -786,1332 +809,3 @@
 		<div class="rn-toast" role="status">{toast}</div>
 	{/if}
 </div>
-
-<style>
-	.rn-page {
-		--rn-bg: #ffffff;
-		--rn-bg-elevated: #f8fafc;
-		--rn-bg-surface: #f1f5f9;
-		--rn-bg-code: #f8fafc;
-		--rn-border: #e2e8f0;
-		--rn-border-muted: #cbd5e1;
-		--rn-text: #424a53;
-		--rn-heading: #1f2328;
-		--rn-text-muted: #656d76;
-		--rn-text-subtle: #848d97;
-		--rn-accent: #2563eb;
-		--rn-warning-fg: #bf8700;
-		--rn-success-fg: #1a7f37;
-		--rn-danger-fg: #cf222e;
-		--rn-breaking-bg: #ffffff;
-		--rn-breaking-border: #ffb8b8;
-		--rn-deprec-bg: #ffffff;
-		--rn-deprec-border: #f0d080;
-		--rn-new-bg: #f0fdf4;
-		--rn-new-border: rgb(99 153 34 / 0.35);
-		--rn-code-fg: #15803d;
-		--rn-code-kind: #0369a1;
-		--rn-code-new: #15803d;
-		--rn-tab-active: #2563eb;
-		--rn-scroll-track: #f1f5f9;
-		--rn-scroll-thumb: #cbd5e1;
-		--rn-selected-bg: #f1f5f9;
-		--rn-latest-bg: #dcfce7;
-		--rn-latest-text: #15803d;
-		--rn-btn-primary: #2563eb;
-		--rn-timeline-dot-ring: #ffffff;
-		--rn-prose: #424a53;
-		--rn-migration: #424a53;
-		--rn-copy-border: #cbd5e1;
-		--rn-copy-text: #64748b;
-		--rn-skeleton-sub: #94a3b8;
-		--rn-risk-high-bg: #fcebeb;
-		--rn-risk-high-fg: #e24b4a;
-		--rn-risk-medium-bg: #faeeda;
-		--rn-risk-medium-fg: #ef9f27;
-		--rn-risk-low-bg: #eaf3de;
-		--rn-risk-low-fg: #639922;
-
-		min-height: 100vh;
-		background: var(--rn-bg);
-		color: var(--rn-text);
-		font-family: system-ui, sans-serif;
-		display: flex;
-		flex-direction: column;
-	}
-
-	:global(html.dark) .rn-page {
-		--rn-bg: #0d1117;
-		--rn-bg-elevated: #161b22;
-		--rn-bg-surface: #1c2128;
-		--rn-bg-code: #0d1117;
-		--rn-border: #30363d;
-		--rn-border-muted: #484f58;
-		--rn-text: #e6edf3;
-		--rn-heading: #f0f6fc;
-		--rn-text-muted: #b1bac4;
-		--rn-text-subtle: #9da5ae;
-		--rn-accent: #58a6ff;
-		--rn-warning-fg: #d4a72c;
-		--rn-success-fg: #3fb950;
-		--rn-danger-fg: #ff7b72;
-		--rn-breaking-bg: #161b22;
-		--rn-breaking-border: #8b3a3a;
-		--rn-deprec-bg: #1c2128;
-		--rn-deprec-border: #6e5a1f;
-		--rn-new-bg: rgb(99 153 34 / 0.1);
-		--rn-new-border: rgb(99 153 34 / 0.35);
-		--rn-code-fg: #7ee787;
-		--rn-code-kind: #79c0ff;
-		--rn-code-new: #56d364;
-		--rn-tab-active: #58a6ff;
-		--rn-scroll-track: #161b22;
-		--rn-scroll-thumb: #484f58;
-		--rn-selected-bg: #21262d;
-		--rn-latest-bg: #1a3a1a;
-		--rn-latest-text: #56d364;
-		--rn-btn-primary: #1f6feb;
-		--rn-timeline-dot-ring: #0d1117;
-		--rn-prose: #e6edf3;
-		--rn-migration: #c9d1d9;
-		--rn-copy-border: #484f58;
-		--rn-copy-text: #b1bac4;
-		--rn-skeleton-sub: #6e7681;
-		--rn-risk-high-bg: rgb(226 75 74 / 0.15);
-		--rn-risk-high-fg: #ff7b72;
-		--rn-risk-medium-bg: rgb(239 159 39 / 0.15);
-		--rn-risk-medium-fg: #ffa657;
-		--rn-risk-low-bg: rgb(99 153 34 / 0.15);
-		--rn-risk-low-fg: #7ee787;
-	}
-
-	.rn-shell {
-		display: flex;
-		flex: 1;
-		min-height: 0;
-		overflow: hidden;
-	}
-
-	.rn-sidebar {
-		width: 220px;
-		flex-shrink: 0;
-		border-right: 1px solid var(--rn-border);
-		display: flex;
-		flex-direction: column;
-		background: var(--rn-bg);
-	}
-
-	.rn-sidebar-header {
-		padding: 16px 14px 10px;
-		border-bottom: 1px solid var(--rn-border);
-	}
-
-	.rn-sidebar-kicker {
-		font-size: 10px;
-		color: var(--rn-accent);
-		text-transform: uppercase;
-		letter-spacing: 1.5px;
-		margin-bottom: 4px;
-	}
-
-	.rn-sidebar-title {
-		font-size: 15px;
-		font-weight: 600;
-	}
-
-	.rn-sidebar-body {
-		padding: 10px 10px 0;
-		flex: 1;
-		overflow-y: auto;
-	}
-
-	.rn-inject {
-		margin-bottom: 20px;
-	}
-
-	.rn-inject-toggle {
-		width: 100%;
-		background: var(--rn-bg-elevated);
-		border: 1px dashed var(--rn-border-muted);
-		border-radius: 8px;
-		padding: 10px 16px;
-		color: var(--rn-accent);
-		cursor: pointer;
-		font-size: 13px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-	}
-
-	.rn-inject-plus {
-		font-size: 18px;
-		line-height: 1;
-	}
-
-	.rn-inject-panel {
-		background: var(--rn-bg-elevated);
-		border: 1px solid var(--rn-border-muted);
-		border-radius: 8px;
-		padding: 16px;
-		margin-top: 8px;
-	}
-
-	.rn-inject-hint,
-	.rn-inject-note {
-		font-size: 11px;
-		color: var(--rn-text-muted);
-	}
-
-	.rn-inject-hint {
-		font-size: 12px;
-		margin-bottom: 8px;
-	}
-
-	.rn-inject-note {
-		margin-top: 8px;
-	}
-
-	.rn-inject-row {
-		display: flex;
-		gap: 8px;
-	}
-
-	.rn-inject-input {
-		flex: 1;
-		background: var(--rn-bg);
-		border: 1px solid var(--rn-border-muted);
-		border-radius: 6px;
-		padding: 6px 10px;
-		color: var(--rn-text);
-		font-size: 13px;
-	}
-
-	.rn-inject-btn {
-		background: var(--rn-btn-primary);
-		border: none;
-		border-radius: 6px;
-		padding: 6px 14px;
-		color: #fff;
-		cursor: pointer;
-		font-size: 13px;
-	}
-
-	.rn-loading-msg {
-		color: var(--rn-text-muted);
-		font-size: 12px;
-		text-align: center;
-		padding: 8px 0;
-		animation: rn-pulse 1.5s infinite;
-	}
-
-	.rn-timeline {
-		position: relative;
-	}
-
-	.rn-timeline-line {
-		position: absolute;
-		left: 13px;
-		top: 8px;
-		bottom: 8px;
-		width: 1px;
-		background: var(--rn-border);
-	}
-
-	.rn-timeline-item {
-		position: relative;
-		width: 100%;
-		text-align: left;
-		padding: 8px 10px 8px 26px;
-		cursor: pointer;
-		background: transparent;
-		border: 1px solid transparent;
-		border-radius: 6px;
-		margin-bottom: 4px;
-		color: inherit;
-	}
-
-	.rn-timeline-item--selected {
-		background: var(--rn-selected-bg);
-		border-color: var(--rn-border-muted);
-	}
-
-	.rn-timeline-dot {
-		position: absolute;
-		left: 8px;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 11px;
-		height: 11px;
-		border-radius: 50%;
-		border: 2px solid var(--rn-timeline-dot-ring);
-	}
-
-	.rn-timeline-dot--skeleton {
-		background: var(--rn-border-muted);
-		animation: rn-pulse 1.5s infinite;
-	}
-
-	.rn-timeline-version {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 13px;
-		color: var(--rn-text-subtle);
-	}
-
-	.rn-timeline-version--active {
-		font-weight: 600;
-		color: var(--rn-text);
-	}
-
-	.rn-timeline-meta {
-		font-size: 11px;
-		color: var(--rn-text-muted);
-		margin-top: 2px;
-	}
-
-	.rn-timeline-breaking {
-		font-size: 10px;
-		color: #e24b4a;
-		margin-top: 2px;
-	}
-
-	.rn-timeline-skeleton {
-		position: relative;
-		padding: 8px 10px 8px 26px;
-		margin-bottom: 4px;
-		opacity: 0.4;
-	}
-
-	.rn-skeleton-text {
-		font-size: 13px;
-		color: var(--rn-text-muted);
-	}
-
-	.rn-skeleton-sub {
-		font-size: 11px;
-		color: var(--rn-skeleton-sub);
-		margin-top: 2px;
-	}
-
-	.rn-tag {
-		font-size: 9px;
-		padding: 1px 5px;
-		border-radius: 3px;
-	}
-
-	.rn-tag--new {
-		background: var(--rn-btn-primary);
-		color: #fff;
-	}
-
-	.rn-tag--latest {
-		background: var(--rn-latest-bg);
-		color: var(--rn-latest-text);
-		font-size: 11px;
-		padding: 2px 8px;
-		border-radius: 4px;
-	}
-
-	.rn-source-badge {
-		margin-left: 4px;
-		font-size: 9px;
-		color: var(--rn-text-muted);
-		border: 1px solid var(--rn-border-muted);
-		padding: 0 4px;
-		border-radius: 3px;
-	}
-
-	.rn-main {
-		flex: 1;
-		overflow-y: auto;
-		background: var(--rn-bg);
-	}
-
-	.rn-main-inner {
-		padding: 24px 28px;
-	}
-
-	.rn-main-empty {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
-		gap: 12px;
-		color: var(--rn-text-muted);
-		min-height: 300px;
-	}
-
-	.rn-main-empty-icon {
-		font-size: 32px;
-		animation: rn-pulse 1.5s infinite;
-	}
-
-	.rn-breaking-banner {
-		background: var(--rn-breaking-bg);
-		border: 1px solid var(--rn-breaking-border);
-		border-radius: 8px;
-		padding: 10px 16px;
-		margin-bottom: 20px;
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-
-	.rn-breaking-icon {
-		color: #e24b4a;
-		font-size: 20px;
-	}
-
-	.rn-breaking-sub {
-		color: var(--rn-text-subtle);
-		font-size: 13px;
-		margin-left: 8px;
-		font-weight: normal;
-	}
-
-	.rn-header-row {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		margin-bottom: 4px;
-		flex-wrap: wrap;
-	}
-
-	.rn-header h1 {
-		margin: 0;
-		font-size: 24px;
-		font-weight: 700;
-	}
-
-	.rn-header-sub {
-		font-size: 13px;
-		color: var(--rn-text-muted);
-		margin: 0;
-	}
-
-	.rn-risk-badge {
-		font-size: 11px;
-		font-weight: 500;
-		padding: 2px 7px;
-		border-radius: 4px;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.rn-risk-badge--lg {
-		font-size: 13px;
-	}
-
-	.rn-risk-badge--high {
-		background: var(--rn-risk-high-bg);
-		color: var(--rn-risk-high-fg);
-	}
-
-	.rn-risk-badge--medium {
-		background: var(--rn-risk-medium-bg);
-		color: var(--rn-risk-medium-fg);
-	}
-
-	.rn-risk-badge--low {
-		background: var(--rn-risk-low-bg);
-		color: var(--rn-risk-low-fg);
-	}
-
-	.rn-tabs {
-		display: flex;
-		gap: 0;
-		border-bottom: 1px solid var(--rn-border-muted);
-		margin-bottom: 20px;
-		overflow-x: auto;
-	}
-
-	.rn-tab {
-		padding: 8px 14px;
-		background: transparent;
-		border: none;
-		border-bottom: 2px solid transparent;
-		color: var(--rn-text-muted);
-		cursor: pointer;
-		font-size: 13px;
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-		gap: 5px;
-	}
-
-	.rn-tab--active {
-		border-bottom-color: var(--rn-tab-active);
-		color: var(--rn-tab-active);
-	}
-
-	.rn-tab-icon {
-		font-size: 10px;
-	}
-
-	.rn-tab-badge {
-		background: #e24b4a;
-		color: #fff;
-		border-radius: 50%;
-		width: 16px;
-		height: 16px;
-		font-size: 10px;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.rn-card {
-		background: var(--rn-bg-elevated);
-		border-radius: 8px;
-		padding: 16px;
-		margin-bottom: 14px;
-	}
-
-	.rn-card--accent {
-		border-left: 3px solid #ef9f27;
-	}
-
-	.rn-card-label {
-		font-size: 13px;
-		color: var(--rn-text-muted);
-		margin-bottom: 6px;
-		text-transform: uppercase;
-		letter-spacing: 0.8px;
-	}
-
-	.rn-prose {
-		color: var(--rn-prose);
-		line-height: 1.7;
-		margin: 0;
-	}
-
-	.rn-prose--sm {
-		font-size: 14px;
-	}
-
-	.rn-stats {
-		display: flex;
-		gap: 16px;
-		flex-wrap: wrap;
-		margin: 14px 0;
-	}
-
-	.rn-stat {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-	}
-
-	.rn-stat-value {
-		font-size: 22px;
-		font-weight: 600;
-	}
-
-	.rn-stat-label {
-		font-size: 12px;
-		color: var(--rn-text-muted);
-		line-height: 1.2;
-	}
-
-	.rn-checklist-item {
-		display: flex;
-		gap: 10px;
-		margin-bottom: 8px;
-		align-items: flex-start;
-		font-size: 14px;
-		line-height: 1.5;
-	}
-
-	.rn-checklist-num {
-		color: var(--rn-accent);
-		font-family: monospace;
-		font-size: 12px;
-		min-width: 20px;
-	}
-
-	.rn-empty {
-		color: var(--rn-text-muted);
-		padding: 32px 0;
-		text-align: center;
-	}
-
-	.rn-breaking-card {
-		background: var(--rn-bg-elevated);
-		border: 1px solid var(--rn-breaking-border);
-		border-radius: 8px;
-		padding: 16px;
-		margin-bottom: 14px;
-		line-height: 1.6;
-		color: var(--rn-text);
-	}
-
-	.rn-breaking-card-head {
-		display: flex;
-		gap: 10px;
-		align-items: center;
-		margin-bottom: 10px;
-		flex-wrap: wrap;
-	}
-
-	.rn-pill {
-		font-size: 11px;
-		padding: 3px 8px;
-		border-radius: 4px;
-		text-transform: uppercase;
-		line-height: 1.3;
-	}
-
-	.rn-pill--breaking {
-		background: rgb(226 75 74 / 0.13);
-		color: var(--rn-danger-fg);
-	}
-
-	.rn-pill--critical {
-		background: rgb(226 75 74 / 0.2);
-		color: var(--rn-danger-fg);
-	}
-
-	.rn-pill--warning {
-		background: rgb(239 159 39 / 0.15);
-		color: var(--rn-warning-fg);
-	}
-
-	.rn-pill--modified {
-		background: rgb(239 159 39 / 0.13);
-		color: var(--rn-warning-fg);
-	}
-
-	.rn-pill--new {
-		background: rgb(99 153 34 / 0.13);
-		color: var(--rn-success-fg);
-	}
-
-	.rn-code-kind {
-		color: var(--rn-code-kind);
-		font-size: 15px;
-		font-weight: 600;
-		word-break: break-word;
-	}
-
-	.rn-code-field {
-		color: var(--rn-heading);
-		-webkit-text-fill-color: var(--rn-heading);
-		font-size: 14px;
-		word-break: break-word;
-	}
-
-	.rn-code-new {
-		color: var(--rn-code-new);
-		font-size: 14px;
-		font-weight: 600;
-	}
-
-	.rn-code-warn {
-		color: var(--rn-warning-fg);
-		font-size: 12px;
-	}
-
-	.rn-migration {
-		margin-bottom: 12px;
-	}
-
-	.rn-migration-step {
-		display: flex;
-		gap: 8px;
-		margin-bottom: 8px;
-		font-size: 14px;
-		line-height: 1.6;
-		color: var(--rn-migration);
-	}
-
-	.rn-migration-num {
-		color: var(--rn-danger-fg);
-		font-family: monospace;
-		font-size: 13px;
-		min-width: 18px;
-		flex-shrink: 0;
-	}
-
-	.rn-yaml-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 10px;
-	}
-
-	@media (max-width: 768px) {
-		.rn-yaml-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	.rn-yaml-label {
-		font-size: 13px;
-		font-weight: 600;
-		margin-bottom: 6px;
-	}
-
-	.rn-yaml-label--before {
-		color: var(--rn-danger-fg);
-	}
-
-	.rn-yaml-label--after {
-		color: var(--rn-success-fg);
-	}
-
-	.rn-codeblock {
-		position: relative;
-		background: var(--rn-bg-code);
-		border: 1px solid var(--rn-border);
-		border-radius: 6px;
-		padding: 12px;
-		margin-top: 8px;
-		overflow-x: auto;
-	}
-
-	.rn-codeblock pre {
-		margin: 0;
-		font-size: 13px;
-		color: var(--rn-code-fg);
-		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-		white-space: pre-wrap;
-		word-break: break-word;
-		line-height: 1.6;
-	}
-
-	.rn-copy {
-		position: absolute;
-		top: 6px;
-		right: 8px;
-		font-size: 11px;
-		padding: 2px 8px;
-		border-radius: 4px;
-		border: 0.5px solid var(--rn-copy-border);
-		background: transparent;
-		color: var(--rn-copy-text);
-		cursor: pointer;
-	}
-
-	.rn-pill--deprec {
-		background: rgb(239 159 39 / 0.13);
-		color: var(--rn-warning-fg);
-	}
-
-	.rn-deprec-toolbar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-		margin-bottom: 16px;
-		position: sticky;
-		top: 0;
-		z-index: 2;
-		background: var(--rn-bg);
-		padding: 8px 0 12px;
-	}
-
-	.rn-deprec-summary {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		flex-wrap: wrap;
-	}
-
-	.rn-deprec-summary-text {
-		font-size: 13px;
-		color: var(--rn-text);
-		-webkit-text-fill-color: var(--rn-text);
-	}
-
-	.rn-deprec-summary-text strong {
-		color: var(--rn-warning-fg);
-		-webkit-text-fill-color: var(--rn-warning-fg);
-		font-weight: 600;
-	}
-
-	.rn-deprec-search {
-		flex: 1;
-		min-width: 220px;
-		max-width: 360px;
-		background: var(--rn-bg);
-		border: 1px solid var(--rn-border-muted);
-		border-radius: 6px;
-		padding: 10px 14px;
-		color: var(--rn-text);
-		font-size: 14px;
-		line-height: 1.4;
-	}
-
-	.rn-list-toolbar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-		margin-bottom: 16px;
-		position: sticky;
-		top: 0;
-		z-index: 2;
-		background: var(--rn-bg);
-		padding: 8px 0 12px;
-	}
-
-	.rn-list-summary {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		flex-wrap: wrap;
-	}
-
-	.rn-list-summary-text {
-		font-size: 13px;
-		color: var(--rn-text);
-		-webkit-text-fill-color: var(--rn-text);
-	}
-
-	.rn-list-search {
-		flex: 1;
-		min-width: 220px;
-		max-width: 400px;
-		background: var(--rn-bg);
-		border: 1px solid var(--rn-border-muted);
-		border-radius: 6px;
-		padding: 10px 14px;
-		color: var(--rn-text);
-		font-size: 14px;
-		line-height: 1.4;
-	}
-
-	.rn-breaking-list,
-	.rn-mod-list {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		max-height: min(70vh, 900px);
-		overflow-y: auto;
-		padding-right: 4px;
-	}
-
-	.rn-breaking-group {
-		background: var(--rn-breaking-bg);
-		border: 1px solid var(--rn-breaking-border);
-		border-radius: 8px;
-		overflow: hidden;
-	}
-
-	.rn-breaking-group-head {
-		width: 100%;
-		display: flex;
-		align-items: flex-start;
-		flex-wrap: wrap;
-		gap: 10px;
-		min-height: 48px;
-		padding: 14px 16px;
-		box-sizing: border-box;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		color: var(--rn-heading);
-		font: inherit;
-		text-align: left;
-		-webkit-text-fill-color: var(--rn-heading);
-	}
-
-	.rn-breaking-group-head code,
-	.rn-breaking-group-head .rn-code-kind {
-		flex: 1;
-		min-width: 0;
-		color: var(--rn-heading);
-		-webkit-text-fill-color: var(--rn-heading);
-		font-size: 16px;
-		font-weight: 600;
-		word-break: break-word;
-		line-height: 1.4;
-	}
-
-	.rn-breaking-group-head:hover {
-		background: rgb(226 75 74 / 0.06);
-	}
-
-	.rn-breaking-group-body {
-		padding: 16px;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		border-top: 1px solid var(--rn-breaking-border);
-		line-height: 1.6;
-	}
-
-	.rn-breaking-group-body .rn-breaking-card {
-		margin-bottom: 0;
-	}
-
-	.rn-deprec-list {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		max-height: min(70vh, 900px);
-		overflow-y: auto;
-		padding-right: 4px;
-	}
-
-	.rn-deprec-card {
-		background: var(--rn-deprec-bg);
-		border: 1px solid var(--rn-deprec-border);
-		border-radius: 8px;
-		overflow: hidden;
-	}
-
-	.rn-deprec-card-head {
-		width: 100%;
-		display: flex;
-		align-items: flex-start;
-		flex-wrap: wrap;
-		gap: 10px;
-		min-height: 48px;
-		padding: 14px 16px;
-		box-sizing: border-box;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		color: var(--rn-heading);
-		font: inherit;
-		text-align: left;
-		-webkit-text-fill-color: var(--rn-heading);
-	}
-
-	.rn-deprec-card-head:hover {
-		background: rgb(239 159 39 / 0.06);
-	}
-
-	.rn-deprec-chevron {
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		font-size: 14px;
-		line-height: 1.4;
-		transition: transform 0.15s ease;
-		flex-shrink: 0;
-		margin-top: 2px;
-	}
-
-	.rn-deprec-chevron--open {
-		transform: rotate(90deg);
-	}
-
-	.rn-deprec-card-title {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.rn-deprec-kind {
-		font-size: 16px;
-		font-weight: 700;
-		color: var(--rn-heading);
-		-webkit-text-fill-color: var(--rn-heading);
-		line-height: 1.4;
-		word-break: break-word;
-	}
-
-	.rn-deprec-group {
-		font-size: 13px;
-		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		line-height: 1.5;
-		word-break: break-all;
-	}
-
-	.rn-deprec-count {
-		font-size: 13px;
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		flex-shrink: 0;
-		line-height: 1.4;
-		align-self: flex-start;
-	}
-
-	.rn-deprec-card-body {
-		padding: 16px 16px 16px 40px;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		border-top: 1px solid var(--rn-deprec-border);
-		line-height: 1.6;
-	}
-
-	.rn-deprec-label {
-		display: block;
-		font-size: 13px;
-		text-transform: uppercase;
-		letter-spacing: 0.6px;
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		margin-bottom: 6px;
-	}
-
-	.rn-deprec-chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-	}
-
-	.rn-deprec-chip {
-		display: inline-flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 6px;
-		min-width: min(100%, 180px);
-		padding: 6px 10px;
-		border-radius: 6px;
-		border: 1px solid var(--rn-deprec-border);
-		background: var(--rn-bg-elevated);
-		font-size: 13px;
-		line-height: 1.4;
-		color: var(--rn-text);
-	}
-
-	.rn-deprec-chip--new {
-		border-color: var(--rn-warning-fg);
-	}
-
-	.rn-deprec-chip-key {
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-	}
-
-	.rn-deprec-chip-val {
-		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--rn-heading);
-		-webkit-text-fill-color: var(--rn-heading);
-		background: transparent;
-		padding: 0;
-		word-break: break-all;
-	}
-
-	.rn-deprec-chip-tag {
-		font-size: 11px;
-		text-transform: uppercase;
-		font-weight: 600;
-		color: var(--rn-warning-fg);
-		background: rgb(239 159 39 / 0.15);
-		padding: 2px 6px;
-		border-radius: 3px;
-	}
-
-	.rn-deprec-row {
-		font-size: 14px;
-		line-height: 1.6;
-	}
-
-	.rn-deprec-recommended {
-		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-		font-size: 13px;
-		color: var(--rn-success-fg);
-		background: transparent;
-		word-break: break-all;
-	}
-
-	.rn-deprec-removed {
-		color: var(--rn-text);
-		-webkit-text-fill-color: var(--rn-text);
-		font-size: 14px;
-		line-height: 1.6;
-	}
-
-	.rn-deprec-migration {
-		margin: 0;
-		font-size: 14px;
-		line-height: 1.6;
-		color: var(--rn-text);
-		-webkit-text-fill-color: var(--rn-text);
-	}
-
-	.rn-new-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-	}
-
-	@media (max-width: 768px) {
-		.rn-new-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	.rn-new-card {
-		background: var(--rn-new-bg);
-		border: 1px solid var(--rn-new-border);
-		border-radius: 8px;
-		padding: 14px;
-	}
-
-	.rn-new-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 8px;
-	}
-
-	.rn-api-version {
-		color: var(--rn-text-muted);
-		font-size: 13px;
-		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-		margin-bottom: 8px;
-		line-height: 1.5;
-	}
-
-	.rn-mod-group {
-		margin-bottom: 0;
-		background: var(--rn-bg-elevated);
-		border: 1px solid var(--rn-border);
-		border-radius: 8px;
-		overflow: hidden;
-	}
-
-	.rn-mod-head {
-		font-size: 15px;
-		font-weight: 600;
-		color: var(--rn-heading);
-		margin-bottom: 8px;
-		display: flex;
-		align-items: flex-start;
-		flex-wrap: wrap;
-		gap: 10px;
-	}
-
-	.rn-mod-head--btn {
-		width: 100%;
-		display: flex;
-		align-items: flex-start;
-		flex-wrap: wrap;
-		gap: 10px;
-		min-height: 48px;
-		padding: 14px 16px;
-		box-sizing: border-box;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		color: var(--rn-heading);
-		font: inherit;
-		text-align: left;
-		margin-bottom: 0;
-		-webkit-text-fill-color: var(--rn-heading);
-	}
-
-	.rn-mod-head--btn code {
-		flex: 1;
-		min-width: 0;
-		color: var(--rn-heading);
-		-webkit-text-fill-color: var(--rn-heading);
-		font-size: 16px;
-		font-weight: 700;
-		word-break: break-word;
-		line-height: 1.4;
-	}
-
-	.rn-mod-head--btn:hover {
-		background: rgb(37 99 235 / 0.04);
-	}
-
-	.rn-mod-table-wrap {
-		overflow-x: auto;
-		border-top: 1px solid var(--rn-border);
-	}
-
-	.rn-mod-table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 13px;
-	}
-
-	.rn-mod-table th,
-	.rn-mod-table td {
-		padding: 10px 12px;
-		text-align: left;
-		vertical-align: top;
-		border-bottom: 1px solid var(--rn-border);
-		line-height: 1.6;
-	}
-
-	.rn-mod-table th {
-		font-size: 12px;
-		text-transform: uppercase;
-		letter-spacing: 0.6px;
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		background: var(--rn-bg-surface);
-	}
-
-	.rn-mod-table td {
-		color: var(--rn-text);
-		-webkit-text-fill-color: var(--rn-text);
-	}
-
-	.rn-mod-table code {
-		font-size: 13px;
-		word-break: break-all;
-		color: var(--rn-heading);
-		-webkit-text-fill-color: var(--rn-heading);
-	}
-
-	.rn-mod-impact {
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		line-height: 1.6;
-		max-width: 320px;
-	}
-
-	.rn-mod-change {
-		background: var(--rn-bg-elevated);
-		border-radius: 6px;
-		padding: 10px 12px;
-		margin-bottom: 6px;
-		border-left: 3px solid #888;
-	}
-
-	.rn-mod-change-head {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		margin-bottom: 6px;
-		flex-wrap: wrap;
-	}
-
-	.rn-mod-before-after {
-		display: flex;
-		gap: 12px;
-		margin-bottom: 6px;
-		font-size: 12px;
-		color: var(--rn-text-muted);
-		flex-wrap: wrap;
-	}
-
-	.rn-val-before {
-		color: var(--rn-danger-fg);
-	}
-
-	.rn-val-after {
-		color: var(--rn-success-fg);
-	}
-
-	.rn-muted {
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-		font-size: 13px;
-		line-height: 1.5;
-	}
-
-	.rn-risk-hero {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		background: var(--rn-bg-elevated);
-		border-radius: 10px;
-		padding: 20px;
-		margin-bottom: 16px;
-	}
-
-	.rn-risk-icon {
-		font-size: 48px;
-		line-height: 1;
-	}
-
-	.rn-risk-title {
-		font-size: 28px;
-		font-weight: 700;
-		text-transform: uppercase;
-	}
-
-	.rn-effort {
-		font-size: 16px;
-		font-weight: 500;
-	}
-
-	.rn-toast {
-		position: fixed;
-		bottom: 24px;
-		right: 24px;
-		background: var(--rn-btn-primary);
-		color: #fff;
-		padding: 10px 18px;
-		border-radius: 8px;
-		font-size: 13px;
-		z-index: 999;
-		box-shadow: 0 4px 20px rgb(0 0 0 / 0.25);
-		animation: rn-slide-up 0.3s ease;
-	}
-
-	@keyframes rn-slide-up {
-		from {
-			transform: translateY(20px);
-			opacity: 0;
-		}
-		to {
-			transform: translateY(0);
-			opacity: 1;
-		}
-	}
-
-	@keyframes rn-pulse {
-		0%,
-		100% {
-			opacity: 1;
-		}
-		50% {
-			opacity: 0.4;
-		}
-	}
-
-	/* Isolate list panels from body/Tailwind color inheritance */
-	.rn-deprec-card,
-	.rn-breaking-group,
-	.rn-mod-group,
-	.rn-deprec-toolbar,
-	.rn-list-toolbar,
-	.rn-deprec-card-body,
-	.rn-breaking-group-body {
-		color: var(--rn-text);
-	}
-
-	.rn-deprec-search,
-	.rn-list-search {
-		color: var(--rn-text);
-		-webkit-text-fill-color: var(--rn-text);
-	}
-
-	.rn-deprec-search::placeholder,
-	.rn-list-search::placeholder {
-		color: var(--rn-text-muted);
-		opacity: 1;
-	}
-
-	.rn-breaking-group-head .rn-muted,
-	.rn-mod-head--btn .rn-muted {
-		color: var(--rn-text-muted);
-		-webkit-text-fill-color: var(--rn-text-muted);
-	}
-
-	.rn-sidebar-body::-webkit-scrollbar,
-	.rn-main::-webkit-scrollbar {
-		width: 6px;
-	}
-
-	.rn-sidebar-body::-webkit-scrollbar-track,
-	.rn-main::-webkit-scrollbar-track {
-		background: var(--rn-scroll-track);
-	}
-
-	.rn-sidebar-body::-webkit-scrollbar-thumb,
-	.rn-main::-webkit-scrollbar-thumb {
-		background: var(--rn-scroll-thumb);
-		border-radius: 3px;
-	}
-</style>
