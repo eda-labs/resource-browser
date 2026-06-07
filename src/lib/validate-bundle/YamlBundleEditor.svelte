@@ -50,7 +50,7 @@
 
 <div class="yaml-editor-shell">
 	<div class="yaml-editor-toolbar">
-		<span class="yaml-editor-label">YAML bundle</span>
+		<span class="yaml-editor-label">YAML</span>
 		<div class="yaml-editor-toolbar-actions">
 			<button
 				type="button"
@@ -93,7 +93,7 @@
 				autocorrect="off"
 				on:scroll={handleScroll}
 				on:keydown={handleKeydown}
-				aria-label="YAML bundle input"
+				aria-label="YAML input"
 			></textarea>
 		</div>
 	</div>

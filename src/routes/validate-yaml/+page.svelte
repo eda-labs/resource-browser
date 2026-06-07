@@ -234,10 +234,10 @@
 </script>
 
 <svelte:head>
-	<title>EDA Resource Browser | YAML Bundle Validator</title>
+	<title>EDA Resource Browser | Validate YAML</title>
 	<meta
 		name="description"
-		content="Validate multi-document Nokia EDA YAML bundles — per-resource CRD schema checks and EDA manifest rules."
+		content="Validate multi-document Nokia EDA YAML — per-resource CRD schema checks and EDA manifest rules."
 	/>
 </svelte:head>
 
@@ -248,7 +248,7 @@
 		<section class="validate-bundle-hero" aria-labelledby="validate-bundle-heading">
 			<p class="homepage-hero-kicker">Per-resource validation</p>
 			<h1 id="validate-bundle-heading" class="homepage-title text-slate-100">
-				YAML Bundle Validator
+				Validate YAML
 			</h1>
 			<p class="homepage-subtitle text-slate-400">
 				Paste multiple Kubernetes-style manifests (<code class="text-slate-300">---</code>
@@ -278,7 +278,7 @@
 				disabled={isValidating || !release}
 				on:click={() => void runValidation()}
 			>
-				{isValidating ? 'Validating…' : 'Validate bundle'}
+				{isValidating ? 'Validating…' : 'Validate YAML'}
 			</button>
 
 			<button
