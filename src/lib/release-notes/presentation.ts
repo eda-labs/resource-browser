@@ -1,11 +1,12 @@
 import { isSchemaMetadataPath } from '$lib/comparison/fieldChangeClassifier';
+import type { ReleaseTone } from './constants';
 import type {
-	BreakingChange,
 	DeprecatedItem,
 	FieldChange,
 	FieldChangeType,
 	ModifiedResource,
-	NewResource
+	NewResource,
+	ReleaseNotes
 } from './types';
 
 export type OperationalArea =
@@ -183,16 +184,19 @@ export function displayNetworkBehavior(change: FieldChange, kind: string): strin
 	}
 }
 
-export function breakingProductionImpact(change: BreakingChange): string {
-	if (change.field === 'resource') {
-		return `${change.kind} CRD removed — production manifests will fail validation on upgrade.`;
-	}
+export function inferReleaseTone(fromVer: string, toVer: string): ReleaseTone {
+	const fromMajor = parseInt(fromVer.split('.')[0], 10);
+	const toMajor = parseInt(toVer.split('.')[0], 10);
+	if (fromMajor !== toMajor) return 'high';
+	if (fromVer.split('.')[1] !== toVer.split('.')[1]) return 'medium';
+	return 'low';
+}
 
-	const label = humanizeFieldPath(change.field);
-	if (change.severity === 'critical') {
-		return `${change.kind} apply will fail in production until ${label} is corrected.`;
-	}
-	return `${change.kind} rollout risk: ${label} change may alter forwarding or session behavior.`;
+export function countOperationalChanges(notes: ReleaseNotes): number {
+	return notes.modifiedResources.reduce((total, resource) => {
+		const { operational } = partitionFieldChanges(resource.changes);
+		return total + operational.length;
+	}, 0);
 }
 
 export function comparisonPageHref(fromVer: string, toVer: string): string {
@@ -222,37 +226,6 @@ export function highlightSegments(text: string, query: string): TextSegment[] {
 	}
 
 	return segments.length > 0 ? segments : [{ text, match: false }];
-}
-
-function breakingSeverityRank(change: BreakingChange): number {
-	if (change.severity === 'critical') return 0;
-	if (change.severity === 'warning') return 1;
-	return 2;
-}
-
-export function sortBreakingChanges(
-	items: BreakingChange[],
-	sort: ListSortMode
-): BreakingChange[] {
-	const sorted = [...items];
-	switch (sort) {
-		case 'kind-desc':
-			return sorted.sort((a, b) => b.kind.localeCompare(a.kind));
-		case 'severity':
-			return sorted.sort(
-				(a, b) =>
-					breakingSeverityRank(a) - breakingSeverityRank(b) ||
-					a.kind.localeCompare(b.kind) ||
-					a.field.localeCompare(b.field)
-			);
-		case 'change-type':
-			return sorted.sort((a, b) => a.field.localeCompare(b.field) || a.kind.localeCompare(b.kind));
-		case 'kind-asc':
-		default:
-			return sorted.sort(
-				(a, b) => a.kind.localeCompare(b.kind) || a.field.localeCompare(b.field)
-			);
-	}
 }
 
 export function sortFieldChanges(changes: FieldChange[], sort: ListSortMode): FieldChange[] {
@@ -407,38 +380,6 @@ export function sortNewResources(items: NewResource[], sort: ListSortMode): NewR
 		default:
 			return sorted.sort((a, b) => a.kind.localeCompare(b.kind));
 	}
-}
-
-export function filterBreakingChanges(
-	items: BreakingChange[],
-	query: string
-): BreakingChange[] {
-	const q = query.trim().toLowerCase();
-	if (!q) return items;
-	return items.filter((b) => {
-		const impact = breakingProductionImpact(b);
-		return (
-			b.kind.toLowerCase().includes(q) ||
-			b.field.toLowerCase().includes(q) ||
-			b.description.toLowerCase().includes(q) ||
-			humanizeFieldPath(b.field).toLowerCase().includes(q) ||
-			impact.toLowerCase().includes(q)
-		);
-	});
-}
-
-export function groupBreakingByKind(
-	items: BreakingChange[]
-): Array<{ kind: string; items: BreakingChange[] }> {
-	const map = new Map<string, BreakingChange[]>();
-	for (const item of items) {
-		const list = map.get(item.kind) ?? [];
-		list.push(item);
-		map.set(item.kind, list);
-	}
-	return Array.from(map.entries())
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([kind, groupItems]) => ({ kind, items: groupItems }));
 }
 
 export function filterModifiedResources(

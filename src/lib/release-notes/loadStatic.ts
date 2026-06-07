@@ -1,4 +1,3 @@
-import type { UpgradeRisk } from './types';
 import type { ReleaseNotesEntry } from './types';
 
 export type ReleaseNotesIndexEntry = {
@@ -6,8 +5,6 @@ export type ReleaseNotesIndexEntry = {
 	fromVer: string;
 	source: 'comparison' | 'mock';
 	timestamp: number;
-	upgradeRisk: UpgradeRisk;
-	breakingCount: number;
 };
 
 export type ReleaseNotesIndex = {

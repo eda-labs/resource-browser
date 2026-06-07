@@ -6,186 +6,260 @@
       {
         "kind": "alarmdefinitions.core.eda.nokia.com",
         "apiVersion": "core.eda.nokia.com/v1",
+        "group": "core.eda.nokia.com",
+        "crdName": "alarmdefinitions.core.eda.nokia.com",
         "description": "New alarmdefinitions.core.eda.nokia.com CRD introduced in EDA 25.12.1 (core.eda.nokia.com/v1)."
       },
       {
         "kind": "Allocation",
         "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "group": "netbox.eda.nokia.com",
+        "crdName": "allocations.netbox.eda.nokia.com",
         "description": "New Allocation CRD introduced in EDA 25.12.1 (netbox.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "applyallocations.netbox.eda.nokia.com",
         "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "group": "netbox.eda.nokia.com",
+        "crdName": "applyallocations.netbox.eda.nokia.com",
         "description": "New applyallocations.netbox.eda.nokia.com CRD introduced in EDA 25.12.1 (netbox.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "ClusterIncident",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "group": "snow.eda.nokia.com",
+        "crdName": "clusterincidents.snow.eda.nokia.com",
         "description": "New ClusterIncident CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "ClusterInstance",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "group": "snow.eda.nokia.com",
+        "crdName": "clusterinstances.snow.eda.nokia.com",
         "description": "New ClusterInstance CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "ClusterProducer",
         "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "group": "kafka.eda.nokia.com",
+        "crdName": "clusterproducers.kafka.eda.nokia.com",
         "description": "New ClusterProducer CRD introduced in EDA 25.12.1 (kafka.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "creategithubissues.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "group": "github.eda.nokia.com",
+        "crdName": "creategithubissues.github.eda.nokia.com",
         "description": "New creategithubissues.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "creategitlabissues.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "group": "gitlab.eda.nokia.com",
+        "crdName": "creategitlabissues.gitlab.eda.nokia.com",
         "description": "New creategitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "defaultmtus.siteinfo.eda.nokia.com",
         "apiVersion": "siteinfo.eda.nokia.com/v1alpha1",
+        "group": "siteinfo.eda.nokia.com",
+        "crdName": "defaultmtus.siteinfo.eda.nokia.com",
         "description": "New defaultmtus.siteinfo.eda.nokia.com CRD introduced in EDA 25.12.1 (siteinfo.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "defaultospfareadeployments.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultospfareadeployments.protocols.eda.nokia.com",
         "description": "New defaultospfareadeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "defaultospfareas.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultospfareas.protocols.eda.nokia.com",
         "description": "New defaultospfareas.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "defaultospfinstancedeployments.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultospfinstancedeployments.protocols.eda.nokia.com",
         "description": "New defaultospfinstancedeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "defaultospfinstances.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultospfinstances.protocols.eda.nokia.com",
         "description": "New defaultospfinstances.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "defaultospfinterfaces.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultospfinterfaces.protocols.eda.nokia.com",
         "description": "New defaultospfinterfaces.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "Export",
         "apiVersion": "prom.eda.nokia.com/v1alpha1",
+        "group": "prom.eda.nokia.com",
+        "crdName": "exports.prom.eda.nokia.com",
         "description": "New Export CRD introduced in EDA 25.12.1 (prom.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "githubactions.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "group": "github.eda.nokia.com",
+        "crdName": "githubactions.github.eda.nokia.com",
         "description": "New githubactions.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "githubinstances.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "group": "github.eda.nokia.com",
+        "crdName": "githubinstances.github.eda.nokia.com",
         "description": "New githubinstances.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "githubissues.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "group": "github.eda.nokia.com",
+        "crdName": "githubissues.github.eda.nokia.com",
         "description": "New githubissues.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "gitlabinstances.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "group": "gitlab.eda.nokia.com",
+        "crdName": "gitlabinstances.gitlab.eda.nokia.com",
         "description": "New gitlabinstances.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "gitlabissues.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "group": "gitlab.eda.nokia.com",
+        "crdName": "gitlabissues.gitlab.eda.nokia.com",
         "description": "New gitlabissues.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "gitlabpipelines.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "group": "gitlab.eda.nokia.com",
+        "crdName": "gitlabpipelines.gitlab.eda.nokia.com",
         "description": "New gitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "Incident",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "group": "snow.eda.nokia.com",
+        "crdName": "incidents.snow.eda.nokia.com",
         "description": "New Incident CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "Instance",
         "apiVersion": "netbox.eda.nokia.com/v1alpha1",
+        "group": "netbox.eda.nokia.com",
+        "crdName": "instances.netbox.eda.nokia.com",
         "description": "New Instance CRD introduced in EDA 25.12.1 (netbox.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "Instance",
         "apiVersion": "snow.eda.nokia.com/v1alpha1",
+        "group": "snow.eda.nokia.com",
+        "crdName": "instances.snow.eda.nokia.com",
         "description": "New Instance CRD introduced in EDA 25.12.1 (snow.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "networktopologies.topologies.eda.nokia.com",
         "apiVersion": "topologies.eda.nokia.com/v1alpha1",
+        "group": "topologies.eda.nokia.com",
+        "crdName": "networktopologies.topologies.eda.nokia.com",
         "description": "New networktopologies.topologies.eda.nokia.com CRD introduced in EDA 25.12.1 (topologies.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "ospfareadeployments.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "ospfareadeployments.protocols.eda.nokia.com",
         "description": "New ospfareadeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "ospfareas.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "ospfareas.protocols.eda.nokia.com",
         "description": "New ospfareas.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "ospfinstancedeployments.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "ospfinstancedeployments.protocols.eda.nokia.com",
         "description": "New ospfinstancedeployments.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "ospfinstances.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "ospfinstances.protocols.eda.nokia.com",
         "description": "New ospfinstances.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "ospfinterfaces.protocols.eda.nokia.com",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "ospfinterfaces.protocols.eda.nokia.com",
         "description": "New ospfinterfaces.protocols.eda.nokia.com CRD introduced in EDA 25.12.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "Producer",
         "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "group": "kafka.eda.nokia.com",
+        "crdName": "producers.kafka.eda.nokia.com",
         "description": "New Producer CRD introduced in EDA 25.12.1 (kafka.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "routetraces.routing.eda.nokia.com",
         "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "group": "routing.eda.nokia.com",
+        "crdName": "routetraces.routing.eda.nokia.com",
         "description": "New routetraces.routing.eda.nokia.com CRD introduced in EDA 25.12.1 (routing.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "rungithubworkflows.github.eda.nokia.com",
         "apiVersion": "github.eda.nokia.com/v1alpha1",
+        "group": "github.eda.nokia.com",
+        "crdName": "rungithubworkflows.github.eda.nokia.com",
         "description": "New rungithubworkflows.github.eda.nokia.com CRD introduced in EDA 25.12.1 (github.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
         "apiVersion": "gitlab.eda.nokia.com/v1alpha1",
+        "group": "gitlab.eda.nokia.com",
+        "crdName": "rungitlabpipelines.gitlab.eda.nokia.com",
         "description": "New rungitlabpipelines.gitlab.eda.nokia.com CRD introduced in EDA 25.12.1 (gitlab.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "systemloadbalancers.siteinfo.eda.nokia.com",
         "apiVersion": "siteinfo.eda.nokia.com/v1alpha1",
+        "group": "siteinfo.eda.nokia.com",
+        "crdName": "systemloadbalancers.siteinfo.eda.nokia.com",
         "description": "New systemloadbalancers.siteinfo.eda.nokia.com CRD introduced in EDA 25.12.1 (siteinfo.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "tagsetdeployments.routingpolicies.eda.nokia.com",
         "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "group": "routingpolicies.eda.nokia.com",
+        "crdName": "tagsetdeployments.routingpolicies.eda.nokia.com",
         "description": "New tagsetdeployments.routingpolicies.eda.nokia.com CRD introduced in EDA 25.12.1 (routingpolicies.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "tagsets.routingpolicies.eda.nokia.com",
         "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "group": "routingpolicies.eda.nokia.com",
+        "crdName": "tagsets.routingpolicies.eda.nokia.com",
         "description": "New tagsets.routingpolicies.eda.nokia.com CRD introduced in EDA 25.12.1 (routingpolicies.eda.nokia.com/v1alpha1)."
       }
     ],
@@ -325,19 +399,6 @@
         ]
       },
       {
-        "kind": "Breakout",
-        "apiVersion": "interfaces.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.nodeSelector.description",
-            "changeType": "type_change",
-            "before": "\"TopoNode where the parent interfaces are to be broken out.\"",
-            "after": "\"Label selector to select nodes on which to configure the breakout interfaces. Either Nodes or NodeSelector must have at least one value set.\"",
-            "networkBehavior": "Description on Breakout changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
         "kind": "BridgeDomain",
         "apiVersion": "services.eda.nokia.com/v1",
         "changes": [
@@ -347,46 +408,6 @@
             "before": "",
             "after": "",
             "networkBehavior": "New optional field spec.configuredName available on BridgeDomain; existing manifests remain valid."
-          }
-        ]
-      },
-      {
-        "kind": "BridgeInterface",
-        "apiVersion": "services.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "spec.uplink.properties.egress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.uplink.properties.ingress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
-        "kind": "BridgeInterface",
-        "apiVersion": "services.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.uplink.properties.egress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.uplink.properties.ingress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on BridgeInterface changed type or structure; validate existing values against the new schema."
           }
         ]
       },
@@ -531,46 +552,6 @@
             "before": "",
             "after": "",
             "networkBehavior": "New optional field spec.reconnectionTimeoutSeconds available on DeployImage; existing manifests remain valid."
-          }
-        ]
-      },
-      {
-        "kind": "EgressPolicy",
-        "apiVersion": "qos.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
-            "changeType": "type_change",
-            "before": "\"The mininum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.\"",
-            "after": "\"The minimum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.\"",
-            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description",
-            "changeType": "type_change",
-            "before": "\"The mininum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.\"",
-            "after": "\"The minimum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.\"",
-            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
-        "kind": "EgressPolicy",
-        "apiVersion": "qos.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThreshold.description",
-            "changeType": "type_change",
-            "before": "\"The mininum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.\"",
-            "after": "\"The minimum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.\"",
-            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.queueManagement.items.properties.wredSlopPolicies.items.properties.minThresholdPercent.description",
-            "changeType": "type_change",
-            "before": "\"The mininum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.\"",
-            "after": "\"The minimum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.\"",
-            "networkBehavior": "Description on EgressPolicy changed type or structure; validate existing values against the new schema."
           }
         ]
       },
@@ -867,19 +848,6 @@
         ]
       },
       {
-        "kind": "IRBInterface",
-        "apiVersion": "services.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.bfd.properties.ttl.description",
-            "changeType": "type_change",
-            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
-            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
-            "networkBehavior": "Description on IRBInterface changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
         "kind": "ISL",
         "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
         "changes": [
@@ -1061,33 +1029,6 @@
         ]
       },
       {
-        "kind": "Registry",
-        "apiVersion": "appstore.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "spec.authSecretRef.description",
-            "changeType": "type_change",
-            "before": "\"AuthSecretRef is the authentication secret reference, used for authentication.\\nMust be in the same namespace as the catalog.\"",
-            "after": "\"AuthSecretRef is the authentication secret reference, used for authentication.\\nMust be in the same namespace as the registry.\"",
-            "networkBehavior": "Description on Registry changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.mirror.description",
-            "changeType": "type_change",
-            "before": "\"Mirror registry of the original remote registry.\\nApp store will use the mirror instead of the original registry that is referenced by a catalog.\"",
-            "after": "\"Mirror registry of the original remote registry.\\nApp store will use the mirror instead of the original registry that is referenced by a registry.\"",
-            "networkBehavior": "Description on Registry changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.title.description",
-            "changeType": "type_change",
-            "before": "\"Title is an UI-friendly name for the catalog.\"",
-            "after": "\"Title is an UI-friendly name for the registry.\"",
-            "networkBehavior": "Description on Registry changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
         "kind": "RoutedInterface",
         "apiVersion": "services.eda.nokia.com/v1",
         "changes": [
@@ -1111,39 +1052,6 @@
             "before": "",
             "after": "",
             "networkBehavior": "New optional field spec.ipv6RouterAdvertisement.description available on RoutedInterface; existing manifests remain valid."
-          }
-        ]
-      },
-      {
-        "kind": "RoutedInterface",
-        "apiVersion": "services.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.bfd.properties.ttl.description",
-            "changeType": "type_change",
-            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
-            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
-            "networkBehavior": "Description on RoutedInterface changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.ipv4Parameters.description",
-            "changeType": "optional_added",
-            "before": "",
-            "after": "",
-            "networkBehavior": "New optional field spec.ipv4Parameters.description available on RoutedInterface; existing manifests remain valid."
-          }
-        ]
-      },
-      {
-        "kind": "RouteLookup",
-        "apiVersion": "routing.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "status.results.items.properties.nextHops.items.properties.interfaces.items.properties.localAddress",
-            "changeType": "optional_added",
-            "before": "",
-            "after": "",
-            "networkBehavior": "New optional field status.results.items.properties.nextHops.items.properties.interfaces.items.properties.localAddress available on RouteLookup; existing manifests remain valid."
           }
         ]
       },
@@ -1203,19 +1111,6 @@
         ]
       },
       {
-        "kind": "Router",
-        "apiVersion": "services.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.bgp.properties.ipAliasNexthops.items.properties.preferredActiveNode.description",
-            "changeType": "type_change",
-            "before": "\"When not set the ES is used in an all active mode. This references the ToppNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.\"",
-            "after": "\"When not set the ES is used in an all active mode. This references the TopoNode object and when set, the DF algorithm is configured to type preference and the selected Node is set with a higher preference value. All other Nodes have a lower value configured.\"",
-            "networkBehavior": "Description on Router changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
         "kind": "SimNode",
         "apiVersion": "core.eda.nokia.com/v1",
         "changes": [
@@ -1265,74 +1160,6 @@
             "before": "",
             "after": "",
             "networkBehavior": "New optional field spec.segments.items.properties.subnetLength.minimum available on SubnetAllocationPool; existing manifests remain valid."
-          }
-        ]
-      },
-      {
-        "kind": "SystemInterface",
-        "apiVersion": "routing.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.bfd.properties.ttl.description",
-            "changeType": "type_change",
-            "before": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not appllicable to single-hop BFD sessions.\"",
-            "after": "\"Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.\"",
-            "networkBehavior": "Description on SystemInterface changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
-        "kind": "Threshold",
-        "apiVersion": "oam.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.field.description",
-            "changeType": "type_change",
-            "before": "\"Field to monitor for this threshold, for example `utilization`.\"",
-            "after": "\"Field to monitor for this threshold, for example `utilization`. Only a single field may be monitored per threshold. This field must be present in the table specified by the path.\\nThe field specified should be an integer field that can be compared to the specified thresholds. Nested fields are supported, for example `utilization.value` would monitor the value field inside of the nested object with key `utilization`.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.generateOverlay.description",
-            "changeType": "type_change",
-            "before": "\"Enable or disable generation of a topology overlay for this threshold.\"",
-            "after": "\"Enable or disable generation of a topology overlay for this threshold.\\nThis functionality is only supported for paths in the .namespace.node table.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.path.description",
-            "changeType": "type_change",
-            "before": "\"Path to monitor for this threshold. This should be the full EDB path to the table containing the field you wish to trigger a threshold on.\\nFor example, to monitor the utilization field of the component volume table, you would use `.namespace.node.normal.components_eda_nokia_com.v1.controlmodule.volume`, and set field to `utilization`.\"",
-            "after": "\"Path to monitor for this threshold. This should be the full EDB path (without keys) to the table containing the field you wish to trigger a threshold on.\\nFor example, to monitor the utilization field of the component volume table, you would use `.namespace.node.normal.components_eda_nokia_com.v1.controlmodule.volume`, and set field to `utilization`.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.resource.description",
-            "changeType": "type_change",
-            "before": "\"Which resource to associate with this threshold. This overrides the destination resource in alarms raised as a result of threshold breaches.\\nBy default a resource will attempt to be derived based on the monitored path.\"",
-            "after": "\"Manually assign a resource to associate with this threshold. This overrides the destination resource in alarms raised as a result of threshold breaches.\\nBy default a resource will be raised against the threshold resource itself.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.resource.properties.group.description",
-            "changeType": "type_change",
-            "before": "\"The group of the resource to monitor.\"",
-            "after": "\"The group of the resource raise alarms against, should any thresholds be breached.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.resource.properties.kind.description",
-            "changeType": "type_change",
-            "before": "\"The kind of resource to monitor.\"",
-            "after": "\"The kind of resource to raise alarms against, should any thresholds be breached.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.resource.properties.name.description",
-            "changeType": "type_change",
-            "before": "\"The name of the resource to monitor.\"",
-            "after": "\"The name of the resource to raise alarms against, should any thresholds be breached.\"",
-            "networkBehavior": "Description on Threshold changed type or structure; validate existing values against the new schema."
           }
         ]
       },
@@ -1906,199 +1733,10 @@
             "networkBehavior": "Description on VirtualNetwork changed type or structure; validate existing values against the new schema."
           }
         ]
-      },
-      {
-        "kind": "VLAN",
-        "apiVersion": "services.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "spec.uplink.properties.egress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.uplink.properties.ingress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
-          }
-        ]
-      },
-      {
-        "kind": "VLAN",
-        "apiVersion": "services.eda.nokia.com/v1alpha1",
-        "changes": [
-          {
-            "field": "spec.uplink.properties.egress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Egress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Egress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
-          },
-          {
-            "field": "spec.uplink.properties.ingress.description",
-            "changeType": "type_change",
-            "before": "\"Manages actions on traffic at Ingress of the Local enpoint of the Uplink.\"",
-            "after": "\"Manages actions on traffic at Ingress of the Local endpoint of the Uplink.\"",
-            "networkBehavior": "Description on VLAN changed type or structure; validate existing values against the new schema."
-          }
-        ]
       }
     ],
-    "deprecated": [],
-    "breakingChanges": [
-      {
-        "kind": "CxCluster",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.1 catalog — migrate or decommission existing CxCluster resources using cx.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing CxCluster manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove CxCluster resources before upgrading"
-        ],
-        "yamlBefore": "# CxCluster resource\napiVersion: cx.eda.nokia.com/v1alpha1\nkind: CxCluster",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Monitor",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.1 catalog — migrate or decommission existing Monitor resources using system.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Monitor manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Monitor resources before upgrading"
-        ],
-        "yamlBefore": "# Monitor resource\napiVersion: system.eda.nokia.com/v1alpha1\nkind: Monitor",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Alarm",
-        "field": "spec.jsPath.type",
-        "description": "Type on Alarm changed type or structure; validate existing values against the new schema.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Alarm resources in your cluster",
-          "Update manifests to address spec.jsPath.type",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "\"string\"",
-        "yamlAfter": "\"array\""
-      },
-      {
-        "kind": "Alarm",
-        "field": "spec.parentAlarm.type",
-        "description": "Type on Alarm changed type or structure; validate existing values against the new schema.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Alarm resources in your cluster",
-          "Update manifests to address spec.parentAlarm.type",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "\"string\"",
-        "yamlAfter": "\"array\""
-      },
-      {
-        "kind": "Fabric",
-        "field": "spec.underlayProtocol.properties.protocol.items.enum",
-        "description": "Enum on Fabric removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Fabric resources in your cluster",
-          "Update manifests to address spec.underlayProtocol.properties.protocol.items.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"EBGP\"]",
-        "yamlAfter": "[\"EBGP\",\"OSPFv2\",\"OSPFv3\"]"
-      },
-      {
-        "kind": "Fabric",
-        "field": "spec.underlayProtocol.required",
-        "description": "Required on Fabric changed type or structure; validate existing values against the new schema.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Fabric resources in your cluster",
-          "Update manifests to address spec.underlayProtocol.required",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"bgp\",\"protocol\"]",
-        "yamlAfter": "[\"protocol\"]"
-      },
-      {
-        "kind": "Manifest",
-        "field": "spec.requirements.items.required",
-        "description": "Required on Manifest changed type or structure; validate existing values against the new schema.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Manifest resources in your cluster",
-          "Update manifests to address spec.requirements.items.required",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"appName\",\"vendor\",\"version\"]",
-        "yamlAfter": "[\"version\"]"
-      },
-      {
-        "kind": "Policy",
-        "field": "spec.statement.items.properties.match.properties.protocol.enum",
-        "description": "Enum on Policy removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Policy resources in your cluster",
-          "Update manifests to address spec.statement.items.properties.match.properties.protocol.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[15 items]",
-        "yamlAfter": "[17 items]"
-      },
-      {
-        "kind": "TopoNode",
-        "field": "spec.npp.properties.mode.enum",
-        "description": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected TopoNode resources in your cluster",
-          "Update manifests to address spec.npp.properties.mode.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"normal\",\"maintenance\",\"null\",\"emulate\"]",
-        "yamlAfter": "[5 items]"
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
-        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[15 items]",
-        "yamlAfter": "[17 items]"
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
-        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.match.properties.protocol.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[15 items]",
-        "yamlAfter": "[17 items]"
-      }
-    ],
-    "totalBreakingCount": 11,
-    "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.8.3 to 25.12.1 includes 11 breaking change(s) including 2 removed CRD(s) and 9 spec field change(s).",
-    "estimatedEffort": "High: >4h"
+    "deprecated": []
   },
-  "timestamp": 1780777992654,
+  "timestamp": 1780852181448,
   "source": "comparison"
 }

@@ -6,31 +6,43 @@
       {
         "kind": "ftpservers.management.eda.nokia.com",
         "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "group": "management.eda.nokia.com",
+        "crdName": "ftpservers.management.eda.nokia.com",
         "description": "New ftpservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "grpcservers.management.eda.nokia.com",
         "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "group": "management.eda.nokia.com",
+        "crdName": "grpcservers.management.eda.nokia.com",
         "description": "New grpcservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "httpservers.management.eda.nokia.com",
         "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "group": "management.eda.nokia.com",
+        "crdName": "httpservers.management.eda.nokia.com",
         "description": "New httpservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "locators.support.eda.nokia.com",
         "apiVersion": "support.eda.nokia.com/v1alpha1",
+        "group": "support.eda.nokia.com",
+        "crdName": "locators.support.eda.nokia.com",
         "description": "New locators.support.eda.nokia.com CRD introduced in EDA 25.12.2 (support.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "sshservers.management.eda.nokia.com",
         "apiVersion": "management.eda.nokia.com/v1alpha1",
+        "group": "management.eda.nokia.com",
+        "crdName": "sshservers.management.eda.nokia.com",
         "description": "New sshservers.management.eda.nokia.com CRD introduced in EDA 25.12.2 (management.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "systempings.routing.eda.nokia.com",
         "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "group": "routing.eda.nokia.com",
+        "crdName": "systempings.routing.eda.nokia.com",
         "description": "New systempings.routing.eda.nokia.com CRD introduced in EDA 25.12.2 (routing.eda.nokia.com/v1alpha1)."
       }
     ],
@@ -136,302 +148,9 @@
         "reason": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1."
       }
     ],
-    "modifiedResources": [
-      {
-        "kind": "BridgeInterface",
-        "apiVersion": "services.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "status.uplinks",
-            "changeType": "optional_added",
-            "before": "",
-            "after": "",
-            "networkBehavior": "New optional field status.uplinks available on BridgeInterface; existing manifests remain valid."
-          }
-        ]
-      },
-      {
-        "kind": "VLAN",
-        "apiVersion": "services.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "status.uplinks",
-            "changeType": "optional_added",
-            "before": "",
-            "after": "",
-            "networkBehavior": "New optional field status.uplinks available on VLAN; existing manifests remain valid."
-          }
-        ]
-      }
-    ],
-    "deprecated": [],
-    "breakingChanges": [
-      {
-        "kind": "Allocation",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Allocation resources using netbox.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Allocation manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Allocation resources before upgrading"
-        ],
-        "yamlBefore": "# Allocation resource\napiVersion: netbox.eda.nokia.com/v1alpha1\nkind: Allocation",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "applyallocations.netbox.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing applyallocations.netbox.eda.nokia.com resources using netbox.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing applyallocations.netbox.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove applyallocations.netbox.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# applyallocations.netbox.eda.nokia.com resource\napiVersion: netbox.eda.nokia.com/v1alpha1\nkind: applyallocations.netbox.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "ClusterIncident",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterIncident resources using snow.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing ClusterIncident manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove ClusterIncident resources before upgrading"
-        ],
-        "yamlBefore": "# ClusterIncident resource\napiVersion: snow.eda.nokia.com/v1alpha1\nkind: ClusterIncident",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "ClusterInstance",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterInstance resources using snow.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing ClusterInstance manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove ClusterInstance resources before upgrading"
-        ],
-        "yamlBefore": "# ClusterInstance resource\napiVersion: snow.eda.nokia.com/v1alpha1\nkind: ClusterInstance",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "ClusterProducer",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing ClusterProducer resources using kafka.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing ClusterProducer manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove ClusterProducer resources before upgrading"
-        ],
-        "yamlBefore": "# ClusterProducer resource\napiVersion: kafka.eda.nokia.com/v1alpha1\nkind: ClusterProducer",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "creategithubissues.github.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing creategithubissues.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing creategithubissues.github.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove creategithubissues.github.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# creategithubissues.github.eda.nokia.com resource\napiVersion: github.eda.nokia.com/v1alpha1\nkind: creategithubissues.github.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "creategitlabissues.gitlab.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing creategitlabissues.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing creategitlabissues.gitlab.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove creategitlabissues.gitlab.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# creategitlabissues.gitlab.eda.nokia.com resource\napiVersion: gitlab.eda.nokia.com/v1alpha1\nkind: creategitlabissues.gitlab.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Export",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Export resources using prom.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Export manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Export resources before upgrading"
-        ],
-        "yamlBefore": "# Export resource\napiVersion: prom.eda.nokia.com/v1alpha1\nkind: Export",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "githubactions.github.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubactions.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing githubactions.github.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove githubactions.github.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# githubactions.github.eda.nokia.com resource\napiVersion: github.eda.nokia.com/v1alpha1\nkind: githubactions.github.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "githubinstances.github.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubinstances.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing githubinstances.github.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove githubinstances.github.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# githubinstances.github.eda.nokia.com resource\napiVersion: github.eda.nokia.com/v1alpha1\nkind: githubinstances.github.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "githubissues.github.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing githubissues.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing githubissues.github.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove githubissues.github.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# githubissues.github.eda.nokia.com resource\napiVersion: github.eda.nokia.com/v1alpha1\nkind: githubissues.github.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "gitlabinstances.gitlab.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabinstances.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing gitlabinstances.gitlab.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove gitlabinstances.gitlab.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# gitlabinstances.gitlab.eda.nokia.com resource\napiVersion: gitlab.eda.nokia.com/v1alpha1\nkind: gitlabinstances.gitlab.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "gitlabissues.gitlab.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabissues.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing gitlabissues.gitlab.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove gitlabissues.gitlab.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# gitlabissues.gitlab.eda.nokia.com resource\napiVersion: gitlab.eda.nokia.com/v1alpha1\nkind: gitlabissues.gitlab.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "gitlabpipelines.gitlab.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing gitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing gitlabpipelines.gitlab.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove gitlabpipelines.gitlab.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# gitlabpipelines.gitlab.eda.nokia.com resource\napiVersion: gitlab.eda.nokia.com/v1alpha1\nkind: gitlabpipelines.gitlab.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Incident",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Incident resources using snow.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Incident manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Incident resources before upgrading"
-        ],
-        "yamlBefore": "# Incident resource\napiVersion: snow.eda.nokia.com/v1alpha1\nkind: Incident",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Instance",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources using netbox.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Instance manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Instance resources before upgrading"
-        ],
-        "yamlBefore": "# Instance resource\napiVersion: netbox.eda.nokia.com/v1alpha1\nkind: Instance",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Instance",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Instance resources using snow.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Instance manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Instance resources before upgrading"
-        ],
-        "yamlBefore": "# Instance resource\napiVersion: snow.eda.nokia.com/v1alpha1\nkind: Instance",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "Producer",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing Producer resources using kafka.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing Producer manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove Producer resources before upgrading"
-        ],
-        "yamlBefore": "# Producer resource\napiVersion: kafka.eda.nokia.com/v1alpha1\nkind: Producer",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "rungithubworkflows.github.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungithubworkflows.github.eda.nokia.com resources using github.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing rungithubworkflows.github.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove rungithubworkflows.github.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# rungithubworkflows.github.eda.nokia.com resource\napiVersion: github.eda.nokia.com/v1alpha1\nkind: rungithubworkflows.github.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "rungitlabpipelines.gitlab.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.12.2 catalog — migrate or decommission existing rungitlabpipelines.gitlab.eda.nokia.com resources using gitlab.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing rungitlabpipelines.gitlab.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove rungitlabpipelines.gitlab.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# rungitlabpipelines.gitlab.eda.nokia.com resource\napiVersion: gitlab.eda.nokia.com/v1alpha1\nkind: rungitlabpipelines.gitlab.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      }
-    ],
-    "totalBreakingCount": 20,
-    "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.12.1 to 25.12.2 includes 20 breaking change(s) including 20 removed CRD(s).",
-    "estimatedEffort": "High: >4h"
+    "modifiedResources": [],
+    "deprecated": []
   },
-  "timestamp": 1780777992479,
+  "timestamp": 1780852181275,
   "source": "comparison"
 }

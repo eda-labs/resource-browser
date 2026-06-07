@@ -94,12 +94,7 @@ describe('fieldChangeClassifier', () => {
 
 describe('reportToReleaseNotes', () => {
 	it('maps bulk diff report counts to release notes structure', () => {
-		const notes = reportToReleaseNotes(fixtureReport, '25.12.3', '26.4.1', [
-			{
-				name: 'widgets.eda.nokia.com',
-				kind: 'Widget',
-				group: 'eda.nokia.com'
-			},
+		const sourceCrds = [
 			{
 				name: 'legacy.eda.nokia.com',
 				kind: 'Legacy',
@@ -110,19 +105,36 @@ describe('reportToReleaseNotes', () => {
 				kind: 'BGPPeer',
 				group: 'protocols.eda.nokia.com'
 			}
-		]);
+		];
+
+		const notes = reportToReleaseNotes(
+			fixtureReport,
+			'25.12.3',
+			'26.4.1',
+			[
+				{
+					name: 'widgets.eda.nokia.com',
+					kind: 'Widget',
+					group: 'eda.nokia.com'
+				},
+				...sourceCrds
+			],
+			[],
+			sourceCrds
+		);
 
 		expect(notes.newResources).toHaveLength(1);
 		expect(notes.newResources[0].kind).toBe('Widget');
+		expect(notes.newResources[0].crdName).toBe('widgets.eda.nokia.com');
+		expect(notes.newResources[0].description).toMatch(/New .* CRD introduced/);
 		expect(notes.removedResources).toHaveLength(1);
 		expect(notes.modifiedResources).toHaveLength(1);
 		expect(notes.modifiedResources[0].kind).toBe('BGPPeer');
 		expect(notes.modifiedResources[0].apiVersion).toBe('protocols.eda.nokia.com/v2');
-		expect(notes.modifiedResources[0].changes).toHaveLength(6);
 
-		const breakingFields = notes.breakingChanges.filter((b) => b.field !== 'resource');
-		expect(breakingFields.map((b) => b.field)).toEqual(['spec.oldField', 'spec.mode.type']);
-		expect(notes.totalBreakingCount).toBe(3);
-		expect(notes.breakingChanges).toHaveLength(3);
+		const fields = notes.modifiedResources[0].changes.map((c) => c.field);
+		expect(fields).toContain('spec.oldField');
+		expect(fields).toContain('spec.mode.type');
+		expect(fields).not.toContain('spec.label.description');
 	});
 });

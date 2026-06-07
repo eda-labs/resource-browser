@@ -1,23 +1,18 @@
 import { generateBulkDiffReport, loadCrdsForRelease } from '$lib/comparison/diffEngine';
-import {
-	detailsToFieldChanges,
-	isManifestBreakingChange
-} from '$lib/comparison/fieldChangeClassifier';
+import { detailsToFieldChanges, isSchemaMetadataPath } from '$lib/comparison/fieldChangeClassifier';
 import type { BulkDiffReport, CrdDiffEntry } from '$lib/comparison/types';
 import { fetchManifest, type ManifestResource } from '$lib/manifest';
 import type { CrdResource, EdaRelease } from '$lib/structure';
 import { groupDeprecatedByResource, type RawDeprecatedVersion } from './deprecation';
 import { generateMockNotes } from './mockNotes';
 import type {
-	BreakingChange,
 	DeprecatedItem,
 	FieldChange,
 	ModifiedResource,
 	NewResource,
 	ReleaseNotes,
 	ReleaseNotesEntry,
-	RemovedResource,
-	UpgradeRisk
+	RemovedResource
 } from './types';
 
 export function parseReleaseVersion(version: string): number[] {
@@ -50,85 +45,19 @@ export function buildConsecutivePairs(
 	return pairs;
 }
 
-function computeUpgradeRisk(fromVer: string, toVer: string, breakingCount: number): UpgradeRisk {
-	const base = (() => {
-		const fromMajor = parseReleaseVersion(fromVer)[0];
-		const toMajor = parseReleaseVersion(toVer)[0];
-		if (fromMajor !== toMajor) return 'high' as UpgradeRisk;
-		if (fromVer.split('.')[1] !== toVer.split('.')[1]) return 'medium' as UpgradeRisk;
-		return 'low' as UpgradeRisk;
-	})();
-	if (breakingCount >= 20) return 'high';
-	if (breakingCount >= 5) return base === 'low' ? 'medium' : 'high';
-	if (breakingCount >= 2 && base === 'low') return 'medium';
-	return base;
-}
-
 function crdApiVersion(crd: CrdDiffEntry | CrdResource, version: string): string {
 	const group = 'group' in crd && crd.group ? crd.group : 'eda.nokia.com';
 	return `${group}/${version}`;
 }
 
-function yamlSnippetForField(kind: string, field: string, phase: 'before' | 'after'): string {
-	const indent = field.startsWith('status.') ? 'status' : 'spec';
-	const leaf = field.split('.').pop() ?? field;
-	if (phase === 'before') {
-		return `# ${kind} — ${field} (before)\n${indent}:\n  ${leaf}: <previous>`;
-	}
-	return `# ${kind} — ${field} (after)\n${indent}:\n  ${leaf}: <updated>`;
+function isOperationalFieldChange(change: FieldChange): boolean {
+	if (change.field.includes('x-kubernetes-')) return false;
+	if (isSchemaMetadataPath(change.field)) return false;
+	return change.field.startsWith('spec.');
 }
 
-function buildBreakingChanges(
-	removedResources: RemovedResource[],
-	modifiedResources: ModifiedResource[]
-): BreakingChange[] {
-	const breaking: BreakingChange[] = [];
-
-	for (const resource of removedResources) {
-		breaking.push({
-			kind: resource.kind,
-			field: 'resource',
-			description: resource.reason,
-			severity: 'critical',
-			migrationSteps: [
-				`Export existing ${resource.kind} manifests`,
-				`Plan migration to replacement CRDs or decommission`,
-				`Remove ${resource.kind} resources before upgrading`
-			],
-			yamlBefore: `# ${resource.kind} resource\napiVersion: ${resource.apiVersion}\nkind: ${resource.kind}`,
-			yamlAfter: '# Resource removed — delete or migrate before upgrade'
-		});
-	}
-
-	for (const resource of modifiedResources) {
-		for (const change of resource.changes) {
-			if (!isManifestBreakingChange(change)) continue;
-			const severity =
-				change.changeType === 'removed' || change.changeType === 'required_added'
-					? 'critical'
-					: 'warning';
-			breaking.push({
-				kind: resource.kind,
-				field: change.field,
-				description:
-					change.networkBehavior ||
-					`${resource.kind} field ${change.field} changed (${change.changeType}).`,
-				severity,
-				migrationSteps: [
-					`Identify affected ${resource.kind} resources in your cluster`,
-					`Update manifests to address ${change.field}`,
-					`Validate against the target release schema before apply`
-				],
-				yamlBefore:
-					change.before ||
-					yamlSnippetForField(resource.kind, change.field, 'before'),
-				yamlAfter:
-					change.after || yamlSnippetForField(resource.kind, change.field, 'after')
-			});
-		}
-	}
-
-	return breaking;
+function hasOperationalChanges(changes: FieldChange[]): boolean {
+	return changes.some(isOperationalFieldChange);
 }
 
 async function findNewlyDeprecated(
@@ -180,22 +109,16 @@ async function findNewlyDeprecated(
 	return groupDeprecatedByResource(Array.from(grouped.values()));
 }
 
-function crdExistedInSource(report: BulkDiffReport, crdName: string): boolean {
-	return report.crds.some(
-		(entry) =>
-			entry.name === crdName &&
-			(entry.status === 'removed' || entry.status === 'modified' || entry.status === 'unchanged')
-	);
-}
-
 export function reportToReleaseNotes(
 	report: BulkDiffReport,
 	fromVer: string,
 	toVer: string,
 	crdMeta: CrdResource[],
-	deprecated: DeprecatedItem[] = []
+	deprecated: DeprecatedItem[] = [],
+	sourceCrds: CrdResource[] = []
 ): ReleaseNotes {
 	const crdByName = new Map(crdMeta.map((c) => [c.name, c]));
+	const sourceCrdNames = new Set(sourceCrds.map((c) => c.name));
 
 	const newResources: NewResource[] = [];
 	const removedResources: RemovedResource[] = [];
@@ -207,13 +130,16 @@ export function reportToReleaseNotes(
 
 		const meta = crdByName.get(entry.name);
 		const kind = entry.kind || meta?.kind || entry.name;
+		const group = meta?.group;
 		const apiVersion = meta ? crdApiVersion(meta, entry.version) : `eda.nokia.com/${entry.version}`;
 
 		if (entry.status === 'added') {
-			const existedInSource = crdExistedInSource(report, entry.name);
+			const existedInSource = sourceCrdNames.has(entry.name);
 			newResources.push({
 				kind,
 				apiVersion,
+				group,
+				crdName: entry.name,
 				description: existedInSource
 					? `New ${apiVersion} apiVersion for ${kind} in EDA ${toVer}.`
 					: `New ${kind} CRD introduced in EDA ${toVer} (${apiVersion}).`
@@ -232,43 +158,17 @@ export function reportToReleaseNotes(
 
 		if (entry.status === 'modified' && entry.hasDiff) {
 			const changes = detailsToFieldChanges(entry.details, kind);
-			if (changes.length > 0) {
+			if (hasOperationalChanges(changes)) {
 				modifiedResources.push({ kind, apiVersion, changes });
 			}
 		}
 	}
 
-	const breakingChanges = buildBreakingChanges(removedResources, modifiedResources);
-	const totalBreakingCount = breakingChanges.length;
-	const manifestBreakingFieldCount = modifiedResources.reduce(
-		(n, r) => n + r.changes.filter((c) => isManifestBreakingChange(c)).length,
-		0
-	);
-
-	const upgradeRisk = computeUpgradeRisk(fromVer, toVer, totalBreakingCount);
-
-	const estimatedEffort =
-		upgradeRisk === 'high' ? 'High: >4h' : upgradeRisk === 'medium' ? 'Medium: 1-4h' : 'Low: <1h';
-
-	const upgradeRiskJustification =
-		upgradeRisk === 'high'
-			? `Upgrade from ${fromVer} to ${toVer} includes ${totalBreakingCount} breaking change(s)${removedResources.length > 0 ? ` including ${removedResources.length} removed CRD(s)` : ''}${manifestBreakingFieldCount > 0 ? ` and ${manifestBreakingFieldCount} spec field change(s)` : ''}.`
-			: upgradeRisk === 'medium'
-				? `Release upgrade with ${modifiedResources.length} modified CRD(s) and ${totalBreakingCount} breaking change(s).`
-				: totalBreakingCount > 0
-					? `Patch-level upgrade with ${totalBreakingCount} breaking change(s) — review affected manifests before apply.`
-					: `Patch-level upgrade with no breaking manifest changes detected.`;
-
 	return {
 		newResources,
 		removedResources,
 		modifiedResources,
-		deprecated,
-		breakingChanges,
-		totalBreakingCount,
-		upgradeRisk,
-		upgradeRiskJustification,
-		estimatedEffort
+		deprecated
 	};
 }
 
@@ -323,16 +223,15 @@ export async function generateReleaseNotesForPair(
 		return {
 			toVer,
 			fromVer,
-			notes: reportToReleaseNotes(report, fromVer, toVer, crdMeta, deprecated),
+			notes: reportToReleaseNotes(report, fromVer, toVer, crdMeta, deprecated, sourceCrds),
 			timestamp: Date.now(),
 			source: 'comparison'
 		};
 	} catch {
-		const mock = generateMockNotes(fromVer, toVer);
 		return {
 			toVer,
 			fromVer,
-			notes: { ...mock, totalBreakingCount: mock.breakingChanges.length },
+			notes: generateMockNotes(fromVer, toVer),
 			timestamp: Date.now(),
 			source: 'mock'
 		};

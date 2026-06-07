@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 async function openDeprecatedTab(page: import('@playwright/test').Page) {
 	await page.goto('/release-notes');
 	await page.locator('.rn-timeline-item').filter({ hasText: '26.4.2' }).first().click();
-	await page.locator('.rn-tab').nth(2).click();
+	await page.locator('.rn-tab').nth(1).click();
 	await expect(page.locator('.rn-deprec-card').first()).toBeVisible();
 }
 

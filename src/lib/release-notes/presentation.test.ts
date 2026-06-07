@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-	breakingProductionImpact,
+	countOperationalChanges,
 	deriveGroupFromApiVersion,
 	displayNetworkBehavior,
 	filterDeprecatedItems,
@@ -10,11 +10,11 @@ import {
 	highlightSegments,
 	humanizeFieldPath,
 	inferOperationalArea,
+	inferReleaseTone,
 	isPresentationMetadataField,
 	partitionFieldChanges
 } from './presentation';
-import type { NewResource } from './types';
-import type { BreakingChange, FieldChange, ModifiedResource } from './types';
+import type { FieldChange, ModifiedResource, NewResource, ReleaseNotes } from './types';
 
 describe('presentation', () => {
 	it('humanizes common network field paths', () => {
@@ -60,17 +60,40 @@ describe('presentation', () => {
 		expect(grouped.map((g) => g.area)).toContain('Topology');
 	});
 
-	it('builds production impact one-liners', () => {
-		const change: BreakingChange = {
-			kind: 'Init',
-			field: 'spec.mgmt.properties.interface.required',
-			description: 'required',
-			severity: 'critical',
-			migrationSteps: [],
-			yamlBefore: '',
-			yamlAfter: ''
+	it('infers release tone from version span', () => {
+		expect(inferReleaseTone('25.8.1', '25.8.2')).toBe('low');
+		expect(inferReleaseTone('25.8.3', '25.12.1')).toBe('medium');
+		expect(inferReleaseTone('25.12.3', '26.4.1')).toBe('high');
+	});
+
+	it('counts operational spec changes only', () => {
+		const notes: ReleaseNotes = {
+			newResources: [],
+			removedResources: [],
+			deprecated: [],
+			modifiedResources: [
+				{
+					kind: 'BGPPeer',
+					changes: [
+						{
+							field: 'spec.holdTime',
+							changeType: 'required_added',
+							before: '',
+							after: '',
+							networkBehavior: ''
+						},
+						{
+							field: 'spec.label.description',
+							changeType: 'type_change',
+							before: 'a',
+							after: 'b',
+							networkBehavior: ''
+						}
+					]
+				}
+			]
 		};
-		expect(breakingProductionImpact(change)).toMatch(/fail in production/i);
+		expect(countOperationalChanges(notes)).toBe(1);
 	});
 
 	it('enriches network behavior from change type', () => {

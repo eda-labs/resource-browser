@@ -5,13 +5,8 @@
     "newResources": [],
     "removedResources": [],
     "modifiedResources": [],
-    "deprecated": [],
-    "breakingChanges": [],
-    "totalBreakingCount": 0,
-    "upgradeRisk": "low",
-    "upgradeRiskJustification": "Patch-level upgrade with no breaking manifest changes detected.",
-    "estimatedEffort": "Low: <1h"
+    "deprecated": []
   },
-  "timestamp": 1780777993039,
+  "timestamp": 1780852181815,
   "source": "comparison"
 }

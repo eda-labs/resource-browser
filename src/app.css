@@ -3962,8 +3962,7 @@ html.dark .release-notes-page .rn-group-kind {
 }
 
 html.dark .release-notes-page .rn-field-label,
-html.dark .release-notes-page .rn-field-name,
-html.dark .release-notes-page .rn-production-impact {
+html.dark .release-notes-page .rn-field-name {
 	color: #f1f5f9;
 }
 

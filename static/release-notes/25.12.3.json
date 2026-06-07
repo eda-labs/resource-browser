@@ -6,16 +6,22 @@
       {
         "kind": "ClusterProducer",
         "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "group": "kafka.eda.nokia.com",
+        "crdName": "clusterproducers.kafka.eda.nokia.com",
         "description": "New ClusterProducer CRD introduced in EDA 25.12.3 (kafka.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "Export",
         "apiVersion": "prom.eda.nokia.com/v1alpha1",
+        "group": "prom.eda.nokia.com",
+        "crdName": "exports.prom.eda.nokia.com",
         "description": "New Export CRD introduced in EDA 25.12.3 (prom.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "Producer",
         "apiVersion": "kafka.eda.nokia.com/v1alpha1",
+        "group": "kafka.eda.nokia.com",
+        "crdName": "producers.kafka.eda.nokia.com",
         "description": "New Producer CRD introduced in EDA 25.12.3 (kafka.eda.nokia.com/v1alpha1)."
       }
     ],
@@ -48,40 +54,8 @@
         ]
       }
     ],
-    "deprecated": [],
-    "breakingChanges": [
-      {
-        "kind": "NodeProfile",
-        "field": "spec.dhcp.properties.dhcp6Options.items.properties.option.enum",
-        "description": "Enum on NodeProfile removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected NodeProfile resources in your cluster",
-          "Update manifests to address spec.dhcp.properties.dhcp6Options.items.properties.option.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"59-BootfileUrl\"]",
-        "yamlAfter": "[\"59-BootfileUrl\",\"56-NTPServers\"]"
-      },
-      {
-        "kind": "TargetNode",
-        "field": "spec.dhcp6.properties.options.items.properties.option.enum",
-        "description": "Enum on TargetNode removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected TargetNode resources in your cluster",
-          "Update manifests to address spec.dhcp6.properties.options.items.properties.option.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"59-BootfileUrl\"]",
-        "yamlAfter": "[\"59-BootfileUrl\",\"56-NTPServers\"]"
-      }
-    ],
-    "totalBreakingCount": 2,
-    "upgradeRisk": "medium",
-    "upgradeRiskJustification": "Release upgrade with 2 modified CRD(s) and 2 breaking change(s).",
-    "estimatedEffort": "Medium: 1-4h"
+    "deprecated": []
   },
-  "timestamp": 1780777992272,
+  "timestamp": 1780852181080,
   "source": "comparison"
 }

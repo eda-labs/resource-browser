@@ -1,5 +1,3 @@
-export type UpgradeRisk = 'low' | 'medium' | 'high';
-
 export type FieldChangeType =
 	| 'type_change'
 	| 'added'
@@ -54,27 +52,11 @@ export type DeprecatedItem = {
 	migrationPath: string;
 };
 
-export type BreakingChange = {
-	kind: string;
-	field: string;
-	description: string;
-	severity?: 'critical' | 'warning';
-	migrationSteps: string[];
-	yamlBefore: string;
-	yamlAfter: string;
-};
-
 export type ReleaseNotes = {
 	newResources: NewResource[];
 	removedResources: RemovedResource[];
 	modifiedResources: ModifiedResource[];
 	deprecated: DeprecatedItem[];
-	breakingChanges: BreakingChange[];
-	/** Full breaking count (breakingChanges may be grouped; use this for stats/risk). */
-	totalBreakingCount: number;
-	upgradeRisk: UpgradeRisk;
-	upgradeRiskJustification: string;
-	estimatedEffort: string;
 };
 
 export type ReleaseNotesEntry = {

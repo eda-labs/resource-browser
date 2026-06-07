@@ -1,21 +1,14 @@
-import type { UpgradeRisk } from './types';
+export type ReleaseTone = 'low' | 'medium' | 'high';
 
-export const RISK_COLOR: Record<UpgradeRisk, string> = {
+export const RISK_COLOR: Record<ReleaseTone, string> = {
 	high: '#e24b4a',
 	medium: '#ef9f27',
 	low: '#639922'
 };
 
-export const TABS = [
-	'Overview',
-	'Breaking',
-	'Deprecated',
-	'New Resources',
-	'Modified',
-	'Upgrade Risk'
-] as const;
+export const TABS = ['Overview', 'Deprecated', 'New Resources', 'Modified'] as const;
 
-export const TAB_ICONS = ['◈', '⚠', '⊘', '✦', '✎', '↑'] as const;
+export const TAB_ICONS = ['◈', '⊘', '✦', '✎'] as const;
 
 export const CHANGE_COLORS: Record<string, string> = {
 	required_added: '#e24b4a',

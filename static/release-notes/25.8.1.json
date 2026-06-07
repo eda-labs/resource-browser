@@ -6,236 +6,330 @@
       {
         "kind": "AggregateRoute",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "aggregateroutes.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for AggregateRoute in EDA 25.8.1."
       },
       {
         "kind": "BGPGroupDeployment",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgpgroupdeployments.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for BGPGroupDeployment in EDA 25.8.1."
       },
       {
         "kind": "BGPGroup",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgpgroups.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for BGPGroup in EDA 25.8.1."
       },
       {
         "kind": "BGPPeer",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "bgppeers.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for BGPPeer in EDA 25.8.1."
       },
       {
         "kind": "BridgeDomainDeployment",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgedomaindeployments.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for BridgeDomainDeployment in EDA 25.8.1."
       },
       {
         "kind": "BridgeDomain",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgedomains.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for BridgeDomain in EDA 25.8.1."
       },
       {
         "kind": "BridgeInterface",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "bridgeinterfaces.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for BridgeInterface in EDA 25.8.1."
       },
       {
         "kind": "DefaultAggregateRoute",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultaggregateroutes.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultAggregateRoute in EDA 25.8.1."
       },
       {
         "kind": "DefaultBGPGroupDeployment",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultbgpgroupdeployments.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultBGPGroupDeployment in EDA 25.8.1."
       },
       {
         "kind": "DefaultBGPGroup",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultbgpgroups.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultBGPGroup in EDA 25.8.1."
       },
       {
         "kind": "DefaultBGPPeer",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultbgppeers.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultBGPPeer in EDA 25.8.1."
       },
       {
         "kind": "DefaultRouteReflectorClient",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultroutereflectorclients.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultRouteReflectorClient in EDA 25.8.1."
       },
       {
         "kind": "DefaultRouteReflector",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultroutereflectors.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultRouteReflector in EDA 25.8.1."
       },
       {
         "kind": "DefaultStaticRoute",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "defaultstaticroutes.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for DefaultStaticRoute in EDA 25.8.1."
       },
       {
         "kind": "DHCPRelay",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "dhcprelays.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for DHCPRelay in EDA 25.8.1."
       },
       {
         "kind": "EgressPolicy",
         "apiVersion": "qos.eda.nokia.com/v1",
+        "group": "qos.eda.nokia.com",
+        "crdName": "egresspolicys.qos.eda.nokia.com",
         "description": "New qos.eda.nokia.com/v1 apiVersion for EgressPolicy in EDA 25.8.1."
       },
       {
         "kind": "ForwardingClass",
         "apiVersion": "qos.eda.nokia.com/v1",
+        "group": "qos.eda.nokia.com",
+        "crdName": "forwardingclasss.qos.eda.nokia.com",
         "description": "New qos.eda.nokia.com/v1 apiVersion for ForwardingClass in EDA 25.8.1."
       },
       {
         "kind": "IngressPolicy",
         "apiVersion": "qos.eda.nokia.com/v1",
+        "group": "qos.eda.nokia.com",
+        "crdName": "ingresspolicys.qos.eda.nokia.com",
         "description": "New qos.eda.nokia.com/v1 apiVersion for IngressPolicy in EDA 25.8.1."
       },
       {
         "kind": "IRBInterface",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "irbinterfaces.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for IRBInterface in EDA 25.8.1."
       },
       {
         "kind": "PolicyAttachment",
         "apiVersion": "qos.eda.nokia.com/v1",
+        "group": "qos.eda.nokia.com",
+        "crdName": "policyattachments.qos.eda.nokia.com",
         "description": "New qos.eda.nokia.com/v1 apiVersion for PolicyAttachment in EDA 25.8.1."
       },
       {
         "kind": "PolicyDeployment",
         "apiVersion": "qos.eda.nokia.com/v1",
+        "group": "qos.eda.nokia.com",
+        "crdName": "policydeployments.qos.eda.nokia.com",
         "description": "New qos.eda.nokia.com/v1 apiVersion for PolicyDeployment in EDA 25.8.1."
       },
       {
         "kind": "Queue",
         "apiVersion": "qos.eda.nokia.com/v1",
+        "group": "qos.eda.nokia.com",
+        "crdName": "queues.qos.eda.nokia.com",
         "description": "New qos.eda.nokia.com/v1 apiVersion for Queue in EDA 25.8.1."
       },
       {
         "kind": "RoutedInterface",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "routedinterfaces.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for RoutedInterface in EDA 25.8.1."
       },
       {
         "kind": "RouterDeployment",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "routerdeployments.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for RouterDeployment in EDA 25.8.1."
       },
       {
         "kind": "RouteReflectorClient",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "routereflectorclients.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for RouteReflectorClient in EDA 25.8.1."
       },
       {
         "kind": "RouteReflector",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "routereflectors.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for RouteReflector in EDA 25.8.1."
       },
       {
         "kind": "Router",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "routers.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for Router in EDA 25.8.1."
       },
       {
         "kind": "StateConfig",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "stateconfigs.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for StateConfig in EDA 25.8.1."
       },
       {
         "kind": "StaticRoute",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "staticroutes.protocols.eda.nokia.com",
         "description": "New protocols.eda.nokia.com/v1 apiVersion for StaticRoute in EDA 25.8.1."
       },
       {
         "kind": "VirtualNetwork",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "virtualnetworks.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for VirtualNetwork in EDA 25.8.1."
       },
       {
         "kind": "VLAN",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "vlans.services.eda.nokia.com",
         "description": "New services.eda.nokia.com/v1 apiVersion for VLAN in EDA 25.8.1."
       },
       {
         "kind": "AppInstaller",
         "apiVersion": "appstore.eda.nokia.com/v1",
+        "group": "appstore.eda.nokia.com",
+        "crdName": "appinstallers.appstore.eda.nokia.com",
         "description": "New AppInstaller CRD introduced in EDA 25.8.1 (appstore.eda.nokia.com/v1)."
       },
       {
         "kind": "ASPathSetDeployment",
         "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "group": "routingpolicies.eda.nokia.com",
+        "crdName": "aspathsetdeployments.routingpolicies.eda.nokia.com",
         "description": "New ASPathSetDeployment CRD introduced in EDA 25.8.1 (routingpolicies.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "ASPathSet",
         "apiVersion": "routingpolicies.eda.nokia.com/v1alpha1",
+        "group": "routingpolicies.eda.nokia.com",
+        "crdName": "aspathsets.routingpolicies.eda.nokia.com",
         "description": "New ASPathSet CRD introduced in EDA 25.8.1 (routingpolicies.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "AttachmentLookup",
         "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "group": "routing.eda.nokia.com",
+        "crdName": "attachmentlookups.routing.eda.nokia.com",
         "description": "New AttachmentLookup CRD introduced in EDA 25.8.1 (routing.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "CheckDefaultBgpPeers",
         "apiVersion": "protocols.eda.nokia.com/v1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "checkdefaultbgppeerss.protocols.eda.nokia.com",
         "description": "New CheckDefaultBgpPeers CRD introduced in EDA 25.8.1 (protocols.eda.nokia.com/v1)."
       },
       {
         "kind": "CheckDefaultBgpPeers",
         "apiVersion": "protocols.eda.nokia.com/v1alpha1",
+        "group": "protocols.eda.nokia.com",
+        "crdName": "checkdefaultbgppeerss.protocols.eda.nokia.com",
         "description": "New CheckDefaultBgpPeers CRD introduced in EDA 25.8.1 (protocols.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "CheckInterfaces",
         "apiVersion": "interfaces.eda.nokia.com/v1alpha1",
+        "group": "interfaces.eda.nokia.com",
+        "crdName": "checkinterfacess.interfaces.eda.nokia.com",
         "description": "New CheckInterfaces CRD introduced in EDA 25.8.1 (interfaces.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "CliPlugin",
         "apiVersion": "environment.eda.nokia.com/v1alpha1",
+        "group": "environment.eda.nokia.com",
+        "crdName": "cliplugins.environment.eda.nokia.com",
         "description": "New CliPlugin CRD introduced in EDA 25.8.1 (environment.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "EdgePing",
         "apiVersion": "services.eda.nokia.com/v1",
+        "group": "services.eda.nokia.com",
+        "crdName": "edgepings.services.eda.nokia.com",
         "description": "New EdgePing CRD introduced in EDA 25.8.1 (services.eda.nokia.com/v1)."
       },
       {
         "kind": "EdgePing",
         "apiVersion": "services.eda.nokia.com/v1alpha1",
+        "group": "services.eda.nokia.com",
+        "crdName": "edgepings.services.eda.nokia.com",
         "description": "New EdgePing CRD introduced in EDA 25.8.1 (services.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "IslPing",
         "apiVersion": "fabrics.eda.nokia.com/v1alpha1",
+        "group": "fabrics.eda.nokia.com",
+        "crdName": "islpings.fabrics.eda.nokia.com",
         "description": "New IslPing CRD introduced in EDA 25.8.1 (fabrics.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "RouteLookup",
         "apiVersion": "routing.eda.nokia.com/v1alpha1",
+        "group": "routing.eda.nokia.com",
+        "crdName": "routelookups.routing.eda.nokia.com",
         "description": "New RouteLookup CRD introduced in EDA 25.8.1 (routing.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "SetupEnv",
         "apiVersion": "environment.eda.nokia.com/v1alpha1",
+        "group": "environment.eda.nokia.com",
+        "crdName": "setupenvs.environment.eda.nokia.com",
         "description": "New SetupEnv CRD introduced in EDA 25.8.1 (environment.eda.nokia.com/v1alpha1)."
       },
       {
         "kind": "SimLink",
         "apiVersion": "core.eda.nokia.com/v1",
+        "group": "core.eda.nokia.com",
+        "crdName": "simlinks.core.eda.nokia.com",
         "description": "New SimLink CRD introduced in EDA 25.8.1 (core.eda.nokia.com/v1)."
       },
       {
         "kind": "SimNode",
         "apiVersion": "core.eda.nokia.com/v1",
+        "group": "core.eda.nokia.com",
+        "crdName": "simnodes.core.eda.nokia.com",
         "description": "New SimNode CRD introduced in EDA 25.8.1 (core.eda.nokia.com/v1)."
       },
       {
         "kind": "TechSupport",
         "apiVersion": "oam.eda.nokia.com/v1alpha1",
+        "group": "oam.eda.nokia.com",
+        "crdName": "techsupports.oam.eda.nokia.com",
         "description": "New TechSupport CRD introduced in EDA 25.8.1 (oam.eda.nokia.com/v1alpha1)."
       }
     ],
@@ -1367,54 +1461,6 @@
             "networkBehavior": "New optional field spec.namespaced available on WorkflowDefinition; existing manifests remain valid."
           }
         ]
-      },
-      {
-        "kind": "Workflow",
-        "apiVersion": "core.eda.nokia.com/v1",
-        "changes": [
-          {
-            "field": "status.duration",
-            "changeType": "removed",
-            "before": "",
-            "after": "",
-            "networkBehavior": "Workflow manifests referencing status.duration must remove this field before apply."
-          },
-          {
-            "field": "status.errors",
-            "changeType": "removed",
-            "before": "",
-            "after": "",
-            "networkBehavior": "Workflow manifests referencing status.errors must remove this field before apply."
-          },
-          {
-            "field": "status.id",
-            "changeType": "removed",
-            "before": "",
-            "after": "",
-            "networkBehavior": "Workflow manifests referencing status.id must remove this field before apply."
-          },
-          {
-            "field": "status.result",
-            "changeType": "removed",
-            "before": "",
-            "after": "",
-            "networkBehavior": "Workflow manifests referencing status.result must remove this field before apply."
-          },
-          {
-            "field": "status.stages",
-            "changeType": "removed",
-            "before": "",
-            "after": "",
-            "networkBehavior": "Workflow manifests referencing status.stages must remove this field before apply."
-          },
-          {
-            "field": "status.subflowswaitingforinput",
-            "changeType": "removed",
-            "before": "",
-            "after": "",
-            "networkBehavior": "Workflow manifests referencing status.subflowswaitingforinput must remove this field before apply."
-          }
-        ]
       }
     ],
     "deprecated": [
@@ -2078,365 +2124,8 @@
           }
         ]
       }
-    ],
-    "breakingChanges": [
-      {
-        "kind": "CPUUtilOverlay",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing CPUUtilOverlay resources using topologies.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing CPUUtilOverlay manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove CPUUtilOverlay resources before upgrading"
-        ],
-        "yamlBefore": "# CPUUtilOverlay resource\napiVersion: topologies.eda.nokia.com/v1alpha1\nkind: CPUUtilOverlay",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "DiskOverlay",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing DiskOverlay resources using topologies.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing DiskOverlay manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove DiskOverlay resources before upgrading"
-        ],
-        "yamlBefore": "# DiskOverlay resource\napiVersion: topologies.eda.nokia.com/v1alpha1\nkind: DiskOverlay",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "MemoryOverlay",
-        "field": "resource",
-        "description": "API version v1alpha1 removed from the EDA 25.8.1 catalog — migrate or decommission existing MemoryOverlay resources using topologies.eda.nokia.com/v1alpha1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing MemoryOverlay manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove MemoryOverlay resources before upgrading"
-        ],
-        "yamlBefore": "# MemoryOverlay resource\napiVersion: topologies.eda.nokia.com/v1alpha1\nkind: MemoryOverlay",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "SimLink",
-        "field": "resource",
-        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing SimLink resources using test.eda.nokia.com/v1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing SimLink manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove SimLink resources before upgrading"
-        ],
-        "yamlBefore": "# SimLink resource\napiVersion: test.eda.nokia.com/v1\nkind: SimLink",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "SimNode",
-        "field": "resource",
-        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing SimNode resources using test.eda.nokia.com/v1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing SimNode manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove SimNode resources before upgrading"
-        ],
-        "yamlBefore": "# SimNode resource\napiVersion: test.eda.nokia.com/v1\nkind: SimNode",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "simtopologies.core.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing simtopologies.core.eda.nokia.com resources using core.eda.nokia.com/v1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing simtopologies.core.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove simtopologies.core.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# simtopologies.core.eda.nokia.com resource\napiVersion: core.eda.nokia.com/v1\nkind: simtopologies.core.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "simtoponodes.core.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing simtoponodes.core.eda.nokia.com resources using core.eda.nokia.com/v1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing simtoponodes.core.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove simtoponodes.core.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# simtoponodes.core.eda.nokia.com resource\napiVersion: core.eda.nokia.com/v1\nkind: simtoponodes.core.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "topologies.core.eda.nokia.com",
-        "field": "resource",
-        "description": "API version v1 removed from the EDA 25.8.1 catalog — migrate or decommission existing topologies.core.eda.nokia.com resources using core.eda.nokia.com/v1.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Export existing topologies.core.eda.nokia.com manifests",
-          "Plan migration to replacement CRDs or decommission",
-          "Remove topologies.core.eda.nokia.com resources before upgrading"
-        ],
-        "yamlBefore": "# topologies.core.eda.nokia.com resource\napiVersion: core.eda.nokia.com/v1\nkind: topologies.core.eda.nokia.com",
-        "yamlAfter": "# Resource removed — delete or migrate before upgrade"
-      },
-      {
-        "kind": "CxCluster",
-        "field": "spec.topology.properties.nodes.items.properties.chassisConfiguration.required",
-        "description": "Required on CxCluster changed type or structure; validate existing values against the new schema.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected CxCluster resources in your cluster",
-          "Update manifests to address spec.topology.properties.nodes.items.properties.chassisConfiguration.required",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"chassisType\",\"macAddress\"]",
-        "yamlAfter": "[\"chassisType\",\"macAddress\",\"pdType\"]"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.nodeSelector",
-        "description": "DeployImage manifests referencing spec.nodeSelector must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.nodeSelector",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.nodeSelector (before)\nspec:\n  nodeSelector: <previous>",
-        "yamlAfter": "# DeployImage — spec.nodeSelector (after)\nspec:\n  nodeSelector: <updated>"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.type",
-        "description": "DeployImage manifests referencing spec.type must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.type",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.type (before)\nspec:\n  type: <previous>",
-        "yamlAfter": "# DeployImage — spec.type (after)\nspec:\n  type: <updated>"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.version",
-        "description": "DeployImage manifests referencing spec.version must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.version",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.version (before)\nspec:\n  version: <previous>",
-        "yamlAfter": "# DeployImage — spec.version (after)\nspec:\n  version: <updated>"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.checks.required",
-        "description": "DeployImage manifests referencing spec.checks.required must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.checks.required",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.checks.required (before)\nspec:\n  required: <previous>",
-        "yamlAfter": "# DeployImage — spec.checks.required (after)\nspec:\n  required: <updated>"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.drains.properties.interfaceDisableSelectors",
-        "description": "DeployImage manifests referencing spec.drains.properties.interfaceDisableSelectors must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.drains.properties.interfaceDisableSelectors",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.drains.properties.interfaceDisableSelectors (before)\nspec:\n  interfaceDisableSelectors: <previous>",
-        "yamlAfter": "# DeployImage — spec.drains.properties.interfaceDisableSelectors (after)\nspec:\n  interfaceDisableSelectors: <updated>"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.drains.properties.minimumWaitTime",
-        "description": "DeployImage manifests referencing spec.drains.properties.minimumWaitTime must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.drains.properties.minimumWaitTime",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.drains.properties.minimumWaitTime (before)\nspec:\n  minimumWaitTime: <previous>",
-        "yamlAfter": "# DeployImage — spec.drains.properties.minimumWaitTime (after)\nspec:\n  minimumWaitTime: <updated>"
-      },
-      {
-        "kind": "DeployImage",
-        "field": "spec.tranches.items.properties.nodeSelector",
-        "description": "DeployImage manifests referencing spec.tranches.items.properties.nodeSelector must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected DeployImage resources in your cluster",
-          "Update manifests to address spec.tranches.items.properties.nodeSelector",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# DeployImage — spec.tranches.items.properties.nodeSelector (before)\nspec:\n  nodeSelector: <previous>",
-        "yamlAfter": "# DeployImage — spec.tranches.items.properties.nodeSelector (after)\nspec:\n  nodeSelector: <updated>"
-      },
-      {
-        "kind": "NodeProfile",
-        "field": "spec.operatingSystem.enum",
-        "description": "Enum on NodeProfile removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected NodeProfile resources in your cluster",
-          "Update manifests to address spec.operatingSystem.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"srl\",\"sros\",\"nxos\"]",
-        "yamlAfter": "[7 items]"
-      },
-      {
-        "kind": "Ping",
-        "field": "spec.node",
-        "description": "Ping manifests referencing spec.node must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address spec.node",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — spec.node (before)\nspec:\n  node: <previous>",
-        "yamlAfter": "# Ping — spec.node (after)\nspec:\n  node: <updated>"
-      },
-      {
-        "kind": "Ping",
-        "field": "spec.pingType",
-        "description": "Ping manifests referencing spec.pingType must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address spec.pingType",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — spec.pingType (before)\nspec:\n  pingType: <previous>",
-        "yamlAfter": "# Ping — spec.pingType (after)\nspec:\n  pingType: <updated>"
-      },
-      {
-        "kind": "Ping",
-        "field": "spec.pods",
-        "description": "Ping manifests referencing spec.pods must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address spec.pods",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — spec.pods (before)\nspec:\n  pods: <previous>",
-        "yamlAfter": "# Ping — spec.pods (after)\nspec:\n  pods: <updated>"
-      },
-      {
-        "kind": "Ping",
-        "field": "spec.roles",
-        "description": "Ping manifests referencing spec.roles must remove this field before apply.",
-        "severity": "critical",
-        "migrationSteps": [
-          "Identify affected Ping resources in your cluster",
-          "Update manifests to address spec.roles",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "# Ping — spec.roles (before)\nspec:\n  roles: <previous>",
-        "yamlAfter": "# Ping — spec.roles (after)\nspec:\n  roles: <updated>"
-      },
-      {
-        "kind": "Policy",
-        "field": "spec.defaultAction.properties.policyResult.enum",
-        "description": "Enum on Policy removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Policy resources in your cluster",
-          "Update manifests to address spec.defaultAction.properties.policyResult.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"accept\",\"reject\"]",
-        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
-      },
-      {
-        "kind": "Policy",
-        "field": "spec.statement.items.properties.action.properties.policyResult.enum",
-        "description": "Enum on Policy removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected Policy resources in your cluster",
-          "Update manifests to address spec.statement.items.properties.action.properties.policyResult.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"accept\",\"reject\"]",
-        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
-      },
-      {
-        "kind": "TopoNode",
-        "field": "spec.component.items.properties.kind.enum",
-        "description": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected TopoNode resources in your cluster",
-          "Update manifests to address spec.component.items.properties.kind.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[7 items]",
-        "yamlAfter": "[8 items]"
-      },
-      {
-        "kind": "TopoNode",
-        "field": "spec.operatingSystem.enum",
-        "description": "Enum on TopoNode removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected TopoNode resources in your cluster",
-          "Update manifests to address spec.operatingSystem.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"srl\",\"sros\",\"nxos\"]",
-        "yamlAfter": "[7 items]"
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum",
-        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.defaultAction.properties.policyResult.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"accept\",\"reject\"]",
-        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
-      },
-      {
-        "kind": "VirtualNetwork",
-        "field": "spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum",
-        "description": "Enum on VirtualNetwork removed enum value(s); verify manifest values are still allowed.",
-        "severity": "warning",
-        "migrationSteps": [
-          "Identify affected VirtualNetwork resources in your cluster",
-          "Update manifests to address spec.protocols.properties.routingPolicies.properties.policies.items.properties.spec.properties.statement.items.properties.action.properties.policyResult.enum",
-          "Validate against the target release schema before apply"
-        ],
-        "yamlBefore": "[\"accept\",\"reject\"]",
-        "yamlAfter": "[\"accept\",\"reject\",\"NextPolicy\",\"NextStatement\"]"
-      }
-    ],
-    "totalBreakingCount": 27,
-    "upgradeRisk": "high",
-    "upgradeRiskJustification": "Upgrade from 25.4.2 to 25.8.1 includes 27 breaking change(s) including 8 removed CRD(s) and 19 spec field change(s).",
-    "estimatedEffort": "High: >4h"
+    ]
   },
-  "timestamp": 1780777993179,
+  "timestamp": 1780852181963,
   "source": "comparison"
 }

@@ -68,8 +68,6 @@ type IndexEntry = {
 	fromVer: string;
 	source: ReleaseNotesEntry['source'];
 	timestamp: number;
-	upgradeRisk: ReleaseNotesEntry['notes']['upgradeRisk'];
-	breakingCount: number;
 };
 
 async function loadExistingEntry(toVer: string): Promise<ReleaseNotesEntry | null> {
@@ -114,9 +112,7 @@ async function main(): Promise<void> {
 				toVer: existing.toVer,
 				fromVer: existing.fromVer,
 				source: existing.source,
-				timestamp: existing.timestamp,
-				upgradeRisk: existing.notes.upgradeRisk,
-				breakingCount: existing.notes.breakingChanges.length
+				timestamp: existing.timestamp
 			});
 			continue;
 		}
@@ -137,9 +133,7 @@ async function main(): Promise<void> {
 			toVer: entry.toVer,
 			fromVer: entry.fromVer,
 			source: entry.source,
-			timestamp: entry.timestamp,
-			upgradeRisk: entry.notes.upgradeRisk,
-			breakingCount: entry.notes.totalBreakingCount ?? entry.notes.breakingChanges.length
+			timestamp: entry.timestamp
 		});
 	}
 

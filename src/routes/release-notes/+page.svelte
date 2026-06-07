@@ -10,41 +10,30 @@
 		countNewlyDeprecatedApiVersions,
 		removedInLabel
 	} from '$lib/release-notes/deprecation';
-	import {
-		CHANGE_COLORS,
-		HIGH_RISK_CHANGE_TYPES,
-		RISK_COLOR,
-		TABS
-	} from '$lib/release-notes/constants';
+	import { CHANGE_COLORS, RISK_COLOR, TABS } from '$lib/release-notes/constants';
 	import HighlightText from '$lib/release-notes/HighlightText.svelte';
 	import {
-		breakingProductionImpact,
 		catalogBrowseHref,
 		changeRowKey,
 		comparisonPageHref,
+		countOperationalChanges,
 		displayNetworkBehavior,
-		filterBreakingChanges,
 		filterDeprecatedItems,
 		filterModifiedResources,
 		filterNewResources,
-		groupBreakingByKind,
 		groupModifiedByOperationalArea,
 		groupNewResourcesByKind,
 		groupNewResourcesByOperationalArea,
 		humanizeFieldPath,
+		inferReleaseTone,
 		partitionFieldChanges,
-		sortBreakingChanges,
 		sortDeprecatedItems,
 		sortFieldChanges,
 		statSparkHeights,
 		type ListSortMode
 	} from '$lib/release-notes/presentation';
-	import {
-		fetchAllReleaseNotes,
-		fetchReleaseNotesEntry,
-		fetchReleaseNotesIndex
-	} from '$lib/release-notes/loadStatic';
-	import type { DeprecatedItem, ReleaseNotes, ReleaseNotesEntry } from '$lib/release-notes/types';
+	import { fetchAllReleaseNotes, fetchReleaseNotesIndex } from '$lib/release-notes/loadStatic';
+	import type { ReleaseNotes, ReleaseNotesEntry } from '$lib/release-notes/types';
 	import { fetchManifest, getManifestCache, type ManifestResource } from '$lib/manifest';
 	import { getLatestVersion } from '$lib/versions';
 	import releasesYaml from '$lib/releases.yaml?raw';
@@ -57,31 +46,19 @@
 		{ value: 'change-type', label: 'Change type' }
 	];
 
-	function breakingCount(notes: ReleaseNotes): number {
-		return notes.totalBreakingCount ?? notes.breakingChanges.length;
-	}
-
 	let releaseHistory: ReleaseNotesEntry[] = $state([]);
 	let selected: string | null = $state(null);
 	let toast: string | null = $state(null);
 	let globalLoading = $state(true);
 	let loadingMsg = $state('Loading release notes...');
 	let activeTab = $state(0);
-	let injectOpen = $state(false);
-	let injectVersion = $state('');
 	let copiedCode: string | null = $state(null);
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
 	const manifestCache = getManifestCache();
 
-	let breakingFilter = $state('');
-	let breakingSort = $state<ListSortMode>('severity');
-	let breakingKindExpanded = $state<Record<string, boolean>>({});
-	let breakingRowExpanded = $state<Record<string, boolean>>({});
-
 	let modifiedFilter = $state('');
 	let modifiedSort = $state<ListSortMode>('severity');
 	let modifiedKindExpanded = $state<Record<string, boolean>>({});
-	let modifiedRowExpanded = $state<Record<string, boolean>>({});
 	let showSchemaMetadata = $state(false);
 
 	let newFilter = $state('');
@@ -121,54 +98,10 @@
 
 	function resetTabState() {
 		deprecFilter = '';
-		breakingFilter = '';
-		breakingKindExpanded = {};
-		breakingRowExpanded = {};
 		modifiedFilter = '';
 		modifiedKindExpanded = {};
-		modifiedRowExpanded = {};
 		showSchemaMetadata = false;
 		newFilter = '';
-	}
-
-	async function handleInject() {
-		const version = injectVersion.trim();
-		if (!version) return;
-
-		const release = releasesConfig.releases.find((r) => r.name === version);
-		if (!release) {
-			showToast('Release not found');
-			return;
-		}
-
-		if (releaseHistory.some((e) => e.toVer === version)) {
-			selected = version;
-			activeTab = 0;
-			injectOpen = false;
-			injectVersion = '';
-			showToast(`Release ${version} is already in the timeline`);
-			return;
-		}
-
-		const entry = await fetchReleaseNotesEntry(version);
-		if (!entry) {
-			showToast('Regenerate release notes (npm run generate:release-notes)');
-			return;
-		}
-
-		releaseHistory = [entry, ...releaseHistory].sort((a, b) =>
-			b.toVer.localeCompare(a.toVer, undefined, { numeric: true })
-		);
-		selected = version;
-		activeTab = 0;
-		injectOpen = false;
-		injectVersion = '';
-		resetTabState();
-
-		const count = breakingCount(entry.notes);
-		showToast(
-			`Release ${version} loaded (${entry.source}) — ${count} breaking change${count !== 1 ? 's' : ''}`
-		);
 	}
 
 	function copyText(text: string, label?: string) {
@@ -186,14 +119,24 @@
 
 	function statItems(notes: ReleaseNotes) {
 		return [
-			{ label: 'New', value: notes.newResources.length, tone: 'new' as const },
-			{ label: 'Removed', value: notes.removedResources.length, tone: 'removed' as const },
-			{ label: 'Modified', value: notes.modifiedResources.length, tone: 'modified' as const },
-			{ label: 'Breaking', value: breakingCount(notes), tone: 'breaking' as const },
+			{ label: 'New', value: notes.newResources.length, tone: 'new' as const, tab: 2 },
+			{
+				label: 'Removed',
+				value: notes.removedResources.length,
+				tone: 'removed' as const,
+				tab: null
+			},
+			{
+				label: 'Modified',
+				value: notes.modifiedResources.length,
+				tone: 'modified' as const,
+				tab: 3
+			},
 			{
 				label: 'Deprecated',
 				value: countDeprecatedApiVersions(notes.deprecated),
-				tone: 'deprecated' as const
+				tone: 'deprecated' as const,
+				tab: 1
 			}
 		];
 	}
@@ -204,14 +147,6 @@
 
 	function isKindExpanded(map: Record<string, boolean>, key: string, defaultOpen = true): boolean {
 		return map[key] ?? defaultOpen;
-	}
-
-	function toggleRowExpanded(map: Record<string, boolean>, key: string) {
-		return { ...map, [key]: !map[key] };
-	}
-
-	function isRowExpanded(map: Record<string, boolean>, key: string): boolean {
-		return map[key] ?? false;
 	}
 
 	function releaseForVersion(version: string): EdaRelease | null {
@@ -264,7 +199,11 @@
 
 	function timelineStatPills(notes: ReleaseNotes) {
 		return [
-			{ label: 'break', value: breakingCount(notes), tone: 'breaking' as const },
+			{
+				label: 'mod',
+				value: countOperationalChanges(notes),
+				tone: 'modified' as const
+			},
 			{
 				label: 'dep',
 				value: countDeprecatedApiVersions(notes.deprecated),
@@ -305,7 +244,7 @@
 	<title>EDA Resource Browser | Release Notes</title>
 	<meta
 		name="description"
-		content="Structured release notes for Nokia EDA upgrades — breaking changes, new CRDs, and upgrade risk."
+		content="Structured release notes for Nokia EDA upgrades — deprecations, new CRDs, and schema changes."
 	/>
 </svelte:head>
 
@@ -320,31 +259,6 @@
 			</div>
 
 			<div class="rn-sidebar-body">
-				<div class="rn-inject">
-					<button type="button" class="rn-inject-toggle" onclick={() => (injectOpen = !injectOpen)}>
-						<span class="rn-inject-plus">+</span> Inject new release
-					</button>
-					{#if injectOpen}
-						<div class="rn-inject-panel">
-							<div class="rn-inject-hint">
-								Load precomputed notes for a release in the project list
-							</div>
-							<div class="rn-inject-row">
-								<input
-									class="rn-inject-input"
-									bind:value={injectVersion}
-									placeholder="e.g. 26.4.2"
-									onkeydown={(e) => e.key === 'Enter' && handleInject()}
-								/>
-								<button type="button" class="rn-inject-btn" onclick={handleInject}>Load</button>
-							</div>
-							<div class="rn-inject-note">
-								Notes are precomputed at build time from schema diffs. Regenerate if a file is missing.
-							</div>
-						</div>
-					{/if}
-				</div>
-
 				{#if globalLoading}
 					<div class="rn-loading-msg">{loadingMsg}</div>
 				{/if}
@@ -352,7 +266,7 @@
 				<div class="rn-timeline">
 					<div class="rn-timeline-line" aria-hidden="true"></div>
 					{#each releaseHistory as entry, i (entry.toVer)}
-						{@const risk = entry.notes.upgradeRisk}
+						{@const tone = inferReleaseTone(entry.fromVer, entry.toVer)}
 						{@const isSelected = selected === entry.toVer}
 						{@const pills = timelineStatPills(entry.notes)}
 						<button
@@ -367,8 +281,7 @@
 						>
 							<span
 								class="rn-timeline-dot"
-								class:rn-timeline-dot--pulse={breakingCount(entry.notes) > 0}
-								style:background={RISK_COLOR[risk]}
+								style:background={RISK_COLOR[tone]}
 							></span>
 							<div class="rn-timeline-version">
 								<span
@@ -384,7 +297,6 @@
 							</div>
 							<div class="rn-timeline-meta">
 								{entry.fromVer} → {entry.toVer}
-								<span class="rn-timeline-risk" style:color={RISK_COLOR[risk]}>{risk}</span>
 								{#if entry.source === 'mock'}
 									<span class="rn-source-badge">{entry.source}</span>
 								{/if}
@@ -417,30 +329,9 @@
 		<main class="rn-main">
 			{#if selectedEntry && selectedRelease}
 				<div class="rn-main-inner">
-					{#if breakingCount(selectedEntry.notes) > 0}
-						<div class="rn-alert" role="alert">
-							<span class="rn-alert-icon">⚠</span>
-							<div>
-								<span class="rn-alert-title">
-									{breakingCount(selectedEntry.notes)} breaking change{breakingCount(
-										selectedEntry.notes
-									) !== 1
-										? 's'
-										: ''}
-								</span>
-								<span class="rn-alert-sub">
-									— existing manifests require updates before applying this release
-								</span>
-							</div>
-						</div>
-					{/if}
-
 					<header class="rn-header">
 						<div class="rn-header-row">
 							<h1>EDA {selectedEntry.toVer}</h1>
-							<span class="rn-risk-badge rn-risk-badge--{selectedEntry.notes.upgradeRisk}">
-								{selectedEntry.notes.upgradeRisk}
-							</span>
 							{#if selectedEntry.toVer === latestVersion}
 								<span class="rn-tag rn-tag--latest">latest</span>
 							{/if}
@@ -451,13 +342,12 @@
 								<span class="rn-version-arrow" aria-hidden="true">→</span>
 								<span class="rn-version-path-to">{selectedEntry.toVer}</span>
 							</span>
-							<span>{selectedEntry.notes.estimatedEffort}</span>
 							<span class="rn-source-badge">{selectedEntry.source}</span>
 							<a
-								class="rn-action-link"
+								class="rn-action-link rn-action-link--prominent"
 								href={comparisonPageHref(selectedEntry.fromVer, selectedEntry.toVer)}
 							>
-								Open schema comparison →
+								View full comparison →
 							</a>
 						</div>
 					</header>
@@ -465,7 +355,6 @@
 					<div class="rn-tabs-wrap">
 						<div class="rn-tabs" role="tablist">
 							{#each TABS as tab, i (tab)}
-								{@const breakingN = breakingCount(selectedEntry.notes)}
 								{@const deprecN = countDeprecatedApiVersions(selectedEntry.notes.deprecated)}
 								<button
 									type="button"
@@ -476,9 +365,7 @@
 									onclick={() => (activeTab = i)}
 								>
 									{tab}
-									{#if i === 1 && breakingN > 0}
-										<span class="rn-tab-count">{breakingN}</span>
-									{:else if i === 2 && deprecN > 0}
+									{#if i === 1 && deprecN > 0}
 										<span class="rn-tab-count rn-tab-count--warn">{deprecN}</span>
 									{/if}
 								</button>
@@ -496,12 +383,10 @@
 										<button
 											type="button"
 											class="rn-stat-cell"
-											class:rn-stat-cell--interactive={stat.value > 0}
+											class:rn-stat-cell--interactive={stat.value > 0 && stat.tab !== null}
+											disabled={stat.tab === null || stat.value === 0}
 											onclick={() => {
-												if (stat.label === 'Breaking') activeTab = 1;
-												else if (stat.label === 'Deprecated') activeTab = 2;
-												else if (stat.label === 'New') activeTab = 3;
-												else if (stat.label === 'Modified') activeTab = 4;
+												if (stat.tab !== null && stat.value > 0) activeTab = stat.tab;
 											}}
 										>
 											<span class="rn-stat-value rn-stat-value--{stat.tone}">{stat.value}</span>
@@ -524,217 +409,6 @@
 									</a>
 								</div>
 							{:else if activeTab === 1}
-								{#if selectedEntry.notes.breakingChanges.length === 0}
-									<div class="rn-empty">
-										<span class="rn-empty-icon">✓</span>
-										No breaking changes in this release
-									</div>
-								{:else}
-									{@const filteredBreaking = sortBreakingChanges(
-										filterBreakingChanges(
-											selectedEntry.notes.breakingChanges,
-											breakingFilter
-										),
-										breakingSort
-									)}
-									{@const groupedBreaking = groupBreakingByKind(filteredBreaking)}
-									<div class="rn-toolbar">
-										<div class="rn-toolbar-summary">
-											<span class="rn-badge rn-badge--breaking">Breaking</span>
-											<span class="rn-toolbar-text">
-												{breakingCount(selectedEntry.notes)} total · {groupedBreaking.length} kind{groupedBreaking.length !==
-												1
-													? 's'
-													: ''}
-											</span>
-										</div>
-										<div class="rn-toolbar-controls">
-											<select class="rn-select" bind:value={breakingSort} aria-label="Sort breaking">
-												{#each SORT_OPTIONS as opt (opt.value)}
-													<option value={opt.value}>{opt.label}</option>
-												{/each}
-											</select>
-											<input
-												class="rn-search"
-												type="search"
-												placeholder="Filter kind, field, impact…"
-												bind:value={breakingFilter}
-												aria-label="Filter breaking changes"
-											/>
-										</div>
-									</div>
-
-									{#if groupedBreaking.length === 0}
-										<div class="rn-empty">No breaking changes match your filter</div>
-									{:else}
-										<div class="rn-group-list">
-											{#each groupedBreaking as group (group.kind)}
-												<div class="rn-card rn-group">
-													<div
-														class="rn-group-head"
-														role="button"
-														tabindex="0"
-														aria-expanded={isKindExpanded(
-															breakingKindExpanded,
-															group.kind
-														)}
-														onclick={() =>
-															(breakingKindExpanded = toggleKindExpanded(
-																breakingKindExpanded,
-																group.kind
-															))}
-														onkeydown={(e) =>
-															collapsibleKeydown(e, () =>
-																(breakingKindExpanded = toggleKindExpanded(
-																	breakingKindExpanded,
-																	group.kind
-																)))}
-													>
-														<span
-															class="rn-chevron"
-															class:rn-chevron--open={isKindExpanded(
-																breakingKindExpanded,
-																group.kind
-															)}>›</span
-														>
-														<button
-															type="button"
-															class="rn-kind-link"
-															onclick={(e) => openKindModal(group.kind, undefined, undefined, e)}
-														>
-															<HighlightText text={group.kind} query={breakingFilter} />
-														</button>
-														<span class="rn-group-count"
-															>{group.items.length} change{group.items.length !== 1
-																? 's'
-																: ''}</span
-														>
-													</div>
-
-													{#if isKindExpanded(breakingKindExpanded, group.kind)}
-														<div class="rn-group-body">
-															{#each group.items as b, i (changeRowKey(group.kind, b.field, i))}
-																{@const rowKey = changeRowKey(group.kind, b.field, i)}
-																{@const expanded = isRowExpanded(breakingRowExpanded, rowKey)}
-																<div class="rn-change-card" class:rn-change-card--open={expanded}>
-																	<div
-																		class="rn-change-summary"
-																		role="button"
-																		tabindex="0"
-																		aria-expanded={expanded}
-																		onclick={() =>
-																			(breakingRowExpanded = toggleRowExpanded(
-																				breakingRowExpanded,
-																				rowKey
-																			))}
-																		onkeydown={(e) =>
-																			collapsibleKeydown(e, () =>
-																				(breakingRowExpanded = toggleRowExpanded(
-																					breakingRowExpanded,
-																					rowKey
-																				)))}
-																	>
-																		<span
-																			class="rn-chevron rn-chevron--sm"
-																			class:rn-chevron--open={expanded}>›</span
-																		>
-																		<div class="rn-change-summary-body">
-																			<p class="rn-production-impact">
-																				<HighlightText
-																					text={breakingProductionImpact(b)}
-																					query={breakingFilter}
-																				/>
-																			</p>
-																			<div class="rn-change-head rn-change-head--compact">
-																				<span class="rn-badge rn-badge--breaking">Breaking</span>
-																				{#if b.severity === 'critical'}
-																					<span class="rn-badge rn-badge--critical">critical</span>
-																				{:else if b.severity === 'warning'}
-																					<span class="rn-badge rn-badge--warning">warning</span>
-																				{/if}
-																				<span class="rn-field-label">
-																					<HighlightText
-																						text={humanizeFieldPath(b.field)}
-																						query={breakingFilter}
-																					/>
-																				</span>
-																				<code class="rn-field-path">{b.field}</code>
-																			</div>
-																		</div>
-																	</div>
-
-																	{#if expanded}
-																		<div class="rn-change-detail">
-																			<p class="rn-prose rn-prose--sm">
-																				<HighlightText text={b.description} query={breakingFilter} />
-																			</p>
-																			{#if b.migrationSteps.length > 0}
-																				<div class="rn-migration">
-																					<div class="rn-section-label">Migration steps</div>
-																					{#each b.migrationSteps as step, j (j)}
-																						<div class="rn-migration-step">
-																							<span class="rn-migration-num">{j + 1}.</span>
-																							<span>{step}</span>
-																						</div>
-																					{/each}
-																				</div>
-																			{/if}
-																			{#if b.yamlBefore || b.yamlAfter}
-																				<div class="rn-yaml-grid">
-																					{#if b.yamlBefore}
-																						<div>
-																							<div class="rn-yaml-label rn-yaml-label--before">
-																								Before
-																							</div>
-																							<div class="rn-codeblock">
-																								<pre>{b.yamlBefore}</pre>
-																								<button
-																									type="button"
-																									class="rn-copy"
-																									onclick={() =>
-																										copyText(b.yamlBefore, 'before YAML')}
-																								>
-																									{copiedCode === b.yamlBefore
-																										? '✓ copied'
-																										: 'copy'}
-																								</button>
-																							</div>
-																						</div>
-																					{/if}
-																					{#if b.yamlAfter}
-																						<div>
-																							<div class="rn-yaml-label rn-yaml-label--after">
-																								After
-																							</div>
-																							<div class="rn-codeblock">
-																								<pre>{b.yamlAfter}</pre>
-																								<button
-																									type="button"
-																									class="rn-copy"
-																									onclick={() =>
-																										copyText(b.yamlAfter, 'after YAML')}
-																								>
-																									{copiedCode === b.yamlAfter
-																										? '✓ copied'
-																										: 'copy'}
-																								</button>
-																							</div>
-																						</div>
-																					{/if}
-																				</div>
-																			{/if}
-																		</div>
-																	{/if}
-																</div>
-															{/each}
-														</div>
-													{/if}
-												</div>
-											{/each}
-										</div>
-									{/if}
-								{/if}
-							{:else if activeTab === 2}
 								{#if selectedEntry.notes.deprecated.length === 0}
 									<div class="rn-empty">
 										<span class="rn-empty-icon">⊘</span>
@@ -881,7 +555,7 @@
 										</div>
 									{/if}
 								{/if}
-							{:else if activeTab === 3}
+							{:else if activeTab === 2}
 								{#if selectedEntry.notes.newResources.length === 0}
 									<div class="rn-empty">
 										<span class="rn-empty-icon">✦</span>
@@ -1004,7 +678,7 @@
 										{/each}
 									{/if}
 								{/if}
-							{:else if activeTab === 4}
+							{:else if activeTab === 3}
 								{#if selectedEntry.notes.modifiedResources.length === 0}
 									<div class="rn-empty">
 										<span class="rn-empty-icon">✎</span>
@@ -1016,14 +690,19 @@
 										modifiedFilter
 									)}
 									{@const operationalGroups = groupModifiedByOperationalArea(filteredModified)}
-									{@const totalChanges = selectedEntry.notes.modifiedResources.reduce(
-										(n, r) => n + r.changes.length,
-										0
-									)}
+									{@const totalChanges = countOperationalChanges(selectedEntry.notes)}
 									{@const metadataCount = filteredModified.reduce((n, r) => {
 										const { metadata } = partitionFieldChanges(r.changes);
 										return n + metadata.length;
 									}, 0)}
+									<div class="rn-comparison-cta">
+										<a
+											class="rn-btn rn-btn--secondary"
+											href={comparisonPageHref(selectedEntry.fromVer, selectedEntry.toVer)}
+										>
+											View full comparison →
+										</a>
+									</div>
 									<div class="rn-toolbar">
 										<div class="rn-toolbar-summary">
 											<span class="rn-badge rn-badge--modified">Modified</span>
@@ -1031,7 +710,7 @@
 												{selectedEntry.notes.modifiedResources.length} CRD{selectedEntry.notes
 													.modifiedResources.length !== 1
 													? 's'
-													: ''} · {totalChanges} field change{totalChanges !== 1 ? 's' : ''}
+													: ''} · {totalChanges} spec change{totalChanges !== 1 ? 's' : ''}
 											</span>
 										</div>
 										<div class="rn-toolbar-controls">
@@ -1116,106 +795,46 @@
 																{#if isKindExpanded(modifiedKindExpanded, r.kind)}
 																	<div class="rn-group-body">
 																		{#each visibleChanges as c, j (changeRowKey(r.kind, c.field, j))}
-																			{@const rowKey = changeRowKey(r.kind, c.field, j)}
-																			{@const expanded = isRowExpanded(
-																				modifiedRowExpanded,
-																				rowKey
-																			)}
 																			{@const col = CHANGE_COLORS[c.changeType] ?? '#86868b'}
-																			<div
-																				class="rn-change-card"
-																				class:rn-change-card--open={expanded}
-																			>
-																				<div
-																					class="rn-change-summary"
-																					role="button"
-																					tabindex="0"
-																					aria-expanded={expanded}
-																					onclick={() =>
-																						(modifiedRowExpanded = toggleRowExpanded(
-																							modifiedRowExpanded,
-																							rowKey
-																						))}
-																					onkeydown={(e) =>
-																						collapsibleKeydown(e, () =>
-																							(modifiedRowExpanded = toggleRowExpanded(
-																								modifiedRowExpanded,
-																								rowKey
-																							)))}
-																				>
-																					<span
-																						class="rn-chevron rn-chevron--sm"
-																						class:rn-chevron--open={expanded}>›</span
-																					>
-																					<div class="rn-change-summary-body">
-																						<p class="rn-impact">
+																			<div class="rn-change-card rn-change-card--flat">
+																				<div class="rn-change-summary-body">
+																					<div class="rn-change-head rn-change-head--compact">
+																						<span class="rn-field-label">
 																							<HighlightText
-																								text={displayNetworkBehavior(c, r.kind)}
+																								text={humanizeFieldPath(c.field)}
 																								query={modifiedFilter}
 																							/>
-																						</p>
-																						<div class="rn-change-head rn-change-head--compact">
-																							<span class="rn-field-label">
-																								<HighlightText
-																									text={humanizeFieldPath(c.field)}
-																									query={modifiedFilter}
-																								/>
+																						</span>
+																						<span
+																							class="rn-change-type-badge"
+																							style:background="{col}18"
+																							style:color={col}
+																							style:border-color="{col}55"
+																						>
+																							{c.changeType.replace(/_/g, ' ')}
+																						</span>
+																					</div>
+																					{#if c.before || c.after}
+																						<div class="rn-diff-pills">
+																							<span class="rn-diff-pill rn-diff-pill--before">
+																								<span class="rn-diff-pill-label">Before</span>
+																								<span class="rn-diff-pill-value">{c.before || '—'}</span>
 																							</span>
-																							<span
-																								class="rn-change-type-badge"
-																								style:background="{col}18"
-																								style:color={col}
-																								style:border-color="{col}55"
-																							>
-																								{c.changeType.replace(/_/g, ' ')}
+																							<span class="rn-diff-arrow" aria-hidden="true">→</span>
+																							<span class="rn-diff-pill rn-diff-pill--after">
+																								<span class="rn-diff-pill-label">After</span>
+																								<span class="rn-diff-pill-value">{c.after || '—'}</span>
 																							</span>
-																							{#if HIGH_RISK_CHANGE_TYPES.has(c.changeType)}
-																								<span class="rn-badge rn-badge--breaking"
-																									>high risk</span
-																								>
-																							{/if}
 																						</div>
-																						{#if c.before || c.after}
-																							<div class="rn-diff-pills">
-																								<span class="rn-diff-pill rn-diff-pill--before">
-																									<span class="rn-diff-pill-label">Before</span>
-																									<span class="rn-diff-pill-value"
-																										>{c.before || '—'}</span
-																									>
-																								</span>
-																								<span class="rn-diff-arrow" aria-hidden="true"
-																									>→</span
-																								>
-																								<span class="rn-diff-pill rn-diff-pill--after">
-																									<span class="rn-diff-pill-label">After</span>
-																									<span class="rn-diff-pill-value"
-																										>{c.after || '—'}</span
-																									>
-																								</span>
-																							</div>
-																						{/if}
-																					</div>
+																					{/if}
+																					<p class="rn-impact">
+																						<HighlightText
+																							text={displayNetworkBehavior(c, r.kind)}
+																							query={modifiedFilter}
+																						/>
+																					</p>
+																					<code class="rn-field-path">{c.field}</code>
 																				</div>
-
-																				{#if expanded}
-																					<div class="rn-change-detail">
-																						<code class="rn-field-path">{c.field}</code>
-																						{#if r.apiVersion}
-																							<div class="rn-api-version-row">
-																								<span class="rn-api-version">{r.apiVersion}</span
-																								>
-																								<button
-																									type="button"
-																									class="rn-chip-copy"
-																									onclick={() =>
-																										copyText(r.apiVersion!, 'apiVersion')}
-																								>
-																									copy apiVersion
-																								</button>
-																							</div>
-																						{/if}
-																					</div>
-																				{/if}
 																			</div>
 																		{/each}
 																	</div>
@@ -1245,38 +864,6 @@
 										{/if}
 									{/if}
 								{/if}
-							{:else if activeTab === 5}
-								{@const risk = selectedEntry.notes.upgradeRisk}
-								<div class="rn-card rn-risk-hero">
-									<div class="rn-risk-ring" style:color={RISK_COLOR[risk]}>◉</div>
-									<div>
-										<div class="rn-section-label">Upgrade risk</div>
-										<div class="rn-risk-title" style:color={RISK_COLOR[risk]}>{risk}</div>
-										<div class="rn-risk-sub">
-											{selectedEntry.fromVer} → {selectedEntry.toVer}
-										</div>
-									</div>
-								</div>
-								{#if selectedEntry.notes.upgradeRiskJustification}
-									<div class="rn-card rn-card-pad">
-										<div class="rn-section-label">Justification</div>
-										<p class="rn-prose">{selectedEntry.notes.upgradeRiskJustification}</p>
-									</div>
-								{/if}
-								{#if selectedEntry.notes.estimatedEffort}
-									<div class="rn-card rn-card-pad">
-										<div class="rn-section-label">Estimated effort</div>
-										<div class="rn-effort">{selectedEntry.notes.estimatedEffort}</div>
-									</div>
-								{/if}
-								<div class="rn-overview-actions">
-									<a
-										class="rn-btn rn-btn--secondary"
-										href={comparisonPageHref(selectedEntry.fromVer, selectedEntry.toVer)}
-									>
-										Compare schemas for this upgrade
-									</a>
-								</div>
 							{/if}
 						</div>
 					{/key}
