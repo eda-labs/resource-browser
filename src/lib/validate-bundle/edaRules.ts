@@ -33,13 +33,15 @@ export function validateEdaRules(
 		if (!hasEdaLabel && res.kind && res.kind !== 'List') {
 			issues.push({
 				id: nextIssueId(),
-				severity: 'warning',
+				severity: 'error',
 				category: 'eda',
-				message: `Missing eda.nokia.com label on ${res.kind} "${res.name}" — consider app.eda.nokia.com/managed or similar`,
+				rule: 'mandatory-label',
+				message: `Required EDA metadata label missing on ${res.kind} "${res.name}" — add a label under eda.nokia.com/* (e.g. app.eda.nokia.com/managed: "true")`,
 				resourceName: res.name,
 				resourceKind: res.kind,
 				docIndex: res.docIndex + 1,
-				line: lineForField(res.doc, '/metadata/labels')
+				line: lineForField(res.doc, '/metadata/labels'),
+				fieldPath: 'metadata.labels'
 			});
 		}
 
@@ -48,6 +50,7 @@ export function validateEdaRules(
 				id: nextIssueId(),
 				severity: 'warning',
 				category: 'eda',
+				rule: 'spec-with-status',
 				message: `${res.kind} "${res.name}" includes both spec and status — status is normally populated by the controller, not applied manifests`,
 				resourceName: res.name,
 				resourceKind: res.kind,
@@ -61,6 +64,7 @@ export function validateEdaRules(
 				id: nextIssueId(),
 				severity: 'warning',
 				category: 'eda',
+				rule: 'api-group-pattern',
 				message: `apiVersion group "${res.group}" does not match the usual *.eda.nokia.com pattern for Nokia EDA CRDs`,
 				resourceName: res.name,
 				resourceKind: res.kind,
@@ -74,6 +78,7 @@ export function validateEdaRules(
 				id: nextIssueId(),
 				severity: 'warning',
 				category: 'eda',
+				rule: 'deprecated-api-version',
 				message: `${res.kind} "${res.name}" uses apiVersion ${res.apiVersion} — v1alpha1 is often deprecated; check ${releaseLabel} for stable versions`,
 				resourceName: res.name,
 				resourceKind: res.kind,
@@ -87,6 +92,7 @@ export function validateEdaRules(
 				id: nextIssueId(),
 				severity: 'info',
 				category: 'eda',
+				rule: 'dns-name',
 				message: `Resource name "${res.name}" should follow DNS subdomain naming (lowercase, hyphens)`,
 				resourceName: res.name,
 				resourceKind: res.kind,

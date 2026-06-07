@@ -183,6 +183,14 @@
 		}
 	}
 
+	function issueCategoryLabel(issue: BundleIssue): string | null {
+		if (issue.rule === 'mandatory-label') return 'Mandatory label';
+		if (issue.category === 'schema') return 'Schema';
+		if (issue.rule === 'deprecated-api-version') return 'Deprecated';
+		if (issue.category === 'eda') return 'EDA rule';
+		return null;
+	}
+
 	onMount(() => {
 		const urlRelease = $page.url.searchParams.get('release');
 		if (urlRelease) {
@@ -301,6 +309,7 @@
 						<ul class="validate-bundle-issues" role="list">
 							{#each displayIssues as issue (issue.id)}
 								{@const tone = severityTone(issue.severity)}
+								{@const categoryLabel = issueCategoryLabel(issue)}
 								{@const crdEntry = manifestEntryForIssue(issue)}
 								<li>
 									<div class="validate-bundle-issue {tone.row}">
@@ -311,6 +320,9 @@
 										>
 											<div class="validate-bundle-issue-head">
 												<span class="validate-bundle-issue-badge {tone.badge}">{tone.label}</span>
+												{#if categoryLabel}
+													<span class="validate-bundle-issue-category">{categoryLabel}</span>
+												{/if}
 												{#if issue.resourceKind}
 													<span class="validate-bundle-issue-resource">
 														{issue.resourceKind}{issue.resourceName ? ` / ${issue.resourceName}` : ''}
@@ -532,6 +544,16 @@
 		font-size: 0.625rem;
 		font-weight: 700;
 		text-transform: uppercase;
+	}
+
+	.validate-bundle-issue-category {
+		border-radius: 0.25rem;
+		padding: 0.1rem 0.4rem;
+		font-size: 0.625rem;
+		font-weight: 600;
+		color: rgb(148 163 184);
+		background: rgb(30 41 59);
+		border: 1px solid rgb(51 65 85);
 	}
 
 	.validate-bundle-issue-resource {

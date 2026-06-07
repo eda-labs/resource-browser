@@ -4,11 +4,21 @@ export type IssueSeverity = 'error' | 'warning' | 'info';
 
 export type IssueCategory = 'schema' | 'eda';
 
+/** Sub-type for EDA manifest rules — distinguishes label requirements from schema required fields. */
+export type EdaIssueRule =
+	| 'mandatory-label'
+	| 'spec-with-status'
+	| 'api-group-pattern'
+	| 'deprecated-api-version'
+	| 'dns-name';
+
 export type BundleIssue = {
 	id: string;
 	severity: IssueSeverity;
 	message: string;
 	category: IssueCategory;
+	/** EDA rule identifier when category is `eda`. */
+	rule?: EdaIssueRule;
 	resourceName?: string;
 	resourceKind?: string;
 	docIndex?: number;
