@@ -735,6 +735,951 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 		color: #94a3b8;
 	}
 
+	/* Validate YAML page */
+	.validate-yaml-main {
+		gap: 0.875rem;
+	}
+
+	@media (min-width: 640px) {
+		.validate-yaml-main {
+			gap: 1rem;
+		}
+	}
+
+	.validate-yaml-hero {
+		margin-bottom: 0;
+	}
+
+	.validate-yaml-toolbar {
+		align-items: center;
+	}
+
+	.validate-yaml-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.375rem;
+		min-height: 2.25rem;
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+		background: #fff;
+		padding: 0.375rem 0.75rem;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: #0f172a;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.validate-yaml-btn:hover:not(:disabled) {
+		background: #f8fafc;
+	}
+
+	.validate-yaml-btn:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
+	}
+
+	.validate-yaml-btn--primary {
+		border-color: #2563eb;
+		background: #2563eb;
+		color: #fff;
+	}
+
+	.validate-yaml-btn--primary:hover:not(:disabled) {
+		background: #1d4ed8;
+	}
+
+	.validate-yaml-btn--ghost {
+		background: transparent;
+	}
+
+	.dark .validate-yaml-btn {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(7, 20, 40, 0.55);
+		color: #f8fafc;
+	}
+
+	.dark .validate-yaml-btn:hover:not(:disabled) {
+		background: rgba(15, 42, 72, 0.88);
+	}
+
+	.dark .validate-yaml-btn--primary {
+		border-color: #2563eb;
+		background: #2563eb;
+		color: #fff;
+	}
+
+	.dark .validate-yaml-btn--ghost {
+		background: transparent;
+	}
+
+	.validate-yaml-btn__spinner {
+		height: 0.875rem;
+		width: 0.875rem;
+	}
+
+	.validate-yaml-auto-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		margin-left: auto;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #64748b;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.validate-yaml-auto-toggle input {
+		height: 0.875rem;
+		width: 0.875rem;
+		accent-color: #2563eb;
+	}
+
+	.dark .validate-yaml-auto-toggle {
+		color: #94a3b8;
+	}
+
+	.validate-yaml-stats {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.625rem 0.875rem;
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+		background: #fff;
+		padding: 0.5rem 0.75rem;
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+	}
+
+	.dark .validate-yaml-stats {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.88);
+		box-shadow: none;
+	}
+
+	.validate-yaml-stats__items {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.validate-yaml-stat {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #64748b;
+	}
+
+	.validate-yaml-stat__value {
+		font-variant-numeric: tabular-nums;
+		color: #0f172a;
+	}
+
+	.dark .validate-yaml-stat__value {
+		color: #f1f5f9;
+	}
+
+	.validate-yaml-stat--error {
+		color: #dc2626;
+	}
+
+	.validate-yaml-stat--error .validate-yaml-stat__value {
+		color: #dc2626;
+	}
+
+	.validate-yaml-stat--warning {
+		color: #d97706;
+	}
+
+	.validate-yaml-stat--warning .validate-yaml-stat__value {
+		color: #d97706;
+	}
+
+	.dark .validate-yaml-stat--error,
+	.dark .validate-yaml-stat--error .validate-yaml-stat__value {
+		color: #f87171;
+	}
+
+	.dark .validate-yaml-stat--warning,
+	.dark .validate-yaml-stat--warning .validate-yaml-stat__value {
+		color: #fbbf24;
+	}
+
+	.validate-yaml-status-pill {
+		margin-left: auto;
+		border-radius: 9999px;
+		padding: 0.125rem 0.625rem;
+		font-size: 0.6875rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.validate-yaml-status-pill--valid {
+		background: rgba(34, 197, 94, 0.15);
+		color: #15803d;
+	}
+
+	.validate-yaml-status-pill--invalid {
+		background: rgba(239, 68, 68, 0.15);
+		color: #b91c1c;
+	}
+
+	.dark .validate-yaml-status-pill--valid {
+		background: rgba(34, 197, 94, 0.2);
+		color: #86efac;
+	}
+
+	.dark .validate-yaml-status-pill--invalid {
+		background: rgba(239, 68, 68, 0.2);
+		color: #fca5a5;
+	}
+
+	.validate-yaml-stats__updating {
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: #64748b;
+	}
+
+	.dark .validate-yaml-stats__updating {
+		color: #94a3b8;
+	}
+
+	.validate-yaml-workspace {
+		display: grid;
+		gap: 0.875rem;
+	}
+
+	@media (min-width: 1024px) {
+		.validate-yaml-workspace {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			align-items: start;
+			gap: 1rem;
+		}
+	}
+
+	.validate-yaml-panel {
+		min-height: 28rem;
+	}
+
+	@media (min-width: 1024px) {
+		.validate-yaml-panel {
+			position: sticky;
+			top: 4rem;
+			max-height: calc(100dvh - 5.5rem);
+		}
+
+		.validate-yaml-panel--editor,
+		.validate-yaml-panel--issues {
+			display: flex;
+			flex-direction: column;
+			min-height: 0;
+		}
+	}
+
+	.validate-yaml-panel--issues {
+		overflow: hidden;
+	}
+
+	.validate-yaml-issues-header {
+		position: sticky;
+		top: 0;
+		z-index: 3;
+		border-bottom: 1px solid #e2e8f0;
+		background: #fff;
+		padding: 0.625rem 0.75rem;
+	}
+
+	.dark .validate-yaml-issues-header {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.98);
+	}
+
+	.validate-yaml-issues-header__title-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.validate-yaml-issues-title {
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: #0f172a;
+	}
+
+	.dark .validate-yaml-issues-title {
+		color: #f8fafc;
+	}
+
+	.validate-yaml-issues-count {
+		border-radius: 9999px;
+		background: #ef4444;
+		padding: 0 0.45rem;
+		font-size: 0.625rem;
+		font-weight: 700;
+		color: #fff;
+		line-height: 1.25rem;
+	}
+
+	.validate-yaml-issues-filters {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.validate-yaml-filter-tabs {
+		display: inline-flex;
+		border-radius: 0.375rem;
+		border: 1px solid #e2e8f0;
+		background: #f8fafc;
+		padding: 0.125rem;
+	}
+
+	.dark .validate-yaml-filter-tabs {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(7, 20, 40, 0.55);
+	}
+
+	.validate-yaml-filter-tab {
+		border: 0;
+		border-radius: 0.25rem;
+		background: transparent;
+		padding: 0.2rem 0.5rem;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: #64748b;
+		cursor: pointer;
+	}
+
+	.validate-yaml-filter-tab--active {
+		background: #fff;
+		color: #0f172a;
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+	}
+
+	.dark .validate-yaml-filter-tab--active {
+		background: rgba(15, 42, 72, 0.95);
+		color: #f8fafc;
+	}
+
+	.validate-yaml-search {
+		flex: 1;
+		min-width: 7rem;
+	}
+
+	.validate-yaml-search__input {
+		width: 100%;
+		min-height: 1.75rem;
+		border-radius: 0.375rem;
+		border: 1px solid #e2e8f0;
+		background: #fff;
+		padding: 0.2rem 0.5rem;
+		font-size: 0.75rem;
+		color: #0f172a;
+	}
+
+	.dark .validate-yaml-search__input {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(7, 20, 40, 0.55);
+		color: #f8fafc;
+	}
+
+	.validate-yaml-issues-body {
+		flex: 1;
+		overflow: auto;
+		padding: 0.625rem;
+		min-height: 0;
+	}
+
+	.validate-yaml-success {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		border-radius: 0.5rem;
+		border: 1px solid rgba(34, 197, 94, 0.35);
+		background: linear-gradient(135deg, rgba(240, 253, 244, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%);
+		padding: 1rem;
+	}
+
+	.dark .validate-yaml-success {
+		border-color: rgba(34, 197, 94, 0.35);
+		background: linear-gradient(135deg, rgba(20, 83, 45, 0.35) 0%, rgba(15, 42, 72, 0.55) 100%);
+	}
+
+	.validate-yaml-success__icon {
+		display: inline-flex;
+		height: 2.25rem;
+		width: 2.25rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		background: rgba(34, 197, 94, 0.15);
+		color: #16a34a;
+		flex-shrink: 0;
+	}
+
+	.dark .validate-yaml-success__icon {
+		background: rgba(34, 197, 94, 0.2);
+		color: #86efac;
+	}
+
+	.validate-yaml-success__title {
+		margin: 0 0 0.125rem;
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: #15803d;
+	}
+
+	.dark .validate-yaml-success__title {
+		color: #86efac;
+	}
+
+	.validate-yaml-success__text {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: #166534;
+	}
+
+	.dark .validate-yaml-success__text {
+		color: #bbf7d0;
+	}
+
+	.validate-yaml-groups {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.validate-yaml-group {
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+		background: #f8fafc;
+		overflow: hidden;
+	}
+
+	.dark .validate-yaml-group {
+		border-color: rgba(56, 100, 150, 0.25);
+		background: rgba(7, 20, 40, 0.45);
+	}
+
+	.validate-yaml-group__header {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		width: 100%;
+		border: 0;
+		background: transparent;
+		padding: 0.5rem 0.625rem;
+		text-align: left;
+		cursor: pointer;
+		color: inherit;
+	}
+
+	.validate-yaml-group__header:hover {
+		background: rgba(15, 23, 42, 0.03);
+	}
+
+	.dark .validate-yaml-group__header:hover {
+		background: rgba(255, 255, 255, 0.03);
+	}
+
+	.validate-yaml-group__chevron {
+		height: 1rem;
+		width: 1rem;
+		flex-shrink: 0;
+		color: #64748b;
+		transition: transform 0.15s ease;
+	}
+
+	.validate-yaml-group__chevron--collapsed {
+		transform: rotate(-90deg);
+	}
+
+	.validate-yaml-group__meta {
+		display: flex;
+		flex-direction: column;
+		gap: 0.0625rem;
+		min-width: 0;
+	}
+
+	.validate-yaml-group__label {
+		font-size: 0.8125rem;
+		font-weight: 700;
+		color: #0f172a;
+	}
+
+	.dark .validate-yaml-group__label {
+		color: #f1f5f9;
+	}
+
+	.validate-yaml-group__subtitle {
+		font-size: 0.6875rem;
+		color: #64748b;
+	}
+
+	.validate-yaml-group__counts {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		margin-left: auto;
+	}
+
+	.validate-yaml-group__count {
+		border-radius: 9999px;
+		padding: 0 0.35rem;
+		font-size: 0.625rem;
+		font-weight: 700;
+		line-height: 1.125rem;
+	}
+
+	.validate-yaml-group__count--error {
+		background: rgba(239, 68, 68, 0.15);
+		color: #b91c1c;
+	}
+
+	.validate-yaml-group__count--warning {
+		background: rgba(245, 158, 11, 0.15);
+		color: #b45309;
+	}
+
+	.dark .validate-yaml-group__count--error {
+		color: #fca5a5;
+	}
+
+	.dark .validate-yaml-group__count--warning {
+		color: #fcd34d;
+	}
+
+	.validate-yaml-issues {
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+		list-style: none;
+		margin: 0;
+		padding: 0 0.5rem 0.5rem;
+	}
+
+	.validate-yaml-issue {
+		border-radius: 0.375rem;
+		border: 1px solid #e2e8f0;
+		border-left-width: 3px;
+		background: #fff;
+		padding: 0.5rem 0.625rem;
+		transition: box-shadow 0.15s ease;
+	}
+
+	.validate-yaml-issue:hover {
+		box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+	}
+
+	.validate-yaml-issue--error {
+		border-left-color: #ef4444;
+	}
+
+	.validate-yaml-issue--warning {
+		border-left-color: #f59e0b;
+	}
+
+	.validate-yaml-issue--info {
+		border-left-color: #3b82f6;
+	}
+
+	.dark .validate-yaml-issue {
+		border-color: rgba(56, 100, 150, 0.25);
+		background: rgba(15, 42, 72, 0.55);
+	}
+
+	.validate-yaml-issue__main {
+		width: 100%;
+		text-align: left;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+	}
+
+	.validate-yaml-issue__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.3rem 0.45rem;
+		margin-bottom: 0.3rem;
+	}
+
+	.validate-yaml-issue-badge {
+		border-radius: 0.25rem;
+		padding: 0.05rem 0.35rem;
+		font-size: 0.5625rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+	}
+
+	.validate-yaml-issue-badge--error {
+		background: rgba(239, 68, 68, 0.15);
+		color: #b91c1c;
+	}
+
+	.validate-yaml-issue-badge--warning {
+		background: rgba(245, 158, 11, 0.15);
+		color: #b45309;
+	}
+
+	.validate-yaml-issue-badge--info {
+		background: rgba(59, 130, 246, 0.15);
+		color: #1d4ed8;
+	}
+
+	.dark .validate-yaml-issue-badge--error {
+		color: #fca5a5;
+	}
+
+	.dark .validate-yaml-issue-badge--warning {
+		color: #fcd34d;
+	}
+
+	.dark .validate-yaml-issue-badge--info {
+		color: #93c5fd;
+	}
+
+	.validate-yaml-issue-category {
+		border-radius: 0.25rem;
+		padding: 0.05rem 0.35rem;
+		font-size: 0.625rem;
+		font-weight: 600;
+		color: #64748b;
+		background: #f1f5f9;
+		border: 1px solid #e2e8f0;
+	}
+
+	.dark .validate-yaml-issue-category {
+		color: #94a3b8;
+		background: rgba(7, 20, 40, 0.55);
+		border-color: rgba(56, 100, 150, 0.25);
+	}
+
+	.validate-yaml-issue-resource {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #334155;
+	}
+
+	.dark .validate-yaml-issue-resource {
+		color: #cbd5e1;
+	}
+
+	.validate-yaml-issue-line {
+		margin-left: auto;
+		font-family: ui-monospace, monospace;
+		font-size: 0.6875rem;
+		color: #64748b;
+	}
+
+	.validate-yaml-issue-msg {
+		margin: 0;
+		font-size: 0.8125rem;
+		color: #0f172a;
+		line-height: 1.4;
+	}
+
+	.dark .validate-yaml-issue-msg {
+		color: #e2e8f0;
+	}
+
+	.validate-yaml-issue-path {
+		margin: 0.2rem 0 0;
+		font-family: ui-monospace, monospace;
+		font-size: 0.6875rem;
+		color: #64748b;
+	}
+
+	.validate-yaml-issue-schema-link {
+		margin-top: 0.35rem;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: #2563eb;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.validate-yaml-issue-schema-link:hover {
+		color: #1d4ed8;
+	}
+
+	.dark .validate-yaml-issue-schema-link {
+		color: #93c5fd;
+	}
+
+	.validate-yaml-toast {
+		position: fixed;
+		bottom: 1.5rem;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 50;
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+		background: #fff;
+		padding: 0.625rem 1rem;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: #0f172a;
+		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+	}
+
+	.dark .validate-yaml-toast {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.95);
+		color: #f1f5f9;
+	}
+
+	/* YAML bundle editor */
+	.yaml-editor-shell {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 28rem;
+		border-radius: 0.5rem;
+		border: 1px solid #e2e8f0;
+		background: #fff;
+		overflow: hidden;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+	}
+
+	.dark .yaml-editor-shell {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(15, 42, 72, 0.88);
+		box-shadow: none;
+	}
+
+	.yaml-editor-toolbar {
+		position: sticky;
+		top: 0;
+		z-index: 3;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid #e2e8f0;
+		background: #f8fafc;
+	}
+
+	.dark .yaml-editor-toolbar {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(7, 20, 40, 0.55);
+	}
+
+	.yaml-editor-label {
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: #64748b;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.dark .yaml-editor-label {
+		color: #94a3b8;
+	}
+
+	.yaml-editor-toolbar-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+	}
+
+	.yaml-editor-validating {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: #64748b;
+	}
+
+	.yaml-editor-validating__spinner {
+		height: 0.875rem;
+		width: 0.875rem;
+	}
+
+	.yaml-editor-hint {
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: #94a3b8;
+	}
+
+	.yaml-editor-body {
+		display: flex;
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.yaml-gutter {
+		flex-shrink: 0;
+		width: 3rem;
+		padding: 0.625rem 0.5rem;
+		border-right: 1px solid #e2e8f0;
+		background: #f8fafc;
+		font-family: ui-monospace, monospace;
+		font-size: 0.8125rem;
+		line-height: 1.25rem;
+		color: #94a3b8;
+		text-align: right;
+		user-select: none;
+	}
+
+	.dark .yaml-gutter {
+		border-color: rgba(56, 100, 150, 0.35);
+		background: rgba(7, 20, 40, 0.45);
+		color: #64748b;
+	}
+
+	.yaml-gutter-line {
+		height: 1.25rem;
+		border-radius: 0.125rem;
+	}
+
+	.yaml-gutter-line--highlight {
+		color: #b45309;
+		font-weight: 700;
+		background: rgba(251, 191, 36, 0.2);
+	}
+
+	.dark .yaml-gutter-line--highlight {
+		color: #fcd34d;
+		background: rgba(251, 191, 36, 0.15);
+	}
+
+	.yaml-editor-stack {
+		position: relative;
+		flex: 1;
+		overflow: hidden;
+	}
+
+	.yaml-line-highlights {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		padding: 0.625rem;
+	}
+
+	.yaml-line-highlight {
+		height: 1.25rem;
+	}
+
+	.yaml-line-highlight--active {
+		background: rgba(251, 191, 36, 0.18);
+		box-shadow: inset 3px 0 0 #f59e0b;
+	}
+
+	.dark .yaml-line-highlight--active {
+		background: rgba(251, 191, 36, 0.12);
+		box-shadow: inset 3px 0 0 #fbbf24;
+	}
+
+	.yaml-highlight,
+	.yaml-textarea {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		padding: 0.625rem;
+		border: 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		font-size: 0.8125rem;
+		line-height: 1.25rem;
+		tab-size: 2;
+		white-space: pre;
+		overflow: hidden;
+	}
+
+	.yaml-highlight {
+		pointer-events: none;
+		color: #0f172a;
+		z-index: 1;
+	}
+
+	.dark .yaml-highlight {
+		color: #e2e8f0;
+	}
+
+	.yaml-textarea {
+		resize: none;
+		background: transparent;
+		color: transparent;
+		caret-color: #0f172a;
+		outline: none;
+		z-index: 2;
+	}
+
+	.dark .yaml-textarea {
+		caret-color: #f8fafc;
+	}
+
+	.yaml-textarea::selection {
+		background: rgba(37, 99, 235, 0.25);
+	}
+
+	.yaml-hl-key {
+		color: #2563eb;
+	}
+
+	.yaml-hl-string {
+		color: #059669;
+	}
+
+	.yaml-hl-number {
+		color: #d97706;
+	}
+
+	.yaml-hl-bool,
+	.yaml-hl-null {
+		color: #db2777;
+	}
+
+	.yaml-hl-comment {
+		color: #94a3b8;
+		font-style: italic;
+	}
+
+	.yaml-hl-doc {
+		color: #7c3aed;
+		font-weight: 600;
+	}
+
+	.dark .yaml-hl-key {
+		color: #93c5fd;
+	}
+
+	.dark .yaml-hl-string {
+		color: #86efac;
+	}
+
+	.dark .yaml-hl-number {
+		color: #fbbf24;
+	}
+
+	.dark .yaml-hl-bool,
+	.dark .yaml-hl-null {
+		color: #f472b6;
+	}
+
+	.dark .yaml-hl-comment {
+		color: #64748b;
+	}
+
+	.dark .yaml-hl-doc {
+		color: #c4b5fd;
+	}
+
 	/* Comparison page */
 	.comparison-highlight {
 		border-radius: 0.125rem;

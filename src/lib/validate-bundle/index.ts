@@ -14,6 +14,7 @@ export { EXAMPLE_BUNDLE_YAML } from './exampleBundle';
 export {
 	formatYamlBundle,
 	fixDocumentData,
+	fixK8sMetadata,
 	fixYamlDocuments,
 	formatFixSummary,
 	type FixKind,

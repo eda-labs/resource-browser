@@ -2,7 +2,9 @@ import yaml from 'js-yaml';
 import { getLatestVersion } from '$lib/versions';
 import { resolveObjectSchema } from '$lib/schema/requiredFields';
 import { parseDocuments } from '$lib/yaml-validation/parseDocuments';
+import { fixInvalidBooleanLiterals } from '$lib/yaml-validation/scanSource';
 import { fetchSchemas, schemaPath } from '$lib/yaml-validation/schemaCache';
+import { tryFixDnsLabel, tryFixDnsSubdomain } from './k8sRules';
 import type { ManifestEntry } from '$lib/yaml-validation/types';
 import type { SchemaSections } from '$lib/yaml-validation/schemaCache';
 
@@ -67,7 +69,7 @@ export function sortCrdKeys(value: unknown, parentKey?: string): unknown {
 	return sortObjectKeys(value);
 }
 
-export type FixKind = 'enumCase' | 'stringCoercion' | 'booleanCoercion';
+export type FixKind = 'enumCase' | 'stringCoercion' | 'booleanCoercion' | 'dnsName';
 
 export type FixReport = {
 	kind: FixKind;
@@ -252,6 +254,46 @@ export function fixDocumentData(
 	return { data: out, fixes };
 }
 
+/** Apply fixable Kubernetes metadata rules (DNS name/namespace). */
+export function fixK8sMetadata(
+	data: Record<string, unknown>,
+	docIndex: number
+): { data: Record<string, unknown>; fixes: FixReport[] } {
+	const fixes: FixReport[] = [];
+	const metadata = data.metadata;
+	if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+		return { data, fixes };
+	}
+
+	const meta = { ...(metadata as Record<string, unknown>) };
+
+	const name = meta.name;
+	if (typeof name === 'string') {
+		const fixed = tryFixDnsSubdomain(name);
+		if (fixed !== null) {
+			fixes.push({ kind: 'dnsName', path: 'metadata.name', from: name, to: fixed, docIndex });
+			meta.name = fixed;
+		}
+	}
+
+	const namespace = meta.namespace;
+	if (typeof namespace === 'string') {
+		const fixed = tryFixDnsLabel(namespace);
+		if (fixed !== null) {
+			fixes.push({
+				kind: 'dnsName',
+				path: 'metadata.namespace',
+				from: namespace,
+				to: fixed,
+				docIndex
+			});
+			meta.namespace = fixed;
+		}
+	}
+
+	return { data: { ...data, metadata: meta }, fixes };
+}
+
 function resolveSchemaForDoc(
 	doc: Record<string, unknown>,
 	manifest: ManifestEntry[],
@@ -321,19 +363,25 @@ export function formatFixSummary(fixes: FixReport[]): string {
 	const counts: Record<FixKind, number> = {
 		enumCase: 0,
 		stringCoercion: 0,
-		booleanCoercion: 0
+		booleanCoercion: 0,
+		dnsName: 0
 	};
 	for (const fix of fixes) counts[fix.kind] += 1;
 
 	const parts: string[] = [];
+	if (counts.dnsName > 0) {
+		const label = counts.dnsName === 1 ? 'DNS name' : 'DNS names';
+		parts.push(`${counts.dnsName} ${label}`);
+	}
+	if (counts.booleanCoercion > 0) {
+		const label = counts.booleanCoercion === 1 ? 'boolean' : 'booleans';
+		parts.push(`${counts.booleanCoercion} ${label}`);
+	}
 	if (counts.enumCase > 0) {
 		parts.push(`${counts.enumCase} enum case`);
 	}
 	if (counts.stringCoercion > 0) {
 		parts.push(`${counts.stringCoercion} string coercion`);
-	}
-	if (counts.booleanCoercion > 0) {
-		parts.push(`${counts.booleanCoercion} boolean coercion`);
 	}
 
 	const issueWord = fixes.length === 1 ? 'issue' : 'issues';
@@ -379,11 +427,31 @@ export async function formatYamlBundle(
 	let fixes: FixReport[] = [];
 	const docData = parsed.docs.map((doc) => ({ ...doc }));
 
-	if (options?.manifest?.length && options.releaseFolder) {
-		fixes = await fixYamlDocuments(docData, options);
+	for (const doc of docData) {
+		const { data, fixes: k8sFixes } = fixK8sMetadata(doc.data, doc.index + 1);
+		doc.data = data;
+		fixes.push(...k8sFixes);
 	}
 
-	const formatted = dumpFormattedDocs(docData.map((doc) => doc.data));
+	if (options?.manifest?.length && options.releaseFolder) {
+		fixes.push(...(await fixYamlDocuments(docData, options)));
+	}
+
+	let formatted = dumpFormattedDocs(docData.map((doc) => doc.data));
+
+	const booleanSourceFix = fixInvalidBooleanLiterals(formatted);
+	if (booleanSourceFix.fixes.length > 0) {
+		formatted = booleanSourceFix.yaml;
+		for (const fix of booleanSourceFix.fixes) {
+			fixes.push({
+				kind: 'booleanCoercion',
+				path: `line:${fix.line}`,
+				from: fix.from,
+				to: fix.to,
+				docIndex: 1
+			});
+		}
+	}
 
 	return { ok: true, formatted, docCount: parsed.docs.length, fixes };
 }

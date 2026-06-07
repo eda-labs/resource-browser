@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseBundleResources } from './parser';
-import { validateK8sRules } from './k8sRules';
+import { tryFixDnsLabel, tryFixDnsSubdomain, validateK8sRules } from './k8sRules';
 
 const VALID_CONFIGLET = `apiVersion: config.eda.nokia.com/v1
 kind: Configlet
@@ -200,5 +200,30 @@ describe('validateK8sRules', () => {
 		expect(specStatusIssue?.severity).toBe('warning');
 		expect(specStatusIssue?.category).toBe('kubernetes');
 		expect(specStatusIssue?.message).toContain('both spec and status');
+	});
+});
+
+describe('tryFixDnsSubdomain', () => {
+	it('fixes underscores and uppercase in metadata.name candidates', () => {
+		expect(tryFixDnsSubdomain('my_topology')).toBe('my-topology');
+		expect(tryFixDnsSubdomain('Invalid_Name')).toBe('invalid-name');
+	});
+
+	it('returns null for already-valid names', () => {
+		expect(tryFixDnsSubdomain('my-topology')).toBeNull();
+	});
+
+	it('returns null for unfixable names', () => {
+		expect(tryFixDnsSubdomain('!!!')).toBeNull();
+	});
+});
+
+describe('tryFixDnsLabel', () => {
+	it('fixes underscores and uppercase in namespace candidates', () => {
+		expect(tryFixDnsLabel('Invalid_Namespace')).toBe('invalid-namespace');
+	});
+
+	it('collapses repeated hyphens and trims edges', () => {
+		expect(tryFixDnsLabel('__my--ns__')).toBe('my-ns');
 	});
 });

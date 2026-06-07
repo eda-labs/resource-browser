@@ -45,12 +45,41 @@ function isValidApiVersion(value: string): boolean {
 	return group.length > 0 && version.length > 0;
 }
 
-function isValidDnsSubdomain(value: string): boolean {
+export function isValidDnsSubdomain(value: string): boolean {
 	return value.length <= DNS_SUBDOMAIN_MAX && DNS_SUBDOMAIN.test(value);
 }
 
-function isValidDnsLabel(value: string): boolean {
+export function isValidDnsLabel(value: string): boolean {
 	return value.length <= DNS_LABEL_MAX && DNS_LABEL.test(value);
+}
+
+/** Normalize a single DNS label segment: underscores to hyphens, lowercase, collapse hyphens. */
+function normalizeDnsLabelSegment(segment: string): string {
+	return segment
+		.replace(/_/g, '-')
+		.toLowerCase()
+		.replace(/-+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
+/** Auto-fix metadata.name when fixable (underscores, case, hyphen runs). Returns null if unchanged or unfixable. */
+export function tryFixDnsSubdomain(value: string): string | null {
+	if (isValidDnsSubdomain(value)) return null;
+	const fixed = value
+		.split('.')
+		.map(normalizeDnsLabelSegment)
+		.filter((s) => s.length > 0)
+		.join('.');
+	if (!fixed || fixed === value || !isValidDnsSubdomain(fixed)) return null;
+	return fixed;
+}
+
+/** Auto-fix metadata.namespace when fixable. Returns null if unchanged or unfixable. */
+export function tryFixDnsLabel(value: string): string | null {
+	if (isValidDnsLabel(value)) return null;
+	const fixed = normalizeDnsLabelSegment(value);
+	if (!fixed || fixed === value || !isValidDnsLabel(fixed)) return null;
+	return fixed;
 }
 
 function isValidLabelKey(key: string): boolean {

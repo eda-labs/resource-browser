@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { scanInvalidBooleanLiterals } from './scanSource';
+import { fixInvalidBooleanLiterals, scanInvalidBooleanLiterals } from './scanSource';
 
 describe('scanInvalidBooleanLiterals', () => {
 	it('flags uppercase boolean literals as errors', () => {
@@ -35,5 +35,30 @@ spec:
 		const issues = scanInvalidBooleanLiterals(yaml);
 		expect(issues).toHaveLength(1);
 		expect(issues[0].message).toContain("'True'");
+	});
+});
+
+describe('fixInvalidBooleanLiterals', () => {
+	it('replaces wrongly-cased boolean literals with lowercase', () => {
+		const yaml = `spec:
+  enabled: False
+  flags:
+    - TRUE
+`;
+		const { yaml: fixed, fixes } = fixInvalidBooleanLiterals(yaml);
+		expect(fixed).toMatch(/enabled: false/);
+		expect(fixed).toMatch(/- true/);
+		expect(fixes).toHaveLength(2);
+		expect(fixes[0].from).toBe('False');
+		expect(fixes[1].from).toBe('TRUE');
+	});
+
+	it('does not change quoted strings', () => {
+		const yaml = `spec:
+  note: "False alarm"
+`;
+		const { yaml: fixed, fixes } = fixInvalidBooleanLiterals(yaml);
+		expect(fixed).toBe(yaml);
+		expect(fixes).toHaveLength(0);
 	});
 });

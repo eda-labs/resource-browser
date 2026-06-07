@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fixDocumentData, formatFixSummary, formatYamlBundle } from './formatYaml';
+import { fixDocumentData, fixK8sMetadata, formatFixSummary, formatYamlBundle } from './formatYaml';
 import type { SchemaSections } from '$lib/yaml-validation/schemaCache';
 import type { ManifestEntry } from '$lib/yaml-validation/types';
 
@@ -244,6 +244,70 @@ spec:
 	});
 });
 
+describe('fixK8sMetadata', () => {
+	it('replaces underscores in metadata.name with hyphens', () => {
+		const data = {
+			apiVersion: 'topologies.eda.nokia.com/v1',
+			kind: 'Topology',
+			metadata: { name: 'my_topology', namespace: 'eda' }
+		};
+
+		const { data: fixed, fixes } = fixK8sMetadata(data, 1);
+
+		expect((fixed.metadata as Record<string, unknown>).name).toBe('my-topology');
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0]).toMatchObject({
+			kind: 'dnsName',
+			path: 'metadata.name',
+			from: 'my_topology',
+			to: 'my-topology'
+		});
+	});
+
+	it('fixes invalid metadata.namespace DNS labels', () => {
+		const data = {
+			metadata: { name: 'test', namespace: 'Invalid_Namespace' }
+		};
+
+		const { data: fixed, fixes } = fixK8sMetadata(data, 1);
+
+		expect((fixed.metadata as Record<string, unknown>).namespace).toBe('invalid-namespace');
+		expect(fixes[0].path).toBe('metadata.namespace');
+	});
+
+	it('leaves valid DNS names unchanged', () => {
+		const data = {
+			metadata: { name: 'my-topology', namespace: 'eda' }
+		};
+
+		const { data: fixed, fixes } = fixK8sMetadata(data, 1);
+
+		expect((fixed.metadata as Record<string, unknown>).name).toBe('my-topology');
+		expect(fixes).toHaveLength(0);
+	});
+});
+
+describe('formatYamlBundle k8s and boolean fixes', () => {
+	it('fixes metadata.name underscores and normalizes False to false in output', async () => {
+		const yaml = `apiVersion: topologies.eda.nokia.com/v1
+kind: Topology
+metadata:
+  name: my_topology
+  namespace: eda
+spec:
+  enabled: False
+`;
+
+		const result = await formatYamlBundle(yaml);
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+
+		expect(result.formatted).toMatch(/name: my-topology/);
+		expect(result.formatted).toMatch(/enabled: false/);
+		expect(result.fixes.some((f) => f.kind === 'dnsName')).toBe(true);
+	});
+});
+
 describe('formatFixSummary', () => {
 	it('summarizes fix counts by category', () => {
 		const summary = formatFixSummary([
@@ -252,5 +316,17 @@ describe('formatFixSummary', () => {
 			{ kind: 'stringCoercion', path: 'spec.port', from: 65000, to: '65000', docIndex: 2 }
 		]);
 		expect(summary).toBe(', fixed 3 issues (2 enum case, 1 string coercion)');
+	});
+
+	it('reports DNS names and booleans in user-friendly labels', () => {
+		const summary = formatFixSummary([
+			{ kind: 'dnsName', path: 'metadata.name', from: 'a_b', to: 'a-b', docIndex: 1 },
+			{ kind: 'dnsName', path: 'metadata.namespace', from: 'X_Y', to: 'x-y', docIndex: 1 },
+			{ kind: 'booleanCoercion', path: 'spec.enabled', from: 'False', to: false, docIndex: 1 },
+			{ kind: 'enumCase', path: 'spec.os', from: 'SRL', to: 'srl', docIndex: 1 },
+			{ kind: 'enumCase', path: 'spec.type', from: 'EVPN', to: 'evpn', docIndex: 1 },
+			{ kind: 'enumCase', path: 'spec.mode', from: 'L2', to: 'l2', docIndex: 1 }
+		]);
+		expect(summary).toBe(', fixed 6 issues (2 DNS names, 1 boolean, 3 enum case)');
 	});
 });

@@ -4,16 +4,13 @@
 
 	export let value = '';
 	export let highlightLine: number | null = null;
-	export let hasParseError = false;
+	export let validating = false;
 
 	let textareaEl: HTMLTextAreaElement | undefined;
 	let scrollTop = 0;
 	let scrollLeft = 0;
 
-	const dispatch = createEventDispatcher<{ validate: void; format: void }>();
-
-	$: formatLabel = hasParseError ? 'Fix indentation' : 'Format manifests';
-	$: formatDisabled = !value.trim();
+	const dispatch = createEventDispatcher<{ validate: void }>();
 
 	$: lines = value.split('\n');
 	$: lineCount = Math.max(lines.length, 1);
@@ -50,17 +47,22 @@
 
 <div class="yaml-editor-shell">
 	<div class="yaml-editor-toolbar">
-		<span class="yaml-editor-label">YAML</span>
-		<div class="yaml-editor-toolbar-actions">
-			<button
-				type="button"
-				class="yaml-toolbar-btn"
-				disabled={formatDisabled}
-				title="Re-indent YAML to standard CRD layout (2 spaces)"
-				on:click={() => dispatch('format')}
-			>
-				{formatLabel}
-			</button>
+		<span class="yaml-editor-label">YAML editor</span>
+		<div class="yaml-editor-toolbar-meta">
+			{#if validating}
+				<span class="yaml-editor-validating" aria-live="polite">
+					<svg class="yaml-editor-validating__spinner animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+						<path
+							class="opacity-75"
+							fill="currentColor"
+							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+						/>
+					</svg>
+					Validating…
+				</span>
+			{/if}
+			<span class="yaml-editor-hint">Ctrl+Enter</span>
 		</div>
 	</div>
 
@@ -77,6 +79,19 @@
 		</div>
 
 		<div class="yaml-editor-stack">
+			<div
+				class="yaml-line-highlights"
+				aria-hidden="true"
+				style:transform="translate({-scrollLeft}px, {-scrollTop}px)"
+			>
+				{#each Array(lineCount) as _, i}
+					<div
+						class="yaml-line-highlight"
+						class:yaml-line-highlight--active={highlightLine === i + 1}
+					></div>
+				{/each}
+			</div>
+
 			<pre
 				class="yaml-highlight"
 				aria-hidden="true"
@@ -98,156 +113,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.yaml-editor-shell {
-		display: flex;
-		flex-direction: column;
-		min-height: 420px;
-		border: 1px solid rgb(51 65 85);
-		border-radius: 0.75rem;
-		overflow: hidden;
-		background: rgb(15 23 42);
-	}
-
-	.yaml-editor-toolbar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-		padding: 0.5rem 0.75rem;
-		border-bottom: 1px solid rgb(51 65 85);
-		background: rgb(30 41 59 / 0.8);
-	}
-
-	.yaml-editor-label {
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: rgb(148 163 184);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-	}
-
-	.yaml-editor-toolbar-actions {
-		display: flex;
-		align-items: center;
-		gap: 0.375rem;
-	}
-
-	.yaml-toolbar-btn {
-		cursor: pointer;
-		border-radius: 0.375rem;
-		border: 1px solid rgb(71 85 105);
-		background: rgb(30 41 59);
-		padding: 0.25rem 0.625rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: rgb(226 232 240);
-	}
-
-	.yaml-toolbar-btn:hover:not(:disabled) {
-		background: rgb(51 65 85);
-	}
-
-	.yaml-toolbar-btn:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.yaml-editor-body {
-		display: flex;
-		flex: 1;
-		min-height: 0;
-		overflow: hidden;
-	}
-
-	.yaml-gutter {
-		flex-shrink: 0;
-		width: 3rem;
-		padding: 0.75rem 0.5rem;
-		border-right: 1px solid rgb(51 65 85);
-		background: rgb(15 23 42);
-		font-family: ui-monospace, monospace;
-		font-size: 0.8125rem;
-		line-height: 1.25rem;
-		color: rgb(100 116 139);
-		text-align: right;
-		user-select: none;
-	}
-
-	.yaml-gutter-line {
-		height: 1.25rem;
-	}
-
-	.yaml-gutter-line--highlight {
-		color: rgb(250 204 21);
-		font-weight: 700;
-		background: rgb(234 179 8 / 0.12);
-		border-radius: 0.125rem;
-	}
-
-	.yaml-editor-stack {
-		position: relative;
-		flex: 1;
-		overflow: hidden;
-	}
-
-	.yaml-highlight,
-	.yaml-textarea {
-		position: absolute;
-		inset: 0;
-		margin: 0;
-		padding: 0.75rem;
-		border: 0;
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-		font-size: 0.8125rem;
-		line-height: 1.25rem;
-		tab-size: 2;
-		white-space: pre;
-		overflow: hidden;
-	}
-
-	.yaml-highlight {
-		pointer-events: none;
-		color: rgb(226 232 240);
-	}
-
-	.yaml-textarea {
-		resize: none;
-		background: transparent;
-		color: transparent;
-		caret-color: rgb(248 250 252);
-		outline: none;
-	}
-
-	.yaml-textarea::selection {
-		background: rgb(59 130 246 / 0.35);
-	}
-
-	:global(.yaml-hl-key) {
-		color: rgb(147 197 253);
-	}
-
-	:global(.yaml-hl-string) {
-		color: rgb(134 239 172);
-	}
-
-	:global(.yaml-hl-number) {
-		color: rgb(251 191 36);
-	}
-
-	:global(.yaml-hl-bool),
-	:global(.yaml-hl-null) {
-		color: rgb(244 114 182);
-	}
-
-	:global(.yaml-hl-comment) {
-		color: rgb(100 116 139);
-		font-style: italic;
-	}
-
-	:global(.yaml-hl-doc) {
-		color: rgb(167 139 250);
-		font-weight: 600;
-	}
-</style>

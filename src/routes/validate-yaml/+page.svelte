@@ -1,6 +1,6 @@
 <script lang="ts">
 	import yaml from 'js-yaml';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -14,6 +14,7 @@
 	import {
 		validateBundle,
 		formatYamlBundle,
+		formatFixSummary,
 		EXAMPLE_BUNDLE_YAML,
 		type BundleIssue,
 		type BundleResource,
@@ -22,6 +23,18 @@
 	import YamlBundleEditor from '$lib/validate-bundle/YamlBundleEditor.svelte';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	const VALIDATE_DEBOUNCE_MS = 800;
+	const AUTO_VALIDATE_KEY = 'validate-yaml-auto';
+
+	type IssueGroup = {
+		key: string;
+		label: string;
+		subtitle: string | null;
+		docIndex?: number;
+		issues: BundleIssue[];
+		errorCount: number;
+		warningCount: number;
+	};
 
 	let releaseName = '';
 	let release: EdaRelease | null = null;
@@ -29,6 +42,7 @@
 	let result: BundleValidationResult | null = null;
 	let isValidating = false;
 	let clientReady = false;
+	let skipAutoValidate = true;
 	let highlightLine: number | null = null;
 	let editorRef: YamlBundleEditor | undefined;
 	let manifestResources: ManifestResource[] = [];
@@ -37,6 +51,12 @@
 	let modalVersion: string | null = null;
 	let toast: string | null = null;
 	let toastTimer: ReturnType<typeof setTimeout> | null = null;
+	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+	let validationGeneration = 0;
+	let autoValidate = true;
+	let issueFilter: 'all' | 'errors' | 'warnings' = 'all';
+	let issueSearch = '';
+	let collapsedGroups = new Set<string>();
 
 	const manifestCache = getManifestCache();
 
@@ -50,6 +70,75 @@
 
 	$: displayIssues = result?.issues ?? [];
 	$: hasParseError = result?.issues.some((i) => i.id.startsWith('parse-')) ?? false;
+	$: formatDisabled = !yamlInput.trim();
+	$: formatLabel = hasParseError ? 'Fix indentation' : 'Format manifests';
+
+	$: filteredIssues = displayIssues.filter((issue) => {
+		if (issueFilter === 'errors' && issue.severity !== 'error') return false;
+		if (issueFilter === 'warnings' && issue.severity !== 'warning') return false;
+		const q = issueSearch.trim().toLowerCase();
+		if (!q) return true;
+		return (
+			issue.message.toLowerCase().includes(q) ||
+			issue.resourceKind?.toLowerCase().includes(q) ||
+			issue.resourceName?.toLowerCase().includes(q) ||
+			issue.fieldPath?.toLowerCase().includes(q) ||
+			issueCategoryLabel(issue)?.toLowerCase().includes(q)
+		);
+	});
+
+	$: issueGroups = groupIssues(filteredIssues);
+
+	function groupIssues(issues: BundleIssue[]): IssueGroup[] {
+		const map = new Map<string, IssueGroup>();
+
+		for (const issue of issues) {
+			let key: string;
+			let label: string;
+			let subtitle: string | null = null;
+
+			if (issue.docIndex !== undefined) {
+				key = `doc-${issue.docIndex}`;
+				label =
+					issue.resourceKind && issue.resourceName
+						? `${issue.resourceKind} / ${issue.resourceName}`
+						: issue.resourceKind || `Document ${issue.docIndex}`;
+				subtitle = issue.docIndex ? `Doc ${issue.docIndex}` : null;
+			} else if (issue.resourceKind) {
+				key = `res-${issue.resourceKind}-${issue.resourceName || 'unnamed'}`;
+				label = issue.resourceKind;
+				subtitle = issue.resourceName || null;
+			} else {
+				key = 'general';
+				label = 'Bundle';
+				subtitle = 'Parse & general issues';
+			}
+
+			if (!map.has(key)) {
+				map.set(key, {
+					key,
+					label,
+					subtitle,
+					docIndex: issue.docIndex,
+					issues: [],
+					errorCount: 0,
+					warningCount: 0
+				});
+			}
+
+			const group = map.get(key)!;
+			group.issues.push(issue);
+			if (issue.severity === 'error') group.errorCount++;
+			if (issue.severity === 'warning') group.warningCount++;
+		}
+
+		return Array.from(map.values()).sort((a, b) => {
+			const aDoc = a.docIndex ?? Number.MAX_SAFE_INTEGER;
+			const bDoc = b.docIndex ?? Number.MAX_SAFE_INTEGER;
+			if (aDoc !== bDoc) return aDoc - bDoc;
+			return a.label.localeCompare(b.label);
+		});
+	}
 
 	function showToast(message: string) {
 		toast = message;
@@ -59,15 +148,25 @@
 		}, 3000);
 	}
 
-	function handleFormatYaml() {
-		const formatResult = formatYamlBundle(yamlInput);
+	async function handleFormatYaml() {
+		const formatOptions =
+			release && manifestResources.length
+				? { releaseFolder: release.folder, manifest: manifestResources }
+				: release
+					? {
+							releaseFolder: release.folder,
+							manifest: (await fetchManifest(release.folder, manifestCache)) || []
+						}
+					: undefined;
+
+		const formatResult = await formatYamlBundle(yamlInput, formatOptions);
 		if (!formatResult.ok) {
 			showToast(formatResult.message);
 			return;
 		}
 		yamlInput = formatResult.formatted;
 		showToast(
-			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}`
+			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}${formatFixSummary(formatResult.fixes)}`
 		);
 		void runValidation();
 	}
@@ -89,18 +188,42 @@
 		updateURL();
 	}
 
+	function scheduleValidation() {
+		if (!browser || !clientReady || !release || skipAutoValidate || !autoValidate) return;
+
+		if (debounceTimer) clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			debounceTimer = null;
+			void runValidation();
+		}, VALIDATE_DEBOUNCE_MS);
+	}
+
+	$: if (browser && clientReady && release && autoValidate && !skipAutoValidate) {
+		yamlInput;
+		scheduleValidation();
+	}
+
 	async function runValidation() {
+		if (debounceTimer) {
+			clearTimeout(debounceTimer);
+			debounceTimer = null;
+		}
+
 		if (!yamlInput.trim()) {
 			result = null;
+			isValidating = false;
 			return;
 		}
 		if (!release) return;
 
+		const generation = ++validationGeneration;
 		isValidating = true;
 		highlightLine = null;
 
 		try {
 			const manifest = (await fetchManifest(release.folder, manifestCache)) || [];
+			if (generation !== validationGeneration) return;
+
 			manifestResources = manifest;
 			result = await validateBundle({
 				yamlInput,
@@ -109,6 +232,7 @@
 				manifest
 			});
 		} catch (error) {
+			if (generation !== validationGeneration) return;
 			const message = error instanceof Error ? error.message : String(error);
 			result = {
 				valid: false,
@@ -124,7 +248,9 @@
 				resources: []
 			};
 		} finally {
-			isValidating = false;
+			if (generation === validationGeneration) {
+				isValidating = false;
+			}
 		}
 	}
 
@@ -133,6 +259,13 @@
 			highlightLine = issue.line;
 			editorRef?.focusLine(issue.line);
 		}
+	}
+
+	function toggleGroup(key: string) {
+		const next = new Set(collapsedGroups);
+		if (next.has(key)) next.delete(key);
+		else next.add(key);
+		collapsedGroups = next;
 	}
 
 	function findManifestEntry(kind: string, group: string): ManifestResource | undefined {
@@ -188,23 +321,15 @@
 	function severityTone(severity: BundleIssue['severity']) {
 		switch (severity) {
 			case 'error':
-				return {
-					row: 'border-red-500/30 bg-red-950/30',
-					badge: 'bg-red-500/20 text-red-300',
-					label: 'Error'
-				};
+				return { strip: 'validate-bundle-issue--error', badge: 'validate-bundle-issue-badge--error', label: 'Error' };
 			case 'warning':
 				return {
-					row: 'border-amber-500/30 bg-amber-950/20',
-					badge: 'bg-amber-500/20 text-amber-300',
+					strip: 'validate-bundle-issue--warning',
+					badge: 'validate-bundle-issue-badge--warning',
 					label: 'Warning'
 				};
 			default:
-				return {
-					row: 'border-blue-500/20 bg-blue-950/20',
-					badge: 'bg-blue-500/20 text-blue-300',
-					label: 'Info'
-				};
+				return { strip: 'validate-bundle-issue--info', badge: 'validate-bundle-issue-badge--info', label: 'Info' };
 		}
 	}
 
@@ -228,9 +353,31 @@
 				releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
 			if (defaultRelease) releaseName = defaultRelease.name;
 		}
+
+		try {
+			const stored = localStorage.getItem(AUTO_VALIDATE_KEY);
+			if (stored !== null) autoValidate = stored === 'true';
+		} catch {
+			/* ignore */
+		}
+
 		clientReady = true;
 		void runValidation();
+		skipAutoValidate = false;
 	});
+
+	onDestroy(() => {
+		if (debounceTimer) clearTimeout(debounceTimer);
+		if (toastTimer) clearTimeout(toastTimer);
+	});
+
+	$: if (browser) {
+		try {
+			localStorage.setItem(AUTO_VALIDATE_KEY, String(autoValidate));
+		} catch {
+			/* ignore */
+		}
+	}
 </script>
 
 <svelte:head>
@@ -241,29 +388,29 @@
 	/>
 </svelte:head>
 
-<div class="validate-bundle-page page-shell min-h-full bg-slate-950 text-slate-100">
+<div class="validate-yaml-page spec-search-page page-shell min-h-full bg-gray-50 dark:text-gray-100">
 	<AppHeader fixed={false} />
 
-	<div class="validate-bundle-main">
-		<section class="validate-bundle-hero" aria-labelledby="validate-bundle-heading">
+	<div class="spec-search-main validate-yaml-main">
+		<section class="spec-search-hero validate-yaml-hero" aria-labelledby="validate-yaml-heading">
 			<p class="homepage-hero-kicker">Per-resource validation</p>
-			<h1 id="validate-bundle-heading" class="homepage-title text-slate-100">
+			<h1 id="validate-yaml-heading" class="homepage-title text-slate-900 dark:text-slate-100">
 				Validate YAML
 			</h1>
-			<p class="homepage-subtitle text-slate-400">
-				Paste multiple Kubernetes-style manifests (<code class="text-slate-300">---</code>
-				separated). Each document is validated against Nokia EDA CRD schemas — required fields,
-				types, deprecated API versions, and unknown fields only.
+			<p class="homepage-subtitle text-slate-600 dark:text-slate-400">
+				Paste multi-document manifests (<code class="text-slate-700 dark:text-slate-300">---</code>
+				separated). Each document is checked against CRD schemas, Kubernetes rules, and EDA manifest
+				constraints.
 			</p>
 		</section>
 
-		<div class="validate-bundle-toolbar" role="group" aria-label="Validation options">
+		<div class="spec-search-filters validate-yaml-toolbar" role="group" aria-label="Validation options">
 			<label for="validation-release" class="sr-only">Release</label>
 			<select
 				id="validation-release"
 				bind:value={releaseName}
 				on:change={() => void runValidation()}
-				class="spec-search-select min-w-[10rem]"
+				class="spec-search-select min-w-[10rem] flex-1 sm:flex-none"
 				aria-label="Select EDA release"
 			>
 				<option value="">Select release…</option>
@@ -274,16 +421,36 @@
 
 			<button
 				type="button"
-				class="validate-bundle-btn validate-bundle-btn--primary"
+				class="validate-yaml-btn validate-yaml-btn--primary"
 				disabled={isValidating || !release}
 				on:click={() => void runValidation()}
 			>
-				{isValidating ? 'Validating…' : 'Validate YAML'}
+				{#if isValidating}
+					<svg class="validate-yaml-btn__spinner animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+						<path
+							class="opacity-75"
+							fill="currentColor"
+							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+						/>
+					</svg>
+				{/if}
+				{isValidating ? 'Validating…' : 'Validate'}
 			</button>
 
 			<button
 				type="button"
-				class="validate-bundle-btn"
+				class="validate-yaml-btn"
+				disabled={formatDisabled}
+				title="Re-indent YAML to standard CRD layout (2 spaces)"
+				on:click={handleFormatYaml}
+			>
+				{formatLabel}
+			</button>
+
+			<button
+				type="button"
+				class="validate-yaml-btn validate-yaml-btn--ghost"
 				on:click={() => {
 					yamlInput = EXAMPLE_BUNDLE_YAML;
 					void runValidation();
@@ -292,112 +459,271 @@
 				Load example
 			</button>
 
-			{#if result}
-				<div class="validate-bundle-stats" role="status" aria-live="polite">
-					<span>{result.summary.resourceCount} document{result.summary.resourceCount !== 1 ? 's' : ''}</span>
-					{#if result.summary.errorCount > 0}
-						<span class="text-red-400">{result.summary.errorCount} error{result.summary.errorCount !== 1 ? 's' : ''}</span>
-					{/if}
-					{#if result.summary.warningCount > 0}
-						<span class="text-amber-400">{result.summary.warningCount} warning{result.summary.warningCount !== 1 ? 's' : ''}</span>
-					{/if}
-					{#if result.valid}
-						<span class="text-green-400">All documents valid</span>
-					{/if}
-				</div>
-			{/if}
+			<label class="validate-yaml-auto-toggle">
+				<input type="checkbox" bind:checked={autoValidate} />
+				<span>Auto-validate</span>
+			</label>
 		</div>
 
-		<div class="validate-bundle-grid">
-			<div class="validate-bundle-panel validate-bundle-panel--editor">
+		{#if result}
+			<div class="validate-yaml-stats" role="status" aria-live="polite">
+				<div class="validate-yaml-stats__items">
+					<span class="validate-yaml-stat">
+						<span class="validate-yaml-stat__value">{result.summary.resourceCount}</span>
+						doc{result.summary.resourceCount !== 1 ? 's' : ''}
+					</span>
+					{#if result.summary.errorCount > 0}
+						<span class="validate-yaml-stat validate-yaml-stat--error">
+							<span class="validate-yaml-stat__value">{result.summary.errorCount}</span>
+							error{result.summary.errorCount !== 1 ? 's' : ''}
+						</span>
+					{/if}
+					{#if result.summary.warningCount > 0}
+						<span class="validate-yaml-stat validate-yaml-stat--warning">
+							<span class="validate-yaml-stat__value">{result.summary.warningCount}</span>
+							warning{result.summary.warningCount !== 1 ? 's' : ''}
+						</span>
+					{/if}
+				</div>
+				<span
+					class="validate-yaml-status-pill"
+					class:validate-yaml-status-pill--valid={result.valid}
+					class:validate-yaml-status-pill--invalid={!result.valid}
+				>
+					{result.valid ? 'Valid' : 'Invalid'}
+				</span>
+				{#if isValidating}
+					<span class="validate-yaml-stats__updating">Updating…</span>
+				{/if}
+			</div>
+		{/if}
+
+		<div class="validate-yaml-workspace">
+			<div class="validate-yaml-panel validate-yaml-panel--editor">
 				<YamlBundleEditor
 					bind:this={editorRef}
 					bind:value={yamlInput}
 					{highlightLine}
-					{hasParseError}
+					validating={isValidating}
 					on:validate={() => void runValidation()}
-					on:format={handleFormatYaml}
 				/>
-				<p class="validate-bundle-hint">Ctrl+Enter to validate · separate documents with ---</p>
 			</div>
 
-			<div class="validate-bundle-panel validate-bundle-panel--results spec-search-results-panel">
-				<div class="validate-bundle-results-header">
-					<h2 class="validate-bundle-results-title">Issues</h2>
-					{#if result && result.summary.errorCount + result.summary.warningCount > 0}
-						<span class="validate-bundle-results-badge">
-							{result.summary.errorCount + result.summary.warningCount}
-						</span>
+			<div class="validate-yaml-panel validate-yaml-panel--issues spec-search-results-panel">
+				<div class="validate-yaml-issues-header">
+					<div class="validate-yaml-issues-header__title-row">
+						<h2 class="validate-yaml-issues-title">Issues</h2>
+						{#if result && result.summary.errorCount + result.summary.warningCount > 0}
+							<span class="validate-yaml-issues-count">
+								{filteredIssues.length === displayIssues.length
+									? result.summary.errorCount + result.summary.warningCount
+									: `${filteredIssues.length}/${displayIssues.length}`}
+							</span>
+						{/if}
+					</div>
+
+					{#if displayIssues.length > 0}
+						<div class="validate-yaml-issues-filters">
+							<div class="validate-yaml-filter-tabs" role="tablist" aria-label="Filter issues">
+								<button
+									type="button"
+									role="tab"
+									aria-selected={issueFilter === 'all'}
+									class="validate-yaml-filter-tab"
+									class:validate-yaml-filter-tab--active={issueFilter === 'all'}
+									on:click={() => (issueFilter = 'all')}
+								>
+									All
+								</button>
+								<button
+									type="button"
+									role="tab"
+									aria-selected={issueFilter === 'errors'}
+									class="validate-yaml-filter-tab"
+									class:validate-yaml-filter-tab--active={issueFilter === 'errors'}
+									on:click={() => (issueFilter = 'errors')}
+								>
+									Errors
+								</button>
+								<button
+									type="button"
+									role="tab"
+									aria-selected={issueFilter === 'warnings'}
+									class="validate-yaml-filter-tab"
+									class:validate-yaml-filter-tab--active={issueFilter === 'warnings'}
+									on:click={() => (issueFilter = 'warnings')}
+								>
+									Warnings
+								</button>
+							</div>
+							<label class="validate-yaml-search">
+								<span class="sr-only">Search issues</span>
+								<input
+									type="search"
+									bind:value={issueSearch}
+									placeholder="Search…"
+									class="validate-yaml-search__input"
+								/>
+							</label>
+						</div>
 					{/if}
 				</div>
 
-				<div class="validate-bundle-results-body">
+				<div class="validate-yaml-issues-body">
 					{#if !result}
 						<div class="spec-search-empty">
-							<p class="text-sm text-slate-400">Paste YAML and validate to see issues.</p>
+							<div class="spec-search-empty-icon" aria-hidden="true">
+								<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="h-7 w-7">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="1.75"
+										d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+									/>
+								</svg>
+							</div>
+							<p class="text-sm text-slate-500 dark:text-slate-400">
+								Paste YAML to validate against the selected release.
+							</p>
 						</div>
 					{:else if displayIssues.length === 0}
-						<div class="validate-bundle-success">
-							<p>All {result.summary.resourceCount} document{result.summary.resourceCount !== 1 ? 's' : ''} passed validation.</p>
+						<div class="validate-yaml-success" role="status">
+							<div class="validate-yaml-success__icon" aria-hidden="true">
+								<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M5 13l4 4L19 7"
+									/>
+								</svg>
+							</div>
+							<div>
+								<p class="validate-yaml-success__title">All clear</p>
+								<p class="validate-yaml-success__text">
+									All {result.summary.resourceCount} document{result.summary.resourceCount !== 1
+										? 's'
+										: ''} passed validation.
+								</p>
+							</div>
+						</div>
+					{:else if filteredIssues.length === 0}
+						<div class="spec-search-empty">
+							<p class="text-sm text-slate-500 dark:text-slate-400">
+								No issues match the current filter.
+							</p>
 						</div>
 					{:else}
-						<ul class="validate-bundle-issues" role="list">
-							{#each displayIssues as issue (issue.id)}
-								{@const tone = severityTone(issue.severity)}
-								{@const categoryLabel = issueCategoryLabel(issue)}
-								{@const crdEntry = manifestEntryForIssue(issue)}
-								<li>
-									<div class="validate-bundle-issue {tone.row}">
-										<button
-											type="button"
-											class="validate-bundle-issue-main"
-											on:click={() => jumpToIssue(issue)}
+						<div class="validate-yaml-groups">
+							{#each issueGroups as group (group.key)}
+								<section class="validate-yaml-group">
+									<button
+										type="button"
+										class="validate-yaml-group__header"
+										aria-expanded={!collapsedGroups.has(group.key)}
+										on:click={() => toggleGroup(group.key)}
+									>
+										<svg
+											class="validate-yaml-group__chevron"
+											class:validate-yaml-group__chevron--collapsed={collapsedGroups.has(group.key)}
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+											aria-hidden="true"
 										>
-											<div class="validate-bundle-issue-head">
-												<span class="validate-bundle-issue-badge {tone.badge}">{tone.label}</span>
-												{#if categoryLabel}
-													<span class="validate-bundle-issue-category">{categoryLabel}</span>
-												{/if}
-												{#if issue.resourceKind}
-													<span class="validate-bundle-issue-resource">
-														{issue.resourceKind}{issue.resourceName ? ` / ${issue.resourceName}` : ''}
-													</span>
-												{/if}
-												{#if issue.line}
-													<span class="validate-bundle-issue-line">Line {issue.line}</span>
-												{/if}
-											</div>
-											<p class="validate-bundle-issue-msg">{issue.message}</p>
-											{#if issue.fieldPath}
-												<p class="validate-bundle-issue-path">{issue.fieldPath}</p>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+										<div class="validate-yaml-group__meta">
+											<span class="validate-yaml-group__label">{group.label}</span>
+											{#if group.subtitle && group.subtitle !== group.label}
+												<span class="validate-yaml-group__subtitle">{group.subtitle}</span>
 											{/if}
-										</button>
-										{#if crdEntry}
-											<button
-												type="button"
-												class="validate-bundle-issue-schema-link"
-												on:click={(e) => openCrdSchemaModal(issue, e)}
-											>
-												View CRD schema →
-											</button>
-										{/if}
-									</div>
-								</li>
+										</div>
+										<div class="validate-yaml-group__counts">
+											{#if group.errorCount > 0}
+												<span class="validate-yaml-group__count validate-yaml-group__count--error">
+													{group.errorCount}
+												</span>
+											{/if}
+											{#if group.warningCount > 0}
+												<span
+													class="validate-yaml-group__count validate-yaml-group__count--warning"
+												>
+													{group.warningCount}
+												</span>
+											{/if}
+										</div>
+									</button>
+
+									{#if !collapsedGroups.has(group.key)}
+										<ul class="validate-yaml-issues" role="list">
+											{#each group.issues as issue (issue.id)}
+												{@const tone = severityTone(issue.severity)}
+												{@const categoryLabel = issueCategoryLabel(issue)}
+												{@const crdEntry = manifestEntryForIssue(issue)}
+												<li>
+													<div class="validate-yaml-issue {tone.strip}">
+														<button
+															type="button"
+															class="validate-yaml-issue__main"
+															on:click={() => jumpToIssue(issue)}
+														>
+															<div class="validate-yaml-issue__head">
+																<span class="validate-yaml-issue-badge {tone.badge}">
+																	{tone.label}
+																</span>
+																{#if categoryLabel}
+																	<span class="validate-yaml-issue-category">{categoryLabel}</span>
+																{/if}
+																{#if issue.resourceKind && !group.label.includes(issue.resourceKind)}
+																	<span class="validate-yaml-issue-resource">
+																		{issue.resourceKind}{issue.resourceName
+																			? ` / ${issue.resourceName}`
+																			: ''}
+																	</span>
+																{/if}
+																{#if issue.line}
+																	<span class="validate-yaml-issue-line">L{issue.line}</span>
+																{/if}
+															</div>
+															<p class="validate-yaml-issue-msg">{issue.message}</p>
+															{#if issue.fieldPath}
+																<p class="validate-yaml-issue-path">{issue.fieldPath}</p>
+															{/if}
+														</button>
+														{#if crdEntry}
+															<button
+																type="button"
+																class="validate-yaml-issue-schema-link"
+																on:click={(e) => openCrdSchemaModal(issue, e)}
+															>
+																View CRD schema →
+															</button>
+														{/if}
+													</div>
+												</li>
+											{/each}
+										</ul>
+									{/if}
+								</section>
 							{/each}
-						</ul>
+						</div>
 					{/if}
 				</div>
 			</div>
 		</div>
 
-		<div class="mt-4">
-			<PageCredits />
-		</div>
+		<PageCredits />
 	</div>
 </div>
 
 {#if toast}
-	<div class="validate-bundle-toast" role="status">{toast}</div>
+	<div class="validate-yaml-toast" role="status">{toast}</div>
 {/if}
 
 {#if release && modalResource}
@@ -410,254 +736,3 @@
 		onClose={closeCrdSchemaModal}
 	/>
 {/if}
-
-<style>
-	.validate-bundle-page {
-		background: rgb(2 6 23);
-	}
-
-	.validate-bundle-main {
-		max-width: 80rem;
-		margin: 0 auto;
-		padding: 1rem 1rem 2rem;
-	}
-
-	.validate-bundle-hero {
-		margin-bottom: 1.25rem;
-	}
-
-	.validate-bundle-toolbar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
-		padding: 0.75rem 1rem;
-		border-radius: 0.75rem;
-		border: 1px solid rgb(51 65 85);
-		background: rgb(15 23 42 / 0.85);
-	}
-
-	.validate-bundle-btn {
-		border-radius: 0.5rem;
-		border: 1px solid rgb(71 85 105);
-		background: rgb(30 41 59);
-		padding: 0.45rem 0.85rem;
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: rgb(226 232 240);
-	}
-
-	.validate-bundle-btn:hover:not(:disabled) {
-		background: rgb(51 65 85);
-	}
-
-	.validate-bundle-btn--primary {
-		border-color: rgb(37 99 235);
-		background: rgb(37 99 235);
-		color: white;
-	}
-
-	.validate-bundle-btn--primary:hover:not(:disabled) {
-		background: rgb(29 78 216);
-	}
-
-	.validate-bundle-btn:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-	.validate-bundle-stats {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		margin-left: auto;
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: rgb(148 163 184);
-	}
-
-	.validate-bundle-grid {
-		display: grid;
-		gap: 1rem;
-	}
-
-	@media (min-width: 1024px) {
-		.validate-bundle-grid {
-			grid-template-columns: 1fr 1fr;
-			align-items: stretch;
-		}
-	}
-
-	.validate-bundle-panel {
-		min-height: 480px;
-	}
-
-	.validate-bundle-panel--results {
-		display: flex;
-		flex-direction: column;
-		min-height: 480px;
-		background: rgb(15 23 42);
-		border-color: rgb(51 65 85);
-	}
-
-	.validate-bundle-hint {
-		margin-top: 0.5rem;
-		font-size: 0.75rem;
-		color: rgb(100 116 139);
-	}
-
-	.validate-bundle-results-header {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.75rem 1rem;
-		border-bottom: 1px solid rgb(51 65 85);
-	}
-
-	.validate-bundle-results-title {
-		margin: 0;
-		font-size: 0.875rem;
-		font-weight: 700;
-		color: rgb(248 250 252);
-	}
-
-	.validate-bundle-results-badge {
-		border-radius: 9999px;
-		background: rgb(239 68 68);
-		padding: 0 0.4rem;
-		font-size: 0.625rem;
-		font-weight: 700;
-		color: white;
-		line-height: 1.25rem;
-	}
-
-	.validate-bundle-results-body {
-		flex: 1;
-		overflow: auto;
-		padding: 0.75rem;
-	}
-
-	.validate-bundle-issues {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.validate-bundle-issue {
-		width: 100%;
-		border-radius: 0.5rem;
-		border-width: 1px;
-		padding: 0.625rem 0.75rem;
-		transition: box-shadow 0.15s;
-	}
-
-	.validate-bundle-issue:hover {
-		box-shadow: 0 0 0 2px rgb(59 130 246 / 0.25);
-	}
-
-	.validate-bundle-issue-main {
-		width: 100%;
-		text-align: left;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		color: inherit;
-		cursor: pointer;
-	}
-
-	.validate-bundle-issue-head {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.35rem 0.5rem;
-		margin-bottom: 0.35rem;
-	}
-
-	.validate-bundle-issue-badge {
-		border-radius: 0.25rem;
-		padding: 0.1rem 0.4rem;
-		font-size: 0.625rem;
-		font-weight: 700;
-		text-transform: uppercase;
-	}
-
-	.validate-bundle-issue-category {
-		border-radius: 0.25rem;
-		padding: 0.1rem 0.4rem;
-		font-size: 0.625rem;
-		font-weight: 600;
-		color: rgb(148 163 184);
-		background: rgb(30 41 59);
-		border: 1px solid rgb(51 65 85);
-	}
-
-	.validate-bundle-issue-resource {
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: rgb(203 213 225);
-	}
-
-	.validate-bundle-issue-line {
-		margin-left: auto;
-		font-family: ui-monospace, monospace;
-		font-size: 0.6875rem;
-		color: rgb(148 163 184);
-	}
-
-	.validate-bundle-issue-msg {
-		font-size: 0.8125rem;
-		color: rgb(226 232 240);
-	}
-
-	.validate-bundle-issue-path {
-		margin-top: 0.25rem;
-		font-family: ui-monospace, monospace;
-		font-size: 0.6875rem;
-		color: rgb(100 116 139);
-	}
-
-	.validate-bundle-issue-schema-link {
-		margin-top: 0.35rem;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		font-size: 0.6875rem;
-		font-weight: 600;
-		color: rgb(147 197 253);
-		text-decoration: underline;
-		cursor: pointer;
-	}
-
-	.validate-bundle-issue-schema-link:hover {
-		color: rgb(191 219 254);
-	}
-
-	.validate-bundle-success {
-		border-radius: 0.5rem;
-		border: 1px solid rgb(34 197 94 / 0.35);
-		background: rgb(20 83 45 / 0.25);
-		padding: 1rem;
-		color: rgb(134 239 172);
-		font-size: 0.875rem;
-	}
-
-	.validate-bundle-toast {
-		position: fixed;
-		bottom: 1.5rem;
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 50;
-		border-radius: 0.5rem;
-		border: 1px solid rgb(71 85 105);
-		background: rgb(30 41 59);
-		padding: 0.625rem 1rem;
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: rgb(226 232 240);
-		box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
-	}
-</style>
