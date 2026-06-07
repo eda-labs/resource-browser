@@ -1,4 +1,3 @@
-import { scanInvalidBooleanLiterals } from '$lib/yaml-validation/scanSource';
 import { parseBundleResources } from './parser';
 import { validateBundleSchema } from './schemaValidator';
 import { validateEdaRules } from './edaRules';
@@ -35,40 +34,32 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 	}
 
 	const parsed = parseBundleResources(yamlInput);
-	if (!parsed.ok) {
-		const issue: BundleIssue = {
-			id: 'parse-1',
-			severity: 'error',
-			category: 'schema',
-			message: parsed.message,
-			line: parsed.line
-		};
-		return {
-			valid: false,
-			issues: [issue],
-			summary: buildSummary([issue], 0),
-			resources: []
-		};
-	}
-
 	const { resources } = parsed;
 
-	const booleanIssues = scanInvalidBooleanLiterals(yamlInput).map(
-		(issue, index): BundleIssue => ({
-			id: `source-${index + 1}`,
-			severity: 'error',
-			category: 'schema',
-			message: issue.message,
-			line: issue.line
-		})
-	);
-	if (booleanIssues.length > 0) {
-		const summary = buildSummary(booleanIssues, resources.length);
+	const parseIssues: BundleIssue[] = parsed.parseErrors.map((err, index) => ({
+		id: `parse-${index + 1}`,
+		severity: 'error',
+		category: 'schema',
+		message: err.message,
+		docIndex: err.docIndex,
+		line: err.line
+	}));
+
+	if (!parsed.ok && resources.length === 0) {
+		const issues = parseIssues.length > 0 ? parseIssues : [
+			{
+				id: 'parse-1',
+				severity: 'error' as const,
+				category: 'schema' as const,
+				message: parsed.message,
+				line: parsed.line
+			}
+		];
 		return {
 			valid: false,
-			issues: booleanIssues,
-			summary,
-			resources
+			issues,
+			summary: buildSummary(issues, 0),
+			resources: []
 		};
 	}
 
@@ -81,7 +72,7 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 	);
 	const edaIssues = validateEdaRules(resources);
 
-	const issues = [...schemaIssues, ...edaIssues];
+	const issues = [...parseIssues, ...schemaIssues, ...edaIssues];
 	const summary = buildSummary(issues, resources.length);
 	const valid = summary.errorCount === 0;
 

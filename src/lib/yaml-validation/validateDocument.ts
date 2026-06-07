@@ -124,6 +124,9 @@ export function validateDocument(ctx: ValidateDocContext): {
 	const getFieldLoc = (fieldPath: string) =>
 		getFieldLocationInfo(doc.rawText, doc.startLine, fieldPath);
 
+	let group = '';
+	let version = '';
+
 	if (!parsedYaml.apiVersion) {
 		errors.push(
 			enrichError(
@@ -137,28 +140,28 @@ export function validateDocument(ctx: ValidateDocContext): {
 				{ docIndex: doc.index, docPrefix: prefix, locationInfo, line: doc.startLine + 1 }
 			)
 		);
-		return { errors, warnings, valid: false };
+		valid = false;
+	} else {
+		const apiVersionParts = String(parsedYaml.apiVersion).split('/');
+		if (apiVersionParts.length !== 2) {
+			errors.push(
+				enrichError(
+					{
+						message: `${prefix}Invalid apiVersion format: '${parsedYaml.apiVersion}' (expected 'group/version')${locationInfo}`,
+						instancePath: '/apiVersion',
+						schemaPath: '#/properties/apiVersion/pattern',
+						keyword: 'pattern',
+						params: {}
+					} as ErrorObject,
+					{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+				)
+			);
+			valid = false;
+		} else {
+			group = apiVersionParts[0];
+			version = apiVersionParts[1];
+		}
 	}
-
-	const apiVersionParts = String(parsedYaml.apiVersion).split('/');
-	if (apiVersionParts.length !== 2) {
-		errors.push(
-			enrichError(
-				{
-					message: `${prefix}Invalid apiVersion format: '${parsedYaml.apiVersion}' (expected 'group/version')${locationInfo}`,
-					instancePath: '/apiVersion',
-					schemaPath: '#/properties/apiVersion/pattern',
-					keyword: 'pattern',
-					params: {}
-				} as ErrorObject,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
-			)
-		);
-		return { errors, warnings, valid: false };
-	}
-
-	const group = apiVersionParts[0];
-	const version = apiVersionParts[1];
 
 	if (!parsedYaml.kind) {
 		errors.push(
@@ -173,7 +176,7 @@ export function validateDocument(ctx: ValidateDocContext): {
 				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
 			)
 		);
-		return { errors, warnings, valid: false };
+		valid = false;
 	}
 
 	if (!parsedYaml.metadata) {
@@ -227,130 +230,159 @@ export function validateDocument(ctx: ValidateDocContext): {
 		}
 	}
 
-	const resourceEntry = findResourceEntry(manifest, String(parsedYaml.kind), group);
-	if (!resourceEntry) {
-		errors.push(
-			enrichError(
-				{
-					message: `${prefix}Could not find CRD definition for kind '${parsedYaml.kind}' in release ${releaseLabel}. Available kinds: ${manifest
-						.map((r) => r.kind)
-						.filter(Boolean)
-						.slice(0, 5)
-						.join(', ')}...`,
-					instancePath: '/kind',
-					schemaPath: '#/properties/kind',
-					keyword: 'enum',
-					params: {}
-				} as ErrorObject,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo }
-			)
-		);
-		return { errors, warnings, valid: false };
+	let resourceLink: { name: string; version: string } | undefined;
+	let schemaKey: string | undefined;
+	let schemaSections: SchemaSections | undefined;
+
+	if (parsedYaml.kind && group) {
+		const resourceEntry = findResourceEntry(manifest, String(parsedYaml.kind), group);
+		if (!resourceEntry) {
+			errors.push(
+				enrichError(
+					{
+						message: `${prefix}Could not find CRD definition for kind '${parsedYaml.kind}' in release ${releaseLabel}. Available kinds: ${manifest
+							.map((r) => r.kind)
+							.filter(Boolean)
+							.slice(0, 5)
+							.join(', ')}...`,
+						instancePath: '/kind',
+						schemaPath: '#/properties/kind',
+						keyword: 'enum',
+						params: {}
+					} as ErrorObject,
+					{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+				)
+			);
+			valid = false;
+		} else {
+			resourceLink = { name: resourceEntry.name, version };
+			const supportedVersions = (resourceEntry.versions || []).map((v) => v?.name).filter(Boolean);
+			const supportedVersionsDetailed = (resourceEntry.versions || [])
+				.map((v) => formatVersionLabel(v))
+				.filter(Boolean);
+			const nonDeprecatedVersions = (resourceEntry.versions || [])
+				.filter((v) => v?.name && !v?.deprecated)
+				.map((v) => v.name);
+			const deprecatedVersions = (resourceEntry.versions || [])
+				.filter((v) => v?.name && v?.deprecated)
+				.map((v) => v.name);
+			const matchedVersionEntry = (resourceEntry.versions || []).find((v) => v?.name === version);
+			const latestVersion = getLatestVersion(resourceEntry);
+
+			if (!matchedVersionEntry) {
+				const supportedText =
+					nonDeprecatedVersions.length > 0
+						? `Supported versions: ${nonDeprecatedVersions.join(', ')}`
+						: `Supported versions: ${supportedVersionsDetailed.join(', ')}`;
+				const deprecatedText =
+					deprecatedVersions.length > 0
+						? `. Deprecated versions: ${deprecatedVersions.join(', ')}`
+						: '';
+				errors.push(
+					enrichError(
+						{
+							message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is not supported for kind '${parsedYaml.kind}' in release ${releaseLabel}. ${supportedText}${deprecatedText}${locationInfo}`,
+							instancePath: '/apiVersion',
+							schemaPath: '#/properties/apiVersion/enum',
+							keyword: 'enum',
+							params: { allowedValues: supportedVersions },
+							resourceLink
+						} as EnrichedError,
+						{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+					)
+				);
+				valid = false;
+			} else {
+				if (matchedVersionEntry.deprecated) {
+					errors.push(
+						enrichError(
+							{
+								message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is deprecated for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
+								instancePath: '/apiVersion',
+								schemaPath: '#/properties/apiVersion',
+								keyword: 'deprecated',
+								params: {}
+							} as ErrorObject,
+							{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+						)
+					);
+					valid = false;
+				}
+
+				if (latestVersion && version !== latestVersion && !matchedVersionEntry.deprecated) {
+					warnings.push(
+						enrichError(
+							{
+								message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is not the latest for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
+								instancePath: '/apiVersion',
+								schemaPath: '#/properties/apiVersion',
+								keyword: 'warning',
+								params: {}
+							} as ErrorObject,
+							{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+						)
+					);
+				}
+
+				if (!latestVersion) {
+					errors.push(
+						enrichError(
+							{
+								message: `${prefix}No API versions found for kind '${parsedYaml.kind}' in release ${releaseLabel}${locationInfo}`,
+								instancePath: '/apiVersion',
+								schemaPath: '#/properties/apiVersion/enum',
+								params: {},
+								resourceLink
+							} as EnrichedError,
+							{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+						)
+					);
+					valid = false;
+				} else {
+					const schemaVersion = latestVersion;
+					schemaKey = `/${ctx.releaseFolder}/${resourceEntry.name}/${schemaVersion}.yaml`;
+					schemaSections = schemas.get(schemaKey);
+
+					if (!schemaSections) {
+						errors.push(
+							enrichError(
+								{
+									message: `${prefix}Could not find schema for ${parsedYaml.kind} version ${schemaVersion}${locationInfo}`,
+									instancePath: '/apiVersion',
+									schemaPath: '#/properties/apiVersion',
+									keyword: 'schema',
+									params: {},
+									resourceLink
+								} as EnrichedError,
+								{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+							)
+						);
+						valid = false;
+					}
+				}
+			}
+		}
 	}
-
-	const resourceLink = { name: resourceEntry.name, version };
-	const supportedVersions = (resourceEntry.versions || []).map((v) => v?.name).filter(Boolean);
-	const supportedVersionsDetailed = (resourceEntry.versions || [])
-		.map((v) => formatVersionLabel(v))
-		.filter(Boolean);
-	const nonDeprecatedVersions = (resourceEntry.versions || [])
-		.filter((v) => v?.name && !v?.deprecated)
-		.map((v) => v.name);
-	const deprecatedVersions = (resourceEntry.versions || [])
-		.filter((v) => v?.name && v?.deprecated)
-		.map((v) => v.name);
-	const matchedVersionEntry = (resourceEntry.versions || []).find((v) => v?.name === version);
-	const latestVersion = getLatestVersion(resourceEntry);
-
-	if (!matchedVersionEntry) {
-		const supportedText =
-			nonDeprecatedVersions.length > 0
-				? `Supported versions: ${nonDeprecatedVersions.join(', ')}`
-				: `Supported versions: ${supportedVersionsDetailed.join(', ')}`;
-		const deprecatedText =
-			deprecatedVersions.length > 0 ? `. Deprecated versions: ${deprecatedVersions.join(', ')}` : '';
-		errors.push(
-			enrichError(
-				{
-					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is not supported for kind '${parsedYaml.kind}' in release ${releaseLabel}. ${supportedText}${deprecatedText}${locationInfo}`,
-					instancePath: '/apiVersion',
-					schemaPath: '#/properties/apiVersion/enum',
-					keyword: 'enum',
-					params: { allowedValues: supportedVersions },
-					resourceLink
-				} as EnrichedError,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
-			)
-		);
-		return { errors, warnings, valid: false };
-	}
-
-	if (matchedVersionEntry.deprecated) {
-		errors.push(
-			enrichError(
-				{
-					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is deprecated for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
-					instancePath: '/apiVersion',
-					schemaPath: '#/properties/apiVersion',
-					keyword: 'deprecated',
-					params: {}
-				} as ErrorObject,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
-			)
-		);
-		valid = false;
-	}
-
-	if (latestVersion && version !== latestVersion && !matchedVersionEntry.deprecated) {
-		warnings.push(
-			enrichError(
-				{
-					message: `${prefix}apiVersion '${parsedYaml.apiVersion}' is not the latest for kind '${parsedYaml.kind}'. Latest version is '${group}/${latestVersion}'${locationInfo}`,
-					instancePath: '/apiVersion',
-					schemaPath: '#/properties/apiVersion',
-					keyword: 'warning',
-					params: {}
-				} as ErrorObject,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
-			)
-		);
-	}
-
-	if (!latestVersion) {
-		errors.push(
-			enrichError(
-				{
-					message: `${prefix}No API versions found for kind '${parsedYaml.kind}' in release ${releaseLabel}${locationInfo}`,
-					instancePath: '/apiVersion',
-					schemaPath: '#/properties/apiVersion/enum',
-					params: {},
-					resourceLink
-				} as EnrichedError,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
-			)
-		);
-		return { errors, warnings, valid: false };
-	}
-
-	const schemaVersion = latestVersion;
-	const schemaKey = `/${ctx.releaseFolder}/${resourceEntry.name}/${schemaVersion}.yaml`;
-	const schemaSections = schemas.get(schemaKey);
 
 	if (!schemaSections) {
-		errors.push(
-			enrichError(
-				{
-					message: `${prefix}Could not find schema for ${parsedYaml.kind} version ${schemaVersion}${locationInfo}`,
-					instancePath: '/apiVersion',
-					schemaPath: '#/properties/apiVersion',
-					keyword: 'schema',
-					params: {},
-					resourceLink
-				} as EnrichedError,
-				{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
-			)
-		);
-		return { errors, warnings, valid: false };
+		const allowedTopLevel = ['apiVersion', 'kind', 'metadata', 'spec', 'status'];
+		const unexpectedFields = Object.keys(parsedYaml).filter((k) => !allowedTopLevel.includes(k));
+		if (unexpectedFields.length > 0) {
+			warnings.push(
+				enrichError(
+					{
+						message: `${prefix}Unexpected top-level fields: ${unexpectedFields.join(', ')}${locationInfo}`,
+						instancePath: '',
+						schemaPath: '',
+						keyword: 'warning',
+						params: {}
+					} as ErrorObject,
+					{ docIndex: doc.index, docPrefix: prefix, locationInfo, resourceLink }
+				)
+			);
+		}
+
+		return { errors, warnings, valid, schemaPath: schemaKey };
 	}
 
 	const { spec, status, isSpecRequired } = schemaSections;

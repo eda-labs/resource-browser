@@ -28,9 +28,24 @@ export type ParsedDocument = {
 	index: number;
 };
 
+export type ParseError = {
+	message: string;
+	line?: number;
+	column?: number;
+	/** 1-based document index in the bundle */
+	docIndex: number;
+};
+
 export type ParseDocumentsResult =
 	| { ok: true; docs: ParsedDocument[] }
-	| { ok: false; message: string; line?: number; column?: number };
+	| {
+			ok: false;
+			message: string;
+			line?: number;
+			column?: number;
+			docs?: ParsedDocument[];
+			parseErrors?: ParseError[];
+	  };
 
 export type ValidateYamlOptions = {
 	yamlInput: string;

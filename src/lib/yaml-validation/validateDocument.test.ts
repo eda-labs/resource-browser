@@ -45,6 +45,39 @@ spec:
 	};
 }
 
+describe('validateDocument error accumulation', () => {
+	it('reports multiple prerequisite errors in one document', () => {
+		const doc: ParsedDocument = {
+			data: { metadata: {} },
+			rawText: 'metadata: {}\n',
+			startLine: 0,
+			index: 0
+		};
+
+		const result = validateDocument({
+			doc,
+			totalDocs: 1,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest,
+			schemas: new Map(),
+			getSpecValidator: () => {
+				throw new Error('schema validation should not run');
+			},
+			getStatusValidator: () => {
+				throw new Error('schema validation should not run');
+			}
+		});
+
+		expect(result.valid).toBe(false);
+		const messages = result.errors.map((e) => e.message).join('\n');
+		expect(messages).toContain("Missing required 'apiVersion'");
+		expect(messages).toContain("Missing required 'kind'");
+		expect(messages).toContain("Missing required 'metadata.name'");
+		expect(result.errors.length).toBeGreaterThanOrEqual(3);
+	});
+});
+
 describe('validateDocument enum handling', () => {
 	it('reports enum case mismatches with exact-case guidance', () => {
 		const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });

@@ -48,19 +48,38 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 	}
 
 	const parsed = parseDocuments(yamlInput);
-	if (!parsed.ok) {
-		const err: EnrichedError = {
-			message: parsed.message,
-			instancePath: '',
-			schemaPath: '',
-			keyword: 'format',
-			params: {},
-			line: parsed.line,
-			column: parsed.column
-		};
+	const docs = parsed.ok ? parsed.docs : (parsed.docs ?? []);
+	const parseErrors = parsed.ok ? [] : (parsed.parseErrors ?? []);
+
+	const parseErrorItems: EnrichedError[] = parseErrors.map((err) => ({
+		message: err.message,
+		instancePath: '',
+		schemaPath: '',
+		keyword: 'format',
+		params: {},
+		line: err.line,
+		column: err.column,
+		docIndex: err.docIndex
+	}));
+
+	if (!parsed.ok && docs.length === 0) {
+		const errors =
+			parseErrorItems.length > 0
+				? parseErrorItems
+				: [
+						{
+							message: parsed.message,
+							instancePath: '',
+							schemaPath: '',
+							keyword: 'format',
+							params: {},
+							line: parsed.line,
+							column: parsed.column
+						} as EnrichedError
+					];
 		return {
 			valid: false,
-			errors: [err],
+			errors,
 			warnings: [],
 			summary: null,
 			parsedDocs: []
@@ -68,26 +87,17 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 	}
 
 	const sourceIssues = scanInvalidBooleanLiterals(yamlInput);
-	if (sourceIssues.length > 0) {
-		const sourceErrors: EnrichedError[] = sourceIssues.map((issue) => ({
-			message: issue.message,
-			instancePath: '',
-			schemaPath: '',
-			keyword: issue.keyword,
-			params: {},
-			line: issue.line,
-			column: issue.column
-		}));
-		return {
-			valid: false,
-			errors: sourceErrors,
-			warnings: [],
-			summary: null,
-			parsedDocs: parsed.docs
-		};
-	}
+	const sourceErrors: EnrichedError[] = sourceIssues.map((issue) => ({
+		message: issue.message,
+		instancePath: '',
+		schemaPath: '',
+		keyword: issue.keyword,
+		params: {},
+		line: issue.line,
+		column: issue.column
+	}));
 
-	if (parsed.docs.length === 0) {
+	if (docs.length === 0) {
 		const err: EnrichedError = {
 			message: 'No valid YAML documents found',
 			instancePath: '',
@@ -105,7 +115,7 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 	}
 
 	const schemaPaths: string[] = [];
-	for (const doc of parsed.docs) {
+	for (const doc of docs) {
 		const apiVersion = String(doc.data.apiVersion || '');
 		const kind = String(doc.data.kind || '');
 		if (!apiVersion || !kind) continue;
@@ -138,10 +148,10 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 	const errors: EnrichedError[] = [];
 	const warnings: EnrichedError[] = [];
 
-	for (const doc of parsed.docs) {
+	for (const doc of docs) {
 		const result = validateDocument({
 			doc,
-			totalDocs: parsed.docs.length,
+			totalDocs: docs.length,
 			releaseFolder,
 			releaseLabel,
 			manifest,
@@ -154,12 +164,14 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 		if (!result.valid) valid = false;
 	}
 
-	const summary = buildSummary(parsed.docs.length, errors, warnings);
+	const summary = buildSummary(docs.length, errors, warnings);
+	const allErrors = [...parseErrorItems, ...sourceErrors, ...errors];
+	const hasBlockingIssues = parseErrorItems.length > 0 || sourceErrors.length > 0 || !valid;
 
-	if (valid) {
+	if (!hasBlockingIssues) {
 		const successMsg =
-			parsed.docs.length > 1
-				? `✓ Successfully validated ${parsed.docs.length} Nokia EDA CRD documents`
+			docs.length > 1
+				? `✓ Successfully validated ${docs.length} Nokia EDA CRD documents`
 				: '✓ Valid Nokia EDA CRD configuration';
 		const successEntry: EnrichedError = {
 			message: `${successMsg} (release: ${releaseLabel}, latest schema per CRD)`,
@@ -173,16 +185,16 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 			errors: [successEntry, ...warnings],
 			warnings,
 			summary,
-			parsedDocs: parsed.docs
+			parsedDocs: docs
 		};
 	}
 
 	return {
 		valid: false,
-		errors: [...errors, ...warnings],
+		errors: [...allErrors, ...warnings],
 		warnings,
 		summary,
-		parsedDocs: parsed.docs
+		parsedDocs: docs
 	};
 }
 

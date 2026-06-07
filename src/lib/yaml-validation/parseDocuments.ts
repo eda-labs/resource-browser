@@ -1,5 +1,5 @@
 import yaml, { YAMLException } from 'js-yaml';
-import type { ParsedDocument, ParseDocumentsResult } from './types';
+import type { ParsedDocument, ParseDocumentsResult, ParseError } from './types';
 
 export function formatYamlParseError(e: unknown): { message: string; line?: number; column?: number } {
 	if (e instanceof YAMLException) {
@@ -78,39 +78,100 @@ export function findLineForPointerInDoc(docText: string, pointer: string): numbe
 	return undefined;
 }
 
+function splitYamlDocumentSections(input: string): { text: string; startLine: number }[] {
+	const lines = input.split('\n');
+	const sections: { text: string; startLine: number }[] = [];
+	let current: string[] = [];
+	let startLine = 0;
+
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+		if (/^---\s*$/.test(line) && current.length > 0) {
+			sections.push({ text: current.join('\n'), startLine });
+			current = [];
+			startLine = i + 1;
+		} else if (/^---\s*$/.test(line) && current.length === 0) {
+			startLine = i + 1;
+		} else {
+			current.push(line);
+		}
+	}
+
+	if (current.some((l) => l.trim()) || sections.length === 0) {
+		sections.push({ text: current.join('\n'), startLine });
+	}
+
+	return sections;
+}
+
+function parseFailureResult(
+	parseErrors: ParseError[],
+	docs: ParsedDocument[]
+): Extract<ParseDocumentsResult, { ok: false }> {
+	const first = parseErrors[0];
+	return {
+		ok: false,
+		message: first.message,
+		line: first.line,
+		column: first.column,
+		docs,
+		parseErrors
+	};
+}
+
 export function parseDocuments(yamlInput: string): ParseDocumentsResult {
 	const trimmed = yamlInput.trim();
 	if (!trimmed) {
 		return { ok: true, docs: [] };
 	}
 
-	try {
-		const parsed: unknown[] = [];
-		yaml.loadAll(trimmed, (doc) => {
-			if (doc !== null && doc !== undefined) {
-				parsed.push(doc);
+	const sections = splitYamlDocumentSections(trimmed);
+	const docs: ParsedDocument[] = [];
+	const parseErrors: ParseError[] = [];
+	let docOrdinal = 0;
+
+	for (const section of sections) {
+		const sectionTrimmed = section.text.trim();
+		if (!sectionTrimmed) continue;
+
+		docOrdinal += 1;
+		try {
+			const data = yaml.load(sectionTrimmed);
+			if (data === null || data === undefined) {
+				parseErrors.push({
+					message: 'Empty YAML document',
+					docIndex: docOrdinal,
+					line: section.startLine + 1
+				});
+				continue;
 			}
-		});
 
-		if (parsed.length === 0) {
-			return { ok: false, message: 'No valid YAML documents found' };
+			docs.push({
+				data: data as Record<string, unknown>,
+				rawText: sectionTrimmed,
+				startLine: section.startLine,
+				index: docs.length
+			});
+		} catch (e) {
+			const { message, line, column } = formatYamlParseError(e);
+			parseErrors.push({
+				message: `YAML parsing error: ${message}`,
+				docIndex: docOrdinal,
+				line: line !== undefined ? section.startLine + line : section.startLine + 1,
+				column
+			});
 		}
-
-		const startLines = findDocStartLines(trimmed, parsed.length);
-		const rawTexts = extractDocRawTexts(trimmed, parsed.length);
-
-		const docs: ParsedDocument[] = parsed.map((data, index) => ({
-			data: data as Record<string, unknown>,
-			rawText: rawTexts[index] || '',
-			startLine: startLines[index] ?? 0,
-			index
-		}));
-
-		return { ok: true, docs };
-	} catch (e) {
-		const { message, line, column } = formatYamlParseError(e);
-		return { ok: false, message: `YAML parsing error: ${message}`, line, column };
 	}
+
+	if (docs.length === 0 && parseErrors.length === 0) {
+		return { ok: false, message: 'No valid YAML documents found' };
+	}
+
+	if (parseErrors.length > 0) {
+		return parseFailureResult(parseErrors, docs);
+	}
+
+	return { ok: true, docs };
 }
 
 export function formatLocationInfo(line?: number, column?: number): string {

@@ -49,7 +49,7 @@
 	}
 
 	$: displayIssues = result?.issues ?? [];
-	$: hasParseError = result?.issues.some((i) => i.id === 'parse-1') ?? false;
+	$: hasParseError = result?.issues.some((i) => i.id.startsWith('parse-')) ?? false;
 
 	function showToast(message: string) {
 		toast = message;

@@ -1,0 +1,56 @@
+import { describe, expect, it } from 'vitest';
+import { validateBundle } from './index';
+import type { ManifestEntry } from '$lib/yaml-validation/types';
+
+const manifest: ManifestEntry[] = [
+	{
+		name: 'configlets.config.eda.nokia.com',
+		kind: 'Configlet',
+		group: 'config.eda.nokia.com',
+		versions: [{ name: 'v1' }]
+	}
+];
+
+describe('validateBundle error accumulation', () => {
+	it('reports issues from all three documents', async () => {
+		const yaml = `metadata:
+  name: doc-one
+spec:
+  enabled: True
+---
+metadata:
+  name: doc-two
+spec:
+  enabled: False
+---
+metadata:
+  name: doc-three
+spec:
+  enabled: TRUE
+`;
+
+		const result = await validateBundle({
+			yamlInput: yaml,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest
+		});
+
+		expect(result.valid).toBe(false);
+		expect(result.summary.resourceCount).toBe(3);
+
+		const booleanIssues = result.issues.filter((i) => i.message.includes('lowercase true or false'));
+		expect(booleanIssues.length).toBe(3);
+
+		const namespaceIssues = result.issues.filter((i) => i.message.includes('metadata.namespace'));
+		expect(namespaceIssues.length).toBe(3);
+
+		const apiVersionIssues = result.issues.filter((i) => i.message.includes("Missing required 'apiVersion'"));
+		expect(apiVersionIssues.length).toBe(3);
+
+		const kindIssues = result.issues.filter((i) => i.message.includes("Missing required 'kind'"));
+		expect(kindIssues.length).toBe(3);
+
+		expect(result.issues.length).toBeGreaterThanOrEqual(12);
+	});
+});
