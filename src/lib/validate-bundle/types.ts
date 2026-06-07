@@ -5,7 +5,7 @@ export type IssueSeverity = 'error' | 'warning' | 'info';
 export type IssueCategory = 'schema' | 'eda';
 
 /** Sub-type for EDA manifest rules not covered by CRD schema validation. */
-export type EdaIssueRule = 'spec-with-status';
+export type EdaIssueRule = 'spec-with-status' | 'required-namespace';
 
 export type BundleIssue = {
 	id: string;

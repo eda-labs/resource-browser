@@ -18,6 +18,27 @@ export function validateEdaRules(resources: BundleResource[]): BundleIssue[] {
 	const issues: BundleIssue[] = [];
 
 	for (const res of resources) {
+		const metadata = (res.data.metadata || {}) as Record<string, unknown>;
+		const namespace = metadata.namespace;
+		if (
+			namespace === undefined ||
+			namespace === null ||
+			(typeof namespace === 'string' && namespace.trim() === '')
+		) {
+			issues.push({
+				id: nextIssueId(),
+				severity: 'error',
+				category: 'eda',
+				rule: 'required-namespace',
+				message: 'metadata.namespace is required',
+				resourceName: res.name,
+				resourceKind: res.kind,
+				docIndex: res.docIndex + 1,
+				line: lineForField(res.doc, '/metadata/namespace'),
+				fieldPath: 'metadata.namespace'
+			});
+		}
+
 		if (res.data.spec && res.data.status) {
 			issues.push({
 				id: nextIssueId(),

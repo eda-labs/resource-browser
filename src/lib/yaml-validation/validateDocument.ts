@@ -4,6 +4,7 @@ import {
 	collectMissingRequiredFields,
 	formatRequiredFieldMessage
 } from '$lib/schema/requiredFields';
+import { formatValueConstraintError } from './formatSchemaError';
 import { formatVersionLabel } from './formatErrors';
 import { formatLocationInfo, getFieldLocationInfo } from './parseDocuments';
 import type { EnrichedError, ManifestEntry, ParsedDocument } from './types';
@@ -370,16 +371,10 @@ export function validateDocument(ctx: ValidateDocContext): {
 					message = fieldPath
 						? formatRequiredFieldMessage(`spec.${fieldPath}`)
 						: message;
-				}
-				if (err.keyword === 'enum') {
-					const allowedValues = err.params?.allowedValues;
-					const providedValue = getValueByPointer(parsedYaml.spec, err.instancePath);
-					if (providedValue !== undefined) {
-						message = `${message}. Provided value: ${String(providedValue)}`;
-					}
-					if (Array.isArray(allowedValues) && allowedValues.length > 0) {
-						message = `${message}. Allowed values: ${allowedValues.join(', ')}`;
-					}
+				} else if (err.keyword === 'enum' || err.keyword === 'const') {
+					const pointerPath = err.instancePath.replace(/^\//, '').replace(/\//g, '.');
+					const fieldLabel = pointerPath ? `spec.${pointerPath}` : 'spec';
+					message = formatValueConstraintError(err, parsedYaml.spec, fieldLabel);
 				}
 				const fieldLocationInfo = getFieldLoc(`/spec${err.instancePath}`);
 				const lineMatch = fieldLocationInfo.match(/Line\s+(\d+)/i);

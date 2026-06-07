@@ -1,6 +1,7 @@
 import type { ErrorObject } from 'ajv';
 import { buildSummary } from './formatErrors';
 import { parseDocuments } from './parseDocuments';
+import { scanInvalidBooleanLiterals } from './scanSource';
 import { fetchSchemas, getOrCompileValidator, schemaPath } from './schemaCache';
 import { validateDocument } from './validateDocument';
 import type { EnrichedError, ValidateYamlOptions, ValidateYamlResult } from './types';
@@ -9,6 +10,8 @@ import { getLatestVersion } from '$lib/versions';
 export * from './types';
 export * from './formatErrors';
 export * from './parseDocuments';
+export * from './scanSource';
+export * from './formatSchemaError';
 export * from './schemaCache';
 export {
 	collectMissingRequiredFields,
@@ -61,6 +64,26 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 			warnings: [],
 			summary: null,
 			parsedDocs: []
+		};
+	}
+
+	const sourceIssues = scanInvalidBooleanLiterals(yamlInput);
+	if (sourceIssues.length > 0) {
+		const sourceErrors: EnrichedError[] = sourceIssues.map((issue) => ({
+			message: issue.message,
+			instancePath: '',
+			schemaPath: '',
+			keyword: issue.keyword,
+			params: {},
+			line: issue.line,
+			column: issue.column
+		}));
+		return {
+			valid: false,
+			errors: sourceErrors,
+			warnings: [],
+			summary: null,
+			parsedDocs: parsed.docs
 		};
 	}
 

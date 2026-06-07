@@ -2,6 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { parseBundleResources } from './parser';
 import { validateEdaRules } from './edaRules';
 
+const CONFIGLET_WITHOUT_NAMESPACE = `apiVersion: config.eda.nokia.com/v1
+kind: Configlet
+metadata:
+  name: vrf-customer-a
+spec:
+  config: |
+    network-instance vrf-customer-a {
+      type ip-vrf
+    }
+`;
+
 const CONFIGLET_WITHOUT_LABEL = `apiVersion: config.eda.nokia.com/v1
 kind: Configlet
 metadata:
@@ -29,6 +40,21 @@ status:
 `;
 
 describe('validateEdaRules', () => {
+	it('errors when metadata.namespace is missing', () => {
+		const parsed = parseBundleResources(CONFIGLET_WITHOUT_NAMESPACE);
+		expect(parsed.ok).toBe(true);
+		if (!parsed.ok) return;
+
+		const issues = validateEdaRules(parsed.resources);
+		const namespaceIssue = issues.find((i) => i.rule === 'required-namespace');
+
+		expect(namespaceIssue).toBeDefined();
+		expect(namespaceIssue?.severity).toBe('error');
+		expect(namespaceIssue?.category).toBe('eda');
+		expect(namespaceIssue?.fieldPath).toBe('metadata.namespace');
+		expect(namespaceIssue?.message).toContain('metadata.namespace is required');
+	});
+
 	it('does not warn about missing EDA metadata labels', () => {
 		const parsed = parseBundleResources(CONFIGLET_WITHOUT_LABEL);
 		expect(parsed.ok).toBe(true);

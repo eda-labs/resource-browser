@@ -1,3 +1,4 @@
+import { scanInvalidBooleanLiterals } from '$lib/yaml-validation/scanSource';
 import { parseBundleResources } from './parser';
 import { validateBundleSchema } from './schemaValidator';
 import { validateEdaRules } from './edaRules';
@@ -50,6 +51,25 @@ export async function validateBundle(options: ValidateBundleOptions): Promise<Bu
 	}
 
 	const { resources } = parsed;
+
+	const booleanIssues = scanInvalidBooleanLiterals(yamlInput).map(
+		(issue, index): BundleIssue => ({
+			id: `source-${index + 1}`,
+			severity: 'error',
+			category: 'schema',
+			message: issue.message,
+			line: issue.line
+		})
+	);
+	if (booleanIssues.length > 0) {
+		const summary = buildSummary(booleanIssues, resources.length);
+		return {
+			valid: false,
+			issues: booleanIssues,
+			summary,
+			resources
+		};
+	}
 
 	const schemaIssues = await validateBundleSchema(
 		yamlInput,
