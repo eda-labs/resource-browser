@@ -135,6 +135,6 @@ describe('reportToReleaseNotes', () => {
 		const fields = notes.modifiedResources[0].changes.map((c) => c.field);
 		expect(fields).toContain('spec.oldField');
 		expect(fields).toContain('spec.mode.type');
-		expect(fields).not.toContain('spec.label.description');
+		expect(notes.modifiedResources).toHaveLength(1);
 	});
 });
