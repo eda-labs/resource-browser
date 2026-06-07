@@ -17,11 +17,6 @@
 		{ href: '/validate-yaml', label: 'Validate YAML', match: (path: string) => path.startsWith('/validate-yaml') },
 		{ href: '/comparison', label: 'Comparison', match: (path: string) => path.startsWith('/comparison') },
 		{
-			href: '/release-notes',
-			label: 'Release Notes',
-			match: (path: string) => path.startsWith('/release-notes')
-		},
-		{
 			href: '/dependency-map',
 			label: 'Dependency Map',
 			match: (path: string) => path.startsWith('/dependency-map')
