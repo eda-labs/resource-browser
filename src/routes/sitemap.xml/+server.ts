@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import resourcesYaml from '$lib/resources.yaml?raw';
 import type { RequestHandler } from './$types';
 
@@ -26,7 +26,7 @@ function escapeXml(value: string) {
 export const GET: RequestHandler = async ({ url }) => {
 	const origin = url.origin.replace(/\/$/, '');
 	const now = new Date().toISOString().split('T')[0];
-	const resources = yaml.load(resourcesYaml) as Record<
+	const resources = loadStaticYaml(resourcesYaml) as Record<
 		string,
 		Array<{ name: string; versions: Array<{ name: string }> }>
 	>;

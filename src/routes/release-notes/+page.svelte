@@ -1,5 +1,5 @@
 <script lang="ts">
-	import yaml from 'js-yaml';
+	import { loadStaticYaml } from '$lib/yaml/safeYaml';
 	import { onMount } from 'svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import PageCredits from '$lib/components/PageCredits.svelte';
@@ -53,7 +53,7 @@
 	let loadingMsg = $state('Loading release notes...');
 	let activeTab = $state(0);
 	let copiedCode: string | null = $state(null);
-	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
 	const manifestCache = getManifestCache();
 
 	let modifiedFilter = $state('');

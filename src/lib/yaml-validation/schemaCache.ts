@@ -1,5 +1,5 @@
-import yaml from 'js-yaml';
 import type { ValidateFunction } from 'ajv';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import { normalizeSchemaForAjv } from '$lib/schema/requiredFields';
 
 export type SchemaSections = {
@@ -9,16 +9,45 @@ export type SchemaSections = {
 	isSpecRequired: boolean;
 };
 
+const SAFE_PATH_SEGMENT = /^[a-z0-9._-]+$/i;
+
 const schemaTextCache = new Map<string, string>();
 const schemaDataCache = new Map<string, SchemaSections>();
 const validatorCache = new Map<string, ValidateFunction>();
 
+/** Reject a single path segment that could enable traversal or injection. */
+export function assertSafePathSegment(segment: string, label: string): string {
+	if (!segment || segment === '.' || segment === '..') {
+		throw new Error(`Invalid ${label}`);
+	}
+	if (segment.includes('/') || segment.includes('\\')) {
+		throw new Error(`Unsafe ${label}`);
+	}
+	if (!SAFE_PATH_SEGMENT.test(segment)) {
+		throw new Error(`Invalid ${label}`);
+	}
+	return segment;
+}
+
+/** Validate multi-segment release folders such as `resources/26.4.2`. */
+export function assertSafeFolderPath(folder: string): string {
+	if (!folder || folder.startsWith('/') || folder.includes('..')) {
+		throw new Error('Invalid releaseFolder');
+	}
+	const parts = folder.split('/').filter(Boolean);
+	if (parts.length === 0) throw new Error('Invalid releaseFolder');
+	return parts.map((part) => assertSafePathSegment(part, 'releaseFolder')).join('/');
+}
+
 export function schemaPath(releaseFolder: string, resourceName: string, version: string): string {
-	return `/${releaseFolder}/${resourceName}/${version}.yaml`;
+	const folder = assertSafeFolderPath(releaseFolder);
+	const name = assertSafePathSegment(resourceName, 'resourceName');
+	const ver = assertSafePathSegment(version, 'version');
+	return `/${folder}/${name}/${ver}.yaml`;
 }
 
 function parseSchemaText(text: string): SchemaSections {
-	const schemaParsed = yaml.load(text) as {
+	const schemaParsed = loadStaticYaml(text) as {
 		schema?: { openAPIV3Schema?: { properties?: { spec?: unknown; status?: unknown }; required?: string[] } };
 	};
 	const topLevel = schemaParsed?.schema?.openAPIV3Schema;

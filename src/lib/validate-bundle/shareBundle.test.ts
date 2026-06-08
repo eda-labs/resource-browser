@@ -3,6 +3,7 @@ import {
 	buildShareUrl,
 	decodeBundleFromUrl,
 	encodeBundleForUrl,
+	MAX_BUNDLE_DECOMPRESSED_BYTES,
 	MAX_BUNDLE_URL_PARAM_BYTES
 } from './shareBundle';
 
@@ -29,6 +30,17 @@ spec:
 		expect(url).toMatch(/^https:\/\/example\.com\/validate-yaml\?/);
 		expect(url).toContain('release=26.4.2');
 		expect(url).toContain('bundle=');
+	});
+
+	it('rejects oversized URL params before decompression', async () => {
+		const oversized = 'A'.repeat(MAX_BUNDLE_URL_PARAM_BYTES + 1);
+		expect(await decodeBundleFromUrl(oversized)).toBeNull();
+	});
+
+	it('rejects decompressed output above the editor input cap', async () => {
+		const hugeYaml = 'x: ' + 'y'.repeat(MAX_BUNDLE_DECOMPRESSED_BYTES);
+		const { param } = await encodeBundleForUrl(hugeYaml);
+		expect(await decodeBundleFromUrl(param)).toBeNull();
 	});
 
 	it('flags payloads that exceed the safe URL size limit', async () => {

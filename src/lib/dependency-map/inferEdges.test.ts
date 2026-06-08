@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import { describe, expect, it } from 'vitest';
 import {
 	buildCatalogFromManifest,
@@ -21,7 +21,7 @@ const fabricYaml = readFileSync(
 	join(root, 'static/resources/26.4.2/fabrics.fabrics.eda.nokia.com/v1.yaml'),
 	'utf8'
 );
-const fabricSchema = yaml.load(fabricYaml) as {
+const fabricSchema = loadStaticYaml(fabricYaml) as {
 	schema?: { openAPIV3Schema?: { properties?: { spec?: unknown; status?: unknown } } };
 };
 

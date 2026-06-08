@@ -1,4 +1,5 @@
-import yaml, { YAMLException } from 'js-yaml';
+import { YAMLException } from 'js-yaml';
+import { loadUserYaml } from '$lib/yaml/safeYaml';
 import type { ParsedDocument, ParseDocumentsResult, ParseError } from './types';
 
 export function formatYamlParseError(e: unknown): { message: string; line?: number; column?: number } {
@@ -136,7 +137,7 @@ export function parseDocuments(yamlInput: string): ParseDocumentsResult {
 
 		docOrdinal += 1;
 		try {
-			const data = yaml.load(sectionTrimmed);
+			const data = loadUserYaml(sectionTrimmed);
 			if (data === null || data === undefined) {
 				parseErrors.push({
 					message: 'Empty YAML document',

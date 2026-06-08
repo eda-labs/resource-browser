@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
-	import yaml from 'js-yaml';
+	import { loadStaticYaml } from '$lib/yaml/safeYaml';
 
 	import Render from '$lib/components/Render.svelte';
 	import ResourceViewTabs from '$lib/components/ResourceViewTabs.svelte';
@@ -11,7 +11,7 @@
 	import type { CrdResource, CrdVersions, EdaRelease, ReleasesConfig } from '$lib/structure';
 	import releasesYaml from '$lib/releases.yaml?raw';
 
-	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
 
 	let DiffRender: typeof import('$lib/components/DiffRender.svelte').default | null = null;
 
@@ -203,7 +203,7 @@
 			const response = await fetch(`/${release.folder}/${name}/${version}.yaml`);
 			if (!response.ok) throw new Error('Failed to load resource');
 			const yamlText = await response.text();
-			const data = yaml.load(yamlText) as any;
+			const data = loadStaticYaml(yamlText) as any;
 			spec = data?.schema?.openAPIV3Schema?.properties?.spec ?? null;
 			status = data?.schema?.openAPIV3Schema?.properties?.status ?? null;
 		} catch {
@@ -312,7 +312,7 @@
 			}
 
 			const crdText = await response.text();
-			const crd = yaml.load(crdText) as any;
+			const crd = loadStaticYaml(crdText) as any;
 			const compareSpec = crd?.schema?.openAPIV3Schema?.properties?.spec;
 			const compareStatus = crd?.schema?.openAPIV3Schema?.properties?.status;
 

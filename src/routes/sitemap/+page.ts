@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import resourcesYaml from '$lib/resources.yaml?raw';
 import type { PageLoad } from './$types';
 
@@ -7,7 +7,7 @@ const staticPaths = ['/', '/spec-search', '/spec-search-auto', '/comparison', '/
 export const prerender = true;
 
 export const load: PageLoad = async () => {
-	const resources = yaml.load(resourcesYaml) as Record<
+	const resources = loadStaticYaml(resourcesYaml) as Record<
 		string,
 		Array<{ name: string; versions: Array<{ name: string }> }>
 	>;

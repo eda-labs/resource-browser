@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import type { CrdResource, CrdVersions, EdaRelease } from '$lib/structure';
 import { fetchManifest } from './fetch';
 import type { ManifestResource } from './types';
@@ -58,7 +58,7 @@ export async function loadCrdsForRelease(
 
 	try {
 		const res = await import('$lib/resources.yaml?raw');
-		const resources = yaml.load(res.default) as Record<string, CrdResource[]>;
+		const resources = loadStaticYaml(res.default) as Record<string, CrdResource[]>;
 		return Object.values(resources).flat();
 	} catch {
 		return [];

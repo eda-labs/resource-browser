@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import {
 	fetchManifest,
 	loadCrdsForRelease as loadCrdsFromManifest,
@@ -166,8 +166,8 @@ async function compareVersionPair(
 		yamlCache.set(targetKey, targetYaml);
 	}
 
-	const sourceData = yaml.load(sourceYaml) as Record<string, unknown>;
-	const targetData = yaml.load(targetYaml) as Record<string, unknown>;
+	const sourceData = loadStaticYaml(sourceYaml) as Record<string, unknown>;
+	const targetData = loadStaticYaml(targetYaml) as Record<string, unknown>;
 	const allChanges = compareSchemas(sourceData, targetData);
 	if (allChanges.length > 0) {
 		crdReport.status = 'modified';

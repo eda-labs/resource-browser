@@ -17,12 +17,12 @@ import {
 	import Render from '$lib/components/Render.svelte';
 	// Avoid importing DiffRender on the home page — it is only useful on detail pages and is lazily loaded there
 	import { expandAll, expandAllScope, ulExpanded } from '$lib/store';
-	import yaml from 'js-yaml';
+	import { loadAllUserYaml, loadStaticYaml } from '$lib/yaml/safeYaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
 	import { searchResources } from '$lib/resourceSearch';
 
-	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
 
 	// Mobile panel state for compact release list (declared later)
 
@@ -246,7 +246,7 @@ import {
 			const response = await fetch(`/${folder}/${resourceName}/${version}.yaml`);
 			if (!response.ok) throw new Error('Failed to load resource');
 			const yamlText = await response.text();
-			resourceData = yaml.load(yamlText) as any;
+			resourceData = loadStaticYaml(yamlText) as any;
 		} catch (error) {
 			resourceData = null;
 		} finally {
@@ -310,7 +310,7 @@ import {
 			const response = await fetch(`/${folder}/${selectedResource}/${version}.yaml`);
 			if (!response.ok) throw new Error('Failed');
 			const yamlText = await response.text();
-			compareData = yaml.load(yamlText) as any;
+			compareData = loadStaticYaml(yamlText) as any;
 			compareVersion = version;
 			showDiff = true;
 		} catch (error) {
@@ -334,7 +334,7 @@ import {
 				return;
 			}
 			const yamlText = await response.text();
-			compareReleaseData = yaml.load(yamlText) as any;
+			compareReleaseData = loadStaticYaml(yamlText) as any;
 			compareRelease = release;
 			showReleaseComparison = true;
 			showDiff = false;
@@ -362,8 +362,7 @@ import {
 		validationResult = null;
 		try {
 			const parsedDocs: any[] = [];
-			const allDocs = yaml.loadAll(yamlInput);
-			parsedDocs.push(...allDocs.filter((d) => d !== null && d !== undefined));
+			parsedDocs.push(...loadAllUserYaml(yamlInput));
 			if (parsedDocs.length === 0) {
 				validationErrors = [{ message: 'No valid YAML' }];
 				validationResult = 'invalid';

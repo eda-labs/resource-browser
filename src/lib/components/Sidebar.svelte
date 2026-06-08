@@ -4,14 +4,14 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import yaml from 'js-yaml';
+	import { loadStaticYaml } from '$lib/yaml/safeYaml';
 	import releasesYaml from '$lib/releases.yaml?raw';
 	import { loadCrdsForRelease as loadManifestCrds } from '$lib/manifest';
 	import type { EdaRelease, ReleasesConfig, CrdResource } from '$lib/structure';
 	import { getLatestVersion } from '$lib/versions';
 	import { onMount, onDestroy } from 'svelte';
 
-	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
 	const defaultRelease =
 		releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
 

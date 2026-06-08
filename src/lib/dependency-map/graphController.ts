@@ -13,6 +13,7 @@ import {
 	type SimulationNodeDatum,
 	type ZoomBehavior
 } from 'd3';
+import { escapeHtml } from '$lib/comparison/highlight';
 import { getGraphPalette, nodeFill, nodeFillLight, REL_LABELS } from './graphColors';
 import type { GraphLink, GraphNode, LinkRelation } from './types';
 import { getHighlightSets, type ChainMode } from './transitiveClosure';
@@ -757,7 +758,10 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 			.on('mouseenter', (event: MouseEvent, d: SimLink) => {
 				hoveredLinkId = d.id;
 				updateHighlight();
-				showTooltip(event, `<strong>${REL_LABELS[d.rel] ?? d.rel}</strong>`);
+				showTooltip(
+					event,
+					`<strong>${escapeHtml(REL_LABELS[d.rel] ?? d.rel)}</strong>`
+				);
 			})
 			.on('mousemove', (event: MouseEvent) => {
 				tooltip.style.left = `${event.pageX + 14}px`;
@@ -825,7 +829,9 @@ export function createGraphController(options: GraphControllerOptions): GraphCon
 				const { inCount, outCount } = countRels(d.id, simLinks);
 				showTooltip(
 					event,
-					`<strong>${d.kind || d.shortName}</strong><br/><span style="opacity:0.75">${d.group}</span><br/><span style="opacity:0.75">${d.type} · ${inCount} in · ${outCount} out</span>`
+					`<strong>${escapeHtml(d.kind || d.shortName)}</strong>` +
+						`<br/><span style="opacity:0.75">${escapeHtml(d.group)}</span>` +
+						`<br/><span style="opacity:0.75">${escapeHtml(d.type)} · ${inCount} in · ${outCount} out</span>`
 				);
 			})
 			.on('mousemove', (event: MouseEvent) => {

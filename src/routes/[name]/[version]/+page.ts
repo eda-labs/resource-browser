@@ -3,13 +3,13 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import type { CrdVersionsMap, OpenAPISchema, ReleasesConfig } from '$lib/structure';
 
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import res from '$lib/resources.yaml?raw';
 import releases from '$lib/releases.yaml?raw';
 
-const crdResources = yaml.load(res);
+const crdResources = loadStaticYaml(res);
 const resources = crdResources as CrdVersionsMap;
-const releaseConfig = yaml.load(releases) as ReleasesConfig;
+const releaseConfig = loadStaticYaml(releases) as ReleasesConfig;
 const allReleases = releaseConfig.releases;
 
 export const load: PageLoad = async ({ fetch, params, url }) => {
@@ -76,7 +76,7 @@ export const load: PageLoad = async ({ fetch, params, url }) => {
 		}
 
 		const crdText = await resp.text();
-		const crd = yaml.load(crdText) as OpenAPISchema;
+		const crd = loadStaticYaml(crdText) as OpenAPISchema;
 
 		const group = crdMeta[0].group;
 		const kind = crdMeta[0].kind;

@@ -4,13 +4,13 @@ import type { PageLoad } from './$types';
 import type { CrdVersionsMap, ReleasesConfig } from '$lib/structure';
 import { getLatestVersion } from '$lib/versions';
 
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import res from '$lib/resources.yaml?raw';
 import releases from '$lib/releases.yaml?raw';
 
-const crdResources = yaml.load(res);
+const crdResources = loadStaticYaml(res);
 const resources = crdResources as CrdVersionsMap;
-const releaseConfig = yaml.load(releases) as ReleasesConfig;
+const releaseConfig = loadStaticYaml(releases) as ReleasesConfig;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
 	const name = params.name;

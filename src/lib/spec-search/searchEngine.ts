@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import {
 	ensureRenderable,
 	prepareMatchSchema,
@@ -76,7 +76,7 @@ async function loadParsedResource(
 	}
 
 	try {
-		const parsed = yaml.load(txt) as {
+		const parsed = loadStaticYaml(txt) as {
 			schema?: { openAPIV3Schema?: { properties?: { spec?: unknown; status?: unknown } } };
 		};
 		const rawSpec = parsed?.schema?.openAPIV3Schema?.properties?.spec;

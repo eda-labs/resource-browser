@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+import { loadStaticYaml } from '$lib/yaml/safeYaml';
 import { fetchManifest, getManifestCache } from '$lib/manifest';
 import type { ManifestResource } from '$lib/manifest';
 import { getLatestVersion } from '$lib/versions';
@@ -44,7 +44,7 @@ async function loadCrdSchema(
 	}
 
 	try {
-		const parsed = yaml.load(txt) as {
+		const parsed = loadStaticYaml(txt) as {
 			schema?: {
 				openAPIV3Schema?: {
 					description?: string;

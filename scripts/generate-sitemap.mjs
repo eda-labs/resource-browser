@@ -44,7 +44,7 @@ const formatUrl = ({ loc, lastmod, changefreq, priority }) => {
 
 const main = async () => {
 	const rawReleases = await fs.readFile(releasesPath, 'utf8');
-	const releaseConfig = yaml.load(rawReleases);
+	const releaseConfig = yaml.load(rawReleases, { schema: yaml.CORE_SCHEMA });
 	const now = new Date().toISOString().split('T')[0];
 
 	if (!releaseConfig || typeof releaseConfig !== 'object' || !Array.isArray(releaseConfig.releases)) {

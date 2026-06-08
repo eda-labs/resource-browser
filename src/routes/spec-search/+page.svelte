@@ -1,5 +1,5 @@
 <script lang="ts">
-    import yaml from 'js-yaml';
+    import { loadStaticYaml } from '$lib/yaml/safeYaml';
     import { onMount, onDestroy } from 'svelte';
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
@@ -21,7 +21,7 @@
     import releasesYaml from '$lib/releases.yaml?raw';
     import type { EdaRelease, ReleasesConfig } from '$lib/structure';
 
-    const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+    const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
 
     let releaseName = '';
     let release: EdaRelease | null = null;
@@ -182,7 +182,7 @@
             if (!versions || versions.length === 0) {
                 try {
                     const res = await import('$lib/resources.yaml?raw');
-                    const resources = yaml.load(res.default) as any;
+                    const resources = loadStaticYaml(res.default) as any;
                     const allResources = Object.values(resources).flat();
                     const fallbackSet = new Set<string>();
                     allResources.forEach((r: any) => {

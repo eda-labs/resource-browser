@@ -10,7 +10,11 @@
 	let scrollTop = 0;
 	let scrollLeft = 0;
 
-	const dispatch = createEventDispatcher<{ validate: void }>();
+	const dispatch = createEventDispatcher<{ validate: void; input: string }>();
+
+	function handleInput() {
+		dispatch('input', value);
+	}
 
 	$: lines = value.split('\n');
 	$: lineCount = Math.max(lines.length, 1);
@@ -107,6 +111,7 @@
 				autocomplete="off"
 				autocorrect="off"
 				on:scroll={handleScroll}
+				on:input={handleInput}
 				on:keydown={handleKeydown}
 				aria-label="YAML input"
 			></textarea>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import yaml from 'js-yaml';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -25,8 +24,10 @@
 		type BundleValidationResult
 	} from '$lib/validate-bundle';
 	import YamlBundleEditor from '$lib/validate-bundle/YamlBundleEditor.svelte';
+	import { clampYamlInput } from '$lib/yaml/inputLimits';
+	import { loadStaticYaml } from '$lib/yaml/safeYaml';
 
-	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
+	const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
 	const VALIDATE_DEBOUNCE_MS = 500;
 	const AUTO_VALIDATE_KEY = 'validate-yaml-auto';
 
@@ -61,8 +62,19 @@
 	let issueFilter: 'all' | 'errors' | 'warnings' = 'all';
 	let issueSearch = '';
 	let collapsedGroups = new Set<string>();
+	let yamlTruncationWarned = false;
 
 	const manifestCache = getManifestCache();
+
+	function setYamlInput(value: string) {
+		const { text, truncated } = clampYamlInput(value);
+		if (truncated && !yamlTruncationWarned) {
+			yamlTruncationWarned = true;
+			showToast('Input exceeds 512KB — truncated to the limit.');
+		}
+		if (!truncated) yamlTruncationWarned = false;
+		yamlInput = text;
+	}
 
 	$: release = releaseName
 		? releasesConfig.releases.find((r) => r.name === releaseName) || null
@@ -201,7 +213,7 @@
 			showToast(formatResult.message);
 			return;
 		}
-		yamlInput = formatResult.formatted;
+		setYamlInput(formatResult.formatted);
 		showToast(
 			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}${formatFixSummary(formatResult.fixes)}`
 		);
@@ -395,7 +407,7 @@
 		if (bundleParam) {
 			const decoded = await decodeBundleFromUrl(bundleParam);
 			if (decoded) {
-				yamlInput = decoded;
+				setYamlInput(decoded);
 			} else {
 				showToast('Could not decode bundle from URL — using default example.');
 			}
@@ -499,7 +511,7 @@
 				type="button"
 				class="validate-yaml-btn validate-yaml-btn--ghost"
 				on:click={() => {
-					yamlInput = EXAMPLE_BUNDLE_YAML;
+					setYamlInput(EXAMPLE_BUNDLE_YAML);
 					void runValidation();
 				}}
 			>
@@ -567,7 +579,8 @@
 			<div class="validate-yaml-panel validate-yaml-panel--editor">
 				<YamlBundleEditor
 					bind:this={editorRef}
-					bind:value={yamlInput}
+					value={yamlInput}
+					on:input={(e) => setYamlInput(e.detail)}
 					{highlightLine}
 					validating={isValidating}
 					on:validate={() => void runValidation()}

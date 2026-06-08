@@ -85,7 +85,7 @@ async function main(): Promise<void> {
 	const force = process.argv.includes('--force');
 
 	const raw = await fs.readFile(RELEASES_PATH, 'utf8');
-	const config = yaml.load(raw) as ReleasesConfig;
+	const config = yaml.load(raw, { schema: yaml.CORE_SCHEMA }) as ReleasesConfig;
 	if (!config?.releases?.length) {
 		throw new Error('releases.yaml did not parse as expected');
 	}
