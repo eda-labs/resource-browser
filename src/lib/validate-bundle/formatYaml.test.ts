@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+	fixApiVersionUpgrade,
 	fixDocumentData,
 	fixK8sMetadata,
 	fixManifestIdentity,
 	formatFixSummary,
 	formatYamlBundle
 } from './formatYaml';
+import { pickLatestApiVersion } from '$lib/versions';
 import type { SchemaSections } from '$lib/yaml-validation/schemaCache';
 import type { ManifestEntry } from '$lib/yaml-validation/types';
 
@@ -227,9 +229,84 @@ const manifest: ManifestEntry[] = [
 		name: 'topologies.topologies.eda.nokia.com',
 		kind: 'Topology',
 		group: 'topologies.eda.nokia.com',
-		versions: [{ name: 'v1' }]
+		versions: [{ name: 'v1alpha1' }, { name: 'v1' }]
 	}
 ];
+
+describe('pickLatestApiVersion', () => {
+	it('prefers stable v1 over v1alpha1 and v1beta1', () => {
+		const latest = pickLatestApiVersion([
+			{ name: 'v1alpha1' },
+			{ name: 'v1beta1' },
+			{ name: 'v1' }
+		]);
+		expect(latest).toBe('v1');
+	});
+
+	it('skips deprecated versions when a non-deprecated alternative exists', () => {
+		const latest = pickLatestApiVersion([
+			{ name: 'v1alpha1', deprecated: true },
+			{ name: 'v1' }
+		]);
+		expect(latest).toBe('v1');
+	});
+});
+
+describe('fixApiVersionUpgrade', () => {
+	it('upgrades v1alpha1 to v1 when v1 is available', () => {
+		const data = {
+			apiVersion: 'topologies.eda.nokia.com/v1alpha1',
+			kind: 'Topology',
+			metadata: { name: 'lab', namespace: 'eda' }
+		};
+
+		const { data: fixed, fixes } = fixApiVersionUpgrade(data, manifest, 1);
+
+		expect(fixed.apiVersion).toBe('topologies.eda.nokia.com/v1');
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0]).toMatchObject({
+			kind: 'apiVersionUpgrade',
+			path: 'apiVersion',
+			from: 'topologies.eda.nokia.com/v1alpha1',
+			to: 'topologies.eda.nokia.com/v1'
+		});
+	});
+
+	it('leaves documents already on the latest version unchanged', () => {
+		const data = {
+			apiVersion: 'topologies.eda.nokia.com/v1',
+			kind: 'Topology',
+			metadata: { name: 'lab', namespace: 'eda' }
+		};
+
+		const { data: fixed, fixes } = fixApiVersionUpgrade(data, manifest, 1);
+
+		expect(fixed.apiVersion).toBe('topologies.eda.nokia.com/v1');
+		expect(fixes).toHaveLength(0);
+	});
+});
+
+describe('formatYamlBundle apiVersion upgrade', () => {
+	it('upgrades apiVersion to latest non-deprecated version when manifest is available', async () => {
+		const yaml = `apiVersion: topologies.eda.nokia.com/v1alpha1
+kind: Topology
+metadata:
+  name: lab
+  namespace: eda
+spec: {}
+`;
+
+		const result = await formatYamlBundle(yaml, {
+			releaseFolder: 'resources/26.4.2',
+			manifest
+		});
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+
+		expect(result.formatted).toContain('apiVersion: topologies.eda.nokia.com/v1');
+		expect(result.fixes.some((f) => f.kind === 'apiVersionUpgrade')).toBe(true);
+	});
+});
 
 describe('fixManifestIdentity', () => {
 	it('fixes apiVersion group casing to manifest canonical group', () => {

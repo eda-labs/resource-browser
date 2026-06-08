@@ -23,13 +23,20 @@ export function compareVersionDesc(a: string, b: string) {
 export function getLatestVersion(
 	resourceEntry: Pick<CrdResource, 'versions'> | CrdVersions[] | null | undefined
 ): string {
-	const versions = Array.isArray(resourceEntry)
-		? resourceEntry
-		: Array.isArray(resourceEntry?.versions)
-			? resourceEntry.versions
-			: [];
-	const nonDeprecated = versions.filter((v) => v?.name && !v?.deprecated);
-	const target = nonDeprecated.length > 0 ? nonDeprecated : versions.filter((v) => v?.name);
+	return pickLatestApiVersion(
+		Array.isArray(resourceEntry)
+			? resourceEntry
+			: Array.isArray(resourceEntry?.versions)
+				? resourceEntry.versions
+				: []
+	);
+}
+
+/** Pick the latest non-deprecated K8s apiVersion from manifest versions (v1 > v1beta1 > v1alpha1). */
+export function pickLatestApiVersion(versions: CrdVersions[] | null | undefined): string {
+	const list = Array.isArray(versions) ? versions : [];
+	const nonDeprecated = list.filter((v) => v?.name && !v?.deprecated);
+	const target = nonDeprecated.length > 0 ? nonDeprecated : list.filter((v) => v?.name);
 	const sorted = target.map((v) => v.name).sort(compareVersionDesc);
 	return sorted[0] || '';
 }

@@ -1,6 +1,6 @@
 import yaml from 'js-yaml';
 import { findManifestEntry, findManifestEntryCaseInsensitive } from '$lib/manifest/lookup';
-import { getLatestVersion } from '$lib/versions';
+import { getLatestVersion, pickLatestApiVersion } from '$lib/versions';
 import { resolveObjectSchema } from '$lib/schema/requiredFields';
 import { parseDocuments } from '$lib/yaml-validation/parseDocuments';
 import { fixInvalidBooleanLiterals } from '$lib/yaml-validation/scanSource';
@@ -76,7 +76,8 @@ export type FixKind =
 	| 'booleanCoercion'
 	| 'dnsName'
 	| 'apiVersionCase'
-	| 'kindCase';
+	| 'kindCase'
+	| 'apiVersionUpgrade';
 
 export type FixReport = {
 	kind: FixKind;
@@ -288,6 +289,43 @@ export function fixManifestIdentity(
 	return { data: out, fixes };
 }
 
+/** Upgrade apiVersion to the latest manifest version when a newer one exists. */
+export function fixApiVersionUpgrade(
+	data: Record<string, unknown>,
+	manifest: ManifestEntry[],
+	docIndex: number
+): { data: Record<string, unknown>; fixes: FixReport[] } {
+	const fixes: FixReport[] = [];
+	const apiVersion = String(data.apiVersion || '');
+	const kind = String(data.kind || '');
+	if (!apiVersion || !kind || !manifest.length) {
+		return { data, fixes };
+	}
+
+	const parts = apiVersion.split('/');
+	if (parts.length !== 2) return { data, fixes };
+	const [group, currentVersion] = parts;
+
+	const entry = findManifestEntryCaseInsensitive(manifest, kind, group);
+	if (!entry?.group || !entry.versions?.length) return { data, fixes };
+
+	const latestVersion = pickLatestApiVersion(entry.versions);
+	if (!latestVersion || latestVersion === currentVersion) return { data, fixes };
+
+	const out = { ...data };
+	const upgradedApiVersion = `${entry.group}/${latestVersion}`;
+	fixes.push({
+		kind: 'apiVersionUpgrade',
+		path: 'apiVersion',
+		from: out.apiVersion,
+		to: upgradedApiVersion,
+		docIndex
+	});
+	out.apiVersion = upgradedApiVersion;
+
+	return { data: out, fixes };
+}
+
 /** Apply fixable Kubernetes metadata rules (DNS name/namespace). */
 export function fixK8sMetadata(
 	data: Record<string, unknown>,
@@ -400,7 +438,8 @@ export function formatFixSummary(fixes: FixReport[]): string {
 		booleanCoercion: 0,
 		dnsName: 0,
 		apiVersionCase: 0,
-		kindCase: 0
+		kindCase: 0,
+		apiVersionUpgrade: 0
 	};
 	for (const fix of fixes) counts[fix.kind] += 1;
 
@@ -420,6 +459,10 @@ export function formatFixSummary(fixes: FixReport[]): string {
 	if (counts.kindCase > 0) {
 		const label = counts.kindCase === 1 ? 'kind case' : 'kind cases';
 		parts.push(`${counts.kindCase} ${label}`);
+	}
+	if (counts.apiVersionUpgrade > 0) {
+		const label = counts.apiVersionUpgrade === 1 ? 'apiVersion upgrade' : 'apiVersion upgrades';
+		parts.push(`${counts.apiVersionUpgrade} ${label}`);
 	}
 	if (counts.enumCase > 0) {
 		parts.push(`${counts.enumCase} enum case`);
@@ -486,6 +529,16 @@ export async function formatYamlBundle(
 			);
 			doc.data = data;
 			fixes.push(...identityFixes);
+		}
+
+		for (const doc of docData) {
+			const { data, fixes: upgradeFixes } = fixApiVersionUpgrade(
+				doc.data,
+				options.manifest,
+				doc.index + 1
+			);
+			doc.data = data;
+			fixes.push(...upgradeFixes);
 		}
 	}
 

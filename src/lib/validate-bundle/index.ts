@@ -13,6 +13,7 @@ export * from './types';
 export { EXAMPLE_BUNDLE_YAML } from './exampleBundle';
 export {
 	formatYamlBundle,
+	fixApiVersionUpgrade,
 	fixDocumentData,
 	fixK8sMetadata,
 	fixManifestIdentity,
