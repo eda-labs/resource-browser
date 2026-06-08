@@ -10,6 +10,12 @@ const manifest: ManifestEntry[] = [
 		kind: 'Configlet',
 		group: 'config.eda.nokia.com',
 		versions: [{ name: 'v1' }]
+	},
+	{
+		name: 'topologies.topologies.eda.nokia.com',
+		kind: 'Topology',
+		group: 'topologies.eda.nokia.com',
+		versions: [{ name: 'v1' }]
 	}
 ];
 
@@ -114,9 +120,55 @@ spec: {}
 		});
 
 		expect(result.valid).toBe(false);
-		expect(result.errors.some((e) => e.message.includes('Could not find CRD definition'))).toBe(
-			true
-		);
+		expect(
+			result.errors.some(
+				(e) =>
+					e.message.includes("kind 'NotARealKind' is not supported for apiVersion") &&
+					e.message.includes("Expected kind 'Configlet'")
+			)
+		).toBe(true);
+	});
+
+	it('errors when kind case does not match the manifest CRD', () => {
+		const doc: ParsedDocument = {
+			data: {
+				apiVersion: 'topologies.eda.nokia.com/v1',
+				kind: 'topology',
+				metadata: { name: 'test-topology', namespace: 'eda' },
+				spec: {}
+			},
+			rawText: `apiVersion: topologies.eda.nokia.com/v1
+kind: topology
+metadata:
+  name: test-topology
+  namespace: eda
+spec: {}
+`,
+			startLine: 0,
+			index: 0
+		};
+
+		const result = validateDocument({
+			doc,
+			totalDocs: 1,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest,
+			schemas: new Map(),
+			getSpecValidator: () => {
+				throw new Error('schema validation should not run');
+			},
+			getStatusValidator: () => {
+				throw new Error('schema validation should not run');
+			}
+		});
+
+		expect(result.valid).toBe(false);
+		expect(
+			result.errors.some((e) =>
+				e.message.includes('kind must match CRD exactly: expected "Topology", got "topology"')
+			)
+		).toBe(true);
 	});
 
 	it('errors when apiVersion group does not match the manifest entry for the kind', () => {
@@ -154,9 +206,98 @@ spec: {}
 		});
 
 		expect(result.valid).toBe(false);
-		expect(result.errors.some((e) => e.message.includes('Could not find CRD definition'))).toBe(
+		expect(result.errors.some((e) => e.message.includes('Could not find CRD for apiVersion'))).toBe(
 			true
 		);
+	});
+
+	it('errors when apiVersion group is a typo for a known kind', () => {
+		const doc: ParsedDocument = {
+			data: {
+				apiVersion: 'topologi.eda.nokia.com/v1',
+				kind: 'Topology',
+				metadata: { name: 'test-topology', namespace: 'eda' },
+				spec: {}
+			},
+			rawText: `apiVersion: topologi.eda.nokia.com/v1
+kind: Topology
+metadata:
+  name: test-topology
+  namespace: eda
+spec: {}
+`,
+			startLine: 0,
+			index: 0
+		};
+
+		const result = validateDocument({
+			doc,
+			totalDocs: 1,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest,
+			schemas: new Map(),
+			getSpecValidator: () => {
+				throw new Error('schema validation should not run');
+			},
+			getStatusValidator: () => {
+				throw new Error('schema validation should not run');
+			}
+		});
+
+		expect(result.valid).toBe(false);
+		expect(
+			result.errors.some(
+				(e) =>
+					e.message.includes("Could not find CRD for apiVersion 'topologi.eda.nokia.com/v1'") &&
+					e.message.includes("kind 'Topology'")
+			)
+		).toBe(true);
+		expect(
+			result.errors.some((e) => e.message.includes("Did you mean apiVersion 'topologies.eda.nokia.com/v1'"))
+		).toBe(true);
+	});
+
+	it('proceeds to schema validation when kind case matches the manifest CRD', () => {
+		const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
+		const validator = getOrCompileValidator(ajv, 'topology::spec', specSchema);
+		const doc: ParsedDocument = {
+			data: {
+				apiVersion: 'topologies.eda.nokia.com/v1',
+				kind: 'Topology',
+				metadata: { name: 'test-topology', namespace: 'eda' },
+				spec: { operatingSystem: 'srl' }
+			},
+			rawText: `apiVersion: topologies.eda.nokia.com/v1
+kind: Topology
+metadata:
+  name: test-topology
+  namespace: eda
+spec:
+  operatingSystem: srl
+`,
+			startLine: 0,
+			index: 0
+		};
+
+		const result = validateDocument({
+			doc,
+			totalDocs: 1,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest,
+			schemas: new Map([
+				[
+					'/resources/26.4.2/topologies.topologies.eda.nokia.com/v1.yaml',
+					{ spec: specSchema, isSpecRequired: true }
+				]
+			]),
+			getSpecValidator: () => validator,
+			getStatusValidator: () => validator
+		});
+
+		expect(result.valid).toBe(true);
+		expect(result.errors).toHaveLength(0);
 	});
 });
 

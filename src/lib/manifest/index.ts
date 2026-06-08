@@ -7,3 +7,11 @@ export {
 	loadVersionsForResource,
 	fetchVersionsForResource
 } from './releases';
+export {
+	findManifestEntry,
+	findManifestEntryCaseMismatch,
+	findManifestEntriesByGroup,
+	findManifestEntriesByKind,
+	formatKindCaseMismatchMessage,
+	formatCrdNotFoundMessage
+} from './lookup';

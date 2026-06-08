@@ -367,6 +367,9 @@ export function isK8sStructuralSchemaIssue(issue: BundleIssue): boolean {
 	const msg = issue.message;
 	if (
 		msg.includes('Could not find CRD definition') ||
+		msg.includes('Could not find CRD for apiVersion') ||
+		msg.includes('kind must match CRD exactly') ||
+		msg.includes('is not supported for apiVersion') ||
 		msg.includes('is not supported for kind') ||
 		msg.includes('Could not find schema for') ||
 		msg.includes('No API versions found for kind') ||

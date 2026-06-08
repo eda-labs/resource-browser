@@ -1,11 +1,12 @@
 import type { ErrorObject } from 'ajv';
+import { findManifestEntry } from '$lib/manifest/lookup';
+import { getLatestVersion } from '$lib/versions';
 import { buildSummary } from './formatErrors';
 import { parseDocuments } from './parseDocuments';
 import { scanInvalidBooleanLiterals } from './scanSource';
 import { fetchSchemas, getOrCompileValidator, schemaPath } from './schemaCache';
 import { validateDocument } from './validateDocument';
 import type { EnrichedError, ValidateYamlOptions, ValidateYamlResult } from './types';
-import { getLatestVersion } from '$lib/versions';
 
 export * from './types';
 export * from './formatErrors';
@@ -21,24 +22,6 @@ export {
 	normalizeSchemaForAjv,
 	resolveObjectSchema
 } from '$lib/schema/requiredFields';
-
-function findResourceEntry(
-	manifest: ValidateYamlOptions['manifest'],
-	kind: string,
-	group: string
-) {
-	let entry = manifest.find((r) => r.kind === kind && (!r.group || r.group === group));
-	if (!entry) entry = manifest.find((r) => r.kind === kind);
-	if (!entry) {
-		entry = manifest.find((r) => {
-			const kindLower = kind?.toLowerCase();
-			const nameLower = r.name?.toLowerCase();
-			const resourceType = nameLower?.split('.')[0];
-			return resourceType === kindLower;
-		});
-	}
-	return entry;
-}
 
 export async function validateYamlInput(options: ValidateYamlOptions): Promise<ValidateYamlResult> {
 	const { yamlInput, releaseFolder, releaseLabel, manifest } = options;
@@ -122,7 +105,7 @@ export async function validateYamlInput(options: ValidateYamlOptions): Promise<V
 		const parts = apiVersion.split('/');
 		if (parts.length !== 2) continue;
 		const [group, version] = parts;
-		const resourceEntry = findResourceEntry(manifest, kind, group);
+		const resourceEntry = findManifestEntry(manifest, kind, group);
 		if (!resourceEntry) continue;
 		const latestVersion = getLatestVersion(resourceEntry);
 		const schemaVersion = latestVersion;

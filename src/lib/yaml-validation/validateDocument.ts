@@ -1,4 +1,12 @@
 import type { ErrorObject, ValidateFunction } from 'ajv';
+import {
+	findManifestEntry,
+	findManifestEntryCaseMismatch,
+	findManifestEntriesByGroup,
+	findManifestEntriesByKind,
+	formatCrdNotFoundMessage,
+	formatKindCaseMismatchMessage
+} from '$lib/manifest/lookup';
 import { getLatestVersion } from '$lib/versions';
 import {
 	collectMissingRequiredFields,
@@ -23,11 +31,6 @@ type ValidateDocContext = {
 
 function docPrefix(index: number, total: number) {
 	return total > 1 ? `[Doc ${index + 1}] ` : '';
-}
-
-function findResourceEntry(manifest: ManifestEntry[], kind: string, group: string) {
-	if (!kind || !group) return undefined;
-	return manifest.find((r) => r.kind === kind && r.group === group);
 }
 
 function ajvReportsRequired(errors: ErrorObject[] | null | undefined, instancePath: string): boolean {
@@ -226,18 +229,38 @@ export function validateDocument(ctx: ValidateDocContext): {
 	let schemaSections: SchemaSections | undefined;
 
 	if (parsedYaml.kind && group) {
-		const resourceEntry = findResourceEntry(manifest, String(parsedYaml.kind), group);
+		const kindStr = String(parsedYaml.kind);
+		const resourceEntry = findManifestEntry(manifest, kindStr, group);
 		if (!resourceEntry) {
+			const caseMismatch = findManifestEntryCaseMismatch(manifest, kindStr, group);
+			const groupEntries = findManifestEntriesByGroup(manifest, group);
+			const kindEntries = findManifestEntriesByKind(manifest, kindStr);
+			let crdMessage: string;
+			let instancePath = '/kind';
+
+			if (caseMismatch) {
+				crdMessage = formatKindCaseMismatchMessage(caseMismatch.kind, kindStr);
+			} else if (groupEntries.length === 1) {
+				crdMessage = `kind '${kindStr}' is not supported for apiVersion '${parsedYaml.apiVersion}'. Expected kind '${groupEntries[0].kind}'`;
+			} else if (kindEntries.length === 1 && kindEntries[0].group !== group) {
+				crdMessage = formatCrdNotFoundMessage(String(parsedYaml.apiVersion), kindStr);
+				const latest = getLatestVersion(kindEntries[0]);
+				if (latest) {
+					crdMessage += `. Did you mean apiVersion '${kindEntries[0].group}/${latest}'?`;
+				}
+				instancePath = '/apiVersion';
+			} else {
+				crdMessage = formatCrdNotFoundMessage(String(parsedYaml.apiVersion), kindStr);
+				instancePath = groupEntries.length > 0 ? '/kind' : '/apiVersion';
+			}
+
 			errors.push(
 				enrichError(
 					{
-						message: `${prefix}Could not find CRD definition for kind '${parsedYaml.kind}' in release ${releaseLabel}. Available kinds: ${manifest
-							.map((r) => r.kind)
-							.filter(Boolean)
-							.slice(0, 5)
-							.join(', ')}...`,
-						instancePath: '/kind',
-						schemaPath: '#/properties/kind',
+						message: `${prefix}${crdMessage}${locationInfo}`,
+						instancePath,
+						schemaPath:
+							instancePath === '/kind' ? '#/properties/kind' : '#/properties/apiVersion',
 						keyword: 'enum',
 						params: {}
 					} as ErrorObject,

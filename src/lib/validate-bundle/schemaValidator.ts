@@ -1,3 +1,4 @@
+import { findManifestEntry } from '$lib/manifest/lookup';
 import { resolveObjectSchema } from '$lib/schema/requiredFields';
 import { getLatestVersion } from '$lib/versions';
 import { schemaPath, fetchSchemas } from '$lib/yaml-validation/schemaCache';
@@ -30,11 +31,6 @@ function toBundleIssue(err: EnrichedError, resource?: BundleResource): BundleIss
 		line: err.line,
 		fieldPath: err.instancePath || undefined
 	};
-}
-
-function findResourceEntry(manifest: ManifestEntry[], kind: string, group: string) {
-	if (!kind || !group) return undefined;
-	return manifest.find((r) => r.kind === kind && r.group === group);
 }
 
 function collectSchemaProperties(schema: unknown): Set<string> | null {
@@ -165,7 +161,7 @@ export async function validateBundleSchema(
 	const schemaPaths: string[] = [];
 	for (const res of resources) {
 		if (!res.kind || !res.group) continue;
-		const entry = findResourceEntry(manifest, res.kind, res.group);
+		const entry = findManifestEntry(manifest, res.kind, res.group);
 		if (!entry) continue;
 		const latest = getLatestVersion(entry);
 		if (latest) schemaPaths.push(schemaPath(releaseFolder, entry.name, latest));
@@ -175,7 +171,7 @@ export async function validateBundleSchema(
 
 	for (const res of resources) {
 		if (!res.kind || !res.group) continue;
-		const entry = findResourceEntry(manifest, res.kind, res.group);
+		const entry = findManifestEntry(manifest, res.kind, res.group);
 		if (!entry) continue;
 		const latest = getLatestVersion(entry);
 		if (!latest) continue;

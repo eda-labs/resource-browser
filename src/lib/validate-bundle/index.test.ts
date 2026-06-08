@@ -8,6 +8,12 @@ const manifest: ManifestEntry[] = [
 		kind: 'Configlet',
 		group: 'config.eda.nokia.com',
 		versions: [{ name: 'v1' }]
+	},
+	{
+		name: 'topologies.topologies.eda.nokia.com',
+		kind: 'Topology',
+		group: 'topologies.eda.nokia.com',
+		versions: [{ name: 'v1' }]
 	}
 ];
 
@@ -78,7 +84,63 @@ spec: {}
 
 		expect(result.valid).toBe(false);
 		expect(
-			result.issues.some((i) => i.severity === 'error' && i.message.includes('Could not find CRD'))
+			result.issues.some(
+				(i) =>
+					i.severity === 'error' &&
+					i.message.includes("kind 'NotARealKind' is not supported for apiVersion")
+			)
+		).toBe(true);
+	});
+
+	it('errors when kind case does not match the manifest CRD', async () => {
+		const yaml = `apiVersion: topologies.eda.nokia.com/v1
+kind: topology
+metadata:
+  name: test-topology
+  namespace: eda
+spec: {}
+`;
+
+		const result = await validateBundle({
+			yamlInput: yaml,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest
+		});
+
+		expect(result.valid).toBe(false);
+		expect(
+			result.issues.some(
+				(i) =>
+					i.severity === 'error' &&
+					i.message.includes('kind must match CRD exactly: expected "Topology", got "topology"')
+			)
+		).toBe(true);
+	});
+
+	it('errors when apiVersion group is invalid for a known kind', async () => {
+		const yaml = `apiVersion: topologi.eda.nokia.com/v1
+kind: Topology
+metadata:
+  name: test-topology
+  namespace: eda
+spec: {}
+`;
+
+		const result = await validateBundle({
+			yamlInput: yaml,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest
+		});
+
+		expect(result.valid).toBe(false);
+		expect(
+			result.issues.some(
+				(i) =>
+					i.severity === 'error' &&
+					i.message.includes("Could not find CRD for apiVersion 'topologi.eda.nokia.com/v1'")
+			)
 		).toBe(true);
 	});
 });
