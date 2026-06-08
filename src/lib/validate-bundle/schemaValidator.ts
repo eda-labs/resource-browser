@@ -1,3 +1,4 @@
+import { resolveObjectSchema } from '$lib/schema/requiredFields';
 import { getLatestVersion } from '$lib/versions';
 import { schemaPath, fetchSchemas } from '$lib/yaml-validation/schemaCache';
 import { validateYamlInput } from '$lib/yaml-validation';
@@ -32,17 +33,8 @@ function toBundleIssue(err: EnrichedError, resource?: BundleResource): BundleIss
 }
 
 function findResourceEntry(manifest: ManifestEntry[], kind: string, group: string) {
-	let entry = manifest.find((r) => r.kind === kind && (!r.group || r.group === group));
-	if (!entry) entry = manifest.find((r) => r.kind === kind);
-	if (!entry) {
-		entry = manifest.find((r) => {
-			const kindLower = kind?.toLowerCase();
-			const nameLower = r.name?.toLowerCase();
-			const resourceType = nameLower?.split('.')[0];
-			return resourceType === kindLower;
-		});
-	}
-	return entry;
+	if (!kind || !group) return undefined;
+	return manifest.find((r) => r.kind === kind && r.group === group);
 }
 
 function collectSchemaProperties(schema: unknown): Set<string> | null {
@@ -58,7 +50,24 @@ function joinFieldPath(key: string, parent: string): string {
 	return parent ? `${parent}.${key}` : key;
 }
 
-function walkUnknownFields(
+function getItemsSchema(schema: unknown): unknown {
+	if (!schema || typeof schema !== 'object' || Array.isArray(schema)) return null;
+	const node = schema as Record<string, unknown>;
+	if (node.items) return node.items;
+	return resolveObjectSchema(schema);
+}
+
+function getChildPropertySchema(schema: unknown, key: string): unknown {
+	if (!schema || typeof schema !== 'object' || Array.isArray(schema)) return null;
+	const node = schema as Record<string, unknown>;
+	if (node.properties && typeof node.properties === 'object') {
+		return (node.properties as Record<string, unknown>)[key] ?? null;
+	}
+	return resolveObjectSchema(schema)?.properties[key] ?? null;
+}
+
+/** Walk data against schema properties; flags keys not defined in the CRD schema. */
+export function walkUnknownFields(
 	data: unknown,
 	schema: unknown,
 	path: string,
@@ -68,7 +77,28 @@ function walkUnknownFields(
 	resource: BundleResource
 ): void {
 	if (data === null || data === undefined) return;
-	if (typeof data !== 'object' || Array.isArray(data)) return;
+
+	if (Array.isArray(data)) {
+		const itemsSchema = getItemsSchema(schema);
+		if (!itemsSchema) return;
+		const itemObjectSchema = resolveObjectSchema(itemsSchema) ?? itemsSchema;
+		data.forEach((item, index) => {
+			if (item !== null && item !== undefined && typeof item === 'object') {
+				walkUnknownFields(
+					item,
+					itemObjectSchema,
+					`${path}[${index}]`,
+					doc,
+					prefix,
+					issues,
+					resource
+				);
+			}
+		});
+		return;
+	}
+
+	if (typeof data !== 'object') return;
 
 	const props = collectSchemaProperties(schema);
 	if (!props) return;
@@ -91,10 +121,8 @@ function walkUnknownFields(
 				line,
 				fieldPath
 			});
-		} else if (record[key] && typeof record[key] === 'object' && !Array.isArray(record[key])) {
-			const childSchema = (schema as Record<string, unknown>).properties
-				? ((schema as { properties: Record<string, unknown> }).properties[key] ?? null)
-				: null;
+		} else if (record[key] && typeof record[key] === 'object') {
+			const childSchema = getChildPropertySchema(schema, key);
 			walkUnknownFields(
 				record[key],
 				childSchema,

@@ -21,6 +21,14 @@ export {
 	type FixReport,
 	type FormatYamlOptions
 } from './formatYaml';
+export {
+	buildShareUrl,
+	decodeBundleFromUrl,
+	encodeBundleForUrl,
+	getBundleParamFromSearchParams,
+	MAX_BUNDLE_URL_PARAM_BYTES,
+	type EncodeBundleResult
+} from './shareBundle';
 
 function buildSummary(issues: BundleIssue[], resourceCount: number): BundleValidationSummary {
 	return {

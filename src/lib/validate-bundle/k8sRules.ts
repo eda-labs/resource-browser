@@ -360,15 +360,24 @@ export function validateK8sRules(resources: BundleResource[]): BundleIssue[] {
 	return resources.flatMap((res) => validateK8sDocument(res));
 }
 
-/** Field paths and messages reported by validateDocument that k8sRules owns in the bundle validator. */
+/** Schema issues that duplicate k8sRules structural checks — CRD resolution errors are kept. */
 export function isK8sStructuralSchemaIssue(issue: BundleIssue): boolean {
 	if (issue.category !== 'schema') return false;
+
+	const msg = issue.message;
+	if (
+		msg.includes('Could not find CRD definition') ||
+		msg.includes('is not supported for kind') ||
+		msg.includes('Could not find schema for') ||
+		msg.includes('No API versions found for kind') ||
+		msg.includes('is deprecated for kind') ||
+		msg.includes('is not the latest for kind')
+	) {
+		return false;
+	}
+
 	const path = issue.fieldPath || '';
 	if (
-		path === 'apiVersion' ||
-		path === '/apiVersion' ||
-		path === 'kind' ||
-		path === '/kind' ||
 		path === 'metadata' ||
 		path === '/metadata' ||
 		path === 'metadata.name' ||
@@ -382,7 +391,7 @@ export function isK8sStructuralSchemaIssue(issue: BundleIssue): boolean {
 	) {
 		return true;
 	}
-	const msg = issue.message;
+
 	return (
 		msg.includes("Missing required 'apiVersion'") ||
 		msg.includes("Missing required 'kind'") ||

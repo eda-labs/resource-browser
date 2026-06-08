@@ -15,6 +15,10 @@
 		validateBundle,
 		formatYamlBundle,
 		formatFixSummary,
+		buildShareUrl,
+		decodeBundleFromUrl,
+		encodeBundleForUrl,
+		getBundleParamFromSearchParams,
 		EXAMPLE_BUNDLE_YAML,
 		type BundleIssue,
 		type BundleResource,
@@ -23,7 +27,7 @@
 	import YamlBundleEditor from '$lib/validate-bundle/YamlBundleEditor.svelte';
 
 	const releasesConfig = yaml.load(releasesYaml) as ReleasesConfig;
-	const VALIDATE_DEBOUNCE_MS = 800;
+	const VALIDATE_DEBOUNCE_MS = 500;
 	const AUTO_VALIDATE_KEY = 'validate-yaml-auto';
 
 	type IssueGroup = {
@@ -146,6 +150,39 @@
 		toastTimer = setTimeout(() => {
 			toast = null;
 		}, 3000);
+	}
+
+	async function handleShareBundle() {
+		if (!yamlInput.trim()) {
+			showToast('Nothing to share — paste YAML first.');
+			return;
+		}
+		try {
+			const { param, tooLarge, encodedLength } = await encodeBundleForUrl(yamlInput);
+			if (tooLarge) {
+				showToast(
+					`Bundle too large for URL sharing (${encodedLength} chars; ~8KB limit). Copy YAML manually.`
+				);
+				return;
+			}
+			const url = buildShareUrl(window.location.origin, releaseName, param);
+			await navigator.clipboard.writeText(url);
+			showToast('Share link copied to clipboard');
+		} catch {
+			showToast('Could not create share link');
+		}
+	}
+
+	function handleDownloadYaml() {
+		if (!yamlInput.trim()) return;
+		const blob = new Blob([yamlInput], { type: 'text/yaml;charset=utf-8' });
+		const url = URL.createObjectURL(blob);
+		const anchor = document.createElement('a');
+		anchor.href = url;
+		anchor.download = 'eda-bundle.yaml';
+		anchor.click();
+		URL.revokeObjectURL(url);
+		showToast('Downloaded eda-bundle.yaml');
 	}
 
 	async function handleFormatYaml() {
@@ -344,7 +381,7 @@
 		return null;
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		const urlRelease = $page.url.searchParams.get('release');
 		if (urlRelease) {
 			releaseName = urlRelease;
@@ -352,6 +389,16 @@
 			const defaultRelease =
 				releasesConfig.releases.find((r) => r.default) || releasesConfig.releases[0];
 			if (defaultRelease) releaseName = defaultRelease.name;
+		}
+
+		const bundleParam = getBundleParamFromSearchParams($page.url.searchParams);
+		if (bundleParam) {
+			const decoded = await decodeBundleFromUrl(bundleParam);
+			if (decoded) {
+				yamlInput = decoded;
+			} else {
+				showToast('Could not decode bundle from URL — using default example.');
+			}
 		}
 
 		try {
@@ -459,6 +506,16 @@
 				Load example
 			</button>
 
+			<button
+				type="button"
+				class="validate-yaml-btn"
+				disabled={!yamlInput.trim()}
+				title="Copy a permalink with gzip-compressed YAML in the URL"
+				on:click={() => void handleShareBundle()}
+			>
+				Share
+			</button>
+
 			<label class="validate-yaml-auto-toggle">
 				<input type="checkbox" bind:checked={autoValidate} />
 				<span>Auto-validate</span>
@@ -495,6 +552,14 @@
 				{#if isValidating}
 					<span class="validate-yaml-stats__updating">Updating…</span>
 				{/if}
+				<button
+					type="button"
+					class="validate-yaml-btn validate-yaml-btn--ghost validate-yaml-stats__download"
+					disabled={!yamlInput.trim()}
+					on:click={handleDownloadYaml}
+				>
+					Download YAML
+				</button>
 			</div>
 		{/if}
 

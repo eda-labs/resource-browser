@@ -59,4 +59,26 @@ spec:
 
 		expect(result.issues.length).toBeGreaterThanOrEqual(12);
 	});
+
+	it('reports unknown CRD kinds instead of treating the bundle as valid', async () => {
+		const yaml = `apiVersion: config.eda.nokia.com/v1
+kind: NotARealKind
+metadata:
+  name: test-resource
+  namespace: eda
+spec: {}
+`;
+
+		const result = await validateBundle({
+			yamlInput: yaml,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest
+		});
+
+		expect(result.valid).toBe(false);
+		expect(
+			result.issues.some((i) => i.severity === 'error' && i.message.includes('Could not find CRD'))
+		).toBe(true);
+	});
 });

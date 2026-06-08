@@ -26,17 +26,8 @@ function docPrefix(index: number, total: number) {
 }
 
 function findResourceEntry(manifest: ManifestEntry[], kind: string, group: string) {
-	let entry = manifest.find((r) => r.kind === kind && (!r.group || r.group === group));
-	if (!entry) entry = manifest.find((r) => r.kind === kind);
-	if (!entry) {
-		entry = manifest.find((r) => {
-			const kindLower = kind?.toLowerCase();
-			const nameLower = r.name?.toLowerCase();
-			const resourceType = nameLower?.split('.')[0];
-			return resourceType === kindLower;
-		});
-	}
-	return entry;
+	if (!kind || !group) return undefined;
+	return manifest.find((r) => r.kind === kind && r.group === group);
 }
 
 function ajvReportsRequired(errors: ErrorObject[] | null | undefined, instancePath: string): boolean {

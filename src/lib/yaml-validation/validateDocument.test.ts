@@ -78,6 +78,88 @@ describe('validateDocument error accumulation', () => {
 	});
 });
 
+describe('validateDocument CRD resolution', () => {
+	it('errors when kind and apiVersion group do not match a manifest CRD', () => {
+		const doc: ParsedDocument = {
+			data: {
+				apiVersion: 'config.eda.nokia.com/v1',
+				kind: 'NotARealKind',
+				metadata: { name: 'test-resource', namespace: 'eda' },
+				spec: {}
+			},
+			rawText: `apiVersion: config.eda.nokia.com/v1
+kind: NotARealKind
+metadata:
+  name: test-resource
+  namespace: eda
+spec: {}
+`,
+			startLine: 0,
+			index: 0
+		};
+
+		const result = validateDocument({
+			doc,
+			totalDocs: 1,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest,
+			schemas: new Map(),
+			getSpecValidator: () => {
+				throw new Error('schema validation should not run');
+			},
+			getStatusValidator: () => {
+				throw new Error('schema validation should not run');
+			}
+		});
+
+		expect(result.valid).toBe(false);
+		expect(result.errors.some((e) => e.message.includes('Could not find CRD definition'))).toBe(
+			true
+		);
+	});
+
+	it('errors when apiVersion group does not match the manifest entry for the kind', () => {
+		const doc: ParsedDocument = {
+			data: {
+				apiVersion: 'wrong.group/v1',
+				kind: 'Configlet',
+				metadata: { name: 'test-resource', namespace: 'eda' },
+				spec: {}
+			},
+			rawText: `apiVersion: wrong.group/v1
+kind: Configlet
+metadata:
+  name: test-resource
+  namespace: eda
+spec: {}
+`,
+			startLine: 0,
+			index: 0
+		};
+
+		const result = validateDocument({
+			doc,
+			totalDocs: 1,
+			releaseFolder: 'resources/26.4.2',
+			releaseLabel: 'EDA 26.4.2',
+			manifest,
+			schemas: new Map(),
+			getSpecValidator: () => {
+				throw new Error('schema validation should not run');
+			},
+			getStatusValidator: () => {
+				throw new Error('schema validation should not run');
+			}
+		});
+
+		expect(result.valid).toBe(false);
+		expect(result.errors.some((e) => e.message.includes('Could not find CRD definition'))).toBe(
+			true
+		);
+	});
+});
+
 describe('validateDocument enum handling', () => {
 	it('reports enum case mismatches with exact-case guidance', () => {
 		const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
