@@ -30,8 +30,6 @@
 	import { loadStaticYaml } from '$lib/yaml/safeYaml';
 
 	const releasesConfig = loadStaticYaml(releasesYaml) as ReleasesConfig;
-	const VALIDATE_DEBOUNCE_MS = 500;
-	const AUTO_VALIDATE_KEY = 'validate-yaml-auto';
 
 	type IssueGroup = {
 		key: string;
@@ -49,7 +47,6 @@
 	let result: BundleValidationResult | null = null;
 	let isValidating = false;
 	let clientReady = false;
-	let skipAutoValidate = true;
 	let highlightLine: number | null = null;
 	let editorRef: YamlBundleEditor | undefined;
 	let manifestResources: ManifestResource[] = [];
@@ -60,9 +57,7 @@
 	let toastTimer: ReturnType<typeof setTimeout> | null = null;
 	let fixSummary: FixSummary | null = null;
 	let fixSummaryTimer: ReturnType<typeof setTimeout> | null = null;
-	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 	let validationGeneration = 0;
-	let autoValidate = true;
 	let issueFilter: 'all' | 'errors' | 'warnings' = 'all';
 	let issueSearch = '';
 	let collapsedGroups = new Set<string>();
@@ -250,27 +245,7 @@
 		updateURL();
 	}
 
-	function scheduleValidation() {
-		if (!browser || !clientReady || !release || skipAutoValidate || !autoValidate) return;
-
-		if (debounceTimer) clearTimeout(debounceTimer);
-		debounceTimer = setTimeout(() => {
-			debounceTimer = null;
-			void runValidation();
-		}, VALIDATE_DEBOUNCE_MS);
-	}
-
-	$: if (browser && clientReady && release && autoValidate && !skipAutoValidate) {
-		yamlInput;
-		scheduleValidation();
-	}
-
 	async function runValidation() {
-		if (debounceTimer) {
-			clearTimeout(debounceTimer);
-			debounceTimer = null;
-		}
-
 		if (!yamlInput.trim()) {
 			result = null;
 			isValidating = false;
@@ -447,31 +422,14 @@
 			}
 		}
 
-		try {
-			const stored = localStorage.getItem(AUTO_VALIDATE_KEY);
-			if (stored !== null) autoValidate = stored === 'true';
-		} catch {
-			/* ignore */
-		}
-
 		clientReady = true;
 		void runValidation();
-		skipAutoValidate = false;
 	});
 
 	onDestroy(() => {
-		if (debounceTimer) clearTimeout(debounceTimer);
 		if (toastTimer) clearTimeout(toastTimer);
 		if (fixSummaryTimer) clearTimeout(fixSummaryTimer);
 	});
-
-	$: if (browser) {
-		try {
-			localStorage.setItem(AUTO_VALIDATE_KEY, String(autoValidate));
-		} catch {
-			/* ignore */
-		}
-	}
 
 </script>
 
@@ -563,11 +521,6 @@
 			>
 				Share
 			</button>
-
-			<label class="validate-yaml-auto-toggle">
-				<input type="checkbox" bind:checked={autoValidate} />
-				<span>Auto-validate</span>
-			</label>
 		</div>
 
 		{#if fixSummary}

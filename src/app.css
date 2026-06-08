@@ -849,28 +849,6 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 		width: 0.875rem;
 	}
 
-	.validate-yaml-auto-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.375rem;
-		margin-left: auto;
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: #64748b;
-		cursor: pointer;
-		white-space: nowrap;
-	}
-
-	.validate-yaml-auto-toggle input {
-		height: 0.875rem;
-		width: 0.875rem;
-		accent-color: #2563eb;
-	}
-
-	.dark .validate-yaml-auto-toggle {
-		color: #94a3b8;
-	}
-
 	.validate-yaml-stats {
 		display: flex;
 		flex-wrap: wrap;
