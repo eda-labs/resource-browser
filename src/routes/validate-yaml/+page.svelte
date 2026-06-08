@@ -55,6 +55,8 @@
 	let modalVersion: string | null = null;
 	let toast: string | null = null;
 	let toastTimer: ReturnType<typeof setTimeout> | null = null;
+	let yamlCopied = false;
+	let yamlCopyTimer: ReturnType<typeof setTimeout> | null = null;
 	let fixSummary: FixSummary | null = null;
 	let fixSummaryTimer: ReturnType<typeof setTimeout> | null = null;
 	let validationGeneration = 0;
@@ -195,16 +197,19 @@
 		}
 	}
 
-	function handleDownloadYaml() {
+	async function handleCopyYaml() {
 		if (!yamlInput.trim()) return;
-		const blob = new Blob([yamlInput], { type: 'text/yaml;charset=utf-8' });
-		const url = URL.createObjectURL(blob);
-		const anchor = document.createElement('a');
-		anchor.href = url;
-		anchor.download = 'eda-bundle.yaml';
-		anchor.click();
-		URL.revokeObjectURL(url);
-		showToast('Downloaded eda-bundle.yaml');
+		try {
+			await navigator.clipboard.writeText(yamlInput);
+			yamlCopied = true;
+			showToast('YAML copied to clipboard');
+			if (yamlCopyTimer) clearTimeout(yamlCopyTimer);
+			yamlCopyTimer = setTimeout(() => {
+				yamlCopied = false;
+			}, 2000);
+		} catch {
+			showToast('Could not copy YAML');
+		}
 	}
 
 	async function handleFormatYaml() {
@@ -429,6 +434,7 @@
 	onDestroy(() => {
 		if (toastTimer) clearTimeout(toastTimer);
 		if (fixSummaryTimer) clearTimeout(fixSummaryTimer);
+		if (yamlCopyTimer) clearTimeout(yamlCopyTimer);
 	});
 
 </script>
@@ -568,11 +574,44 @@
 				{/if}
 				<button
 					type="button"
-					class="validate-yaml-btn validate-yaml-btn--ghost validate-yaml-stats__download"
+					class="validate-yaml-btn validate-yaml-btn--ghost"
 					disabled={!yamlInput.trim()}
-					on:click={handleDownloadYaml}
+					aria-label="Copy YAML to clipboard"
+					on:click={() => void handleCopyYaml()}
 				>
-					Download YAML
+					{#if yamlCopied}
+						<svg
+							class="validate-yaml-btn__spinner"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							aria-hidden="true"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M5 13l4 4L19 7"
+							/>
+						</svg>
+						Copied
+					{:else}
+						<svg
+							class="validate-yaml-btn__spinner"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							aria-hidden="true"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+							/>
+						</svg>
+						Copy YAML
+					{/if}
 				</button>
 			</div>
 		{/if}
