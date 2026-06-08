@@ -23,6 +23,14 @@ export type K8sIssueRule =
 	| 'invalid-annotation-key'
 	| 'spec-with-status';
 
+export type SuggestedFixField = 'apiVersion' | 'kind' | 'metadata.name' | 'metadata.namespace';
+
+export type SuggestedFix = {
+	field: SuggestedFixField;
+	value: string;
+	line?: number;
+};
+
 export type BundleIssue = {
 	id: string;
 	severity: IssueSeverity;
@@ -35,6 +43,8 @@ export type BundleIssue = {
 	docIndex?: number;
 	line?: number;
 	fieldPath?: string;
+	/** When set, the issue can be auto-fixed in the editor. */
+	suggestedFix?: SuggestedFix;
 };
 
 export type BundleResource = {

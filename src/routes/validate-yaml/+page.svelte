@@ -14,6 +14,7 @@
 		validateBundle,
 		formatYamlBundle,
 		formatFixSummary,
+		applySuggestedFix,
 		buildShareUrl,
 		decodeBundleFromUrl,
 		encodeBundleForUrl,
@@ -310,6 +311,25 @@
 		}
 	}
 
+	function handleApplyFix(issue: BundleIssue, event: MouseEvent) {
+		event.stopPropagation();
+		if (!issue.suggestedFix) return;
+
+		const updated = applySuggestedFix(yamlInput, issue);
+		if (!updated) {
+			showToast('Could not apply fix — edit the field manually.');
+			return;
+		}
+
+		setYamlInput(updated);
+		if (issue.line) {
+			highlightLine = issue.line;
+			editorRef?.focusLine(issue.line);
+		}
+		showToast(`Applied fix: ${issue.suggestedFix.field} → ${issue.suggestedFix.value}`);
+		void runValidation();
+	}
+
 	function toggleGroup(key: string) {
 		const next = new Set(collapsedGroups);
 		if (next.has(key)) next.delete(key);
@@ -384,6 +404,8 @@
 
 	function issueCategoryLabel(issue: BundleIssue): string | null {
 		if (issue.category === 'schema') {
+			if (issue.message.startsWith('Invalid apiVersion:')) return 'Schema · apiVersion';
+			if (issue.message.startsWith('Invalid kind:')) return 'Schema · kind';
 			if (/\bdeprecated\b/i.test(issue.message)) return 'Schema · Deprecated';
 			if (issue.message.includes('Unknown field')) return 'Schema · Unknown field';
 			return 'Schema';
@@ -774,14 +796,28 @@
 																<p class="validate-yaml-issue-path">{issue.fieldPath}</p>
 															{/if}
 														</button>
-														{#if crdEntry}
-															<button
-																type="button"
-																class="validate-yaml-issue-schema-link"
-																on:click={(e) => openCrdSchemaModal(issue, e)}
-															>
-																View CRD schema →
-															</button>
+														{#if issue.suggestedFix || crdEntry}
+															<div class="validate-yaml-issue__actions">
+																{#if issue.suggestedFix}
+																	<button
+																		type="button"
+																		class="validate-yaml-issue-fix-link"
+																		title="Replace {issue.suggestedFix.field} with {issue.suggestedFix.value}"
+																		on:click={(e) => handleApplyFix(issue, e)}
+																	>
+																		Fix
+																	</button>
+																{/if}
+																{#if crdEntry}
+																	<button
+																		type="button"
+																		class="validate-yaml-issue-schema-link"
+																		on:click={(e) => openCrdSchemaModal(issue, e)}
+																	>
+																		View CRD schema →
+																	</button>
+																{/if}
+															</div>
 														{/if}
 													</div>
 												</li>

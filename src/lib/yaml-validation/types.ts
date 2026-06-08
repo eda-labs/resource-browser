@@ -14,11 +14,20 @@ export type ResourceLink = {
 	version: string;
 };
 
+export type SuggestedFixField = 'apiVersion' | 'kind' | 'metadata.name' | 'metadata.namespace';
+
+export type SuggestedFix = {
+	field: SuggestedFixField;
+	value: string;
+	line?: number;
+};
+
 export type EnrichedError = ErrorObject & {
 	docIndex?: number;
 	line?: number;
 	column?: number;
 	resourceLink?: ResourceLink;
+	suggestedFix?: SuggestedFix;
 };
 
 export type ParsedDocument = {

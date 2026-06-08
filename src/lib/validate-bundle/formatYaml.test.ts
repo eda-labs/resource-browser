@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fixDocumentData, fixK8sMetadata, formatFixSummary, formatYamlBundle } from './formatYaml';
+import {
+	fixDocumentData,
+	fixK8sMetadata,
+	fixManifestIdentity,
+	formatFixSummary,
+	formatYamlBundle
+} from './formatYaml';
 import type { SchemaSections } from '$lib/yaml-validation/schemaCache';
 import type { ManifestEntry } from '$lib/yaml-validation/types';
 
@@ -216,8 +222,54 @@ const manifest: ManifestEntry[] = [
 		kind: 'Configlet',
 		group: 'config.eda.nokia.com',
 		versions: [{ name: 'v1' }]
+	},
+	{
+		name: 'topologies.topologies.eda.nokia.com',
+		kind: 'Topology',
+		group: 'topologies.eda.nokia.com',
+		versions: [{ name: 'v1' }]
 	}
 ];
+
+describe('fixManifestIdentity', () => {
+	it('fixes apiVersion group casing to manifest canonical group', () => {
+		const data = {
+			apiVersion: 'Topologies.eda.nokia.com/v1',
+			kind: 'Topology',
+			metadata: { name: 'lab', namespace: 'eda' }
+		};
+
+		const { data: fixed, fixes } = fixManifestIdentity(data, manifest, 1);
+
+		expect(fixed.apiVersion).toBe('topologies.eda.nokia.com/v1');
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0]).toMatchObject({
+			kind: 'apiVersionCase',
+			path: 'apiVersion',
+			from: 'Topologies.eda.nokia.com/v1',
+			to: 'topologies.eda.nokia.com/v1'
+		});
+	});
+
+	it('fixes kind casing when group matches case-insensitively', () => {
+		const data = {
+			apiVersion: 'topologies.eda.nokia.com/v1',
+			kind: 'topology',
+			metadata: { name: 'lab', namespace: 'eda' }
+		};
+
+		const { data: fixed, fixes } = fixManifestIdentity(data, manifest, 1);
+
+		expect(fixed.kind).toBe('Topology');
+		expect(fixes).toHaveLength(1);
+		expect(fixes[0]).toMatchObject({
+			kind: 'kindCase',
+			path: 'kind',
+			from: 'topology',
+			to: 'Topology'
+		});
+	});
+});
 
 describe('formatYamlBundle auto-fix output', () => {
 	it('applies schema fixes and quotes coerced string fields in output', async () => {
@@ -241,6 +293,26 @@ spec:
 		expect(result.fixes).toHaveLength(2);
 		expect(result.formatted).toMatch(/operatingSystem: srl/);
 		expect(result.formatted).toMatch(/asNumber: ['"]65000['"]/);
+	});
+
+	it('fixes apiVersion group casing in formatted output', async () => {
+		const yaml = `apiVersion: Topologies.eda.nokia.com/v1
+kind: Topology
+metadata:
+  name: lab
+  namespace: eda
+spec: {}
+`;
+
+		const result = await formatYamlBundle(yaml, {
+			releaseFolder: 'resources/26.4.2',
+			manifest
+		});
+		expect(result.ok).toBe(true);
+		if (!result.ok) return;
+
+		expect(result.formatted).toContain('apiVersion: topologies.eda.nokia.com/v1');
+		expect(result.fixes.some((f) => f.kind === 'apiVersionCase')).toBe(true);
 	});
 });
 

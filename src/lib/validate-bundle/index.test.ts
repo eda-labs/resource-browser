@@ -113,9 +113,11 @@ spec: {}
 			result.issues.some(
 				(i) =>
 					i.severity === 'error' &&
-					i.message.includes('kind must match CRD exactly: expected "Topology", got "topology"')
+					i.message.includes(`Invalid kind: 'topology' must be 'Topology'`)
 			)
 		).toBe(true);
+		const kindIssue = result.issues.find((i) => i.message.includes('Invalid kind:'));
+		expect(kindIssue?.suggestedFix).toEqual({ field: 'kind', value: 'Topology', line: 2 });
 	});
 
 	it('errors when apiVersion group is invalid for a known kind', async () => {
@@ -139,8 +141,10 @@ spec: {}
 			result.issues.some(
 				(i) =>
 					i.severity === 'error' &&
-					i.message.includes("Could not find CRD for apiVersion 'topologi.eda.nokia.com/v1'")
+					i.message.includes(`Invalid apiVersion: 'topologi.eda.nokia.com/v1'`)
 			)
 		).toBe(true);
+		const apiIssue = result.issues.find((i) => i.message.includes('Invalid apiVersion:'));
+		expect(apiIssue?.suggestedFix?.value).toBe('topologies.eda.nokia.com/v1');
 	});
 });

@@ -15,12 +15,14 @@ export {
 	formatYamlBundle,
 	fixDocumentData,
 	fixK8sMetadata,
+	fixManifestIdentity,
 	fixYamlDocuments,
 	formatFixSummary,
 	type FixKind,
 	type FixReport,
 	type FormatYamlOptions
 } from './formatYaml';
+export { applySuggestedFix } from './applyIssueFix';
 export {
 	buildShareUrl,
 	decodeBundleFromUrl,

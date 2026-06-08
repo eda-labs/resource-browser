@@ -10,8 +10,12 @@ export {
 export {
 	findManifestEntry,
 	findManifestEntryCaseMismatch,
+	findManifestEntryCaseInsensitive,
+	findManifestEntryGroupCaseMismatch,
+	findManifestEntryKindCaseMismatchInsensitive,
 	findManifestEntriesByGroup,
 	findManifestEntriesByKind,
 	formatKindCaseMismatchMessage,
+	formatInvalidApiVersionMessage,
 	formatCrdNotFoundMessage
 } from './lookup';

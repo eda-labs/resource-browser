@@ -29,7 +29,8 @@ function toBundleIssue(err: EnrichedError, resource?: BundleResource): BundleIss
 		resourceKind: resource?.kind,
 		docIndex: err.docIndex ?? (resource ? resource.docIndex + 1 : undefined),
 		line: err.line,
-		fieldPath: err.instancePath || undefined
+		fieldPath: err.instancePath || undefined,
+		suggestedFix: err.suggestedFix
 	};
 }
 

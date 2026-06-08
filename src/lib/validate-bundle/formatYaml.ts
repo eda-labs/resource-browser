@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { findManifestEntry } from '$lib/manifest/lookup';
+import { findManifestEntry, findManifestEntryCaseInsensitive } from '$lib/manifest/lookup';
 import { getLatestVersion } from '$lib/versions';
 import { resolveObjectSchema } from '$lib/schema/requiredFields';
 import { parseDocuments } from '$lib/yaml-validation/parseDocuments';
@@ -70,7 +70,13 @@ export function sortCrdKeys(value: unknown, parentKey?: string): unknown {
 	return sortObjectKeys(value);
 }
 
-export type FixKind = 'enumCase' | 'stringCoercion' | 'booleanCoercion' | 'dnsName';
+export type FixKind =
+	| 'enumCase'
+	| 'stringCoercion'
+	| 'booleanCoercion'
+	| 'dnsName'
+	| 'apiVersionCase'
+	| 'kindCase';
 
 export type FixReport = {
 	kind: FixKind;
@@ -241,6 +247,47 @@ export function fixDocumentData(
 	return { data: out, fixes };
 }
 
+/** Normalize apiVersion group and kind casing to manifest canonical values. */
+export function fixManifestIdentity(
+	data: Record<string, unknown>,
+	manifest: ManifestEntry[],
+	docIndex: number
+): { data: Record<string, unknown>; fixes: FixReport[] } {
+	const fixes: FixReport[] = [];
+	const apiVersion = String(data.apiVersion || '');
+	const kind = String(data.kind || '');
+	if (!apiVersion || !kind || !manifest.length) {
+		return { data, fixes };
+	}
+
+	const parts = apiVersion.split('/');
+	if (parts.length !== 2) return { data, fixes };
+	const [group, version] = parts;
+
+	const entry = findManifestEntryCaseInsensitive(manifest, kind, group);
+	if (!entry?.group || !entry.kind) return { data, fixes };
+
+	const out = { ...data };
+	const canonicalApiVersion = `${entry.group}/${version}`;
+
+	if (out.kind !== entry.kind) {
+		fixes.push({ kind: 'kindCase', path: 'kind', from: out.kind, to: entry.kind, docIndex });
+		out.kind = entry.kind;
+	}
+	if (String(out.apiVersion) !== canonicalApiVersion) {
+		fixes.push({
+			kind: 'apiVersionCase',
+			path: 'apiVersion',
+			from: out.apiVersion,
+			to: canonicalApiVersion,
+			docIndex
+		});
+		out.apiVersion = canonicalApiVersion;
+	}
+
+	return { data: out, fixes };
+}
+
 /** Apply fixable Kubernetes metadata rules (DNS name/namespace). */
 export function fixK8sMetadata(
 	data: Record<string, unknown>,
@@ -351,7 +398,9 @@ export function formatFixSummary(fixes: FixReport[]): string {
 		enumCase: 0,
 		stringCoercion: 0,
 		booleanCoercion: 0,
-		dnsName: 0
+		dnsName: 0,
+		apiVersionCase: 0,
+		kindCase: 0
 	};
 	for (const fix of fixes) counts[fix.kind] += 1;
 
@@ -363,6 +412,14 @@ export function formatFixSummary(fixes: FixReport[]): string {
 	if (counts.booleanCoercion > 0) {
 		const label = counts.booleanCoercion === 1 ? 'boolean' : 'booleans';
 		parts.push(`${counts.booleanCoercion} ${label}`);
+	}
+	if (counts.apiVersionCase > 0) {
+		const label = counts.apiVersionCase === 1 ? 'apiVersion case' : 'apiVersion cases';
+		parts.push(`${counts.apiVersionCase} ${label}`);
+	}
+	if (counts.kindCase > 0) {
+		const label = counts.kindCase === 1 ? 'kind case' : 'kind cases';
+		parts.push(`${counts.kindCase} ${label}`);
 	}
 	if (counts.enumCase > 0) {
 		parts.push(`${counts.enumCase} enum case`);
@@ -418,6 +475,18 @@ export async function formatYamlBundle(
 		const { data, fixes: k8sFixes } = fixK8sMetadata(doc.data, doc.index + 1);
 		doc.data = data;
 		fixes.push(...k8sFixes);
+	}
+
+	if (options?.manifest?.length) {
+		for (const doc of docData) {
+			const { data, fixes: identityFixes } = fixManifestIdentity(
+				doc.data,
+				options.manifest,
+				doc.index + 1
+			);
+			doc.data = data;
+			fixes.push(...identityFixes);
+		}
 	}
 
 	if (options?.manifest?.length && options.releaseFolder) {

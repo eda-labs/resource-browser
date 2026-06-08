@@ -110,8 +110,10 @@ function pushIssue(
 	rule: K8sIssueRule,
 	severity: BundleIssue['severity'],
 	message: string,
-	fieldPath?: string
+	fieldPath?: string,
+	suggestedFix?: BundleIssue['suggestedFix']
 ): void {
+	const line = fieldPath ? lineForField(res.doc, fieldPath) : res.doc.startLine + 1;
 	issues.push({
 		id: nextIssueId(),
 		severity,
@@ -121,8 +123,9 @@ function pushIssue(
 		resourceName: res.name,
 		resourceKind: res.kind,
 		docIndex: res.docIndex + 1,
-		line: fieldPath ? lineForField(res.doc, fieldPath) : res.doc.startLine + 1,
-		fieldPath
+		line,
+		fieldPath,
+		suggestedFix: suggestedFix ? { ...suggestedFix, line: suggestedFix.line ?? line } : undefined
 	});
 }
 
@@ -259,13 +262,15 @@ export function validateK8sDocument(res: BundleResource): BundleIssue[] {
 				'metadata.name'
 			);
 		} else if (typeof name === 'string' && !isValidDnsSubdomain(name)) {
+			const fixedName = tryFixDnsSubdomain(name);
 			pushIssue(
 				issues,
 				res,
 				'invalid-metadata-name',
 				'error',
 				'metadata.name must be a valid DNS subdomain (lowercase alphanumeric, hyphens, dots; max 253 characters)',
-				'metadata.name'
+				'metadata.name',
+				fixedName ? { field: 'metadata.name', value: fixedName } : undefined
 			);
 		}
 
@@ -284,13 +289,15 @@ export function validateK8sDocument(res: BundleResource): BundleIssue[] {
 				'metadata.namespace'
 			);
 		} else if (typeof namespace === 'string' && !isValidDnsLabel(namespace)) {
+			const fixedNamespace = tryFixDnsLabel(namespace);
 			pushIssue(
 				issues,
 				res,
 				'invalid-metadata-namespace',
 				'error',
 				'metadata.namespace must be a valid DNS label (lowercase alphanumeric and hyphens; max 63 characters)',
-				'metadata.namespace'
+				'metadata.namespace',
+				fixedNamespace ? { field: 'metadata.namespace', value: fixedNamespace } : undefined
 			);
 		}
 
@@ -368,6 +375,8 @@ export function isK8sStructuralSchemaIssue(issue: BundleIssue): boolean {
 	if (
 		msg.includes('Could not find CRD definition') ||
 		msg.includes('Could not find CRD for apiVersion') ||
+		msg.includes('Invalid apiVersion:') ||
+		msg.includes('Invalid kind:') ||
 		msg.includes('kind must match CRD exactly') ||
 		msg.includes('is not supported for apiVersion') ||
 		msg.includes('is not supported for kind') ||

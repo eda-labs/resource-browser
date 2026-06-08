@@ -1399,6 +1399,41 @@ html:not(.dark) .font-nokia-headline.font-extrabold {
 		color: #64748b;
 	}
 
+	.validate-yaml-issue__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
+		margin-top: 0.35rem;
+		padding-top: 0.35rem;
+		border-top: 1px solid rgba(148, 163, 184, 0.2);
+	}
+
+	.dark .validate-yaml-issue__actions {
+		border-top-color: rgba(56, 100, 150, 0.25);
+	}
+
+	.validate-yaml-issue-fix-link {
+		border: 0;
+		background: rgba(37, 99, 235, 0.1);
+		color: #1d4ed8;
+		border-radius: 0.25rem;
+		padding: 0.15rem 0.45rem;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.15s ease;
+	}
+
+	.validate-yaml-issue-fix-link:hover {
+		background: rgba(37, 99, 235, 0.18);
+	}
+
+	.dark .validate-yaml-issue-fix-link {
+		background: rgba(59, 130, 246, 0.15);
+		color: #93c5fd;
+	}
+
 	.validate-yaml-issue-schema-link {
 		margin-top: 0.35rem;
 		padding: 0;

@@ -2,9 +2,12 @@ import type { ErrorObject, ValidateFunction } from 'ajv';
 import {
 	findManifestEntry,
 	findManifestEntryCaseMismatch,
+	findManifestEntryGroupCaseMismatch,
+	findManifestEntryKindCaseMismatchInsensitive,
 	findManifestEntriesByGroup,
 	findManifestEntriesByKind,
 	formatCrdNotFoundMessage,
+	formatInvalidApiVersionMessage,
 	formatKindCaseMismatchMessage
 } from '$lib/manifest/lookup';
 import { getLatestVersion } from '$lib/versions';
@@ -15,7 +18,7 @@ import {
 import { formatValueConstraintError } from './formatSchemaError';
 import { formatVersionLabel } from './formatErrors';
 import { formatLocationInfo, getFieldLocationInfo } from './parseDocuments';
-import type { EnrichedError, ManifestEntry, ParsedDocument } from './types';
+import type { EnrichedError, ManifestEntry, ParsedDocument, SuggestedFix } from './types';
 import type { SchemaSections } from './schemaCache';
 
 type ValidateDocContext = {
@@ -83,6 +86,11 @@ function enrichRequiredFieldErrors(
 	return enriched;
 }
 
+function lineFromLocationInfo(locationInfo: string): number | undefined {
+	const match = locationInfo.match(/Line\s+(\d+)/i);
+	return match ? Number(match[1]) : undefined;
+}
+
 function enrichError(
 	err: ErrorObject,
 	ctx: {
@@ -91,13 +99,18 @@ function enrichError(
 		locationInfo: string;
 		resourceLink?: { name: string; version: string };
 		line?: number;
+		suggestedFix?: SuggestedFix;
 	}
 ): EnrichedError {
+	const line = ctx.line ?? lineFromLocationInfo(ctx.locationInfo);
 	return {
 		...err,
 		docIndex: ctx.docIndex + 1,
 		resourceLink: ctx.resourceLink,
-		line: ctx.line
+		line,
+		suggestedFix: ctx.suggestedFix
+			? { ...ctx.suggestedFix, line: ctx.suggestedFix.line ?? line }
+			: undefined
 	};
 }
 
@@ -230,41 +243,78 @@ export function validateDocument(ctx: ValidateDocContext): {
 
 	if (parsedYaml.kind && group) {
 		const kindStr = String(parsedYaml.kind);
+		const apiVersionStr = String(parsedYaml.apiVersion);
 		const resourceEntry = findManifestEntry(manifest, kindStr, group);
 		if (!resourceEntry) {
-			const caseMismatch = findManifestEntryCaseMismatch(manifest, kindStr, group);
+			const kindCaseMismatch =
+				findManifestEntryCaseMismatch(manifest, kindStr, group) ??
+				findManifestEntryKindCaseMismatchInsensitive(manifest, kindStr, group);
+			const groupCaseMismatch = findManifestEntryGroupCaseMismatch(manifest, kindStr, group);
 			const groupEntries = findManifestEntriesByGroup(manifest, group);
 			const kindEntries = findManifestEntriesByKind(manifest, kindStr);
 			let crdMessage: string;
 			let instancePath = '/kind';
+			let suggestedFix: SuggestedFix | undefined;
+			let fieldLocationInfo = locationInfo;
 
-			if (caseMismatch) {
-				crdMessage = formatKindCaseMismatchMessage(caseMismatch.kind, kindStr);
+			if (kindCaseMismatch?.kind) {
+				crdMessage = formatKindCaseMismatchMessage(kindCaseMismatch.kind, kindStr);
+				instancePath = '/kind';
+				fieldLocationInfo = getFieldLoc('/kind');
+				suggestedFix = { field: 'kind', value: kindCaseMismatch.kind };
+			} else if (groupCaseMismatch?.group) {
+				const suggestedApiVersion = `${groupCaseMismatch.group}/${version}`;
+				crdMessage = formatInvalidApiVersionMessage(
+					apiVersionStr,
+					suggestedApiVersion,
+					kindStr
+				);
+				instancePath = '/apiVersion';
+				fieldLocationInfo = getFieldLoc('/apiVersion');
+				suggestedFix = { field: 'apiVersion', value: suggestedApiVersion };
 			} else if (groupEntries.length === 1) {
-				crdMessage = `kind '${kindStr}' is not supported for apiVersion '${parsedYaml.apiVersion}'. Expected kind '${groupEntries[0].kind}'`;
+				crdMessage = `kind '${kindStr}' is not supported for apiVersion '${apiVersionStr}'. Expected kind '${groupEntries[0].kind}'`;
+				instancePath = '/kind';
+				fieldLocationInfo = getFieldLoc('/kind');
 			} else if (kindEntries.length === 1 && kindEntries[0].group !== group) {
-				crdMessage = formatCrdNotFoundMessage(String(parsedYaml.apiVersion), kindStr);
-				const latest = getLatestVersion(kindEntries[0]);
-				if (latest) {
-					crdMessage += `. Did you mean apiVersion '${kindEntries[0].group}/${latest}'?`;
+				const entry = kindEntries[0];
+				const latest = getLatestVersion(entry);
+				const suggestedApiVersion =
+					entry.group && latest ? `${entry.group}/${latest}` : undefined;
+				if (suggestedApiVersion) {
+					crdMessage = formatInvalidApiVersionMessage(
+						apiVersionStr,
+						suggestedApiVersion,
+						kindStr
+					);
+					suggestedFix = { field: 'apiVersion', value: suggestedApiVersion };
+				} else {
+					crdMessage = formatCrdNotFoundMessage(apiVersionStr, kindStr);
 				}
 				instancePath = '/apiVersion';
+				fieldLocationInfo = getFieldLoc('/apiVersion');
 			} else {
-				crdMessage = formatCrdNotFoundMessage(String(parsedYaml.apiVersion), kindStr);
+				crdMessage = formatCrdNotFoundMessage(apiVersionStr, kindStr);
 				instancePath = groupEntries.length > 0 ? '/kind' : '/apiVersion';
+				fieldLocationInfo = getFieldLoc(instancePath);
 			}
 
 			errors.push(
 				enrichError(
 					{
-						message: `${prefix}${crdMessage}${locationInfo}`,
+						message: `${prefix}${crdMessage}${fieldLocationInfo}`,
 						instancePath,
 						schemaPath:
 							instancePath === '/kind' ? '#/properties/kind' : '#/properties/apiVersion',
 						keyword: 'enum',
 						params: {}
 					} as ErrorObject,
-					{ docIndex: doc.index, docPrefix: prefix, locationInfo }
+					{
+						docIndex: doc.index,
+						docPrefix: prefix,
+						locationInfo: fieldLocationInfo,
+						suggestedFix
+					}
 				)
 			);
 			valid = false;
