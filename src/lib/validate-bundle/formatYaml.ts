@@ -1,4 +1,5 @@
 import yaml from 'js-yaml';
+import { findManifestEntry } from '$lib/manifest/lookup';
 import { getLatestVersion } from '$lib/versions';
 import { resolveObjectSchema } from '$lib/schema/requiredFields';
 import { parseDocuments } from '$lib/yaml-validation/parseDocuments';
@@ -87,20 +88,6 @@ export type FormatYamlOptions = {
 export type FormatYamlResult =
 	| { ok: true; formatted: string; docCount: number; fixes: FixReport[] }
 	| { ok: false; message: string };
-
-function findResourceEntry(manifest: ManifestEntry[], kind: string, group: string) {
-	let entry = manifest.find((r) => r.kind === kind && (!r.group || r.group === group));
-	if (!entry) entry = manifest.find((r) => r.kind === kind);
-	if (!entry) {
-		entry = manifest.find((r) => {
-			const kindLower = kind?.toLowerCase();
-			const nameLower = r.name?.toLowerCase();
-			const resourceType = nameLower?.split('.')[0];
-			return resourceType === kindLower;
-		});
-	}
-	return entry;
-}
 
 function isObjectSchema(node: unknown): node is Record<string, unknown> {
 	return !!node && typeof node === 'object' && !Array.isArray(node);
@@ -308,7 +295,7 @@ function resolveSchemaForDoc(
 	if (parts.length !== 2) return null;
 
 	const [group] = parts;
-	const entry = findResourceEntry(manifest, kind, group);
+	const entry = findManifestEntry(manifest, kind, group);
 	if (!entry) return null;
 
 	const latestVersion = getLatestVersion(entry);
@@ -335,7 +322,7 @@ export async function fixYamlDocuments(
 		const parts = apiVersion.split('/');
 		if (parts.length !== 2) continue;
 		const [group] = parts;
-		const entry = findResourceEntry(manifest, kind, group);
+		const entry = findManifestEntry(manifest, kind, group);
 		if (!entry) continue;
 		const latestVersion = getLatestVersion(entry);
 		if (latestVersion) {
