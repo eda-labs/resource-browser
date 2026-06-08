@@ -459,23 +459,49 @@ spec:
 
 describe('formatFixSummary', () => {
 	it('summarizes fix counts by category', () => {
-		const summary = formatFixSummary([
-			{ kind: 'enumCase', path: 'spec.os', from: 'SRL', to: 'srl', docIndex: 1 },
-			{ kind: 'enumCase', path: 'spec.type', from: 'EVPN', to: 'evpn', docIndex: 1 },
-			{ kind: 'stringCoercion', path: 'spec.port', from: 65000, to: '65000', docIndex: 2 }
-		]);
-		expect(summary).toBe(', fixed 3 issues (2 enum case, 1 string coercion)');
+		const summary = formatFixSummary(
+			[
+				{ kind: 'enumCase', path: 'spec.os', from: 'SRL', to: 'srl', docIndex: 1 },
+				{ kind: 'enumCase', path: 'spec.type', from: 'EVPN', to: 'evpn', docIndex: 1 },
+				{ kind: 'stringCoercion', path: 'spec.port', from: 65000, to: '65000', docIndex: 2 }
+			],
+			2
+		);
+		expect(summary.layoutOnly).toBe(false);
+		expect(summary.headline).toBe('Fixed 3 issues in 2 documents');
+		expect(summary.items).toHaveLength(2);
+		expect(summary.items[0]).toMatchObject({ kind: 'enumCase', count: 2, label: 'Fixed 2 enum cases' });
+		expect(summary.items[1]).toMatchObject({
+			kind: 'stringCoercion',
+			count: 1,
+			label: "Coerced string: 65000 → 65000"
+		});
 	});
 
 	it('reports DNS names and booleans in user-friendly labels', () => {
-		const summary = formatFixSummary([
-			{ kind: 'dnsName', path: 'metadata.name', from: 'a_b', to: 'a-b', docIndex: 1 },
-			{ kind: 'dnsName', path: 'metadata.namespace', from: 'X_Y', to: 'x-y', docIndex: 1 },
-			{ kind: 'booleanCoercion', path: 'spec.enabled', from: 'False', to: false, docIndex: 1 },
-			{ kind: 'enumCase', path: 'spec.os', from: 'SRL', to: 'srl', docIndex: 1 },
-			{ kind: 'enumCase', path: 'spec.type', from: 'EVPN', to: 'evpn', docIndex: 1 },
-			{ kind: 'enumCase', path: 'spec.mode', from: 'L2', to: 'l2', docIndex: 1 }
+		const summary = formatFixSummary(
+			[
+				{ kind: 'dnsName', path: 'metadata.name', from: 'a_b', to: 'a-b', docIndex: 1 },
+				{ kind: 'dnsName', path: 'metadata.namespace', from: 'X_Y', to: 'x-y', docIndex: 1 },
+				{ kind: 'booleanCoercion', path: 'spec.enabled', from: 'False', to: false, docIndex: 1 },
+				{ kind: 'enumCase', path: 'spec.os', from: 'SRL', to: 'srl', docIndex: 1 },
+				{ kind: 'enumCase', path: 'spec.type', from: 'EVPN', to: 'evpn', docIndex: 1 },
+				{ kind: 'enumCase', path: 'spec.mode', from: 'L2', to: 'l2', docIndex: 1 }
+			],
+			1
+		);
+		expect(summary.headline).toBe('Fixed 6 issues in 1 document');
+		expect(summary.items.map((i) => i.label)).toEqual([
+			'Fixed 2 DNS names',
+			'Fixed 3 enum cases',
+			'Fixed boolean: False → false'
 		]);
-		expect(summary).toBe(', fixed 6 issues (2 DNS names, 1 boolean, 3 enum case)');
+	});
+
+	it('reports layout-only formatting when no fixes were applied', () => {
+		const summary = formatFixSummary([], 3);
+		expect(summary.layoutOnly).toBe(true);
+		expect(summary.headline).toBe('Formatted 3 documents (layout only)');
+		expect(summary.items).toHaveLength(0);
 	});
 });

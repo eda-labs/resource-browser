@@ -14,6 +14,7 @@
 		validateBundle,
 		formatYamlBundle,
 		formatFixSummary,
+		type FixSummary,
 		applySuggestedFix,
 		buildShareUrl,
 		decodeBundleFromUrl,
@@ -57,6 +58,8 @@
 	let modalVersion: string | null = null;
 	let toast: string | null = null;
 	let toastTimer: ReturnType<typeof setTimeout> | null = null;
+	let fixSummary: FixSummary | null = null;
+	let fixSummaryTimer: ReturnType<typeof setTimeout> | null = null;
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 	let validationGeneration = 0;
 	let autoValidate = true;
@@ -88,7 +91,10 @@
 	$: displayIssues = result?.issues ?? [];
 	$: hasParseError = result?.issues.some((i) => i.id.startsWith('parse-')) ?? false;
 	$: formatDisabled = !yamlInput.trim();
-	$: formatLabel = hasParseError ? 'Fix indentation' : 'Format manifests';
+	$: formatLabel = hasParseError ? 'Fix syntax' : 'Fix manifest';
+	$: formatTooltip = hasParseError
+		? 'Cannot auto-fix until YAML syntax errors are resolved'
+		: 'Re-indent, fix DNS names, apiVersion/kind casing, enum and boolean values, and upgrade apiVersion';
 
 	$: filteredIssues = displayIssues.filter((issue) => {
 		if (issueFilter === 'errors' && issue.severity !== 'error') return false;
@@ -165,6 +171,14 @@
 		}, 3000);
 	}
 
+	function showFixSummary(summary: FixSummary) {
+		fixSummary = summary;
+		if (fixSummaryTimer) clearTimeout(fixSummaryTimer);
+		fixSummaryTimer = setTimeout(() => {
+			fixSummary = null;
+		}, 5000);
+	}
+
 	async function handleShareBundle() {
 		if (!yamlInput.trim()) {
 			showToast('Nothing to share — paste YAML first.');
@@ -215,9 +229,7 @@
 			return;
 		}
 		setYamlInput(formatResult.formatted);
-		showToast(
-			`Formatted ${formatResult.docCount} document${formatResult.docCount !== 1 ? 's' : ''}${formatFixSummary(formatResult.fixes)}`
-		);
+		showFixSummary(formatFixSummary(formatResult.fixes, formatResult.docCount));
 		void runValidation();
 	}
 
@@ -450,6 +462,7 @@
 	onDestroy(() => {
 		if (debounceTimer) clearTimeout(debounceTimer);
 		if (toastTimer) clearTimeout(toastTimer);
+		if (fixSummaryTimer) clearTimeout(fixSummaryTimer);
 	});
 
 	$: if (browser) {
@@ -524,7 +537,7 @@
 				type="button"
 				class="validate-yaml-btn"
 				disabled={formatDisabled}
-				title="Re-indent YAML to standard CRD layout (2 spaces)"
+				title={formatTooltip}
 				on:click={handleFormatYaml}
 			>
 				{formatLabel}
@@ -556,6 +569,19 @@
 				<span>Auto-validate</span>
 			</label>
 		</div>
+
+		{#if fixSummary}
+			<div class="validate-yaml-fix-banner" role="status" aria-live="polite">
+				<p class="validate-yaml-fix-banner__headline">{fixSummary.headline}</p>
+				{#if fixSummary.items.length > 0}
+					<ul class="validate-yaml-fix-banner__list">
+						{#each fixSummary.items as item (item.kind)}
+							<li>{item.label}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+		{/if}
 
 		{#if result}
 			<div class="validate-yaml-stats" role="status" aria-live="polite">

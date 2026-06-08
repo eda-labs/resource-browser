@@ -21,6 +21,8 @@ export {
 	formatFixSummary,
 	type FixKind,
 	type FixReport,
+	type FixSummary,
+	type FixSummaryItem,
 	type FormatYamlOptions
 } from './formatYaml';
 export { applySuggestedFix } from './applyIssueFix';

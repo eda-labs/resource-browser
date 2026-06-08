@@ -429,51 +429,99 @@ export async function fixYamlDocuments(
 	return allFixes;
 }
 
-export function formatFixSummary(fixes: FixReport[]): string {
-	if (fixes.length === 0) return '';
+export type FixSummaryItem = {
+	kind: FixKind;
+	label: string;
+	count: number;
+	examples?: string[];
+};
 
-	const counts: Record<FixKind, number> = {
-		enumCase: 0,
-		stringCoercion: 0,
-		booleanCoercion: 0,
-		dnsName: 0,
-		apiVersionCase: 0,
-		kindCase: 0,
-		apiVersionUpgrade: 0
-	};
-	for (const fix of fixes) counts[fix.kind] += 1;
+export type FixSummary = {
+	docCount: number;
+	layoutOnly: boolean;
+	headline: string;
+	items: FixSummaryItem[];
+};
 
-	const parts: string[] = [];
-	if (counts.dnsName > 0) {
-		const label = counts.dnsName === 1 ? 'DNS name' : 'DNS names';
-		parts.push(`${counts.dnsName} ${label}`);
+const FIX_KIND_ORDER: FixKind[] = [
+	'apiVersionUpgrade',
+	'kindCase',
+	'apiVersionCase',
+	'dnsName',
+	'enumCase',
+	'booleanCoercion',
+	'stringCoercion'
+];
+
+function fixExample(fix: FixReport): string {
+	return `${String(fix.from)} → ${String(fix.to)}`;
+}
+
+function buildFixItemLabel(kind: FixKind, count: number, examples: string[]): string {
+	switch (kind) {
+		case 'apiVersionUpgrade':
+			return count === 1
+				? `Upgraded apiVersion: ${examples[0]}`
+				: `Upgraded apiVersion on ${count} documents`;
+		case 'kindCase':
+			return count === 1 ? `Fixed kind case: ${examples[0]}` : `Fixed ${count} kind cases`;
+		case 'apiVersionCase':
+			return count === 1
+				? `Fixed apiVersion case: ${examples[0]}`
+				: `Fixed ${count} apiVersion cases`;
+		case 'dnsName':
+			return count === 1 ? `Fixed DNS name: ${examples[0]}` : `Fixed ${count} DNS names`;
+		case 'enumCase':
+			return count === 1 ? `Fixed enum case: ${examples[0]}` : `Fixed ${count} enum cases`;
+		case 'booleanCoercion':
+			return count === 1 ? `Fixed boolean: ${examples[0]}` : `Fixed ${count} booleans`;
+		case 'stringCoercion':
+			return count === 1
+				? `Coerced string: ${examples[0]}`
+				: `Coerced ${count} values to strings`;
 	}
-	if (counts.booleanCoercion > 0) {
-		const label = counts.booleanCoercion === 1 ? 'boolean' : 'booleans';
-		parts.push(`${counts.booleanCoercion} ${label}`);
+}
+
+/** Build a structured summary of auto-fixes applied during format. */
+export function formatFixSummary(fixes: FixReport[], docCount: number): FixSummary {
+	const docWord = docCount === 1 ? 'document' : 'documents';
+
+	if (fixes.length === 0) {
+		return {
+			docCount,
+			layoutOnly: true,
+			headline: `Formatted ${docCount} ${docWord} (layout only)`,
+			items: []
+		};
 	}
-	if (counts.apiVersionCase > 0) {
-		const label = counts.apiVersionCase === 1 ? 'apiVersion case' : 'apiVersion cases';
-		parts.push(`${counts.apiVersionCase} ${label}`);
+
+	const grouped = new Map<FixKind, { count: number; examples: string[] }>();
+	for (const fix of fixes) {
+		const entry = grouped.get(fix.kind) ?? { count: 0, examples: [] };
+		entry.count += 1;
+		if (entry.examples.length < 3) entry.examples.push(fixExample(fix));
+		grouped.set(fix.kind, entry);
 	}
-	if (counts.kindCase > 0) {
-		const label = counts.kindCase === 1 ? 'kind case' : 'kind cases';
-		parts.push(`${counts.kindCase} ${label}`);
-	}
-	if (counts.apiVersionUpgrade > 0) {
-		const label = counts.apiVersionUpgrade === 1 ? 'apiVersion upgrade' : 'apiVersion upgrades';
-		parts.push(`${counts.apiVersionUpgrade} ${label}`);
-	}
-	if (counts.enumCase > 0) {
-		parts.push(`${counts.enumCase} enum case`);
-	}
-	if (counts.stringCoercion > 0) {
-		parts.push(`${counts.stringCoercion} string coercion`);
+
+	const items: FixSummaryItem[] = [];
+	for (const kind of FIX_KIND_ORDER) {
+		const entry = grouped.get(kind);
+		if (!entry) continue;
+		items.push({
+			kind,
+			count: entry.count,
+			examples: entry.examples,
+			label: buildFixItemLabel(kind, entry.count, entry.examples)
+		});
 	}
 
 	const issueWord = fixes.length === 1 ? 'issue' : 'issues';
-	const detail = parts.length > 0 ? ` (${parts.join(', ')})` : '';
-	return `, fixed ${fixes.length} ${issueWord}${detail}`;
+	return {
+		docCount,
+		layoutOnly: false,
+		headline: `Fixed ${fixes.length} ${issueWord} in ${docCount} ${docWord}`,
+		items
+	};
 }
 
 function dumpFormattedDocs(docs: Record<string, unknown>[]): string {
