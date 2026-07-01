@@ -5,26 +5,33 @@
 	import Footer from '$lib/components/Footer.svelte';
 
 	import { newestApiVersion } from '$lib/apiVersion';
-	import type { CrdVersionsMap } from '$lib/structure';
+	import type { CrdResource, CrdVersionsMap } from '$lib/structure';
 
 	import yaml from 'js-yaml';
 	import res from '$lib/resources.yaml?raw';
 	const resources = yaml.load(res) as CrdVersionsMap;
-	const crdMeta = Object.values(resources).flat();
+	const crdMeta: CrdResource[] = Object.values(resources).flat();
 
-	const crdMetaStore = writable(crdMeta);
 	const resourceSearch = writable('');
 
-	const resourceNameStore = derived(crdMetaStore, ($crdMetaStore) =>
-		$crdMetaStore.map((x) => x.name)
-	);
-	const resourceSearchFilter = derived(
-		[resourceSearch, resourceNameStore],
-		([$resourceSearch, $resourceNameStore]) =>
-			$resourceNameStore.filter((x) =>
-				$resourceSearch.split(/\s+/).every((y) => x.includes(y.toLowerCase()))
+	const resourceSearchFilter = derived(resourceSearch, ($resourceSearch) => {
+		const terms = $resourceSearch
+			.trim()
+			.split(/\s+/)
+			.filter(Boolean)
+			.map((term) => term.toLowerCase());
+		if (terms.length === 0) return crdMeta.map((x) => x.name);
+
+		return crdMeta
+			.filter((x) =>
+				terms.every(
+					(term) =>
+						x.kind.toLowerCase().includes(term) ||
+						x.group.toLowerCase().includes(term)
+				)
 			)
-	);
+			.map((x) => x.name);
+	});
 
 	let selectedIndex = crdMeta.length > 0 ? 0 : -1;
 	let previousSearch = '';
