@@ -23,6 +23,8 @@ schema:
       spec:
         description: RoutedInterfaceStateSpec defines the desired state of RoutedInterfaceState
         properties:
+          bfdEnabled:
+            type: boolean
           ipv4Addresses:
             description: List of IPv4 addresses
             items:
@@ -79,6 +81,7 @@ schema:
                   type: string
                 subinterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface

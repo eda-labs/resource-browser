@@ -60,7 +60,7 @@ schema:
             description: |-
               Sets the priority of this NodeConfig, with lower priorities being overwritten by higher priorities.
               Negative priorities may be used to indicate a lower-than-default priority.
-            format: int32
+            format: int64
             maximum: 100
             minimum: -100
             type: integer

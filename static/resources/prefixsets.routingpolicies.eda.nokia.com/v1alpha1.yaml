@@ -34,6 +34,7 @@ schema:
               properties:
                 endRange:
                   description: The end range when using a range to match prefixes.
+                  format: int64
                   maximum: 128
                   minimum: 0
                   type: integer
@@ -45,6 +46,7 @@ schema:
                   type: string
                 startRange:
                   description: If specifying a range, this is the start of the range.
+                  format: int64
                   maximum: 128
                   minimum: 0
                   type: integer

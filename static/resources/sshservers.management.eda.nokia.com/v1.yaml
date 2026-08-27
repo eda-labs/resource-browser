@@ -31,6 +31,7 @@ schema:
             type: boolean
           port:
             description: Port for the SSH server to listen on.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
@@ -49,6 +50,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         required:
           - enabled
         type: object
@@ -74,6 +76,8 @@ schema:
             type: array
           health:
             description: Health score of the SSH server.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Reason for the health score.

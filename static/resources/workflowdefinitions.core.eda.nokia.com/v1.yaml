@@ -31,7 +31,7 @@ schema:
         description: WorkflowDefinitionSpec defines the desired state of FlowDefinition
         properties:
           flowDefinitionResource:
-            description: the resource type to be used for this flow, can only be set if Schema is not set
+            description: The resource type to be used for this flow, can only be set if flowDefinitionSchema is not set
             properties:
               group:
                 type: string
@@ -44,7 +44,7 @@ schema:
               - version
             type: object
           flowDefinitionSchema:
-            description: the schema for the flow, can only be set if Resource is not set
+            description: The schema for the flow, can only be set if flowDefinitionResource is not set
             properties:
               jsonSchemaSpec:
                 description: A string containing the JSON schema the workflow accepts as input.

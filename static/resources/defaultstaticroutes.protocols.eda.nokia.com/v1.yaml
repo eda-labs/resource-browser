@@ -68,9 +68,11 @@ schema:
                           type: string
                         localDiscriminator:
                           description: Defines the local discriminator.
+                          format: int64
                           type: integer
                         remoteDiscriminator:
                           description: Defines the remote discriminator.
+                          format: int64
                           type: integer
                       type: object
                     ipPrefix:
@@ -91,6 +93,7 @@ schema:
             type: object
           preference:
             description: Defines the route preference.
+            format: int64
             type: integer
           prefixes:
             description: List of destination prefixes and mask to use for the static routes.
@@ -107,6 +110,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the static routes.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

@@ -28,6 +28,7 @@ schema:
             type: string
           evi:
             description: EVI in use for this BridgeDomain
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
@@ -41,9 +42,11 @@ schema:
             type: string
           tunnelIndex:
             description: Vxlan tunnel index in use
+            format: int64
             type: integer
           vni:
             description: VNI in use for this BridgeDomain
+            format: int64
             maximum: 16777215
             minimum: 1
             type: integer

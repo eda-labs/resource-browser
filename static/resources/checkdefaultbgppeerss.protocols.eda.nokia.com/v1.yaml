@@ -41,6 +41,7 @@ schema:
               type: string
             type: array
           waitFor:
+            format: int64
             type: integer
         type: object
       status:

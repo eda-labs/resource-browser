@@ -26,6 +26,10 @@ schema:
           description:
             description: A brief description of the resource
             type: string
+          enabled:
+            default: true
+            description: Whether the tool definition is enabled
+            type: boolean
           inputSchema:
             description: Input schema for the tool (JSONSchema)
             type: string
@@ -83,6 +87,16 @@ schema:
                       HTTP endpoint URL.
                       Includes scheme, host, port and path.
                     type: string
+                  urlParamsRetainedInBody:
+                    description: |-
+                      URL template parameters that should also be retained in the request body.
+                      By default, any parameter referenced by the URL template (e.g. /{{namespace}})
+                      is removed from the forwarded body. List parameter names here to keep them
+                      in the body as well. This is useful for APIs that expect the same value in both
+                      the URL path and the body.
+                    items:
+                      type: string
+                    type: array
                 type: object
               query:
                 description: Query provider configuration

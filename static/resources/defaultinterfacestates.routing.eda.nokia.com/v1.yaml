@@ -78,8 +78,9 @@ schema:
           operatingSystem:
             description: Operating System of the Node
             type: string
-          subInterfaceIndex:
+          subinterfaceIndex:
             description: Index of the subinterface
+            format: int64
             type: integer
           unnumbered:
             description: Indicates if the interface is unnumbered

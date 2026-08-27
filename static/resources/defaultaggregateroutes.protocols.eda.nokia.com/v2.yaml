@@ -25,7 +25,9 @@ schema:
         properties:
           aggregatorASN:
             description: Specifies the aggregator's ASN.
-            format: int32
+            format: int64
+            maximum: 4294967295
+            minimum: 1
             type: integer
           aggregatorIP:
             description: Specifies the aggregator's IP address.
@@ -41,6 +43,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           summaryOnly:
             description: When set to true the router blocks the advertisement of all contributing routes of this aggregate route in dynamic protocols such as BGP.
             type: boolean

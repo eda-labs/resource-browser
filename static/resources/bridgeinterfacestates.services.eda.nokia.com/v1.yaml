@@ -53,6 +53,7 @@ schema:
                   type: string
                 subInterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface
@@ -87,6 +88,7 @@ schema:
                   type: string
                 subInterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface

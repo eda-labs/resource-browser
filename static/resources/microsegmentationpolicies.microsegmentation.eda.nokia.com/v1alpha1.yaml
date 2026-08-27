@@ -60,6 +60,7 @@ schema:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     destinationPortName:
                       description: Destination port to match by name.
                       enum:
@@ -233,6 +234,7 @@ schema:
                       type: string
                     destinationPortNumber:
                       description: Destination port to match by numerical value.
+                      format: int64
                       maximum: 65535
                       minimum: 0
                       type: integer
@@ -285,6 +287,7 @@ schema:
                       type: string
                     protocolNumber:
                       description: Match a specific IP protocol number (specified in the type field of the IP header).
+                      format: int64
                       maximum: 255
                       minimum: 0
                       type: integer
@@ -293,6 +296,7 @@ schema:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     sourcePortName:
                       description: Source port to match by name.
                       enum:
@@ -466,6 +470,7 @@ schema:
                       type: string
                     sourcePortNumber:
                       description: Source port to match by numerical value.
+                      format: int64
                       maximum: 65535
                       minimum: 0
                       type: integer
@@ -497,31 +502,37 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               bridgeDomains:
                 description: Bridge Domains to which this policy applies.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               routerSelectors:
                 description: Routers (label selectors) to which this policy applies.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               routers:
                 description: Routers to which this policy applies.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               virtualNetworkSelectors:
                 description: Virtual Networks (label selectors) to which this policy applies.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               virtualNetworks:
                 description: Virtual Networks to which this policy applies.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             type: object
         required:
           - entries

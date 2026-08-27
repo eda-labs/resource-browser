@@ -41,6 +41,10 @@ schema:
                 - satellitePort
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - hostPort
+              - satellitePort
+            x-kubernetes-list-type: map
           id:
             description: ID of the satellite node.
             type: string
@@ -80,6 +84,7 @@ schema:
                         type: string
                       minItems: 1
                       type: array
+                      x-kubernetes-list-type: set
                     primary:
                       description: The primary uplink interface for downlinks.
                       type: string

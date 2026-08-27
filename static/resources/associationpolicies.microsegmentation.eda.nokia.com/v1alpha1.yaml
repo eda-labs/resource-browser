@@ -35,51 +35,61 @@ schema:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     bridgeInterfaces:
                       description: The Bridge Interfaces on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     irbInterfaceSelectors:
                       description: Label selector used to select IRB Interfaces on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     irbInterfaces:
                       description: The IRB Interfaces on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     routedInterfaceSelectors:
                       description: Label selector to select Routed Interfaces on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     routedInterfaces:
                       description: The Routed Interfaces on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     staticRouteSelectors:
                       description: Label selector to select Static Routes on which to assign the Group Tag. Static routes only get enforced in L3 services.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     staticRoutes:
                       description: "The StaticRoutes on which to assign the Group Tag.\tStatic routes only get enforced in L3 services."
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     vlanSelectors:
                       description: Label selector to select VLANs on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     vlans:
                       description: The VLANs on which to assign the Group Tag.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                   type: object
                 groupTagNames:
                   description: The Group Tag to be associated with the below interfaces or static routes.
@@ -87,6 +97,7 @@ schema:
                     type: string
                   maxItems: 1
                   type: array
+                  x-kubernetes-list-type: set
               required:
                 - associationTargets
                 - groupTagNames

@@ -27,6 +27,13 @@ schema:
       spec:
         description: ArtifactSpec defines the desired state of Artifact
         properties:
+          checksumEnabled:
+            default: false
+            description: |-
+              When true, artifact server writes digest files next to the artifact using extensions
+              .md5, .sha1, .sha256, and .sha512, each containing a single lowercase hexadecimal hash. Those
+              files are published with the artifact for download. When false, any such digest files are removed.
+            type: boolean
           filePath:
             description: |-
               Provide the file path, including an optional file name
@@ -90,6 +97,15 @@ schema:
               - gitHash
               - repoUrl
             type: object
+          maxRetries:
+            description: |-
+              MaxRetries is the maximum number of download retries before the artifact is
+              marked Failed. Omit to use the default (5). Set to 0 to fail immediately on
+              the first transient error.
+            format: int32
+            maximum: 20
+            minimum: 0
+            type: integer
           oci:
             description: The container and registry to pull down and host in the artifact server registry
             properties:
@@ -148,12 +164,18 @@ schema:
             description: If provided the configmap contains the trust bundle for https upstream
             type: string
         required:
+          - checksumEnabled
           - filePath
           - repo
         type: object
       status:
         description: ArtifactStatus defines the observed state of Artifact
         properties:
+          checkSums:
+            additionalProperties:
+              type: string
+            description: CheckSums maps digest algorithm name (MD5, SHA1, SHA256, SHA512) to a lowercase hex-encoded digest.
+            type: object
           downloadStatus:
             enum:
               - InProgress
@@ -172,6 +194,15 @@ schema:
           observedGeneration:
             format: int64
             type: integer
+          proxiedFromProdGeneration:
+            description: ProxiedFromProdGeneration tracks the production Artifact generation that was last accepted for proxying.
+            format: int64
+            type: integer
+          proxyStatus:
+            enum:
+              - Proxied
+              - ProxiedUnreachable
+            type: string
           statusReason:
             description: Human-readable message indicating details about the downloadStatus's Error|Failed state
             type: string

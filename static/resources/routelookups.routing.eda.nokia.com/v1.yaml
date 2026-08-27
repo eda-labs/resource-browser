@@ -43,11 +43,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: Nodes is a list of node names to execute lookups on.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           resolve:
             default: true
             description: Resolve indicates whether indirect next hops should be resolved.
@@ -62,6 +64,7 @@ schema:
           found:
             type: boolean
           nodesWithRoute:
+            format: int64
             type: integer
           results:
             items:
@@ -126,6 +129,7 @@ schema:
               type: object
             type: array
           totalNodes:
+            format: int64
             type: integer
         required:
           - found

@@ -72,7 +72,7 @@ schema:
                   type: string
                 subnetLength:
                   description: The size of the subnets to be allocated from within the parent subnet, e.g. 29 (which could allocate 10.1.0.8/29, for example).
-                  format: int32
+                  format: int64
                   maximum: 4294967295
                   minimum: 0
                   type: integer

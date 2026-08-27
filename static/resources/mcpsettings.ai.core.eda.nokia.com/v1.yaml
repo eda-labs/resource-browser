@@ -55,6 +55,9 @@ schema:
             default: false
             description: Enable EDA MCP Server
             type: boolean
+          instructions:
+            description: MCP Server Instructions
+            type: string
         type: object
       status:
         description: MCPSettingsStatus defines the observed state of MCPSettings

@@ -29,6 +29,11 @@ schema:
           node:
             description: Reference to a Node on which to deploy the LabelBlock.
             type: string
+          type:
+            description: Deployment type.
+            enum:
+              - SRGB
+            type: string
         required:
           - labelBlock
           - node

@@ -27,15 +27,12 @@ schema:
             items:
               type: string
             type: array
-          nodes:
+          nodeGroups:
             items:
-              properties:
-                nodeName:
-                  type: string
-                operatingSystem:
-                  type: string
-              type: object
+              type: string
             type: array
+          routerKind:
+            type: string
           serverType:
             type: string
         type: object

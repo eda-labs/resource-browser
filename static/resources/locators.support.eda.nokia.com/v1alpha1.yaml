@@ -30,6 +30,7 @@ schema:
           durationSeconds:
             default: 300
             description: Duration in seconds to enable the locator for.
+            format: int64
             maximum: 3600
             minimum: 10
             type: integer

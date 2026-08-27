@@ -84,6 +84,7 @@ schema:
             properties:
               privilegeLevel:
                 description: Set the privilege level for this group.
+                format: int64
                 maximum: 15
                 minimum: 0
                 type: integer

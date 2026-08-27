@@ -28,11 +28,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: List of TopoNodes for which certificate rotation is to be performed. When left empty, all TopoNodes are selected.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           skipCertificateValidation:
             description: SkipCertificateValidation indicates whether to skip certificate validation after rotation.
             type: boolean

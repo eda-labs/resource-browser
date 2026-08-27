@@ -1,0 +1,117 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: DNSCheck is the Schema for the dnschecks API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: DNSCheckSpec defines the desired state of DNSCheck
+        properties:
+          dnsNames:
+            description: DNSNames is the list of DNS entries to check.
+            items:
+              description: DNSCheckEntry defines a single DNS name to check and its optional expected results.
+              properties:
+                expectedAddresses:
+                  description: |-
+                    ExpectedAddresses is an optional list of addresses that the DNS name is expected to resolve to.
+                    When set, the check will report a failure if the resolved addresses do not match.
+                  items:
+                    type: string
+                  type: array
+                name:
+                  description: Name is the DNS name to resolve.
+                  minLength: 1
+                  pattern: ^.*\S.*$
+                  type: string
+                recordType:
+                  default: A
+                  description: RecordType is the DNS record type to query.
+                  enum:
+                    - A
+                    - AAAA
+                    - CNAME
+                  type: string
+              required:
+                - name
+              type: object
+            minItems: 1
+            type: array
+          interval:
+            default: 5m
+            description: Interval specifies how often the DNS check runs.
+            type: string
+          nameservers:
+            description: |-
+              Nameservers is an optional list of DNS server addresses to query. Each entry must be a
+              strict host:port (use [ipv6]:port for IPv6 literals). There is no implicit :53 default.
+              If not specified, the Pod resolver is used.
+            items:
+              type: string
+            type: array
+          timeout:
+            default: 5s
+            description: Timeout specifies the timeout for each DNS query.
+            type: string
+        required:
+          - dnsNames
+        type: object
+      status:
+        description: DNSCheckStatus defines the observed state of DNSCheck
+        properties:
+          entryStatuses:
+            description: EntryStatuses contains the DNS check results for each entry
+            items:
+              description: DNSCheckEntryStatus defines the result of a single DNS name check.
+              properties:
+                error:
+                  description: Error provides any error message that occurred during the check.
+                  type: string
+                name:
+                  description: Name is the DNS name that was checked.
+                  type: string
+                recordType:
+                  description: RecordType is the DNS record type that was queried.
+                  type: string
+                resolvedAddresses:
+                  description: |-
+                    ResolvedAddresses contains the result strings returned for the query. For A/AAAA,
+                    these are the final addresses after normal CNAME chaining. For CNAME, these are the
+                    direct CNAME rdata targets only.
+                  items:
+                    type: string
+                  type: array
+                valid:
+                  description: Valid indicates whether the DNS check passed.
+                  type: boolean
+              required:
+                - name
+                - valid
+              type: object
+            type: array
+          lastChecked:
+            description: LastChecked indicates the last time the DNS check was performed.
+            format: date-time
+            type: string
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

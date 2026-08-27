@@ -42,12 +42,14 @@ schema:
               desiredMinTransmitIntMs:
                 default: 1000
                 description: The minimum interval in milliseconds between transmission of BFD control packets.
+                format: int64
                 maximum: 100000
                 minimum: 10
                 type: integer
               detectionMultiplier:
                 default: 3
                 description: The number of packets that must be missed to declare this session as down.
+                format: int64
                 maximum: 20
                 minimum: 3
                 type: integer
@@ -58,17 +60,20 @@ schema:
               requiredMinEchoReceiveIntMs:
                 default: 0
                 description: The minimum interval between echo packets the local node can receive.
+                format: int64
                 maximum: 100000
                 minimum: 0
                 type: integer
               requiredMinReceiveIntMs:
                 default: 1000
                 description: The minimum interval in milliseconds between received BFD control packets that this system should support.
+                format: int64
                 maximum: 100000
                 minimum: 10
                 type: integer
               ttl:
                 description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                format: int64
                 maximum: 255
                 minimum: 2
                 type: integer
@@ -86,11 +91,13 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               qosPolicies:
                 description: List of QoS Egress policy references to use at egress.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             type: object
           hostRoutePopulate:
             description: Configures host route population based on ARP/ND entries.
@@ -143,11 +150,13 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               qosPolicies:
                 description: List of QoS Ingress policy references to use at ingress.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             type: object
           interface:
             description: Reference to an Interface to use for attachment.
@@ -155,6 +164,7 @@ schema:
           ipMTU:
             default: 1500
             description: IP MTU for the RoutedInterface.
+            format: int64
             maximum: 9486
             minimum: 1280
             type: integer
@@ -164,7 +174,7 @@ schema:
               arpTimeoutSeconds:
                 default: 14400
                 description: Duration of time that dynamic ARP entries remain in the ARP cache before they expire.
-                format: int32
+                format: int64
                 minimum: 0
                 type: integer
               directedBroadcast:
@@ -192,6 +202,9 @@ schema:
                 - ipPrefix
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - ipPrefix
+            x-kubernetes-list-type: map
           ipv6:
             description: IPv6 parameters that are not applicable to IPv4.
             properties:
@@ -210,7 +223,7 @@ schema:
                   currentHopLimit:
                     default: 64
                     description: The current hop limit to advertise in the router advertisement messages.
-                    format: int32
+                    format: int64
                     maximum: 255
                     minimum: 0
                     type: integer
@@ -220,7 +233,7 @@ schema:
                     type: boolean
                   ipMTU:
                     description: The IP MTU to advertise in the router advertisement messages.
-                    format: int32
+                    format: int64
                     maximum: 9486
                     minimum: 1280
                     type: integer
@@ -231,14 +244,14 @@ schema:
                   maxAdvertisementIntervalSeconds:
                     default: 600
                     description: Maximum time between router advertisements (in seconds).
-                    format: int32
+                    format: int64
                     maximum: 1800
                     minimum: 4
                     type: integer
                   minAdvertisementIntervalSeconds:
                     default: 200
                     description: Minimum time between router advertisements (in seconds).
-                    format: int32
+                    format: int64
                     maximum: 1350
                     minimum: 3
                     type: integer
@@ -262,8 +275,7 @@ schema:
                         preferredLifetimeSeconds:
                           default: 604800
                           description: The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.
-                          format: int32
-                          maximum: 4294967295
+                          format: int64
                           minimum: 0
                           type: integer
                         prefix:
@@ -272,32 +284,34 @@ schema:
                         validLifetimeSeconds:
                           default: 2592000
                           description: The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.
-                          format: int32
-                          maximum: 4294967295
+                          format: int64
                           minimum: 0
                           type: integer
                       required:
                         - prefix
                       type: object
                     type: array
+                    x-kubernetes-list-map-keys:
+                      - prefix
+                    x-kubernetes-list-type: map
                   reachableTimeMs:
                     default: 0
                     description: Time in milliseconds for Neighbor Unreachability Detection.
-                    format: int32
+                    format: int64
                     maximum: 3600000
                     minimum: 0
                     type: integer
                   retransmitTimeMs:
                     default: 0
                     description: Time in milliseconds between retransmitted NS messages.
-                    format: int32
+                    format: int64
                     maximum: 1800000
                     minimum: 0
                     type: integer
                   routerLifetimeSeconds:
                     default: 1800
                     description: Router lifetime in seconds for default gateway.
-                    format: int32
+                    format: int64
                     maximum: 9000
                     minimum: 0
                     type: integer
@@ -326,6 +340,9 @@ schema:
                 - ipPrefix
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - ipPrefix
+            x-kubernetes-list-type: map
           l3ProxyARPND:
             description: L3 Proxy ARP and ND configuration.
             properties:
@@ -358,6 +375,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the RoutedInterface.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -408,6 +427,7 @@ schema:
                   type: string
                 subinterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.

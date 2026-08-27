@@ -40,6 +40,7 @@ schema:
             type: boolean
           maxConcurrentStreams:
             description: Maximum number of concurrent streams for the gRPC server.
+            format: int64
             maximum: 2147483647
             minimum: 0
             type: integer
@@ -48,11 +49,13 @@ schema:
             type: boolean
           port:
             description: Port for the gRPC server to listen on.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
           rateLimit:
             description: Rate limit for the gRPC server.
+            format: int64
             maximum: 65535
             minimum: 0
             type: integer
@@ -86,6 +89,7 @@ schema:
             type: array
           sessionLimit:
             description: Maximum number of gRPC sessions.
+            format: int64
             maximum: 65535
             minimum: 0
             type: integer
@@ -120,6 +124,8 @@ schema:
             type: array
           health:
             description: Health score of the gRPC server.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Reason for the health score.

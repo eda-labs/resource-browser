@@ -28,11 +28,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: List of TopoNodes on which to configure the management VRF. When left empty, all TopoNodes are selected.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           staticRoutes:
             description: Optional list of static routes to add to the management network instance as part of the initial configuration.
             items:

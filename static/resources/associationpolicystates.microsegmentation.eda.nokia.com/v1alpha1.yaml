@@ -151,6 +151,7 @@ schema:
                         type: string
                       tag:
                         description: Tag is the GroupTagID assigned for this scope.
+                        format: int64
                         type: integer
                     required:
                       - scopeName

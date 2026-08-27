@@ -45,6 +45,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the OSPF area.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -54,9 +56,11 @@ schema:
             type: string
           numActiveInterfaces:
             description: The number of active interfaces in the OSPF area.
+            format: int64
             type: integer
           numNeighbors:
             description: The number of discovered neighbors in the OSPF area.
+            format: int64
             type: integer
         type: object
     type: object

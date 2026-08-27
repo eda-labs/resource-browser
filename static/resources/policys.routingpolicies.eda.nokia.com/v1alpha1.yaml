@@ -36,7 +36,7 @@ schema:
                 properties:
                   asPathPrepend:
                     description: AS number to prepend to the AS Path attributes.
-                    format: int32
+                    format: int64
                     maximum: 4294967295
                     minimum: 1
                     type: integer
@@ -46,7 +46,7 @@ schema:
                   asPathReplace:
                     description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                     items:
-                      format: int32
+                      format: int64
                       type: integer
                     type: array
                   communitySet:
@@ -73,7 +73,7 @@ schema:
                     type: object
                   localPreference:
                     description: Set a new LOCAL_PREF value for matching BGP routes.
-                    format: int32
+                    format: int64
                     maximum: 4294967295
                     minimum: 0
                     type: integer
@@ -82,6 +82,7 @@ schema:
                     properties:
                       numericalValue:
                         description: Fixed numerical value to set or add/subtract.
+                        format: int64
                         maximum: 4294967295
                         minimum: 0
                         type: integer
@@ -135,7 +136,7 @@ schema:
                       properties:
                         asPathPrepend:
                           description: AS number to prepend to the AS Path attributes.
-                          format: int32
+                          format: int64
                           maximum: 4294967295
                           minimum: 1
                           type: integer
@@ -145,7 +146,7 @@ schema:
                         asPathReplace:
                           description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                           items:
-                            format: int32
+                            format: int64
                             type: integer
                           type: array
                         communitySet:
@@ -172,7 +173,7 @@ schema:
                           type: object
                         localPreference:
                           description: Set a new LOCAL_PREF value for matching BGP routes.
-                          format: int32
+                          format: int64
                           maximum: 4294967295
                           minimum: 0
                           type: integer
@@ -181,6 +182,7 @@ schema:
                           properties:
                             numericalValue:
                               description: Fixed numerical value to set or add/subtract.
+                              format: int64
                               maximum: 4294967295
                               minimum: 0
                               type: integer
@@ -251,6 +253,7 @@ schema:
                         evpnRouteType:
                           description: Match conditions for EVPN route types.
                           items:
+                            format: int64
                             type: integer
                           type: array
                       type: object

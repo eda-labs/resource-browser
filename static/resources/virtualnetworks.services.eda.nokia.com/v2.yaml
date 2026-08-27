@@ -34,6 +34,27 @@ schema:
             description: List of Subnets. [emits=BridgeDomain]
             items:
               properties:
+                metadata:
+                  description: Metadata to assign to the derived resource.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations to assign to the derived resource object.
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: Labels to assign to the derived resource object.
+                      type: object
+                    method:
+                      default: Add
+                      description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                      enum:
+                        - Add
+                        - Replace
+                      type: string
+                  type: object
                 name:
                   description: The name of the BridgeDomain.
                   maxLength: 253
@@ -71,6 +92,7 @@ schema:
                                   - SR-OSPFv3
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                             controlWord:
                               description: Enable or disable the use of control word. Applicable only to EVPNMPLS service Type.
                               type: boolean
@@ -84,6 +106,7 @@ schema:
                               type: string
                             vni:
                               description: VNI to use for this BridgeDomain, can be optionally left blank to have it allocated using the VNI Pool.
+                              format: int64
                               maximum: 16777215
                               minimum: 1
                               type: integer
@@ -95,6 +118,7 @@ schema:
                       type: object
                     evi:
                       description: EVI to use for this BridgeDomain, can be optionally left blank to have it automatically allocated using the EVI Pool.
+                      format: int64
                       maximum: 65535
                       minimum: 1
                       type: integer
@@ -118,7 +142,7 @@ schema:
                           properties:
                             agingTimeSeconds:
                               description: Aging timer value for the proxy entries in seconds. If not set, this indicates that the entries are never flushed.
-                              format: int32
+                              format: int64
                               maximum: 86400
                               minimum: 60
                               type: integer
@@ -128,6 +152,7 @@ schema:
                               type: boolean
                             refreshIntervalSeconds:
                               description: The interval determines the frequency at which the system generates three ARP Requests or Neighbor Solicitations with the intent to refresh the proxy entry. The refresh is sent within the age-time window.
+                              format: int64
                               maximum: 86400
                               minimum: 120
                               type: integer
@@ -142,18 +167,21 @@ schema:
                             holdDownTimeMinutes:
                               default: 9
                               description: Time to wait in minutes from the moment an IP is declared duplicate to the time the IP is removed from the proxy ARP/ND table.
+                              format: int64
                               maximum: 60
                               minimum: 2
                               type: integer
                             monitoringWindowMinutes:
                               default: 3
                               description: Monitoring window for detecting duplication on a given IP address in the proxy ARP/ND table.
+                              format: int64
                               maximum: 15
                               minimum: 1
                               type: integer
                             numMoves:
                               default: 5
                               description: Number of moves in the proxy ARP/ND table that an IP is allowed within the monitoring-window.
+                              format: int64
                               maximum: 10
                               minimum: 3
                               type: integer
@@ -161,6 +189,7 @@ schema:
                         maxEntries:
                           default: 250
                           description: Maximum number of entries allowed in the proxy table of the bridge domain.
+                          format: int64
                           maximum: 8192
                           minimum: 1
                           type: integer
@@ -191,20 +220,21 @@ schema:
                         holdDownTimeMinutes:
                           default: 9
                           description: Time to wait in minutes from the moment a mac is declared duplicate to the mac is flushed from the bridge table.
-                          format: int32
+                          format: int64
                           maximum: 60
                           minimum: 2
                           type: integer
                         monitoringWindowMinutes:
                           default: 3
                           description: Monitoring window in minutes for detecting duplication on a given mac address.
-                          format: int32
+                          format: int64
                           maximum: 15
                           minimum: 1
                           type: integer
                         numMoves:
                           default: 5
                           description: Number of moves a mac is allowed within the monitoring-window, before it is declared duplicate.
+                          format: int64
                           minimum: 3
                           type: integer
                       type: object
@@ -217,7 +247,7 @@ schema:
                         agingTimeSeconds:
                           default: 300
                           description: Configurable aging time for dynamically learned mac addresses.
-                          format: int32
+                          format: int64
                           maximum: 86400
                           minimum: 60
                           type: integer
@@ -230,7 +260,7 @@ schema:
                       type: object
                     macLimit:
                       description: Sets the maximum number of MAC entries accepted in the bridge table.
-                      format: int32
+                      format: int64
                       minimum: 1
                       type: integer
                     type:
@@ -247,10 +277,34 @@ schema:
                 - spec
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
           bridgeInterfaces:
             description: List of BridgeInterfaces. [emits=BridgeInterface]
             items:
               properties:
+                metadata:
+                  description: Metadata to assign to the derived resource.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations to assign to the derived resource object.
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: Labels to assign to the derived resource object.
+                      type: object
+                    method:
+                      default: Add
+                      description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                      enum:
+                        - Add
+                        - Replace
+                      type: string
+                  type: object
                 name:
                   description: The name of the BridgeInterface.
                   maxLength: 253
@@ -274,11 +328,13 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Egress policy references to use at egress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     ingress:
                       description: Manages actions on traffic at Ingress.
@@ -288,17 +344,20 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Ingress policy references to use at ingress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     interface:
                       description: Reference to an Interface resource to attach this BridgeInterface.
                       type: string
                     l2MTU:
                       description: L2 MTU specifies the maximum sized Ethernet frame that can be transmitted on the subinterface. If a frame exceeds this size it is discarded. If the l2-mtu of the subinterface exceeds the port-mtu of the associated interface, the subinterface will remain operationally down.
+                      format: int64
                       maximum: 9500
                       minimum: 1450
                       type: integer
@@ -324,11 +383,13 @@ schema:
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                             qosPolicies:
                               description: List of QoS Egress policy references to use at egress.
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                           type: object
                         ingress:
                           description: Manages actions on traffic at Ingress of the Local endpoint of the Uplink.
@@ -338,17 +399,20 @@ schema:
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                             qosPolicies:
                               description: List of QoS Ingress policy references to use at ingress.
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                           type: object
                         uplinkSelectors:
                           description: Selects TopoLinks which connect a leaf switch to a breakout switch. This is the uplink between your access breakout switch and your leaf switch.  There can only be a single TopoLink between the access breakout switch and the leaf switch, if more than one TopoLink is present between two devices the transaction will fail.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         uplinkVLANID:
                           default: pool
                           description: The VLAN ID to be utilized to isolate traffic from the VLAN on the access breakout switch to the leaf switch on the selected uplink TopoLink.
@@ -370,10 +434,34 @@ schema:
                 - spec
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
           irbInterfaces:
             description: List of IRBInterfaces. [emits=IRBInterface]
             items:
               properties:
+                metadata:
+                  description: Metadata to assign to the derived resource.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations to assign to the derived resource object.
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: Labels to assign to the derived resource object.
+                      type: object
+                    method:
+                      default: Add
+                      description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                      enum:
+                        - Add
+                        - Replace
+                      type: string
+                  type: object
                 name:
                   description: The name of the IrbInterface.
                   maxLength: 253
@@ -392,12 +480,14 @@ schema:
                         desiredMinTransmitIntMs:
                           default: 1000
                           description: The minimum interval in milliseconds between transmission of BFD control packets.
+                          format: int64
                           maximum: 100000
                           minimum: 10
                           type: integer
                         detectionMultiplier:
                           default: 3
                           description: The number of packets that must be missed to declare this session as down.
+                          format: int64
                           maximum: 20
                           minimum: 3
                           type: integer
@@ -408,17 +498,20 @@ schema:
                         requiredMinEchoReceiveIntMs:
                           default: 0
                           description: The minimum interval between echo packets the local node can receive.
+                          format: int64
                           maximum: 100000
                           minimum: 0
                           type: integer
                         requiredMinReceiveIntMs:
                           default: 1000
                           description: The minimum interval in milliseconds between received BFD control packets that this system should support.
+                          format: int64
                           maximum: 100000
                           minimum: 10
                           type: integer
                         ttl:
                           description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                          format: int64
                           maximum: 255
                           minimum: 2
                           type: integer
@@ -439,11 +532,13 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Egress policy references to use at egress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     evpnRouteAdvertisementType:
                       description: Controls the type of ARP/ND entries to advertise.
@@ -511,6 +606,30 @@ schema:
                             - populate
                           type: object
                       type: object
+                    indexAllocation:
+                      default:
+                        mode: GlobalPool
+                      description: Index Allocation strategy for the IRBInterface.
+                      properties:
+                        index:
+                          description: Index value to use when Mode is set to Manual. Ignored for other modes.
+                          format: int64
+                          maximum: 4094
+                          minimum: 0
+                          type: integer
+                        indexPool:
+                          default: irb-subif-pool
+                          description: Name of the index pool to use when Mode is set to PerNodePool. Ignored for Manual and GlobalPool modes.
+                          type: string
+                        mode:
+                          default: GlobalPool
+                          description: Strategy for allocating interface indices. Options are GlobalPool (default), PerNodePool, or Manual.
+                          enum:
+                            - GlobalPool
+                            - PerNodePool
+                            - Manual
+                          type: string
+                      type: object
                     ingress:
                       description: Manages actions on traffic at Ingress.
                       properties:
@@ -519,11 +638,13 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Ingress policy references to use at ingress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     ipAddresses:
                       description: Configures IP addresses on the IRBInterface.
@@ -567,6 +688,7 @@ schema:
                     ipMTU:
                       default: 1500
                       description: IP MTU for the IRBInterface [default=1500].
+                      format: int64
                       maximum: 9486
                       minimum: 1280
                       type: integer
@@ -576,7 +698,7 @@ schema:
                         arpTimeoutSeconds:
                           default: 14400
                           description: Duration of time that dynamic ARP entries remain in the ARP cache before they expire.
-                          format: int32
+                          format: int64
                           minimum: 0
                           type: integer
                         directedBroadcast:
@@ -608,7 +730,7 @@ schema:
                             currentHopLimit:
                               default: 64
                               description: The current hop limit to advertise in the router advertisement messages.
-                              format: int32
+                              format: int64
                               maximum: 255
                               minimum: 0
                               type: integer
@@ -618,7 +740,7 @@ schema:
                               type: boolean
                             ipMTU:
                               description: The IP MTU to advertise in the router advertisement messages.
-                              format: int32
+                              format: int64
                               maximum: 9486
                               minimum: 1280
                               type: integer
@@ -629,14 +751,14 @@ schema:
                             maxAdvertisementIntervalSeconds:
                               default: 600
                               description: Maximum time between router advertisements (in seconds).
-                              format: int32
+                              format: int64
                               maximum: 1800
                               minimum: 4
                               type: integer
                             minAdvertisementIntervalSeconds:
                               default: 200
                               description: Minimum time between router advertisements (in seconds).
-                              format: int32
+                              format: int64
                               maximum: 1350
                               minimum: 3
                               type: integer
@@ -660,8 +782,7 @@ schema:
                                   preferredLifetimeSeconds:
                                     default: 604800
                                     description: The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.
-                                    format: int32
-                                    maximum: 4294967295
+                                    format: int64
                                     minimum: 0
                                     type: integer
                                   prefix:
@@ -670,32 +791,34 @@ schema:
                                   validLifetimeSeconds:
                                     default: 2592000
                                     description: The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.
-                                    format: int32
-                                    maximum: 4294967295
+                                    format: int64
                                     minimum: 0
                                     type: integer
                                 required:
                                   - prefix
                                 type: object
                               type: array
+                              x-kubernetes-list-map-keys:
+                                - prefix
+                              x-kubernetes-list-type: map
                             reachableTimeMs:
                               default: 0
                               description: Time in milliseconds for Neighbor Unreachability Detection.
-                              format: int32
+                              format: int64
                               maximum: 3600000
                               minimum: 0
                               type: integer
                             retransmitTimeMs:
                               default: 0
                               description: Time in milliseconds between retransmitted NS messages.
-                              format: int32
+                              format: int64
                               maximum: 1800000
                               minimum: 0
                               type: integer
                             routerLifetimeSeconds:
                               default: 1800
                               description: Router lifetime in seconds for default gateway.
-                              format: int32
+                              format: int64
                               maximum: 9000
                               minimum: 0
                               type: integer
@@ -737,14 +860,17 @@ schema:
                             items:
                               type: string
                             type: array
+                            x-kubernetes-list-type: set
                           bridgeInterfaces:
                             description: List of BridgeInterfaces on the associated MAC-VRF to which the ARP probes are sent. If left blank, the probes are sent on all BridgeInterfaces associated with the BridgeDomain.
                             items:
                               type: string
                             type: array
+                            x-kubernetes-list-type: set
                           probeIntervalSeconds:
                             default: 0
                             description: ARP probe interval in seconds.
+                            format: int64
                             maximum: 86400
                             minimum: 0
                             type: integer
@@ -753,10 +879,14 @@ schema:
                             items:
                               type: string
                             type: array
+                            x-kubernetes-list-type: set
                         required:
                           - address
                         type: object
                       type: array
+                      x-kubernetes-list-map-keys:
+                        - address
+                      x-kubernetes-list-type: map
                   required:
                     - bridgeDomain
                     - router
@@ -766,6 +896,9 @@ schema:
                 - spec
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
           protocols:
             description: Protocols to configure.
             properties:
@@ -776,6 +909,27 @@ schema:
                     description: List of BgpGroups. [emits=BGPGroup]
                     items:
                       properties:
+                        metadata:
+                          description: Metadata to assign to the derived resource.
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              description: Annotations to assign to the derived resource object.
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description: Labels to assign to the derived resource object.
+                              type: object
+                            method:
+                              default: Add
+                              description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                              enum:
+                                - Add
+                                - Replace
+                              type: string
+                          type: object
                         name:
                           description: The name of the BgpGroup.
                           maxLength: 253
@@ -791,6 +945,7 @@ schema:
                                 allowOwnAS:
                                   default: 0
                                   description: The maximum number of times the global AS number or a local AS number of the BGP instance can appear in any received AS_PATH before it is considered a loop and considered invalid.
+                                  format: int64
                                   maximum: 255
                                   minimum: 0
                                   type: integer
@@ -843,6 +998,7 @@ schema:
                               type: array
                             grStaleRouteTimeSeconds:
                               description: Enables Graceful Restart on the peer and sets the stale route time in seconds.
+                              format: int64
                               maximum: 3600
                               minimum: 1
                               type: integer
@@ -860,6 +1016,20 @@ schema:
                                 enabled:
                                   description: Enables the IPv4 unicast AFISAFI.
                                   type: boolean
+                                exportPolicies:
+                                  description: Reference to a Policy resource for route exports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
+                                importPolicies:
+                                  description: Reference to a Policy resource for route imports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
                                 prefixLimit:
                                   description: Configures the maximum number of IPv4 unicast prefixes that can be received from a BGP peer.
                                   properties:
@@ -871,12 +1041,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -889,12 +1059,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -910,6 +1080,20 @@ schema:
                                 enabled:
                                   description: Enables the IPv6 unicast AFISAFI
                                   type: boolean
+                                exportPolicies:
+                                  description: Reference to a Policy resource for route exports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
+                                importPolicies:
+                                  description: Reference to a Policy resource for route imports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
                                 prefixLimit:
                                   description: Enables advertisement of IPv6 Unicast routes with IPv4 next-hops to peers.
                                   properties:
@@ -921,12 +1105,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -939,12 +1123,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -959,6 +1143,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -973,11 +1158,12 @@ schema:
                               type: object
                             localPreference:
                               description: Local Preference attribute added to received routes from the BGP peers, also sets local preference for generated routes.
-                              maximum: 4294967295
+                              format: int64
                               minimum: 0
                               type: integer
                             multiHopMaxHop:
                               description: Enable multihop for eBGP peers and sets the maximum number of hops allowed.
+                              format: int64
                               maximum: 255
                               minimum: 1
                               type: integer
@@ -989,6 +1175,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -1012,6 +1199,7 @@ schema:
                                       - IPv6Unicast
                                     type: string
                                   type: array
+                                  x-kubernetes-list-type: set
                                 exportPolicy:
                                   description: Reference to a Policy that should be applied to the advertised default routes, in order to set their attributes to non-default values.
                                   type: string
@@ -1023,21 +1211,25 @@ schema:
                               properties:
                                 connectRetrySeconds:
                                   description: The time interval in seconds between successive attempts to establish a session with a peer.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 1
                                   type: integer
                                 holdTimeSeconds:
                                   description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 0
                                   type: integer
                                 keepAliveSeconds:
                                   description: The interval in seconds between successive keepalive messages sent to the peer.
+                                  format: int64
                                   maximum: 21845
                                   minimum: 0
                                   type: integer
                                 minimumAdvertisementIntervalSeconds:
                                   description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions, in seconds.
+                                  format: int64
                                   maximum: 255
                                   minimum: 1
                                   type: integer
@@ -1048,10 +1240,34 @@ schema:
                         - spec
                       type: object
                     type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
                   bgpPeers:
                     description: List of BgpPeers [emits=BGPPeer]
                     items:
                       properties:
+                        metadata:
+                          description: Metadata to assign to the derived resource.
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              description: Annotations to assign to the derived resource object.
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description: Labels to assign to the derived resource object.
+                              type: object
+                            method:
+                              default: Add
+                              description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                              enum:
+                                - Add
+                                - Replace
+                              type: string
+                          type: object
                         name:
                           description: The name of the BgpPeer.
                           maxLength: 253
@@ -1067,6 +1283,7 @@ schema:
                                 allowOwnAS:
                                   default: 0
                                   description: The maximum number of times the global AS number or a local AS number of the BGP instance can appear in any received AS_PATH before it is considered a loop and considered invalid.
+                                  format: int64
                                   maximum: 255
                                   minimum: 0
                                   type: integer
@@ -1116,8 +1333,10 @@ schema:
                             dynamicNeighborAllowedPeerASs:
                               description: The autonomous system numbers allowed from peers if dynamic peering is enabled.
                               items:
+                                format: int64
                                 type: integer
                               type: array
+                              x-kubernetes-list-type: set
                             exportPolicies:
                               description: Reference to a Policy CR that will be used to filter routes advertised to peers.
                               items:
@@ -1125,6 +1344,7 @@ schema:
                               type: array
                             grStaleRouteTimeSeconds:
                               description: Enables Graceful Restart on the peer and sets the stale route time in seconds.
+                              format: int64
                               maximum: 3600
                               minimum: 1
                               type: integer
@@ -1154,6 +1374,20 @@ schema:
                                 enabled:
                                   description: Enables the IPv4 unicast AFISAFI.
                                   type: boolean
+                                exportPolicies:
+                                  description: Reference to a Policy resource for route exports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
+                                importPolicies:
+                                  description: Reference to a Policy resource for route imports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
                                 prefixLimit:
                                   description: Configures the maximum number of IPv4 unicast prefixes that can be received from a BGP peer.
                                   properties:
@@ -1165,12 +1399,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1183,12 +1417,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1204,6 +1438,20 @@ schema:
                                 enabled:
                                   description: Enables the IPv6 unicast AFISAFI
                                   type: boolean
+                                exportPolicies:
+                                  description: Reference to a Policy resource for route exports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
+                                importPolicies:
+                                  description: Reference to a Policy resource for route imports for this address family.
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                                  minItems: 1
+                                  type: array
                                 prefixLimit:
                                   description: Enables advertisement of IPv6 Unicast routes with IPv4 next-hops to peers.
                                   properties:
@@ -1215,12 +1463,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1233,12 +1481,12 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 1
                                           type: integer
                                         warningThresholdPercent:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1253,6 +1501,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -1267,11 +1516,12 @@ schema:
                               type: object
                             localPreference:
                               description: Local Preference attribute added to received routes from the BGP peers, also sets local preference for generated routes.
-                              maximum: 4294967295
+                              format: int64
                               minimum: 0
                               type: integer
                             multiHopMaxHop:
                               description: Enable multihop for eBGP peers and sets the maximum number of hops allowed.
+                              format: int64
                               maximum: 255
                               minimum: 1
                               type: integer
@@ -1286,6 +1536,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -1312,6 +1563,7 @@ schema:
                                       - IPv6Unicast
                                     type: string
                                   type: array
+                                  x-kubernetes-list-type: set
                                 exportPolicy:
                                   description: Reference to a Policy that should be applied to the advertised default routes, in order to set their attributes to non-default values.
                                   type: string
@@ -1323,21 +1575,25 @@ schema:
                               properties:
                                 connectRetrySeconds:
                                   description: The time interval in seconds between successive attempts to establish a session with a peer.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 1
                                   type: integer
                                 holdTimeSeconds:
                                   description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 0
                                   type: integer
                                 keepAliveSeconds:
                                   description: The interval in seconds between successive keepalive messages sent to the peer.
+                                  format: int64
                                   maximum: 21845
                                   minimum: 0
                                   type: integer
                                 minimumAdvertisementIntervalSeconds:
                                   description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions, in seconds.
+                                  format: int64
                                   maximum: 255
                                   minimum: 1
                                   type: integer
@@ -1352,11 +1608,423 @@ schema:
                         - spec
                       type: object
                     type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
+                type: object
+              isis:
+                description: IS-IS Protocol.
+                properties:
+                  isisInterfaces:
+                    description: List of IS-IS Interfaces.
+                    items:
+                      properties:
+                        metadata:
+                          description: Metadata to assign to the derived resource.
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              description: Annotations to assign to the derived resource object.
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description: Labels to assign to the derived resource object.
+                              type: object
+                            method:
+                              default: Add
+                              description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                              enum:
+                                - Add
+                                - Replace
+                              type: string
+                          type: object
+                        name:
+                          description: The name of the ISISInterface.
+                          maxLength: 253
+                          minLength: 1
+                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                          type: string
+                        spec:
+                          description: Specification of the ISISInterface.
+                          properties:
+                            bfd:
+                              description: Configure BFD on the IS-IS interface.
+                              properties:
+                                bfdEnabledTLV:
+                                  description: Use the BFD-Enabled TLV for establishing adjacencies on this interface.
+                                  type: boolean
+                                enabledAddressFamilies:
+                                  description: Enables BFD on the IS-IS interface using the specified address families (IPv4 and/or IPv6).
+                                  items:
+                                    enum:
+                                      - IPv4
+                                      - IPv6
+                                    type: string
+                                  minItems: 1
+                                  type: array
+                                  x-kubernetes-list-type: set
+                              required:
+                                - enabledAddressFamilies
+                              type: object
+                            interface:
+                              description: Reference to a RoutedInterface or IRBInterface.
+                              type: string
+                            interfaceKind:
+                              default: RoutedInterface
+                              description: Reference to the Kind of interface to enable IS-IS on.
+                              enum:
+                                - RoutedInterface
+                                - IRBInterface
+                              type: string
+                            isisInstance:
+                              description: Reference to an IS-IS Instance on which the interface is configured.
+                              type: string
+                            level:
+                              default: L2
+                              description: IS-IS interface level capability.
+                              enum:
+                                - L1
+                                - L2
+                                - L1L2
+                              type: string
+                            level1:
+                              description: IS-IS Level 1 Configuration.
+                              properties:
+                                metric:
+                                  description: Interface metric for this level.
+                                  format: int64
+                                  maximum: 16777215
+                                  minimum: 1
+                                  type: integer
+                              type: object
+                            level2:
+                              description: IS-IS Level 2 Configuration.
+                              properties:
+                                metric:
+                                  description: Interface metric for this level.
+                                  format: int64
+                                  maximum: 16777215
+                                  minimum: 1
+                                  type: integer
+                              type: object
+                            passive:
+                              default: false
+                              description: Configure the IS-IS interface as passive.
+                              type: boolean
+                            type:
+                              default: PointToPoint
+                              description: IS-IS interface type.
+                              enum:
+                                - PointToPoint
+                                - Broadcast
+                              type: string
+                          required:
+                            - isisInstance
+                          type: object
+                      required:
+                        - name
+                        - spec
+                      type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
+                  metadata:
+                    description: Metadata to assign to the derived resource.
+                    properties:
+                      annotations:
+                        additionalProperties:
+                          type: string
+                        description: Annotations to assign to the derived resource object.
+                        type: object
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: Labels to assign to the derived resource object.
+                        type: object
+                      method:
+                        default: Add
+                        description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                        enum:
+                          - Add
+                          - Replace
+                        type: string
+                    type: object
+                  name:
+                    description: The name of the ISISInstance.
+                    maxLength: 253
+                    minLength: 1
+                    pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                    type: string
+                  spec:
+                    description: Specification of the ISISInstance.
+                    properties:
+                      addressFamilies:
+                        description: Address families to enable. Uses a single-topology (native) configuration mode.
+                        items:
+                          enum:
+                            - IPv4
+                            - IPv6
+                          type: string
+                        minItems: 1
+                        type: array
+                        x-kubernetes-list-type: set
+                      areaIDs:
+                        description: The list of IS-IS area addresses for this instance. Each area address is represented as an NSAP Area ID, which is a string in the format of AFI.area-address (e.g. '49.0001'). The system ID and NSEL are not included in the area address as they are derived from the router's configuration and do not need to be specified by the user.
+                        items:
+                          pattern: ^[0-9A-Fa-f]{2}(\.[0-9A-Fa-f]{4}){0,6}$
+                          type: string
+                        maxItems: 3
+                        minItems: 1
+                        type: array
+                        x-kubernetes-list-type: set
+                      enabled:
+                        default: true
+                        description: Enables IS-IS instance.
+                        type: boolean
+                      helloPadding:
+                        description: Hello Padding mode for IS-IS adjacencies.
+                        enum:
+                          - Adaptive
+                          - Loose
+                          - Strict
+                          - Disabled
+                        type: string
+                      level1:
+                        description: IS-IS Level 1 settings.
+                        properties:
+                          routePreference:
+                            description: Route preference configuration for this level.
+                            properties:
+                              external:
+                                description: RTM Route Preference (Administrative Distance) for external routes.
+                                format: int64
+                                maximum: 255
+                                minimum: 1
+                                type: integer
+                              internal:
+                                description: RTM Route Preference (Administrative Distance) for internal routes.
+                                format: int64
+                                maximum: 255
+                                minimum: 1
+                                type: integer
+                            type: object
+                        type: object
+                      level2:
+                        description: IS-IS Level 2 settings.
+                        properties:
+                          routePreference:
+                            description: Route preference configuration for this level.
+                            properties:
+                              external:
+                                description: RTM Route Preference (Administrative Distance) for external routes.
+                                format: int64
+                                maximum: 255
+                                minimum: 1
+                                type: integer
+                              internal:
+                                description: RTM Route Preference (Administrative Distance) for internal routes.
+                                format: int64
+                                maximum: 255
+                                minimum: 1
+                                type: integer
+                            type: object
+                        type: object
+                      levelCapability:
+                        default: L2
+                        description: IS-IS level capability for this instance.
+                        enum:
+                          - L1
+                          - L2
+                          - L1L2
+                        type: string
+                      lfa:
+                        description: LFA (Loop-Free Alternate) functionality.
+                        properties:
+                          enabled:
+                            description: Enables IS-IS LFA (Loop-Free Alternate) functionality.
+                            type: boolean
+                        required:
+                          - enabled
+                        type: object
+                      lspMTU:
+                        description: Maximum LSP MTU size, in bytes.
+                        format: int64
+                        maximum: 10240
+                        minimum: 512
+                        type: integer
+                      maxECMP:
+                        description: The maximum number of ECMP paths (next-hops).
+                        format: int64
+                        maximum: 256
+                        minimum: 1
+                        type: integer
+                      overload:
+                        description: IS-IS Overload configuration.
+                        properties:
+                          onBoot:
+                            description: Overload configuration on boot.
+                            properties:
+                              durationSeconds:
+                                description: Overload duration in seconds.
+                                format: int64
+                                maximum: 65535
+                                minimum: 1
+                                type: integer
+                              mode:
+                                default: MaxMetric
+                                description: Overload mode to use for the overload on boot.
+                                enum:
+                                  - MaxMetric
+                                  - OverloadBit
+                                type: string
+                            required:
+                              - durationSeconds
+                            type: object
+                          static:
+                            description: Static overload configuration.
+                            properties:
+                              mode:
+                                description: Overload mode to use for the immediate (static) overload.
+                                enum:
+                                  - MaxMetric
+                                  - OverloadBit
+                                type: string
+                            required:
+                              - mode
+                            type: object
+                        type: object
+                      passiveOnly:
+                        default: false
+                        description: Advertise prefixes that belong to passive interfaces only.
+                        type: boolean
+                      redistribution:
+                        description: Route redistribution settings.
+                        properties:
+                          exportLimit:
+                            description: Maximum number of routes to redistribute into IS-IS.
+                            format: int64
+                            maximum: 4294967295
+                            minimum: 1
+                            type: integer
+                          exportPolicies:
+                            description: Export policies to use for redistributing routes into IS-IS.
+                            items:
+                              type: string
+                            maxItems: 5
+                            minItems: 1
+                            type: array
+                        required:
+                          - exportPolicies
+                        type: object
+                      referenceBandwidthGbps:
+                        description: Reference bandwidth (in Gbps) for automatic metric calculation.
+                        format: int64
+                        maximum: 3200
+                        minimum: 1
+                        type: integer
+                      timers:
+                        description: Configures IS-IS timers.
+                        properties:
+                          lsp:
+                            description: LSP Timers configuration.
+                            properties:
+                              generation:
+                                description: LSP Generation timers configuration.
+                                properties:
+                                  holdIntervalMs:
+                                    description: Hold interval for subsequent LSP regeneration (in milliseconds).
+                                    format: int64
+                                    minimum: 0
+                                    type: integer
+                                  initialDelayMs:
+                                    description: Initial delay to generate the first instance of an LSP (in milliseconds).
+                                    format: int64
+                                    minimum: 0
+                                    type: integer
+                                  maxDelayMs:
+                                    description: Maximum interval between two consecutive LSP regenerations (in milliseconds).
+                                    format: int64
+                                    minimum: 0
+                                    type: integer
+                                type: object
+                              lifetimeSeconds:
+                                description: LSP lifetime (in seconds). The time an LSP remains valid in the LSDB.
+                                format: int64
+                                maximum: 65535
+                                minimum: 350
+                                type: integer
+                            type: object
+                          spf:
+                            description: SPF Timers configuration.
+                            properties:
+                              holdIntervalMs:
+                                description: Hold interval for subsequent SPF calculations (in milliseconds).
+                                format: int64
+                                minimum: 1
+                                type: integer
+                              initialDelayMs:
+                                description: Initial SPF calculation delay (in milliseconds).
+                                format: int64
+                                minimum: 0
+                                type: integer
+                              maxDelayMs:
+                                description: Maximum interval between two consecutive SPF calculations (in milliseconds).
+                                format: int64
+                                minimum: 1
+                                type: integer
+                            type: object
+                        type: object
+                      tlvConfig:
+                        default: {}
+                        description: IS-IS (optional) TLV configuration.
+                        properties:
+                          poi:
+                            default: true
+                            description: Enable IS-IS Purge Originator Identification (POI) TLV support.
+                            type: boolean
+                          routerCapability:
+                            description: Enables IS-IS Router Capability TLV advertisement and selects the flooding scope.
+                            enum:
+                              - Domain
+                              - Level
+                            type: string
+                        type: object
+                    required:
+                      - areaIDs
+                      - enabled
+                    type: object
+                required:
+                  - name
+                  - spec
                 type: object
               ospf:
                 description: OSPF Protocol Instanes.
                 items:
                   properties:
+                    metadata:
+                      description: Metadata to assign to the derived resource.
+                      properties:
+                        annotations:
+                          additionalProperties:
+                            type: string
+                          description: Annotations to assign to the derived resource object.
+                          type: object
+                        labels:
+                          additionalProperties:
+                            type: string
+                          description: Labels to assign to the derived resource object.
+                          type: object
+                        method:
+                          default: Add
+                          description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                          enum:
+                            - Add
+                            - Replace
+                          type: string
+                      type: object
                     name:
                       description: The name of the OSPFInstance.
                       maxLength: 253
@@ -1367,6 +2035,27 @@ schema:
                       description: List of OSPFAreas. [emits=OSPFArea]
                       items:
                         properties:
+                          metadata:
+                            description: Metadata to assign to the derived resource.
+                            properties:
+                              annotations:
+                                additionalProperties:
+                                  type: string
+                                description: Annotations to assign to the derived resource object.
+                                type: object
+                              labels:
+                                additionalProperties:
+                                  type: string
+                                description: Labels to assign to the derived resource object.
+                                type: object
+                              method:
+                                default: Add
+                                description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                                enum:
+                                  - Add
+                                  - Replace
+                                type: string
+                            type: object
                           name:
                             description: The name of the OSPFArea.
                             maxLength: 253
@@ -1398,10 +2087,34 @@ schema:
                           - spec
                         type: object
                       type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
                     ospfInterfaces:
                       description: List of OSPFInterfaces. [emits=OSPFInterface]
                       items:
                         properties:
+                          metadata:
+                            description: Metadata to assign to the derived resource.
+                            properties:
+                              annotations:
+                                additionalProperties:
+                                  type: string
+                                description: Annotations to assign to the derived resource object.
+                                type: object
+                              labels:
+                                additionalProperties:
+                                  type: string
+                                description: Labels to assign to the derived resource object.
+                                type: object
+                              method:
+                                default: Add
+                                description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                                enum:
+                                  - Add
+                                  - Replace
+                                type: string
+                            type: object
                           name:
                             description: The name of the OSPFInterface.
                             maxLength: 253
@@ -1423,6 +2136,7 @@ schema:
                                     type: boolean
                                   strictModeHoldDownSeconds:
                                     description: Enables Hold Down Timer for BFD Strict Mode, in seconds.
+                                    format: int64
                                     maximum: 3600
                                     minimum: 512
                                     type: integer
@@ -1431,11 +2145,13 @@ schema:
                                 type: object
                               deadIntervalSeconds:
                                 description: Dead Interval in seconds.
+                                format: int64
                                 maximum: 65535
                                 minimum: 3
                                 type: integer
                               helloIntervalSeconds:
                                 description: Hello Interval in seconds.
+                                format: int64
                                 maximum: 65535
                                 minimum: 1
                                 type: integer
@@ -1448,12 +2164,17 @@ schema:
                                 enum:
                                   - RoutedInterface
                                 type: string
+                              keychain:
+                                description: Reference to a Keychain resource that will be used for authentication with the OSPF peer interface.
+                                type: string
                               metric:
                                 description: Interface metric.
+                                format: int64
                                 minimum: 0
                                 type: integer
                               mtu:
                                 description: OSPF interface MTU
+                                format: int64
                                 maximum: 10240
                                 minimum: 512
                                 type: integer
@@ -1485,6 +2206,9 @@ schema:
                           - spec
                         type: object
                       type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
                     spec:
                       description: Specification of the OSPFInstance.
                       properties:
@@ -1498,8 +2222,18 @@ schema:
                           default: false
                           description: Enables OSPF instance.
                           type: boolean
+                        lfa:
+                          description: LFA (Loop-Free Alternate) functionality.
+                          properties:
+                            enabled:
+                              description: Enables OSPF LFA (Loop-Free Alternate) functionality.
+                              type: boolean
+                          required:
+                            - enabled
+                          type: object
                         maxECMP:
                           description: The maximum number of ECMP paths (next-hops).
+                          format: int64
                           maximum: 256
                           minimum: 1
                           type: integer
@@ -1508,17 +2242,47 @@ schema:
                           properties:
                             onBoot:
                               description: Set Max Metric on boot for the fixed period of time (in seconds).
+                              format: int64
                               minimum: 10
                               type: integer
                             overload:
                               description: Enable Max Link Metric on all interfaces.
                               type: boolean
                           type: object
+                        redistribution:
+                          description: Redistribution settings.
+                          properties:
+                            exportPolicy:
+                              description: Export policy to use for redistributing routes into OSPF.
+                              type: string
+                            externalRouteTag:
+                              description: ExternalRouteTag to attach to the redistributed routes.
+                              maxLength: 16
+                              minLength: 1
+                              type: string
+                          type: object
                         referenceBandwidthGbps:
                           description: Reference bandwidth (in Gbps) for automatic metric calculation.
+                          format: int64
                           maximum: 3200
                           minimum: 1
                           type: integer
+                        routePreference:
+                          description: Route preference configuration.
+                          properties:
+                            external:
+                              description: RTM Route Preference (Administrative Distance) for external routes.
+                              format: int64
+                              maximum: 255
+                              minimum: 1
+                              type: integer
+                            internal:
+                              description: RTM Route Preference (Administrative Distance) for internal routes.
+                              format: int64
+                              maximum: 255
+                              minimum: 1
+                              type: integer
+                          type: object
                         timers:
                           description: Configures OSPF timers.
                           properties:
@@ -1527,22 +2291,27 @@ schema:
                               properties:
                                 accumulateMs:
                                   description: Delay (in milliseconds) to gather LSAs before advertising to neighbors
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 arrivalMs:
                                   description: Minimum interval (in milliseconds) to accept an identical LSA.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 genHoldIntervalMs:
                                   description: Hold interval (in milliseconds) for subsequent LSA regeneration.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 genInitialDelayMs:
                                   description: Initial delay (in milliseconds) to generate the first instance of LSAs.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 genMaxDelayMs:
                                   description: Maximum interval (in milliseconds) between two consecutive regenerations (of the same LSA).
+                                  format: int64
                                   minimum: 0
                                   type: integer
                               type: object
@@ -1551,18 +2320,22 @@ schema:
                               properties:
                                 holdIntervalMs:
                                   description: Hold interval for subsequent SPF calculations.
+                                  format: int64
                                   minimum: 1
                                   type: integer
                                 incrementalSPFDelayMs:
                                   description: Delay (in milliseconds) before an incremental SPF calculation starts.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 initialDelayMs:
                                   description: Initial SPF calculation delay (in milliseconds).
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 maxDelayMs:
                                   description: Maximum interval (in milliseconds) between two consecutive SPF calculations.
+                                  format: int64
                                   minimum: 1
                                   type: integer
                               type: object
@@ -1582,6 +2355,9 @@ schema:
                     - spec
                   type: object
                 type: array
+                x-kubernetes-list-map-keys:
+                  - name
+                x-kubernetes-list-type: map
               routingPolicies:
                 description: Routing Policies.
                 properties:
@@ -1589,6 +2365,27 @@ schema:
                     description: List of Policies.  [emits=Policy]
                     items:
                       properties:
+                        metadata:
+                          description: Metadata to assign to the derived resource.
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              description: Annotations to assign to the derived resource object.
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description: Labels to assign to the derived resource object.
+                              type: object
+                            method:
+                              default: Add
+                              description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                              enum:
+                                - Add
+                                - Replace
+                              type: string
+                          type: object
                         name:
                           description: Name of the Policy.
                           maxLength: 253
@@ -1616,7 +2413,7 @@ schema:
                                           type: string
                                         count:
                                           description: Number of times to prepend the AS number.
-                                          format: int32
+                                          format: int64
                                           maximum: 50
                                           minimum: 1
                                           type: integer
@@ -1629,7 +2426,9 @@ schema:
                                     asPathReplace:
                                       description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                                       items:
-                                        format: int32
+                                        format: int64
+                                        maximum: 4294967295
+                                        minimum: 1
                                         type: integer
                                       type: array
                                     communities:
@@ -1641,25 +2440,28 @@ schema:
                                             type: string
                                           maxItems: 1
                                           type: array
+                                          x-kubernetes-list-type: set
                                         removeSets:
                                           description: List of community sets to remove from the route.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
+                                          x-kubernetes-list-type: set
                                         replaceSets:
                                           description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
+                                          x-kubernetes-list-type: set
                                       type: object
                                     med:
                                       description: Set a new MED value.
                                       properties:
                                         numericalValue:
                                           description: Fixed numerical value to set or add/subtract.
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 0
                                           type: integer
                                         operation:
@@ -1692,8 +2494,7 @@ schema:
                                       type: object
                                     setLocalPreference:
                                       description: Set a new LOCAL_PREF value for matching BGP routes.
-                                      format: int32
-                                      maximum: 4294967295
+                                      format: int64
                                       minimum: 0
                                       type: integer
                                     setOrigin:
@@ -1712,6 +2513,12 @@ schema:
                                     - NextPolicy
                                     - NextStatement
                                   type: string
+                                setRoutePreference:
+                                  description: Set the RTM route preference (administrative distance) value.
+                                  format: int64
+                                  maximum: 255
+                                  minimum: 1
+                                  type: integer
                                 tags:
                                   description: Manipulate internal route tags associated with the route.
                                   properties:
@@ -1739,7 +2546,7 @@ schema:
                                                 type: string
                                               count:
                                                 description: Number of times to prepend the AS number.
-                                                format: int32
+                                                format: int64
                                                 maximum: 50
                                                 minimum: 1
                                                 type: integer
@@ -1752,7 +2559,9 @@ schema:
                                           asPathReplace:
                                             description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                                             items:
-                                              format: int32
+                                              format: int64
+                                              maximum: 4294967295
+                                              minimum: 1
                                               type: integer
                                             type: array
                                           communities:
@@ -1764,25 +2573,28 @@ schema:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
+                                                x-kubernetes-list-type: set
                                               removeSets:
                                                 description: List of community sets to remove from the route.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
+                                                x-kubernetes-list-type: set
                                               replaceSets:
                                                 description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
+                                                x-kubernetes-list-type: set
                                             type: object
                                           med:
                                             description: Set a new MED value.
                                             properties:
                                               numericalValue:
                                                 description: Fixed numerical value to set or add/subtract.
-                                                maximum: 4294967295
+                                                format: int64
                                                 minimum: 0
                                                 type: integer
                                               operation:
@@ -1815,8 +2627,7 @@ schema:
                                             type: object
                                           setLocalPreference:
                                             description: Set a new LOCAL_PREF value for matching BGP routes.
-                                            format: int32
-                                            maximum: 4294967295
+                                            format: int64
                                             minimum: 0
                                             type: integer
                                           setOrigin:
@@ -1835,6 +2646,12 @@ schema:
                                           - NextPolicy
                                           - NextStatement
                                         type: string
+                                      setRoutePreference:
+                                        description: Set the RTM route preference (administrative distance) value.
+                                        format: int64
+                                        maximum: 255
+                                        minimum: 1
+                                        type: integer
                                       tags:
                                         description: Manipulate internal route tags associated with the route.
                                         properties:
@@ -1872,8 +2689,20 @@ schema:
                                           evpnRouteTypes:
                                             description: Match conditions for EVPN route types.
                                             items:
+                                              format: int64
                                               type: integer
                                             type: array
+                                            x-kubernetes-list-type: set
+                                          nextHop:
+                                            description: Match conditions for the BGP next-hop attribute.
+                                            properties:
+                                              ipAddress:
+                                                description: Match the next-hop attribute to a specific IP address.
+                                                type: string
+                                              prefixSet:
+                                                description: Match the next-hop attribute to a specific group of IP addresses defined in a PrefixSet. Mutually exclusive with IPAddress.
+                                                type: string
+                                            type: object
                                         type: object
                                       families:
                                         description: Address families that the route belongs to.
@@ -1885,6 +2714,7 @@ schema:
                                             - RTC
                                           type: string
                                         type: array
+                                        x-kubernetes-list-type: set
                                       prefixSet:
                                         description: Reference to a PrefixSet resource.
                                         type: string
@@ -1927,10 +2757,34 @@ schema:
                         - name
                       type: object
                     type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
                   prefixSets:
                     description: List of PrefixSet [emits=PrefixSet]
                     items:
                       properties:
+                        metadata:
+                          description: Metadata to assign to the derived resource.
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              description: Annotations to assign to the derived resource object.
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              description: Labels to assign to the derived resource object.
+                              type: object
+                            method:
+                              default: Add
+                              description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                              enum:
+                                - Add
+                                - Replace
+                              type: string
+                          type: object
                         name:
                           description: Name of the PrefixSet.
                           maxLength: 253
@@ -1949,6 +2803,7 @@ schema:
                                 properties:
                                   endRange:
                                     description: The end range when using a range to match prefixes.
+                                    format: int64
                                     maximum: 128
                                     minimum: 0
                                     type: integer
@@ -1960,6 +2815,7 @@ schema:
                                     type: string
                                   startRange:
                                     description: If specifying a range, this is the start of the range.
+                                    format: int64
                                     maximum: 128
                                     minimum: 0
                                     type: integer
@@ -1974,11 +2830,35 @@ schema:
                         - name
                       type: object
                     type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
                 type: object
               staticRoutes:
                 description: List of Static Routes within this VirtualNetwork. [emits=StaticRoute]
                 items:
                   properties:
+                    metadata:
+                      description: Metadata to assign to the derived resource.
+                      properties:
+                        annotations:
+                          additionalProperties:
+                            type: string
+                          description: Annotations to assign to the derived resource object.
+                          type: object
+                        labels:
+                          additionalProperties:
+                            type: string
+                          description: Labels to assign to the derived resource object.
+                          type: object
+                        method:
+                          default: Add
+                          description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                          enum:
+                            - Add
+                            - Replace
+                          type: string
+                      type: object
                     name:
                       description: Name of the StaticRoute.
                       maxLength: 253
@@ -2039,9 +2919,11 @@ schema:
                                         type: string
                                       localDiscriminator:
                                         description: Defines the local discriminator.
+                                        format: int64
                                         type: integer
                                       remoteDiscriminator:
                                         description: Defines the remote discriminator.
+                                        format: int64
                                         type: integer
                                     type: object
                                   ipPrefix:
@@ -2065,14 +2947,17 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         preference:
                           description: Defines the route preference.
+                          format: int64
                           type: integer
                         prefixes:
                           description: List of destination prefixes and mask to use for the static routes.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         router:
                           description: Reference to a Router on which to configure the static routes.  If no Nodes are provided then the static routes will be provisioned on all Nodes on which the Router is provisioned.
                           type: string
@@ -2085,11 +2970,35 @@ schema:
                     - name
                   type: object
                 type: array
+                x-kubernetes-list-map-keys:
+                  - name
+                x-kubernetes-list-type: map
             type: object
           routedInterfaces:
             description: List of RoutedInterface. [emits=RoutedInterface]
             items:
               properties:
+                metadata:
+                  description: Metadata to assign to the derived resource.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations to assign to the derived resource object.
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: Labels to assign to the derived resource object.
+                      type: object
+                    method:
+                      default: Add
+                      description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                      enum:
+                        - Add
+                        - Replace
+                      type: string
+                  type: object
                 name:
                   description: The name of the RoutedInterface.
                   maxLength: 253
@@ -2105,12 +3014,14 @@ schema:
                         desiredMinTransmitIntMs:
                           default: 1000
                           description: The minimum interval in milliseconds between transmission of BFD control packets.
+                          format: int64
                           maximum: 100000
                           minimum: 10
                           type: integer
                         detectionMultiplier:
                           default: 3
                           description: The number of packets that must be missed to declare this session as down.
+                          format: int64
                           maximum: 20
                           minimum: 3
                           type: integer
@@ -2121,17 +3032,20 @@ schema:
                         requiredMinEchoReceiveIntMs:
                           default: 0
                           description: The minimum interval between echo packets the local node can receive.
+                          format: int64
                           maximum: 100000
                           minimum: 0
                           type: integer
                         requiredMinReceiveIntMs:
                           default: 1000
                           description: The minimum interval in milliseconds between received BFD control packets that this system should support.
+                          format: int64
                           maximum: 100000
                           minimum: 10
                           type: integer
                         ttl:
                           description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                          format: int64
                           maximum: 255
                           minimum: 2
                           type: integer
@@ -2149,11 +3063,13 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Egress policy references to use at egress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     hostRoutePopulate:
                       description: Configures host route population based on ARP/ND entries.
@@ -2206,11 +3122,13 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Ingress policy references to use at ingress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     interface:
                       description: Reference to an Interface to use for attachment.
@@ -2218,6 +3136,7 @@ schema:
                     ipMTU:
                       default: 1500
                       description: IP MTU for the RoutedInterface.
+                      format: int64
                       maximum: 9486
                       minimum: 1280
                       type: integer
@@ -2227,7 +3146,7 @@ schema:
                         arpTimeoutSeconds:
                           default: 14400
                           description: Duration of time that dynamic ARP entries remain in the ARP cache before they expire.
-                          format: int32
+                          format: int64
                           minimum: 0
                           type: integer
                         directedBroadcast:
@@ -2255,6 +3174,9 @@ schema:
                           - ipPrefix
                         type: object
                       type: array
+                      x-kubernetes-list-map-keys:
+                        - ipPrefix
+                      x-kubernetes-list-type: map
                     ipv6:
                       description: IPv6 parameters that are not applicable to IPv4.
                       properties:
@@ -2273,7 +3195,7 @@ schema:
                             currentHopLimit:
                               default: 64
                               description: The current hop limit to advertise in the router advertisement messages.
-                              format: int32
+                              format: int64
                               maximum: 255
                               minimum: 0
                               type: integer
@@ -2283,7 +3205,7 @@ schema:
                               type: boolean
                             ipMTU:
                               description: The IP MTU to advertise in the router advertisement messages.
-                              format: int32
+                              format: int64
                               maximum: 9486
                               minimum: 1280
                               type: integer
@@ -2294,14 +3216,14 @@ schema:
                             maxAdvertisementIntervalSeconds:
                               default: 600
                               description: Maximum time between router advertisements (in seconds).
-                              format: int32
+                              format: int64
                               maximum: 1800
                               minimum: 4
                               type: integer
                             minAdvertisementIntervalSeconds:
                               default: 200
                               description: Minimum time between router advertisements (in seconds).
-                              format: int32
+                              format: int64
                               maximum: 1350
                               minimum: 3
                               type: integer
@@ -2325,8 +3247,7 @@ schema:
                                   preferredLifetimeSeconds:
                                     default: 604800
                                     description: The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.
-                                    format: int32
-                                    maximum: 4294967295
+                                    format: int64
                                     minimum: 0
                                     type: integer
                                   prefix:
@@ -2335,32 +3256,34 @@ schema:
                                   validLifetimeSeconds:
                                     default: 2592000
                                     description: The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.
-                                    format: int32
-                                    maximum: 4294967295
+                                    format: int64
                                     minimum: 0
                                     type: integer
                                 required:
                                   - prefix
                                 type: object
                               type: array
+                              x-kubernetes-list-map-keys:
+                                - prefix
+                              x-kubernetes-list-type: map
                             reachableTimeMs:
                               default: 0
                               description: Time in milliseconds for Neighbor Unreachability Detection.
-                              format: int32
+                              format: int64
                               maximum: 3600000
                               minimum: 0
                               type: integer
                             retransmitTimeMs:
                               default: 0
                               description: Time in milliseconds between retransmitted NS messages.
-                              format: int32
+                              format: int64
                               maximum: 1800000
                               minimum: 0
                               type: integer
                             routerLifetimeSeconds:
                               default: 1800
                               description: Router lifetime in seconds for default gateway.
-                              format: int32
+                              format: int64
                               maximum: 9000
                               minimum: 0
                               type: integer
@@ -2389,6 +3312,9 @@ schema:
                           - ipPrefix
                         type: object
                       type: array
+                      x-kubernetes-list-map-keys:
+                        - ipPrefix
+                      x-kubernetes-list-type: map
                     l3ProxyARPND:
                       description: L3 Proxy ARP and ND configuration.
                       properties:
@@ -2421,10 +3347,34 @@ schema:
                 - spec
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
           routers:
             description: List of Routers.[emits=Router]
             items:
               properties:
+                metadata:
+                  description: Metadata to assign to the derived resource.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations to assign to the derived resource object.
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: Labels to assign to the derived resource object.
+                      type: object
+                    method:
+                      default: Add
+                      description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                      enum:
+                        - Add
+                        - Replace
+                      type: string
+                  type: object
                 name:
                   description: The name of the Router.
                   maxLength: 253
@@ -2439,12 +3389,14 @@ schema:
                       properties:
                         autonomousSystem:
                           description: Autonomous System number for BGP.
+                          format: int64
                           maximum: 4294967295
                           minimum: 1
                           type: integer
                         ebgpPreference:
                           default: 170
                           description: Preference to be set for eBGP [default=170].
+                          format: int64
                           maximum: 255
                           minimum: 1
                           type: integer
@@ -2460,6 +3412,7 @@ schema:
                         ibgpPreference:
                           default: 170
                           description: Preference to be set for iBGP [default=170].
+                          format: int64
                           maximum: 255
                           minimum: 1
                           type: integer
@@ -2486,6 +3439,9 @@ schema:
                               - nextHop
                             type: object
                           type: array
+                          x-kubernetes-list-map-keys:
+                            - nextHop
+                          x-kubernetes-list-type: map
                         ipv4Unicast:
                           description: Parameters relating to the IPv4 unicast AFI/SAFI.
                           properties:
@@ -2496,6 +3452,20 @@ schema:
                               default: false
                               description: Enables the IPv4 unicast AFISAFI.
                               type: boolean
+                            exportPolicies:
+                              description: Reference to a Policy resource to use when evaluating route exports from the Router for this address family.
+                              items:
+                                type: string
+                              maxItems: 5
+                              minItems: 1
+                              type: array
+                            importPolicies:
+                              description: Reference to a Policy resource to use when evaluating route imports into the Router for this address family.
+                              items:
+                                type: string
+                              maxItems: 5
+                              minItems: 1
+                              type: array
                             multipath:
                               description: Enable multipath.
                               properties:
@@ -2505,6 +3475,7 @@ schema:
                                   type: boolean
                                 maxAllowedPaths:
                                   description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                                  format: int64
                                   maximum: 256
                                   minimum: 1
                                   type: integer
@@ -2525,8 +3496,22 @@ schema:
                               default: false
                               description: Enables the IPv6 unicast AFISAFI
                               type: boolean
+                            exportPolicies:
+                              description: Reference to a Policy resource to use when evaluating route exports from the Router for this address family.
+                              items:
+                                type: string
+                              maxItems: 5
+                              minItems: 1
+                              type: array
+                            importPolicies:
+                              description: Reference to a Policy resource to use when evaluating route imports into the Router for this address family.
+                              items:
+                                type: string
+                              maxItems: 5
+                              minItems: 1
+                              type: array
                             multipath:
-                              description: Enable multipath
+                              description: Enable multipath.
                               properties:
                                 allowMultipleAS:
                                   default: true
@@ -2534,6 +3519,7 @@ schema:
                                   type: boolean
                                 maxAllowedPaths:
                                   description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                                  format: int64
                                   maximum: 256
                                   minimum: 1
                                   type: integer
@@ -2550,6 +3536,7 @@ schema:
                         minWaitToAdvertiseSeconds:
                           default: 0
                           description: Minimum wait time before advertising routes post BGP restart.
+                          format: int64
                           maximum: 3600
                           minimum: 0
                           type: integer
@@ -2568,8 +3555,20 @@ schema:
                     description:
                       description: The description of the Router.
                       type: string
+                    dynamicLoadBalancing:
+                      description: Dynamic load balancing configuration.
+                      properties:
+                        prefixes:
+                          description: List of IPv4 and/or IPv6 prefixes. Active routes in the FIB that are covered by this list are programmed with dynamic load balancing if conditions are met.
+                          items:
+                            type: string
+                          minItems: 1
+                          type: array
+                          x-kubernetes-list-type: set
+                      type: object
                     ecmp:
                       description: Set the maximum number of ECMP paths for the Router. This is supported only by some platforms, and will be ignored for others.
+                      format: int64
                       maximum: 256
                       minimum: 1
                       type: integer
@@ -2595,6 +3594,7 @@ schema:
                                   - SR-OSPFv3
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                           type: object
                         vxlan:
                           description: VXLAN encapsulation options. Only applicable if VXLAN encapsulation is used (Type=EVPNVXLAN).
@@ -2605,6 +3605,7 @@ schema:
                               type: string
                             vni:
                               description: VNI for the Router; leave blank for auto-allocation from VNI pool. Only applicable to VXLAN encapsulation.
+                              format: int64
                               maximum: 16777215
                               minimum: 1
                               type: integer
@@ -2616,6 +3617,7 @@ schema:
                       type: object
                     evi:
                       description: EVI for the Router; leave blank for auto-allocation from EVI pool. Optional for IPVPN (can be used to auto-derive RTs), required for EVPN.
+                      format: int64
                       maximum: 65535
                       minimum: 1
                       type: integer
@@ -2627,6 +3629,18 @@ schema:
                       description: Export route target in 'target:N:N' format, if not specified, the default value taken as "target:1:<evi>".
                       pattern: ^target.*$
                       type: string
+                    forwardingOptions:
+                      description: Additional (advanced) traffic processing options that are specific to some platforms.
+                      properties:
+                        ipv4RxCheck:
+                          default: false
+                          description: Check if IPv4 address family is enabled on receiving interface for IPv4 traffic. If false, traffic will be accepted from any interface regardless of address family configuration. Applicable only to SR Linux, ignored for unsupported platforms.
+                          type: boolean
+                        ipv6RxCheck:
+                          default: false
+                          description: Check if IPv6 address family is enabled on receiving interface for IPv6 traffic. If false, traffic will be accepted from any interface regardless of address family configuration. Applicable only to SR Linux, ignored for unsupported platforms.
+                          type: boolean
+                      type: object
                     importTarget:
                       description: Import route target in 'target:N:N' format, if not specified, the default value taken as "target:1:<evi>".
                       pattern: ^target.*$
@@ -2636,6 +3650,7 @@ schema:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     resilientHashing:
                       description: Resilient Hashing configuration.
                       properties:
@@ -2646,12 +3661,14 @@ schema:
                               hashBucketsPerPath:
                                 default: 1
                                 description: The number of times each next-hop is repeated in the fill pattern if there are max-paths ECMP next-hops.
+                                format: int64
                                 maximum: 32
                                 minimum: 1
                                 type: integer
                               maxECMP:
                                 default: 1
                                 description: The maximum number of ECMP next-hops per route associated with the resilient-hash prefix.
+                                format: int64
                                 maximum: 64
                                 minimum: 1
                                 type: integer
@@ -2664,6 +3681,9 @@ schema:
                               - prefix
                             type: object
                           type: array
+                          x-kubernetes-list-map-keys:
+                            - prefix
+                          x-kubernetes-list-type: map
                       type: object
                     routeLeaking:
                       description: Route leaking controlled by routing policies in and out of the DefaultRouter.
@@ -2693,10 +3713,34 @@ schema:
                 - spec
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
           vlans:
             description: List of VLANs. [emits=VLAN]
             items:
               properties:
+                metadata:
+                  description: Metadata to assign to the derived resource.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations to assign to the derived resource object.
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: Labels to assign to the derived resource object.
+                      type: object
+                    method:
+                      default: Add
+                      description: Method to apply the metadata. If not specified, defaults to "Add" which means the provided metadata will be combined with the metadata from the parent Virtual Network resource. If "Replace" is specified, the provided metadata will replace the parent metadata on the derived resource.
+                      enum:
+                        - Add
+                        - Replace
+                      type: string
+                  type: object
                 name:
                   description: The name of the VLAN.
                   maxLength: 253
@@ -2720,11 +3764,13 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Egress policy references to use at egress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     ingress:
                       description: Manages actions on traffic at Ingress.
@@ -2734,19 +3780,23 @@ schema:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         qosPolicies:
                           description: List of QoS Ingress policy references to use at ingress.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                       type: object
                     interfaceSelectors:
                       description: Interfaces to use for attachment to this VLAN based on the label selector.  Selects Interfaces based on their associated labels.
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     l2MTU:
                       description: L2 MTU specifies the maximum sized Ethernet frame that can be transmitted on the subinterface. If a frame exceeds this size it is discarded. If the l2-mtu of the subinterface exceeds the port-mtu of the associated interface, the subinterface will remain operationally down.
+                      format: int64
                       maximum: 9500
                       minimum: 1450
                       type: integer
@@ -2772,11 +3822,13 @@ schema:
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                             qosPolicies:
                               description: List of QoS Egress policy references to use at egress.
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                           type: object
                         ingress:
                           description: Manages actions on traffic at Ingress of the Local endpoint of the Uplink.
@@ -2786,17 +3838,20 @@ schema:
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                             qosPolicies:
                               description: List of QoS Ingress policy references to use at ingress.
                               items:
                                 type: string
                               type: array
+                              x-kubernetes-list-type: set
                           type: object
                         uplinkSelectors:
                           description: Selects TopoLinks which connect a leaf switch to a breakout switch. This is the uplink between your access breakout switch and your leaf switch.  There can only be a single TopoLink between the access breakout switch and the leaf switch, if more than one TopoLink is present between two devices the transaction will fail.
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: set
                         uplinkVLANID:
                           default: pool
                           description: The VLAN ID to be utilized to isolate traffic from the VLAN on the access breakout switch to the leaf switch on the selected uplink TopoLink.
@@ -2821,11 +3876,16 @@ schema:
                 - spec
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
         type: object
       status:
         properties:
           health:
             description: Indicates the health score of the VNET.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -2840,42 +3900,55 @@ schema:
             type: array
           numBGPPeers:
             description: Total number of configured BGP Peers.
+            format: int64
             type: integer
           numBGPPeersOperDown:
             description: Total Number of BGP Peer operationally down.
+            format: int64
             type: integer
           numIRBInterfaces:
             description: Total number of irb-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numIRBInterfacesOperDown:
             description: Total number of irb-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
+            type: integer
+          numISISInterfaces:
+            description: Total number of configured IS-IS Interfaces.
+            format: int64
+            type: integer
+          numISISInterfacesOperDown:
+            description: Total Number of IS-IS Interface operationally down.
+            format: int64
             type: integer
           numNodes:
             description: Total number of Nodes on which the VNET is configured.
+            format: int64
             type: integer
           numOSPFInterfaces:
             description: Total number of configured OSPF Interfaces.
+            format: int64
             type: integer
           numOSPFInterfacesOperDown:
             description: Total Number of OSPF Interface operationally down.
+            format: int64
             type: integer
           numRoutedInterfaces:
             description: Total number of routed-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numRoutedInterfacesOperDown:
             description: Total number of routed-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
             type: integer
           numSubinterfaces:
             description: Total number of sub-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numSubinterfacesOperDown:
             description: Total number of sub-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the VNET.

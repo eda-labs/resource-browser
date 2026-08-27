@@ -28,6 +28,7 @@ schema:
           durationSeconds:
             default: 300
             description: Duration in seconds to enable the locator for.
+            format: int64
             maximum: 3600
             minimum: 10
             type: integer
@@ -38,6 +39,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: |-
               List of nodes to enable locator for.
@@ -45,6 +47,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         type: object
       status:
         description: LocatorStatus defines the observed state of Locator

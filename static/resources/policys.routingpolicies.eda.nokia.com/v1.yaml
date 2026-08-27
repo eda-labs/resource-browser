@@ -41,7 +41,7 @@ schema:
                         type: string
                       count:
                         description: Number of times to prepend the AS number.
-                        format: int32
+                        format: int64
                         maximum: 50
                         minimum: 1
                         type: integer
@@ -54,7 +54,9 @@ schema:
                   asPathReplace:
                     description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                     items:
-                      format: int32
+                      format: int64
+                      maximum: 4294967295
+                      minimum: 1
                       type: integer
                     type: array
                   communities:
@@ -66,25 +68,28 @@ schema:
                           type: string
                         maxItems: 1
                         type: array
+                        x-kubernetes-list-type: set
                       removeSets:
                         description: List of community sets to remove from the route.
                         items:
                           type: string
                         maxItems: 1
                         type: array
+                        x-kubernetes-list-type: set
                       replaceSets:
                         description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                         items:
                           type: string
                         maxItems: 1
                         type: array
+                        x-kubernetes-list-type: set
                     type: object
                   med:
                     description: Set a new MED value.
                     properties:
                       numericalValue:
                         description: Fixed numerical value to set or add/subtract.
-                        maximum: 4294967295
+                        format: int64
                         minimum: 0
                         type: integer
                       operation:
@@ -117,8 +122,7 @@ schema:
                     type: object
                   setLocalPreference:
                     description: Set a new LOCAL_PREF value for matching BGP routes.
-                    format: int32
-                    maximum: 4294967295
+                    format: int64
                     minimum: 0
                     type: integer
                   setOrigin:
@@ -137,6 +141,12 @@ schema:
                   - NextPolicy
                   - NextStatement
                 type: string
+              setRoutePreference:
+                description: Set the RTM route preference (administrative distance) value.
+                format: int64
+                maximum: 255
+                minimum: 1
+                type: integer
               tags:
                 description: Manipulate internal route tags associated with the route.
                 properties:
@@ -164,7 +174,7 @@ schema:
                               type: string
                             count:
                               description: Number of times to prepend the AS number.
-                              format: int32
+                              format: int64
                               maximum: 50
                               minimum: 1
                               type: integer
@@ -177,7 +187,9 @@ schema:
                         asPathReplace:
                           description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                           items:
-                            format: int32
+                            format: int64
+                            maximum: 4294967295
+                            minimum: 1
                             type: integer
                           type: array
                         communities:
@@ -189,25 +201,28 @@ schema:
                                 type: string
                               maxItems: 1
                               type: array
+                              x-kubernetes-list-type: set
                             removeSets:
                               description: List of community sets to remove from the route.
                               items:
                                 type: string
                               maxItems: 1
                               type: array
+                              x-kubernetes-list-type: set
                             replaceSets:
                               description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                               items:
                                 type: string
                               maxItems: 1
                               type: array
+                              x-kubernetes-list-type: set
                           type: object
                         med:
                           description: Set a new MED value.
                           properties:
                             numericalValue:
                               description: Fixed numerical value to set or add/subtract.
-                              maximum: 4294967295
+                              format: int64
                               minimum: 0
                               type: integer
                             operation:
@@ -240,8 +255,7 @@ schema:
                           type: object
                         setLocalPreference:
                           description: Set a new LOCAL_PREF value for matching BGP routes.
-                          format: int32
-                          maximum: 4294967295
+                          format: int64
                           minimum: 0
                           type: integer
                         setOrigin:
@@ -260,6 +274,12 @@ schema:
                         - NextPolicy
                         - NextStatement
                       type: string
+                    setRoutePreference:
+                      description: Set the RTM route preference (administrative distance) value.
+                      format: int64
+                      maximum: 255
+                      minimum: 1
+                      type: integer
                     tags:
                       description: Manipulate internal route tags associated with the route.
                       properties:
@@ -297,8 +317,20 @@ schema:
                         evpnRouteTypes:
                           description: Match conditions for EVPN route types.
                           items:
+                            format: int64
                             type: integer
                           type: array
+                          x-kubernetes-list-type: set
+                        nextHop:
+                          description: Match conditions for the BGP next-hop attribute.
+                          properties:
+                            ipAddress:
+                              description: Match the next-hop attribute to a specific IP address.
+                              type: string
+                            prefixSet:
+                              description: Match the next-hop attribute to a specific group of IP addresses defined in a PrefixSet. Mutually exclusive with IPAddress.
+                              type: string
+                          type: object
                       type: object
                     families:
                       description: Address families that the route belongs to.
@@ -310,6 +342,7 @@ schema:
                           - RTC
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     prefixSet:
                       description: Reference to a PrefixSet resource.
                       type: string

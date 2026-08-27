@@ -1,0 +1,119 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: |-
+      ClusterSimLink is the Schema for the clustersimlinks API. It is the runtime
+      sim representation of a ClusterSimLink — a logical sim link whose endpoints
+      reside in two different namespaces.
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          ClusterSimLinkSpec defines the desired state of ClusterSimLink.
+          ClusterSimLink represents a logical sim link between SimNodes that may reside in different namespaces.
+          All members on one side of the sim link must be in the same namespace.
+        properties:
+          bondName:
+            description: |-
+              When creating a ClusterSimLink with more than one member, the bondName is
+              used to create a bond on the Remote side. This field must not be used when
+              creating a single-member ClusterSimLink.
+            type: string
+          links:
+            description: |-
+              Define the set of physical sim links making up this ClusterSimLink.
+              All local endpoints across members must share the same namespace, and all remote endpoints must share the same namespace.
+            items:
+              description: |-
+                ClusterSimLinkMember represents a single physical sim link within a ClusterSimLink.
+                All local endpoints across members must share the same namespace, and all remote endpoints must share the same namespace.
+              properties:
+                local:
+                  description: Local, or "A" endpoint of the sim link.
+                  properties:
+                    interface:
+                      description: Normalized name of the interface/port, e.g. ethernet-1-1.
+                      type: string
+                    interfaceResource:
+                      description: Reference to an Interface.
+                      type: string
+                    namespace:
+                      description: Namespace of the referenced resource.
+                      type: string
+                    node:
+                      description: Reference to a TopoNode.
+                      type: string
+                  required:
+                    - interfaceResource
+                    - namespace
+                    - node
+                  type: object
+                remote:
+                  description: Remote, or "B" endpoint of the sim link.
+                  properties:
+                    interface:
+                      description: Normalized name of the interface/port, e.g. ethernet-1-1.
+                      type: string
+                    interfaceResource:
+                      description: Reference to an Interface.
+                      type: string
+                    namespace:
+                      description: Namespace of the referenced resource.
+                      type: string
+                    node:
+                      description: Reference to a TopoNode.
+                      type: string
+                  required:
+                    - interfaceResource
+                    - namespace
+                    - node
+                  type: object
+                speed:
+                  description: Speed of the sim link.
+                  enum:
+                    - 1.6T
+                    - 800G
+                    - 400G
+                    - 200G
+                    - 100G
+                    - 50G
+                    - 40G
+                    - 25G
+                    - 10G
+                    - 2.5G
+                    - 1G
+                    - 100M
+                  type: string
+              required:
+                - local
+                - remote
+              type: object
+            minItems: 1
+            type: array
+        required:
+          - links
+        type: object
+      status:
+        description: ClusterSimLinkStatus defines the observed state of ClusterSimLink.
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

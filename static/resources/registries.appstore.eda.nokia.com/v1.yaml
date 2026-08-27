@@ -48,6 +48,18 @@ schema:
               RemoteURL is the remote URL of the registry. Supported URI schemes: 'https://' and 'http://'.
               	Default is HTTPS if no scheme is given.
             type: string
+          skipDigestVerification:
+            default: false
+            description: |-
+              SkipDigestVerification skips pinning the image pull to the digest recorded
+              in the catalog manifest.
+            type: boolean
+          skipSignatureVerification:
+            default: false
+            description: |-
+              SkipSignatureVerification indicates whether to skip the signature verification of the appImage.
+              Apps without signature behave the same as invalid signatures. The skip is required for these apps
+            type: boolean
           skipTLSVerify:
             default: false
             description: Skip TLS Verification on connection

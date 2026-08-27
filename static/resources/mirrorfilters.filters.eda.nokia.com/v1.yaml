@@ -335,7 +335,7 @@ schema:
                       properties:
                         burstSizeBytes:
                           description: The maximum burst size in bytes.
-                          format: int32
+                          format: int64
                           type: integer
                         entrySpecificPolicer:
                           default: false
@@ -343,7 +343,7 @@ schema:
                           type: boolean
                         peakRateKbps:
                           description: The peak rate in kilobytes per second.
-                          format: int32
+                          format: int64
                           type: integer
                         scope:
                           default: Global

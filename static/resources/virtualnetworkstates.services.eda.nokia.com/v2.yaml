@@ -43,6 +43,20 @@ schema:
             items:
               type: string
             type: array
+          isisInstances:
+            description: List of ISISInstances created by the VNET
+            items:
+              properties:
+                interfaces:
+                  items:
+                    type: string
+                  type: array
+                name:
+                  type: string
+              required:
+                - name
+              type: object
+            type: array
           ospfInstances:
             description: List of OSPFInstances created by the VNET
             items:

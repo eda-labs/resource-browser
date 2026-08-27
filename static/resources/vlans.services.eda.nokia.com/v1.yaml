@@ -85,6 +85,7 @@ schema:
             type: array
           l2MTU:
             description: L2 MTU specifies the maximum sized Ethernet frame that can be transmitted on the subinterface. If a frame exceeds this size it is discarded. If the l2-mtu of the subinterface exceeds the port-mtu of the associated interface, the subinterface will remain operationally down.
+            format: int64
             maximum: 9500
             minimum: 1450
             type: integer
@@ -158,6 +159,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the VNET.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -167,11 +170,11 @@ schema:
             type: string
           numSubInterfaces:
             description: Total number of sub-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numSubInterfacesOperDown:
             description: Total number of sub-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the VNET.
@@ -206,6 +209,7 @@ schema:
                   type: string
                 subInterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.
@@ -247,6 +251,7 @@ schema:
                   type: string
                 subInterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.

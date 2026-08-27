@@ -36,6 +36,14 @@ schema:
       spec:
         description: VirtualClusterSpec defines the desired state of VirtualCluster
         properties:
+          artifactServerProxyEnabled:
+            default: false
+            description: |-
+              ArtifactServerProxyEnabled, when true with spec.targetBranch set, allows cluster-manager to
+              provision production artifact-server proxy credentials on prod (RBAC), branch kubeconfig, and
+              mTLS client cert into the virtual cluster. Ignored when targetBranch is nil (hosted
+              VirtualClusters use the proxy path without this flag).
+            type: boolean
           targetBranch:
             description: |-
               TargetBranch selects the cluster where the vcluster workload (namespace, etcd, vcluster deployment) will be created.
@@ -109,7 +117,7 @@ schema:
             type: array
           failureCount:
             description: FailureCount tracks consecutive reconciliation failures
-            format: int32
+            format: int64
             type: integer
           healthCheckTime:
             description: HealthCheckTime is the last time health check succeeded

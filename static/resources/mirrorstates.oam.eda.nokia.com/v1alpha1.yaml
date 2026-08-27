@@ -53,6 +53,7 @@ schema:
                   type: string
                 subinterfaceIndex:
                   description: Index allocated to the subinterface which is being mirrored. If an interface is used as a source, this will not be set.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.

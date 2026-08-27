@@ -34,11 +34,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: List of nodes on which to configure the banners.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         type: object
       status:
         description: BannerStatus defines the observed state of Banner

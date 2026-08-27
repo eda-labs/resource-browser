@@ -60,7 +60,7 @@ schema:
                   type: array
                 tier:
                   description: The tier to assign to nodes that match the selector.
-                  format: int32
+                  format: int64
                   type: integer
               required:
                 - tier

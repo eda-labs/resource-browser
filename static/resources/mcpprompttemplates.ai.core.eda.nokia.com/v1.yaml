@@ -27,6 +27,22 @@ schema:
             description: List of arguments for the prompt
             items:
               properties:
+                autocomplete:
+                  description: |-
+                    Autocomplete string for the argument
+                    Examples:
+                    - '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+                    - '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+                    - '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+                  type: string
+                choices:
+                  description: Choices for the argument
+                  items:
+                    type: string
+                  type: array
+                default:
+                  description: Whether the argument is hidden
+                  type: string
                 description:
                   description: A brief description of the argument
                   type: string
@@ -65,11 +81,22 @@ schema:
                     - text
                     - resource
                   type: string
+              required:
+                - type
               type: object
+              x-kubernetes-validations:
+                - message: when type is text, text is required and resource must not be set
+                  rule: self.type != 'text' || (has(self.text) && !has(self.resource))
+                - message: when type is resource, resource is required and text must not be set
+                  rule: self.type != 'resource' || (has(self.resource) && !has(self.text))
             type: array
           description:
             description: A brief description of the prompt
             type: string
+          enabled:
+            default: true
+            description: Whether the prompt template is enabled
+            type: boolean
           title:
             description: A human friendly title for the prompt
             type: string

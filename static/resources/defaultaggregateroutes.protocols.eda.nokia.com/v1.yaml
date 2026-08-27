@@ -27,7 +27,7 @@ schema:
         properties:
           aggregatorASN:
             description: Specifies the aggregator's ASN.
-            format: int32
+            format: int64
             type: integer
           aggregatorIP:
             description: Specifies the aggregator's IP address.

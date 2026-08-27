@@ -25,10 +25,20 @@ schema:
         properties:
           nodes:
             items:
+              properties:
+                nodeName:
+                  type: string
+                operatingSystem:
+                  type: string
+              type: object
+            type: array
+          serverGroups:
+            items:
               type: string
             type: array
         required:
           - nodes
+          - serverGroups
         type: object
       status:
         description: AuthenticationPolicyStateStatus defines the observed state of AuthenticationPolicyState

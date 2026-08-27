@@ -45,6 +45,8 @@ schema:
           virtualNetwork:
             type: string
           vlanID:
+            format: int64
+            maximum: 65535
             type: integer
         required:
           - pingType

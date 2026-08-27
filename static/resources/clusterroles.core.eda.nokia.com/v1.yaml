@@ -25,6 +25,17 @@ schema:
           ClusterRole defines a set of permissions to access EDA resources.
           ClusterRoles and users are bound via groups, selecting a set of users and a set of ClusterRoles to bind.
         properties:
+          coreAccessItems:
+            description: |-
+              Core items to which this role gives access; arbitrary things/actions that do not match the "resource" or "table" paradigm.
+              Each item must have a 'resource/subResource/verb structure', where /subResource is optional (depends on the resource).
+              The leading or trailing part part may be wildcarded with '*'.  A wildcard is recursive; i.e. if a subResource is a wildcard, the verb is wildcarded.
+              A simple '*' provides access to all of these items.
+            items:
+              minLength: 1
+              pattern: ^(?:\*|[a-z][a-z0-9]{0,31}/(?:[a-z]{1,20}|\*)|\*/[a-z]{1,20}|(?:\*|[a-z][a-z0-9]{0,31})/[a-z][a-z0-9]{0,31}/(?:[a-z]{1,20}|\*)|(?:\*|[a-z][a-z0-9]{0,31})/\*/[a-z]{1,20})$
+              type: string
+            type: array
           description:
             description: A description for the role.
             type: string
@@ -36,7 +47,7 @@ schema:
                 apiGroups:
                   description: |-
                     The API groups for the resources controlled by the rule.
-                    An API group consists of an apiGroup and a version, e.g. "apigroup/version".
+                    Accepted forms: "*" (all groups), "group" (all versions), "group/*" (all versions), "group/version".
                     The API group can be a wildcard ("*"), in which case it will match any API group.
                   items:
                     minLength: 1
@@ -88,6 +99,7 @@ schema:
                   enum:
                     - none
                     - read
+                    - readWrite
                   type: string
               required:
                 - path

@@ -32,11 +32,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           defaultRouters:
             description: Reference to DefaultRouters to drain.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           enabled:
             default: true
             description: Enable this Drain.

@@ -36,7 +36,7 @@ schema:
                 type: string
               port:
                 description: TCP Port of the target service.
-                format: int32
+                format: int64
                 maximum: 65535
                 minimum: 1
                 type: integer
@@ -63,7 +63,7 @@ schema:
               port:
                 default: 514
                 description: TCP or UDP port of the remote Syslog server.
-                format: int32
+                format: int64
                 maximum: 65535
                 minimum: 1
                 type: integer
@@ -87,7 +87,7 @@ schema:
                 type: string
               syslogMaxsize:
                 description: Maximum size allowed per message, in bytes.
-                format: int32
+                format: int64
                 type: integer
               syslogMessageKey:
                 default: log

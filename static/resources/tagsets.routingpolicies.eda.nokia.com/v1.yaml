@@ -29,6 +29,7 @@ schema:
               properties:
                 tag:
                   description: The route tag value.
+                  format: int64
                   maximum: 4294967295
                   minimum: 1
                   type: integer

@@ -49,6 +49,7 @@ schema:
             description: Keychain type.
             enum:
               - TCPMD5
+              - OSPF
             type: string
         required:
           - keys

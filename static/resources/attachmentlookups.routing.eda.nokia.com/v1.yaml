@@ -44,11 +44,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: Nodes is a list of node names to execute lookups on.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         required:
           - address
         type: object

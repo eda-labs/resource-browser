@@ -43,6 +43,7 @@ schema:
                         description: |-
                           The minimum average utilization over the last 1 minute to trigger a critical alarm.
                           This value must be greater than the majorThreshold.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -51,6 +52,7 @@ schema:
                         description: |-
                           The delta in which a triggered threshold must drop below to clear an alarm.
                           For example, with a criticalThreshold of 90 and a fallingDelta of 5, the critical alarm will clear when the utilization drops below 85.
+                        format: int64
                         maximum: 25
                         minimum: 1
                         type: integer
@@ -59,12 +61,14 @@ schema:
                         description: |-
                           The minimum average utilization over the last 1 minute to trigger a major alarm.
                           This value must be greater than the minorThreshold.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
                       minorThreshold:
                         default: 80
                         description: The minimum average utilization over the last 1 minute to trigger a minor alarm.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -87,6 +91,7 @@ schema:
                         description: |-
                           The minimum average utilization over the last 1 minute to trigger a critical alarm.
                           This value must be greater than the majorThreshold.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -95,6 +100,7 @@ schema:
                         description: |-
                           The delta in which a triggered threshold must drop below to clear an alarm.
                           For example, with a criticalThreshold of 90 and a fallingDelta of 5, the critical alarm will clear when the utilization drops below 85.
+                        format: int64
                         maximum: 25
                         minimum: 1
                         type: integer
@@ -103,12 +109,14 @@ schema:
                         description: |-
                           The minimum average utilization over the last 1 minute to trigger a major alarm.
                           This value must be greater than the minorThreshold.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
                       minorThreshold:
                         default: 80
                         description: The minimum average utilization over the last 1 minute to trigger a minor alarm.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -141,6 +149,7 @@ schema:
                         description: |-
                           The minimum average utilization over the last 1 minute to trigger a critical alarm.
                           This value must be greater than the majorThreshold.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -149,6 +158,7 @@ schema:
                         description: |-
                           The delta in which a triggered threshold must drop below to clear an alarm.
                           For example, with a criticalThreshold of 90 and a fallingDelta of 5, the critical alarm will clear when the utilization drops below 85.
+                        format: int64
                         maximum: 25
                         minimum: 1
                         type: integer
@@ -157,12 +167,14 @@ schema:
                         description: |-
                           The minimum average utilization over the last 1 minute to trigger a major alarm.
                           This value must be greater than the minorThreshold.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
                       minorThreshold:
                         default: 80
                         description: The minimum average utilization over the last 1 minute to trigger a minor alarm.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer

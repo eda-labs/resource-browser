@@ -26,6 +26,9 @@ schema:
           appInfo:
             description: Additional information relating the application described by this Manifest
             properties:
+              appImageDigest:
+                description: ImageDigest is the digest of the OCI AppImage. It is used to verify the integrity.
+                type: string
               categories:
                 description: Categories of the application described by this Manifest, used by UI
                 items:
@@ -193,6 +196,11 @@ schema:
                         category:
                           description: Category in which to present this resource, these groups exist in the UI navigation menu
                           type: string
+                        dashlets:
+                          description: |-
+                            Relative path to the resource dashlets layout file in the local application repository.
+                            This file contains specifications for the dashlets in the resource pages of the UI
+                          type: string
                         icon:
                           description: Icon to use with this resource
                           type: string
@@ -288,6 +296,11 @@ schema:
                       properties:
                         category:
                           description: Category in which to present this resource, these groups exist in the UI navigation menu
+                          type: string
+                        dashlets:
+                          description: |-
+                            Relative path to the resource dashlets layout file in the local application repository.
+                            This file contains specifications for the dashlets in the resource pages of the UI
                           type: string
                         icon:
                           description: Icon to use with this resource

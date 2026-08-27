@@ -54,7 +54,7 @@ schema:
             description: |-
               RefreshInterval tells the controller how often it should check the remote catalog for new updates, in seconds.
               Default is 180 seconds. Minimum is 30 seconds for production environments; 10 seconds for test environments.
-            format: int32
+            format: int64
             type: integer
           remoteType:
             default: git

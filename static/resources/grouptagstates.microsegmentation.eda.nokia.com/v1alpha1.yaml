@@ -22,6 +22,11 @@ schema:
         type: object
       spec:
         description: GroupTagStateSpec defines the desired state of GroupTagState
+        properties:
+          poolName:
+            type: string
+          scope:
+            type: string
         type: object
       status:
         description: GroupTagStateStatus defines the observed state of GroupTagState

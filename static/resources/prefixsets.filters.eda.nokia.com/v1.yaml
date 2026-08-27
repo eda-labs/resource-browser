@@ -34,6 +34,9 @@ schema:
                 - prefix
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - prefix
+            x-kubernetes-list-type: map
         required:
           - prefixes
         type: object

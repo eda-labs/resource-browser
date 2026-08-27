@@ -28,6 +28,9 @@ schema:
             items:
               type: string
             type: array
+          bfd:
+            description: Is Bi-forward Forwarding Detection (BFD) with fast failover enabled or disabled.
+            type: boolean
           defaultNetworkInstance:
             description: Denotes if the router is a DefaultRouter or Router
             type: boolean
@@ -64,6 +67,7 @@ schema:
             type: string
           subInterfaceIndex:
             description: Sub interface index of the default interface which is configured to peer as a dynamic neighbor
+            format: int64
             type: integer
         required:
           - defaultNetworkInstance

@@ -33,6 +33,7 @@ schema:
             type: boolean
           port:
             description: Port for the server to listen on.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
@@ -59,7 +60,7 @@ schema:
             type: array
           sessionLimit:
             description: Maximum number of HTTP(s) sessions.
-            format: int32
+            format: int64
             maximum: 65535
             minimum: 0
             type: integer
@@ -92,6 +93,8 @@ schema:
             type: array
           health:
             description: Health score of the HTTP server.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Reason for the health score.

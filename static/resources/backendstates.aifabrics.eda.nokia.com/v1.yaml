@@ -31,9 +31,13 @@ schema:
                   description: List of interfaces mapped to the IsolationGroup.
                   items:
                     type: string
+                  maxItems: 256000
+                  minItems: 1
                   type: array
                 name:
                   description: The name of the IsolationGroup.
+                  maxLength: 253
+                  minLength: 1
                   type: string
               type: object
             type: array
@@ -42,6 +46,8 @@ schema:
             properties:
               name:
                 description: The name of the Stripe Connector.
+                maxLength: 253
+                minLength: 1
                 type: string
               stripeConnectorNodes:
                 description: List of stripe connector nodes in the Stripe.
@@ -49,14 +55,22 @@ schema:
                   properties:
                     node:
                       description: Name of the TopoNode.
+                      maxLength: 253
+                      minLength: 1
                       type: string
                     operatingSystem:
                       description: Operating system running on the node.
+                      maxLength: 253
+                      minLength: 1
                       type: string
                     operatingSystemVersion:
                       description: Operating system version running on the node.
+                      maxLength: 253
+                      minLength: 1
                       type: string
                   type: object
+                maxItems: 1024
+                minItems: 1
                 type: array
             type: object
           stripes:
@@ -69,17 +83,27 @@ schema:
                     properties:
                       node:
                         description: Name of the TopoNode.
+                        maxLength: 253
+                        minLength: 1
                         type: string
                       operatingSystem:
                         description: Operating system running on the node.
+                        maxLength: 253
+                        minLength: 1
                         type: string
                       operatingSystemVersion:
                         description: Operating system version running on the node.
+                        maxLength: 253
+                        minLength: 1
                         type: string
                     type: object
+                  maxItems: 8192
+                  minItems: 1
                   type: array
                 name:
                   description: The name of the Stripe.
+                  maxLength: 253
+                  minLength: 1
                   type: string
               type: object
             type: array

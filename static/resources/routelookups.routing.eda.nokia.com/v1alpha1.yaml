@@ -64,6 +64,7 @@ schema:
           found:
             type: boolean
           nodesWithRoute:
+            format: int64
             type: integer
           results:
             items:
@@ -128,6 +129,7 @@ schema:
               type: object
             type: array
           totalNodes:
+            format: int64
             type: integer
         required:
           - found

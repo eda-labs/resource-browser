@@ -1,0 +1,223 @@
+name: v1alpha1
+schema:
+  openAPIV3Schema:
+    description: VolumeCheck is the Schema for the volumechecks API
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: VolumeCheckSpec defines the desired state of VolumeCheck
+        properties:
+          interval:
+            default: 5m
+            description: Interval specifies how often the volume check runs.
+            type: string
+          namespace:
+            description: |-
+              Namespace is the namespace of the PersistentVolumeClaims to check.
+              If not specified, the EDA cluster namespace will be used.
+            type: string
+          pvcNames:
+            description: PVCNames is a list of named PersistentVolumeClaims to check.
+            items:
+              type: string
+            type: array
+          pvcSelector:
+            description: PVCSelector defines a label selector for dynamically selecting PersistentVolumeClaims to check.
+            properties:
+              matchExpressions:
+                description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                items:
+                  description: |-
+                    A label selector requirement is a selector that contains values, a key, and an operator that
+                    relates the key and values.
+                  properties:
+                    key:
+                      description: key is the label key that the selector applies to.
+                      type: string
+                    operator:
+                      description: |-
+                        operator represents a key's relationship to a set of values.
+                        Valid operators are In, NotIn, Exists and DoesNotExist.
+                      type: string
+                    values:
+                      description: |-
+                        values is an array of string values. If the operator is In or NotIn,
+                        the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                        the values array must be empty. This array is replaced during a strategic
+                        merge patch.
+                      items:
+                        type: string
+                      type: array
+                      x-kubernetes-list-type: atomic
+                  required:
+                    - key
+                    - operator
+                  type: object
+                type: array
+                x-kubernetes-list-type: atomic
+              matchLabels:
+                additionalProperties:
+                  type: string
+                description: |-
+                  matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                  map is equivalent to an element of matchExpressions, whose key field is "key", the
+                  operator is "In", and the values array contains only "value". The requirements are ANDed.
+                type: object
+            type: object
+            x-kubernetes-map-type: atomic
+          thresholds:
+            default:
+              criticalThreshold: 90
+              majorThreshold: 80
+              minorThreshold: 70
+            description: |-
+              Thresholds defines the volume utilization thresholds for raising alarms.
+              When omitted, (minorThreshold: 70, majorThreshold: 80, criticalThreshold: 90) take effect.
+            properties:
+              criticalThreshold:
+                default: 90
+                description: |-
+                  Set the threshold for which a critical alarm will be generated for volume utilization, as a percentage.
+                  Using a value of 0 will disable the generation of critical threshold alarms.
+                maximum: 100
+                minimum: 0
+                type: integer
+              majorThreshold:
+                default: 80
+                description: |-
+                  Set the threshold for which a major alarm will be generated for volume utilization, as a percentage.
+                  Using a value of 0 will disable the generation of major threshold alarms.
+                maximum: 100
+                minimum: 0
+                type: integer
+              minorThreshold:
+                default: 70
+                description: |-
+                  Set the threshold for which a minor alarm will be generated for volume utilization, as a percentage.
+                  Using a value of 0 will disable the generation of minor threshold alarms.
+                maximum: 100
+                minimum: 0
+                type: integer
+            type: object
+        type: object
+      status:
+        description: VolumeCheckStatus defines the observed state of VolumeCheck
+        properties:
+          conditions:
+            description: Conditions indicates the validation and execution state of this VolumeCheck.
+            items:
+              description: Condition contains details for one aspect of the current state of this API Resource.
+              properties:
+                lastTransitionTime:
+                  description: |-
+                    lastTransitionTime is the last time the condition transitioned from one status to another.
+                    This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                  format: date-time
+                  type: string
+                message:
+                  description: |-
+                    message is a human readable message indicating details about the transition.
+                    This may be an empty string.
+                  maxLength: 32768
+                  type: string
+                observedGeneration:
+                  description: |-
+                    observedGeneration represents the .metadata.generation that the condition was set based upon.
+                    For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                    with respect to the current state of the instance.
+                  format: int64
+                  minimum: 0
+                  type: integer
+                reason:
+                  description: |-
+                    reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                    Producers of specific condition types may define expected values and meanings for this field,
+                    and whether the values are considered a guaranteed API.
+                    The value should be a CamelCase string.
+                    This field may not be empty.
+                  maxLength: 1024
+                  minLength: 1
+                  pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                  type: string
+                status:
+                  description: status of the condition, one of True, False, Unknown.
+                  enum:
+                    - "True"
+                    - "False"
+                    - Unknown
+                  type: string
+                type:
+                  description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                  maxLength: 316
+                  pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                  type: string
+              required:
+                - lastTransitionTime
+                - message
+                - reason
+                - status
+                - type
+              type: object
+            type: array
+          entryStatuses:
+            description: EntryStatuses contains the volume check results for each PVC.
+            items:
+              description: VolumeCheckEntryStatus defines the result of a single volume check.
+              properties:
+                alarmSeverity:
+                  description: AlarmSeverity indicates the alarm severity based on the configured thresholds, if any.
+                  enum:
+                    - Minor
+                    - Major
+                    - Critical
+                  type: string
+                capacityBytes:
+                  description: CapacityBytes is the total capacity of the volume in bytes.
+                  format: int64
+                  type: integer
+                error:
+                  description: Error provides any error message that occurred during the check.
+                  type: string
+                namespace:
+                  description: Namespace is the namespace of the PersistentVolumeClaim.
+                  type: string
+                pvcName:
+                  description: PVCName is the name of the PersistentVolumeClaim that was checked.
+                  type: string
+                usagePercent:
+                  description: UsagePercent is the current utilization of the volume as a percentage.
+                  type: integer
+                usedBytes:
+                  description: UsedBytes is the number of bytes currently in use on the volume.
+                  format: int64
+                  type: integer
+              required:
+                - pvcName
+              type: object
+            type: array
+          lastChecked:
+            description: LastChecked indicates the last time the volume check was performed.
+            format: date-time
+            type: string
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

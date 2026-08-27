@@ -44,6 +44,8 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
             type: string
         type: object
       status:

@@ -38,6 +38,7 @@ schema:
               allowOwnAS:
                 default: 0
                 description: The maximum number of times the global AS number or a local AS number of the BGP instance can appear in any received AS_PATH before it is considered a loop and considered invalid.
+                format: int64
                 maximum: 255
                 minimum: 0
                 type: integer
@@ -90,6 +91,7 @@ schema:
             type: array
           grStaleRouteTime:
             description: Enables Graceful Restart on the peer and sets the stale route time.
+            format: int64
             maximum: 3600
             minimum: 1
             type: integer
@@ -116,12 +118,13 @@ schema:
                         type: boolean
                       maxReceivedRoutes:
                         description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                        format: int32
+                        format: int64
                         maximum: 4294967295
                         minimum: 1
                         type: integer
                       warningThreshold:
                         description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -133,12 +136,13 @@ schema:
                         type: boolean
                       maxReceivedRoutes:
                         description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                        format: int32
+                        format: int64
                         maximum: 4294967295
                         minimum: 1
                         type: integer
                       warningThreshold:
                         description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -163,12 +167,13 @@ schema:
                         type: boolean
                       maxReceivedRoutes:
                         description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                        format: int32
+                        format: int64
                         maximum: 4294967295
                         minimum: 1
                         type: integer
                       warningThreshold:
                         description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -180,12 +185,13 @@ schema:
                         type: boolean
                       maxReceivedRoutes:
                         description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                        format: int32
+                        format: int64
                         maximum: 4294967295
                         minimum: 1
                         type: integer
                       warningThreshold:
                         description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -213,12 +219,13 @@ schema:
                         type: boolean
                       maxReceivedRoutes:
                         description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                        format: int32
+                        format: int64
                         maximum: 4294967295
                         minimum: 1
                         type: integer
                       warningThreshold:
                         description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -230,12 +237,13 @@ schema:
                         type: boolean
                       maxReceivedRoutes:
                         description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                        format: int32
+                        format: int64
                         maximum: 4294967295
                         minimum: 1
                         type: integer
                       warningThreshold:
                         description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
@@ -247,6 +255,7 @@ schema:
             properties:
               autonomousSystem:
                 description: Local Autonomous System number.
+                format: int64
                 maximum: 4294967295
                 minimum: 1
                 type: integer
@@ -261,11 +270,13 @@ schema:
             type: object
           localPreference:
             description: Local Preference attribute added to received routes from the BGP peers, also sets local preference for generated routes.
+            format: int64
             maximum: 4294967295
             minimum: 0
             type: integer
           multiHopMaxHop:
             description: Enable multihop for eBGP peers and sets the maximum number of hops allowed.
+            format: int64
             maximum: 255
             minimum: 1
             type: integer
@@ -277,6 +288,7 @@ schema:
             properties:
               autonomousSystem:
                 description: Local Autonomous System number.
+                format: int64
                 maximum: 4294967295
                 minimum: 1
                 type: integer
@@ -321,21 +333,25 @@ schema:
             properties:
               connectRetry:
                 description: The time interval in seconds between successive attempts to establish a session with a peer.
+                format: int64
                 maximum: 65535
                 minimum: 1
                 type: integer
               holdTime:
                 description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                format: int64
                 maximum: 65535
                 minimum: 0
                 type: integer
               keepAlive:
                 description: The interval in seconds between successive keepalive messages sent to the peer.
+                format: int64
                 maximum: 21845
                 minimum: 0
                 type: integer
               minimumAdvertisementInterval:
                 description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -346,6 +362,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the BGP group.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -355,15 +373,15 @@ schema:
             type: string
           numPeers:
             description: Number of configured BGP peers within the BGP Group.
-            format: int32
+            format: int64
             type: integer
           numPeersOperDown:
             description: Number of configured BGP peers which have an Operational State of down within the BGP Group.
-            format: int32
+            format: int64
             type: integer
           numPeersUnknown:
             description: Number of configured BGP peers within the BGP Group which cannot be reached by npp.
-            format: int32
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the BGP group.

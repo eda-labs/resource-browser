@@ -44,11 +44,13 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               qosPolicies:
                 description: List of QoS Egress policy references to use at egress.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             type: object
           ingress:
             description: Manages actions on traffic at Ingress.
@@ -58,17 +60,20 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               qosPolicies:
                 description: List of QoS Ingress policy references to use at ingress.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             type: object
           interface:
             description: Reference to an Interface resource to attach this BridgeInterface.
             type: string
           l2MTU:
             description: L2 MTU specifies the maximum sized Ethernet frame that can be transmitted on the subinterface. If a frame exceeds this size it is discarded. If the l2-mtu of the subinterface exceeds the port-mtu of the associated interface, the subinterface will remain operationally down.
+            format: int64
             maximum: 9500
             minimum: 1450
             type: integer
@@ -94,11 +99,13 @@ schema:
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   qosPolicies:
                     description: List of QoS Egress policy references to use at egress.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                 type: object
               ingress:
                 description: Manages actions on traffic at Ingress of the Local endpoint of the Uplink.
@@ -108,17 +115,20 @@ schema:
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   qosPolicies:
                     description: List of QoS Ingress policy references to use at ingress.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                 type: object
               uplinkSelectors:
                 description: Selects TopoLinks which connect a leaf switch to a breakout switch. This is the uplink between your access breakout switch and your leaf switch.  There can only be a single TopoLink between the access breakout switch and the leaf switch, if more than one TopoLink is present between two devices the transaction will fail.
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               uplinkVLANID:
                 default: pool
                 description: The VLAN ID to be utilized to isolate traffic from the VLAN on the access breakout switch to the leaf switch on the selected uplink TopoLink.
@@ -139,6 +149,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the BridgeInterface.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -189,6 +201,7 @@ schema:
                   type: string
                 subinterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.
@@ -235,6 +248,7 @@ schema:
                   type: string
                 subinterfaceIndex:
                   description: Index allocated to the subinterface on the associated interface for the given VLAN.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.

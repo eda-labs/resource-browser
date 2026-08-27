@@ -32,6 +32,9 @@ schema:
           areaID:
             description: AreaId that is configured on the node
             type: string
+          bfd:
+            description: Is Bi-forward Forwarding Detection (BFD) with fast failover enabled or disabled.
+            type: boolean
           defaultOSPFInterface:
             description: Denotes if the interface is a DefaultOSPFInterface or OSPFInterface
             type: boolean
@@ -39,10 +42,13 @@ schema:
             description: Reference to an ospf instance
             type: string
           instanceEnabled:
-            description: Indicates whether the OSPF Insance is administratively enabled
+            description: Indicates whether the ospf instance is administratively enabled
             type: boolean
           interface:
             description: Reference to an ospf interface
+            type: string
+          interfaceKind:
+            description: Reference to the Kind of interface where ospf is enabled.
             type: string
           networkInstanceName:
             description: The name of the network-instance

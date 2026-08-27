@@ -293,6 +293,8 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
             type: string
           platform:
             description: Platform type of this Node, e.g. 7220 IXR-D3L

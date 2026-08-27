@@ -53,6 +53,8 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
             type: string
           platformPath:
             description: JSPath to use for retrieving the version string from Satellite Nodes referencing this SatelliteProfile, e.g. .platform.chassis.type.

@@ -54,6 +54,7 @@ schema:
           ipMTU:
             default: 4136
             description: IP MTU for this fabric. Default is 4136 bytes.
+            format: int64
             maximum: 9000
             minimum: 1500
             type: integer
@@ -63,28 +64,32 @@ schema:
               ecnMaxDropProbabilityPercent:
                 default: 100
                 description: If the queue depth is between min and max threshold then this the probability with which packets are dropped or marked.
+                format: int64
                 type: integer
               ecnSlopeMaxThresholdPercent:
                 default: 80
                 description: The maximum threshold parameter for a RED-managed queue in percent. When the average queue length exceeds the max value, all packets are dropped (or marked if ECN is enabled). Mutually exclusive with min-threshold and max-threshold.
+                format: int64
                 type: integer
               ecnSlopeMinThresholdPercent:
                 default: 5
                 description: The minimum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.
+                format: int64
                 type: integer
               pfcDeadlockDetectionTimer:
                 default: 750
                 description: Number of milliseconds during which outgoing interface is receiving pfc-pause-frames before triggering recovery-timer.
+                format: int64
                 type: integer
               pfcDeadlockRecoveryTimer:
                 default: 750
                 description: Number of milliseconds during which the pfc-pause-frames will be ignored.
+                format: int64
                 type: integer
               queueMaximumBurstSize:
                 default: 1024000
                 description: Maximum amount of shared buffer memory available to the queue in bytes.
-                format: int32
-                maximum: 4294967295
+                format: int64
                 minimum: 0
                 type: integer
             required:
@@ -131,6 +136,7 @@ schema:
                   type: string
                 gpuVlan:
                   description: The VLAN used on interfaces facing the GPU servers.
+                  format: int64
                   type: integer
                 name:
                   description: The name of the Stripe.
@@ -142,6 +148,7 @@ schema:
                   type: array
                 stripeID:
                   description: Unique ID for a stripe
+                  format: int64
                   type: integer
                 systemPoolIPV4:
                   description: Optional reference to an IPAllocationPool used to dynamically allocate an IPv4 address to system/lo0 interfaces. If left blank, system IP allocation will be done from the SystemIPV4Subnet.
@@ -166,6 +173,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the Fabric.  The health score of the Fabric is determined by the aggregate health score of the resources emitted by the Fabric such as ISL, DefaultRouteReflectors etc.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

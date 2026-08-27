@@ -40,8 +40,18 @@ schema:
             default: false
             description: Enables OSPF instance.
             type: boolean
+          lfa:
+            description: LFA (Loop-Free Alternate) functionality.
+            properties:
+              enabled:
+                description: Enables OSPF LFA (Loop-Free Alternate) functionality.
+                type: boolean
+            required:
+              - enabled
+            type: object
           maxECMP:
             description: The maximum number of ECMP paths (next-hops).
+            format: int64
             maximum: 256
             minimum: 1
             type: integer
@@ -50,17 +60,47 @@ schema:
             properties:
               onBoot:
                 description: Set Max Metric on boot for the fixed period of time (in seconds).
+                format: int64
                 minimum: 10
                 type: integer
               overload:
                 description: Enable Max Link Metric on all interfaces.
                 type: boolean
             type: object
+          redistribution:
+            description: Redistribution settings.
+            properties:
+              exportPolicy:
+                description: Export policy to use for redistributing routes into OSPF.
+                type: string
+              externalRouteTag:
+                description: ExternalRouteTag to attach to the redistributed routes.
+                maxLength: 16
+                minLength: 1
+                type: string
+            type: object
           referenceBandwidthGbps:
             description: Reference bandwidth (in Gbps) for automatic metric calculation.
+            format: int64
             maximum: 3200
             minimum: 1
             type: integer
+          routePreference:
+            description: Route preference configuration.
+            properties:
+              external:
+                description: RTM Route Preference (Administrative Distance) for external routes.
+                format: int64
+                maximum: 255
+                minimum: 1
+                type: integer
+              internal:
+                description: RTM Route Preference (Administrative Distance) for internal routes.
+                format: int64
+                maximum: 255
+                minimum: 1
+                type: integer
+            type: object
           timers:
             description: Configures OSPF timers.
             properties:
@@ -69,22 +109,27 @@ schema:
                 properties:
                   accumulateMs:
                     description: Delay (in milliseconds) to gather LSAs before advertising to neighbors
+                    format: int64
                     minimum: 0
                     type: integer
                   arrivalMs:
                     description: Minimum interval (in milliseconds) to accept an identical LSA.
+                    format: int64
                     minimum: 0
                     type: integer
                   genHoldIntervalMs:
                     description: Hold interval (in milliseconds) for subsequent LSA regeneration.
+                    format: int64
                     minimum: 0
                     type: integer
                   genInitialDelayMs:
                     description: Initial delay (in milliseconds) to generate the first instance of LSAs.
+                    format: int64
                     minimum: 0
                     type: integer
                   genMaxDelayMs:
                     description: Maximum interval (in milliseconds) between two consecutive regenerations (of the same LSA).
+                    format: int64
                     minimum: 0
                     type: integer
                 type: object
@@ -93,18 +138,22 @@ schema:
                 properties:
                   holdIntervalMs:
                     description: Hold interval for subsequent SPF calculations.
+                    format: int64
                     minimum: 1
                     type: integer
                   incrementalSPFDelayMs:
                     description: Delay (in milliseconds) before an incremental SPF calculation starts.
+                    format: int64
                     minimum: 0
                     type: integer
                   initialDelayMs:
                     description: Initial SPF calculation delay (in milliseconds).
+                    format: int64
                     minimum: 0
                     type: integer
                   maxDelayMs:
                     description: Maximum interval (in milliseconds) between two consecutive SPF calculations.
+                    format: int64
                     minimum: 1
                     type: integer
                 type: object
@@ -124,6 +173,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the OSPF Instance.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

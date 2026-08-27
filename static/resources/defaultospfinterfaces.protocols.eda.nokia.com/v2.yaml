@@ -42,6 +42,7 @@ schema:
                 type: boolean
               strictModeHoldDownSeconds:
                 description: Enables Hold Down Timer for BFD Strict Mode, in seconds.
+                format: int64
                 maximum: 3600
                 minimum: 512
                 type: integer
@@ -50,6 +51,7 @@ schema:
             type: object
           deadIntervalSeconds:
             description: Dead Interval in seconds.
+            format: int64
             maximum: 65535
             minimum: 3
             type: integer
@@ -61,6 +63,7 @@ schema:
             type: string
           helloIntervalSeconds:
             description: Hello Interval in seconds.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
@@ -73,13 +76,19 @@ schema:
             enum:
               - DefaultInterface
               - SystemInterface
+              - DefaultLoopbackInterface
+            type: string
+          keychain:
+            description: Reference to a Keychain resource that will be used for authentication with the OSPF peer interface.
             type: string
           metric:
             description: Interface metric.
+            format: int64
             minimum: 0
             type: integer
           mtu:
             description: OSPF interface MTU
+            format: int64
             maximum: 10240
             minimum: 512
             type: integer
@@ -105,6 +114,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the OSPF interface.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -119,6 +130,12 @@ schema:
                 adjacencyState:
                   description: Adjacency state of the OSPF neighbor.
                   type: string
+                localIPAddress:
+                  description: Local IP address (IPv4 or IPv6).
+                  type: string
+                neighborIPAddress:
+                  description: Neighbor IP address (IPv4 or IPv6).
+                  type: string
                 neighborRouterID:
                   description: Router ID of the OSPF neighbor.
                   type: string
@@ -126,6 +143,7 @@ schema:
             type: array
           numNeighbors:
             description: The number of discovered neighbors.
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the OSPF interface.

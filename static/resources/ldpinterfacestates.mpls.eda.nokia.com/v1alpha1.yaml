@@ -52,6 +52,7 @@ schema:
             type: string
           subInterfaceIndex:
             description: Index of the subinterface
+            format: int64
             type: integer
         required:
           - defaultNodeInterface

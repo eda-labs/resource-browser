@@ -27,6 +27,7 @@ schema:
         properties:
           channels:
             description: The number of breakout channels to create.
+            format: int64
             maximum: 8
             minimum: 1
             type: integer

@@ -27,16 +27,19 @@ schema:
         properties:
           interfaceMTU:
             description: Configures the Default MTU value for Ethernet interfaces. Includes Ethernet headers but excludes 4-byte FCS trailer.
+            format: int64
             maximum: 11000
             minimum: 1500
             type: integer
           layer2SubifMTU:
             description: Configures the Default MTU value for Layer 2 (bridged) interfaces. Includes Ethernet headers but excludes 4-byte FCS trailer.
+            format: int64
             maximum: 11000
             minimum: 1500
             type: integer
           layer3MTU:
             description: Configures the Default IP MTU value for Layer 3 interfaces. Includes IP headers but excludes Ethernet headers.
+            format: int64
             maximum: 11000
             minimum: 1280
             type: integer

@@ -39,11 +39,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: List of nodes to generate and collect technical support packages for.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         type: object
       status:
         description: Result of the technical support package generation.
