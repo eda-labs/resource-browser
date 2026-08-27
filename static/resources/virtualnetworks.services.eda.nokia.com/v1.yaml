@@ -53,6 +53,7 @@ schema:
                       type: string
                     evi:
                       description: EVI to use for this BridgeDomain, can be optionally left blank to have it automatically allocated using the EVI Pool.
+                      format: int64
                       maximum: 65535
                       minimum: 1
                       type: integer
@@ -75,6 +76,7 @@ schema:
                           properties:
                             ageTime:
                               description: Aging timer value for the proxy entries in seconds. If not set, this indicates that the entries are never flushed.
+                              format: int64
                               maximum: 86400
                               minimum: 60
                               type: integer
@@ -84,6 +86,7 @@ schema:
                               type: boolean
                             sendRefresh:
                               description: The interval determines the frequency at which the system generates three ARP Requests or Neighbor Solicitations with the intent to refresh the proxy entry. The refresh is sent within the age-time window.
+                              format: int64
                               maximum: 86400
                               minimum: 120
                               type: integer
@@ -97,18 +100,21 @@ schema:
                             holdDownTime:
                               default: 9
                               description: Time to wait in minutes from the moment an IP is declared duplicate to the time the IP is removed from the proxy ARP/ND table.
+                              format: int64
                               maximum: 60
                               minimum: 2
                               type: integer
                             monitoringWindow:
                               default: 3
                               description: Monitoring window for detecting duplication on a given IP address in the proxy ARP/ND table.
+                              format: int64
                               maximum: 15
                               minimum: 1
                               type: integer
                             numMoves:
                               default: 5
                               description: Number of moves in the proxy ARP/ND table that an IP is allowed within the monitoring-window.
+                              format: int64
                               maximum: 10
                               minimum: 3
                               type: integer
@@ -124,6 +130,7 @@ schema:
                         tableSize:
                           default: 250
                           description: Maximum number of entries allowed in the proxy table of the bridge domain.
+                          format: int64
                           maximum: 8192
                           minimum: 1
                           type: integer
@@ -131,7 +138,7 @@ schema:
                     macAging:
                       default: 300
                       description: Configurable aging time for dynamically learned mac addresses.
-                      format: int32
+                      format: int64
                       maximum: 86400
                       minimum: 60
                       type: integer
@@ -153,18 +160,21 @@ schema:
                         holdDownTime:
                           default: 9
                           description: Time to wait in minutes from the moment a mac is declared duplicate to the mac is flushed from the bridge table.
+                          format: int64
                           maximum: 60
                           minimum: 2
                           type: integer
                         monitoringWindow:
                           default: 3
                           description: Monitoring window in minutes for detecting duplication on a given mac address.
+                          format: int64
                           maximum: 15
                           minimum: 1
                           type: integer
                         numMoves:
                           default: 5
                           description: Number of moves a mac is allowed within the monitoring-window, before it is declared duplicate.
+                          format: int64
                           minimum: 3
                           type: integer
                       type: object
@@ -174,7 +184,7 @@ schema:
                       type: boolean
                     macLimit:
                       description: Sets the maximum number of MAC entries accepted in the bridge table.
-                      format: int32
+                      format: int64
                       minimum: 1
                       type: integer
                     tunnelIndexPool:
@@ -190,6 +200,7 @@ schema:
                       type: string
                     vni:
                       description: VNI to use for this BridgeDomain, can be optionally left blank to have it allocated using the VNI Pool.
+                      format: int64
                       maximum: 16777215
                       minimum: 1
                       type: integer
@@ -255,6 +266,7 @@ schema:
                       type: string
                     l2MTU:
                       description: L2 MTU specifies the maximum sized Ethernet frame that can be transmitted on the subinterface. If a frame exceeds this size it is discarded. If the l2-mtu of the subinterface exceeds the port-mtu of the associated interface, the subinterface will remain operationally down.
+                      format: int64
                       maximum: 9500
                       minimum: 1450
                       type: integer
@@ -345,7 +357,7 @@ schema:
                     arpTimeout:
                       default: 14400
                       description: Duration of time that dynamic ARP entries remain in the ARP cache before they expire.
-                      format: int32
+                      format: int64
                       type: integer
                     bfd:
                       description: Enable BFD on the IRBInterface.
@@ -353,12 +365,14 @@ schema:
                         desiredMinTransmitInt:
                           default: 1000000
                           description: The minimum interval in microseconds between transmission of BFD control packets.
+                          format: int64
                           maximum: 100000000
                           minimum: 10000
                           type: integer
                         detectionMultiplier:
                           default: 3
                           description: The number of packets that must be missed to declare this session as down.
+                          format: int64
                           maximum: 20
                           minimum: 3
                           type: integer
@@ -369,17 +383,20 @@ schema:
                         minEchoReceiveInterval:
                           default: 0
                           description: The minimum interval between echo packets the local node can receive.
+                          format: int64
                           maximum: 100000000
                           minimum: 0
                           type: integer
                         requiredMinReceive:
                           default: 1000000
                           description: The minimum interval in microseconds between received BFD control packets that this system should support.
+                          format: int64
                           maximum: 100000000
                           minimum: 10000
                           type: integer
                         ttl:
                           description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                          format: int64
                           maximum: 255
                           minimum: 2
                           type: integer
@@ -495,6 +512,7 @@ schema:
                     ipMTU:
                       default: 1500
                       description: IP MTU for the IRBInterface [default=1500].
+                      format: int64
                       maximum: 9486
                       minimum: 1280
                       type: integer
@@ -511,7 +529,7 @@ schema:
                         currentHopLimit:
                           default: 64
                           description: The current hop limit to advertise in the router advertisement messages.
-                          format: int32
+                          format: int64
                           maximum: 255
                           minimum: 0
                           type: integer
@@ -521,7 +539,7 @@ schema:
                           type: boolean
                         ipMTU:
                           description: The IP MTU to advertise in the router advertisement messages.
-                          format: int32
+                          format: int64
                           maximum: 9486
                           minimum: 1280
                           type: integer
@@ -532,14 +550,14 @@ schema:
                         maxAdvertisementInterval:
                           default: 600
                           description: Maximum time between router advertisements (in seconds).
-                          format: int32
+                          format: int64
                           maximum: 1800
                           minimum: 4
                           type: integer
                         minAdvertisementInterval:
                           default: 200
                           description: Minimum time between router advertisements (in seconds).
-                          format: int32
+                          format: int64
                           maximum: 1350
                           minimum: 3
                           type: integer
@@ -563,8 +581,7 @@ schema:
                               preferredLifetime:
                                 default: 604800
                                 description: The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.
-                                format: int32
-                                maximum: 4294967295
+                                format: int64
                                 minimum: 0
                                 type: integer
                               prefix:
@@ -573,8 +590,7 @@ schema:
                               validLifetime:
                                 default: 2592000
                                 description: The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.
-                                format: int32
-                                maximum: 4294967295
+                                format: int64
                                 minimum: 0
                                 type: integer
                             required:
@@ -584,21 +600,21 @@ schema:
                         reachableTime:
                           default: 0
                           description: Time in milliseconds for Neighbor Unreachability Detection.
-                          format: int32
+                          format: int64
                           maximum: 3600000
                           minimum: 0
                           type: integer
                         retransmitTime:
                           default: 0
                           description: Time in milliseconds between retransmitted NS messages.
-                          format: int32
+                          format: int64
                           maximum: 1800000
                           minimum: 0
                           type: integer
                         routerLifetime:
                           default: 1800
                           description: Router lifetime in seconds for default gateway.
-                          format: int32
+                          format: int64
                           maximum: 9000
                           minimum: 0
                           type: integer
@@ -661,6 +677,7 @@ schema:
                           probeInterval:
                             default: 0
                             description: ARP probe interval in seconds.
+                            format: int64
                             maximum: 86400
                             minimum: 0
                             type: integer
@@ -707,6 +724,7 @@ schema:
                                 allowOwnAS:
                                   default: 0
                                   description: The maximum number of times the global AS number or a local AS number of the BGP instance can appear in any received AS_PATH before it is considered a loop and considered invalid.
+                                  format: int64
                                   maximum: 255
                                   minimum: 0
                                   type: integer
@@ -759,6 +777,7 @@ schema:
                               type: array
                             grStaleRouteTime:
                               description: Enables Graceful Restart on the peer and sets the stale route time.
+                              format: int64
                               maximum: 3600
                               minimum: 1
                               type: integer
@@ -785,12 +804,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -802,12 +822,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -832,12 +853,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -849,12 +871,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -869,6 +892,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -883,11 +907,13 @@ schema:
                               type: object
                             localPreference:
                               description: Local Preference attribute added to received routes from the BGP peers, also sets local preference for generated routes.
+                              format: int64
                               maximum: 4294967295
                               minimum: 0
                               type: integer
                             multiHopMaxHop:
                               description: Enable multihop for eBGP peers and sets the maximum number of hops allowed.
+                              format: int64
                               maximum: 255
                               minimum: 1
                               type: integer
@@ -899,6 +925,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -933,21 +960,25 @@ schema:
                               properties:
                                 connectRetry:
                                   description: The time interval in seconds between successive attempts to establish a session with a peer.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 1
                                   type: integer
                                 holdTime:
                                   description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 0
                                   type: integer
                                 keepAlive:
                                   description: The interval in seconds between successive keepalive messages sent to the peer.
+                                  format: int64
                                   maximum: 21845
                                   minimum: 0
                                   type: integer
                                 minimumAdvertisementInterval:
                                   description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                                  format: int64
                                   maximum: 255
                                   minimum: 1
                                   type: integer
@@ -977,6 +1008,7 @@ schema:
                                 allowOwnAS:
                                   default: 0
                                   description: The maximum number of times the global AS number or a local AS number of the BGP instance can appear in any received AS_PATH before it is considered a loop and considered invalid.
+                                  format: int64
                                   maximum: 255
                                   minimum: 0
                                   type: integer
@@ -1026,6 +1058,7 @@ schema:
                             dynamicNeighborAllowedPeerAS:
                               description: The autonomous system numbers allowed from peers if dynamic peering is enabled.
                               items:
+                                format: int64
                                 type: integer
                               type: array
                             exportPolicy:
@@ -1035,6 +1068,7 @@ schema:
                               type: array
                             grStaleRouteTime:
                               description: Enables Graceful Restart on the peer and sets the stale route time.
+                              format: int64
                               maximum: 3600
                               minimum: 1
                               type: integer
@@ -1073,12 +1107,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1090,12 +1125,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1120,12 +1156,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting only accepted routes.
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be accepted before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1137,12 +1174,13 @@ schema:
                                           type: boolean
                                         maxReceivedRoutes:
                                           description: Maximum number of prefixes allowed to be received from the neighbor, counting all routes (accepted and rejected by import policies).
-                                          format: int32
+                                          format: int64
                                           maximum: 4294967295
                                           minimum: 1
                                           type: integer
                                         warningThreshold:
                                           description: A percentage of the maximum number of prefixes that can be received before a warning is logged.
+                                          format: int64
                                           maximum: 100
                                           minimum: 1
                                           type: integer
@@ -1157,6 +1195,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -1171,11 +1210,13 @@ schema:
                               type: object
                             localPreference:
                               description: Local Preference attribute added to received routes from the BGP peers, also sets local preference for generated routes.
+                              format: int64
                               maximum: 4294967295
                               minimum: 0
                               type: integer
                             multiHopMaxHop:
                               description: Enable multihop for eBGP peers and sets the maximum number of hops allowed.
+                              format: int64
                               maximum: 255
                               minimum: 1
                               type: integer
@@ -1190,6 +1231,7 @@ schema:
                               properties:
                                 autonomousSystem:
                                   description: Local Autonomous System number.
+                                  format: int64
                                   maximum: 4294967295
                                   minimum: 1
                                   type: integer
@@ -1227,21 +1269,25 @@ schema:
                               properties:
                                 connectRetry:
                                   description: The time interval in seconds between successive attempts to establish a session with a peer.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 1
                                   type: integer
                                 holdTime:
                                   description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                                  format: int64
                                   maximum: 65535
                                   minimum: 0
                                   type: integer
                                 keepAlive:
                                   description: The interval in seconds between successive keepalive messages sent to the peer.
+                                  format: int64
                                   maximum: 21845
                                   minimum: 0
                                   type: integer
                                 minimumAdvertisementInterval:
                                   description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                                  format: int64
                                   maximum: 255
                                   minimum: 1
                                   type: integer
@@ -1317,11 +1363,13 @@ schema:
                             properties:
                               deadIntervalSec:
                                 description: Dead Interval in seconds.
+                                format: int64
                                 maximum: 65535
                                 minimum: 3
                                 type: integer
                               helloIntervalSec:
                                 description: Hello Interval in seconds.
+                                format: int64
                                 maximum: 65535
                                 minimum: 1
                                 type: integer
@@ -1336,10 +1384,12 @@ schema:
                                 type: string
                               metric:
                                 description: Interface metric.
+                                format: int64
                                 minimum: 0
                                 type: integer
                               mtu:
                                 description: OSPF interface MTU
+                                format: int64
                                 maximum: 10240
                                 minimum: 512
                                 type: integer
@@ -1358,6 +1408,7 @@ schema:
                                     type: boolean
                                   strictModeHoldDownSec:
                                     description: Enables Hold Down Timer for BFD Strict Mode, in seconds.
+                                    format: int64
                                     maximum: 3600
                                     minimum: 512
                                     type: integer
@@ -1404,6 +1455,7 @@ schema:
                           type: boolean
                         maxECMP:
                           description: The maximum number of ECMP paths (next-hops).
+                          format: int64
                           maximum: 256
                           minimum: 1
                           type: integer
@@ -1412,6 +1464,7 @@ schema:
                           properties:
                             onBoot:
                               description: Set Max Metric on boot for the fixed period of time (in seconds).
+                              format: int64
                               minimum: 10
                               type: integer
                             overload:
@@ -1420,6 +1473,7 @@ schema:
                           type: object
                         refBwGbps:
                           description: Reference bandwidth (in Gbps) for automatic metric calculation.
+                          format: int64
                           maximum: 3200
                           minimum: 1
                           type: integer
@@ -1431,22 +1485,27 @@ schema:
                               properties:
                                 accumulateMs:
                                   description: Delay (in milliseconds) to gather LSAs before advertising to neighbors
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 arrivalMs:
                                   description: Minimum interval (in milliseconds) to accept an identical LSA.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 genHoldIntervalMs:
                                   description: Hold interval (in milliseconds) for subsequent LSA regeneration.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 genInitialDelayMs:
                                   description: Initial delay (in milliseconds) to generate the first instance of LSAs.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 genMaxDelayMs:
                                   description: Maximum interval (in milliseconds) between two consecutive regenerations (of the same LSA).
+                                  format: int64
                                   minimum: 0
                                   type: integer
                               type: object
@@ -1455,18 +1514,22 @@ schema:
                               properties:
                                 holdIntervalMs:
                                   description: Hold interval for subsequent SPF calculations.
+                                  format: int64
                                   minimum: 1
                                   type: integer
                                 incrementalSPFDelayMs:
                                   description: Delay (in milliseconds) before an incremental SPF calculation starts.
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 initialDelayMs:
                                   description: Initial SPF calculation delay (in milliseconds).
+                                  format: int64
                                   minimum: 0
                                   type: integer
                                 maxDelayMs:
                                   description: Maximum interval (in milliseconds) between two consecutive SPF calculations.
+                                  format: int64
                                   minimum: 1
                                   type: integer
                               type: object
@@ -1520,7 +1583,7 @@ schema:
                                           type: string
                                         count:
                                           description: Number of times to prepend the AS number.
-                                          format: int32
+                                          format: int64
                                           maximum: 50
                                           minimum: 1
                                           type: integer
@@ -1533,7 +1596,9 @@ schema:
                                     asPathReplace:
                                       description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                                       items:
-                                        format: int32
+                                        format: int64
+                                        maximum: 4294967295
+                                        minimum: 1
                                         type: integer
                                       type: array
                                     communities:
@@ -1545,25 +1610,28 @@ schema:
                                             type: string
                                           maxItems: 1
                                           type: array
+                                          x-kubernetes-list-type: set
                                         removeSets:
                                           description: List of community sets to remove from the route.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
+                                          x-kubernetes-list-type: set
                                         replaceSets:
                                           description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                                           items:
                                             type: string
                                           maxItems: 1
                                           type: array
+                                          x-kubernetes-list-type: set
                                       type: object
                                     med:
                                       description: Set a new MED value.
                                       properties:
                                         numericalValue:
                                           description: Fixed numerical value to set or add/subtract.
-                                          maximum: 4294967295
+                                          format: int64
                                           minimum: 0
                                           type: integer
                                         operation:
@@ -1596,8 +1664,7 @@ schema:
                                       type: object
                                     setLocalPreference:
                                       description: Set a new LOCAL_PREF value for matching BGP routes.
-                                      format: int32
-                                      maximum: 4294967295
+                                      format: int64
                                       minimum: 0
                                       type: integer
                                     setOrigin:
@@ -1616,6 +1683,12 @@ schema:
                                     - NextPolicy
                                     - NextStatement
                                   type: string
+                                setRoutePreference:
+                                  description: Set the RTM route preference (administrative distance) value.
+                                  format: int64
+                                  maximum: 255
+                                  minimum: 1
+                                  type: integer
                                 tags:
                                   description: Manipulate internal route tags associated with the route.
                                   properties:
@@ -1643,7 +1716,7 @@ schema:
                                                 type: string
                                               count:
                                                 description: Number of times to prepend the AS number.
-                                                format: int32
+                                                format: int64
                                                 maximum: 50
                                                 minimum: 1
                                                 type: integer
@@ -1656,7 +1729,9 @@ schema:
                                           asPathReplace:
                                             description: Replace the existing AS path with a new AS_SEQUENCE containing the listed AS numbers.
                                             items:
-                                              format: int32
+                                              format: int64
+                                              maximum: 4294967295
+                                              minimum: 1
                                               type: integer
                                             type: array
                                           communities:
@@ -1668,25 +1743,28 @@ schema:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
+                                                x-kubernetes-list-type: set
                                               removeSets:
                                                 description: List of community sets to remove from the route.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
+                                                x-kubernetes-list-type: set
                                               replaceSets:
                                                 description: List of community sets to replace the existing communities with. Cannot be combined with Add or Remove.
                                                 items:
                                                   type: string
                                                 maxItems: 1
                                                 type: array
+                                                x-kubernetes-list-type: set
                                             type: object
                                           med:
                                             description: Set a new MED value.
                                             properties:
                                               numericalValue:
                                                 description: Fixed numerical value to set or add/subtract.
-                                                maximum: 4294967295
+                                                format: int64
                                                 minimum: 0
                                                 type: integer
                                               operation:
@@ -1719,8 +1797,7 @@ schema:
                                             type: object
                                           setLocalPreference:
                                             description: Set a new LOCAL_PREF value for matching BGP routes.
-                                            format: int32
-                                            maximum: 4294967295
+                                            format: int64
                                             minimum: 0
                                             type: integer
                                           setOrigin:
@@ -1739,6 +1816,12 @@ schema:
                                           - NextPolicy
                                           - NextStatement
                                         type: string
+                                      setRoutePreference:
+                                        description: Set the RTM route preference (administrative distance) value.
+                                        format: int64
+                                        maximum: 255
+                                        minimum: 1
+                                        type: integer
                                       tags:
                                         description: Manipulate internal route tags associated with the route.
                                         properties:
@@ -1776,8 +1859,20 @@ schema:
                                           evpnRouteTypes:
                                             description: Match conditions for EVPN route types.
                                             items:
+                                              format: int64
                                               type: integer
                                             type: array
+                                            x-kubernetes-list-type: set
+                                          nextHop:
+                                            description: Match conditions for the BGP next-hop attribute.
+                                            properties:
+                                              ipAddress:
+                                                description: Match the next-hop attribute to a specific IP address.
+                                                type: string
+                                              prefixSet:
+                                                description: Match the next-hop attribute to a specific group of IP addresses defined in a PrefixSet. Mutually exclusive with IPAddress.
+                                                type: string
+                                            type: object
                                         type: object
                                       families:
                                         description: Address families that the route belongs to.
@@ -1789,6 +1884,7 @@ schema:
                                             - RTC
                                           type: string
                                         type: array
+                                        x-kubernetes-list-type: set
                                       prefixSet:
                                         description: Reference to a PrefixSet resource.
                                         type: string
@@ -1853,6 +1949,7 @@ schema:
                                 properties:
                                   endRange:
                                     description: The end range when using a range to match prefixes.
+                                    format: int64
                                     maximum: 128
                                     minimum: 0
                                     type: integer
@@ -1864,6 +1961,7 @@ schema:
                                     type: string
                                   startRange:
                                     description: If specifying a range, this is the start of the range.
+                                    format: int64
                                     maximum: 128
                                     minimum: 0
                                     type: integer
@@ -1932,9 +2030,11 @@ schema:
                                         type: string
                                       localDiscriminator:
                                         description: Defines the local discriminator.
+                                        format: int64
                                         type: integer
                                       remoteDiscriminator:
                                         description: Defines the remote discriminator.
+                                        format: int64
                                         type: integer
                                     type: object
                                   ipPrefix:
@@ -1960,6 +2060,7 @@ schema:
                           type: array
                         preference:
                           description: Defines the route preference.
+                          format: int64
                           type: integer
                         prefixes:
                           description: List of destination prefixes and mask to use for the static routes.
@@ -1995,7 +2096,7 @@ schema:
                     arpTimeout:
                       default: 14400
                       description: Duration of time that dynamic ARP entries remain in the ARP cache before they expire.
-                      format: int32
+                      format: int64
                       type: integer
                     bfd:
                       description: Enables BFD on the RoutedInterface.
@@ -2003,12 +2104,14 @@ schema:
                         desiredMinTransmitInt:
                           default: 1000000
                           description: The minimum interval in microseconds between transmission of BFD control packets.
+                          format: int64
                           maximum: 100000000
                           minimum: 10000
                           type: integer
                         detectionMultiplier:
                           default: 3
                           description: The number of packets that must be missed to declare this session as down.
+                          format: int64
                           maximum: 20
                           minimum: 3
                           type: integer
@@ -2019,17 +2122,20 @@ schema:
                         minEchoReceiveInterval:
                           default: 0
                           description: The minimum interval between echo packets the local node can receive.
+                          format: int64
                           maximum: 100000000
                           minimum: 0
                           type: integer
                         requiredMinReceive:
                           default: 1000000
                           description: The minimum interval in microseconds between received BFD control packets that this system should support.
+                          format: int64
                           maximum: 100000000
                           minimum: 10000
                           type: integer
                         ttl:
                           description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                          format: int64
                           maximum: 255
                           minimum: 2
                           type: integer
@@ -2116,6 +2222,7 @@ schema:
                     ipMTU:
                       default: 1500
                       description: IP MTU for the RoutedInterface.
+                      format: int64
                       maximum: 9486
                       minimum: 1280
                       type: integer
@@ -2160,7 +2267,7 @@ schema:
                         currentHopLimit:
                           default: 64
                           description: The current hop limit to advertise in the router advertisement messages.
-                          format: int32
+                          format: int64
                           maximum: 255
                           minimum: 0
                           type: integer
@@ -2170,7 +2277,7 @@ schema:
                           type: boolean
                         ipMTU:
                           description: The IP MTU to advertise in the router advertisement messages.
-                          format: int32
+                          format: int64
                           maximum: 9486
                           minimum: 1280
                           type: integer
@@ -2181,14 +2288,14 @@ schema:
                         maxAdvertisementInterval:
                           default: 600
                           description: Maximum time between router advertisements (in seconds).
-                          format: int32
+                          format: int64
                           maximum: 1800
                           minimum: 4
                           type: integer
                         minAdvertisementInterval:
                           default: 200
                           description: Minimum time between router advertisements (in seconds).
-                          format: int32
+                          format: int64
                           maximum: 1350
                           minimum: 3
                           type: integer
@@ -2212,8 +2319,7 @@ schema:
                               preferredLifetime:
                                 default: 604800
                                 description: The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.
-                                format: int32
-                                maximum: 4294967295
+                                format: int64
                                 minimum: 0
                                 type: integer
                               prefix:
@@ -2222,8 +2328,7 @@ schema:
                               validLifetime:
                                 default: 2592000
                                 description: The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.
-                                format: int32
-                                maximum: 4294967295
+                                format: int64
                                 minimum: 0
                                 type: integer
                             required:
@@ -2233,21 +2338,21 @@ schema:
                         reachableTime:
                           default: 0
                           description: Time in milliseconds for Neighbor Unreachability Detection.
-                          format: int32
+                          format: int64
                           maximum: 3600000
                           minimum: 0
                           type: integer
                         retransmitTime:
                           default: 0
                           description: Time in milliseconds between retransmitted NS messages.
-                          format: int32
+                          format: int64
                           maximum: 1800000
                           minimum: 0
                           type: integer
                         routerLifetime:
                           default: 1800
                           description: Router lifetime in seconds for default gateway.
-                          format: int32
+                          format: int64
                           maximum: 9000
                           minimum: 0
                           type: integer
@@ -2325,12 +2430,14 @@ schema:
                       properties:
                         autonomousSystem:
                           description: Autonomous System number for BGP.
+                          format: int64
                           maximum: 4294967295
                           minimum: 1
                           type: integer
                         ebgpPreference:
                           default: 170
                           description: Preference to be set for eBGP [default=170].
+                          format: int64
                           maximum: 255
                           minimum: 1
                           type: integer
@@ -2346,6 +2453,7 @@ schema:
                         ibgpPreference:
                           default: 170
                           description: Preference to be set for iBGP [default=170].
+                          format: int64
                           maximum: 255
                           minimum: 1
                           type: integer
@@ -2391,6 +2499,7 @@ schema:
                                   type: boolean
                                 maxAllowedPaths:
                                   description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                                  format: int64
                                   maximum: 256
                                   minimum: 1
                                   type: integer
@@ -2420,6 +2529,7 @@ schema:
                                   type: boolean
                                 maxAllowedPaths:
                                   description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                                  format: int64
                                   maximum: 256
                                   minimum: 1
                                   type: integer
@@ -2436,6 +2546,7 @@ schema:
                         minWaitToAdvertise:
                           default: 0
                           description: Minimum wait time before advertising routes post BGP restart.
+                          format: int64
                           maximum: 3600
                           minimum: 0
                           type: integer
@@ -2456,11 +2567,13 @@ schema:
                       type: string
                     ecmp:
                       description: Set the maximum number of ECMP paths for the Router. This is supported only by some platforms, and will be ignored for others.
+                      format: int64
                       maximum: 256
                       minimum: 1
                       type: integer
                     evi:
                       description: EVI for the Router; leave blank for auto-allocation from EVI pool. Optional for IPVPN (can be used to auto-derive RTs), required for EVPN.
+                      format: int64
                       maximum: 65535
                       minimum: 1
                       type: integer
@@ -2486,12 +2599,14 @@ schema:
                               hashBucketsPerPath:
                                 default: 1
                                 description: The number of times each next-hop is repeated in the fill pattern if there are max-paths ECMP next-hops.
+                                format: int64
                                 maximum: 32
                                 minimum: 1
                                 type: integer
                               maxECMP:
                                 default: 1
                                 description: The maximum number of ECMP next-hops per route associated with the resilient-hash prefix.
+                                format: int64
                                 maximum: 64
                                 minimum: 1
                                 type: integer
@@ -2536,6 +2651,7 @@ schema:
                       type: string
                     vni:
                       description: VNI for the Router; leave blank for auto-allocation from VNI pool. Only applicable to VXLAN encapsulation.
+                      format: int64
                       maximum: 16777215
                       minimum: 1
                       type: integer
@@ -2603,6 +2719,7 @@ schema:
                       type: array
                     l2MTU:
                       description: L2 MTU specifies the maximum sized Ethernet frame that can be transmitted on the subinterface. If a frame exceeds this size it is discarded. If the l2-mtu of the subinterface exceeds the port-mtu of the associated interface, the subinterface will remain operationally down.
+                      format: int64
                       maximum: 9500
                       minimum: 1450
                       type: integer
@@ -2682,6 +2799,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the VNET.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -2696,42 +2815,47 @@ schema:
             type: array
           numBGPPeers:
             description: Total number of configured BGP Peers.
+            format: int64
             type: integer
           numBGPPeersOperDown:
             description: Total Number of BGP Peer operationally down.
+            format: int64
             type: integer
           numIRBInterfaces:
             description: Total number of irb-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numIRBInterfacesOperDown:
             description: Total number of irb-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
             type: integer
           numNodes:
             description: Total number of Nodes on which the VNET is configured.
+            format: int64
             type: integer
           numOSPFInterfaces:
             description: Total number of configured OSPF Interfaces.
+            format: int64
             type: integer
           numOSPFInterfacesOperDown:
             description: Total Number of OSPF Interface operationally down.
+            format: int64
             type: integer
           numRoutedInterfaces:
             description: Total number of routed-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numRoutedInterfacesOperDown:
             description: Total number of routed-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
             type: integer
           numSubInterfaces:
             description: Total number of sub-interfaces configured by the VNET.
-            format: int32
+            format: int64
             type: integer
           numSubInterfacesOperDown:
             description: Total number of sub-interfaces configured by the VNET which are oper-down.
-            format: int32
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the VNET.

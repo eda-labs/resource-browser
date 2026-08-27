@@ -25,13 +25,13 @@ schema:
         properties:
           endLabel:
             description: End label of the block.
-            format: int32
+            format: int64
             maximum: 1048575
             minimum: 16
             type: integer
           startLabel:
             description: Start label of the block.
-            format: int32
+            format: int64
             maximum: 1048575
             minimum: 16
             type: integer

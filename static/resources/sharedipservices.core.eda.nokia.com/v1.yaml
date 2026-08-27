@@ -51,7 +51,7 @@ schema:
                     Port is the port number that will be exposed on the shared IP
                     If a port is specified than ports on addres must not overlap
                     If unspecified than controller will allocate a free port
-                  format: int32
+                  format: int64
                   maximum: 65535
                   minimum: 1
                   type: integer
@@ -65,7 +65,7 @@ schema:
                   type: string
                 targetPort:
                   description: TargetPort is the port number on the pod to forward traffic to
-                  format: int32
+                  format: int64
                   maximum: 65535
                   minimum: 1
                   type: integer
@@ -102,7 +102,7 @@ schema:
                   type: string
                 port:
                   description: Port is the allocated port number on the shared IP
-                  format: int32
+                  format: int64
                   type: integer
                 protocol:
                   description: Protocol is the network protocol

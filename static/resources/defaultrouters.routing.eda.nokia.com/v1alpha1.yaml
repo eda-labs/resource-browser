@@ -37,12 +37,14 @@ schema:
             properties:
               autonomousSystem:
                 description: Autonomous System number for BGP.
+                format: int64
                 maximum: 4294967295
                 minimum: 1
                 type: integer
               ebgpPreference:
                 default: 170
                 description: Preference to be set for eBGP.
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -53,6 +55,7 @@ schema:
               ibgpPreference:
                 default: 170
                 description: Preference to be set for iBGP.
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -74,6 +77,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -103,6 +107,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -139,6 +144,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -153,6 +159,7 @@ schema:
               minWaitToAdvertise:
                 default: 0
                 description: Minimum wait time before advertising routes post BGP restart.
+                format: int64
                 maximum: 3600
                 minimum: 0
                 type: integer
@@ -176,6 +183,7 @@ schema:
             type: string
           ecmp:
             description: Set the maximum number of ECMP paths for the DefaultRouter. This is supported only by some platforms, and will be ignored for others.
+            format: int64
             maximum: 256
             minimum: 1
             type: integer
@@ -217,6 +225,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the Router.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

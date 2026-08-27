@@ -32,7 +32,21 @@ schema:
                 autocomplete:
                   description: |-
                     Autocomplete string for the argument
-                    Example: '{"group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+                    Examples:
+                    - '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+                    - '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+                    - '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+                  type: string
+                choices:
+                  description: Choices for the argument
+                  items:
+                    type: string
+                  type: array
+                default:
+                  description: Default value for the argument
+                  type: string
+                description:
+                  description: A brief description of the argument
                   type: string
                 name:
                   description: Argument name to be used in the resource template
@@ -42,6 +56,10 @@ schema:
           description:
             description: A brief description of the resource
             type: string
+          enabled:
+            default: true
+            description: Whether the resource definition is enabled
+            type: boolean
           mimeType:
             description: The MIME type of the resource
             type: string

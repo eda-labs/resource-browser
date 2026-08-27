@@ -71,6 +71,7 @@ schema:
             properties:
               ipMTU:
                 description: Sets the IP MTU for the DefaultInterface.
+                format: int64
                 maximum: 9486
                 minimum: 1280
                 type: integer
@@ -99,6 +100,7 @@ schema:
                 type: string
               vlanID:
                 description: Configures the provided VLAN on the DefaultInterfaces which are members of the ISLs.
+                format: int64
                 maximum: 4094
                 minimum: 1
                 type: integer
@@ -142,12 +144,14 @@ schema:
                   desiredMinTransmitInt:
                     default: 1000000
                     description: The minimum interval in microseconds between transmission of BFD control packets.
+                    format: int64
                     maximum: 100000000
                     minimum: 10000
                     type: integer
                   detectionMultiplier:
                     default: 3
                     description: The number of packets that must be missed to declare this session as down.
+                    format: int64
                     maximum: 20
                     minimum: 3
                     type: integer
@@ -158,17 +162,20 @@ schema:
                   minEchoReceiveInterval:
                     default: 1000000
                     description: The minimum interval between echo packets the local node can receive in microseconds.
+                    format: int64
                     maximum: 100000000
                     minimum: 0
                     type: integer
                   requiredMinReceive:
                     default: 1000000
                     description: The minimum interval in microseconds between received BFD control packets that this system should support.
+                    format: int64
                     maximum: 100000000
                     minimum: 10000
                     type: integer
                   ttl:
                     description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                    format: int64
                     maximum: 255
                     minimum: 2
                     type: integer
@@ -178,7 +185,7 @@ schema:
                 properties:
                   autonomousSystem:
                     description: Autonomous System used for iBGP peering session, when protocol is set to IBGP providing an autonomousSystem is required.
-                    format: int32
+                    format: int64
                     type: integer
                   clusterID:
                     description: Sets the cluster ID used by DefaultRouteReflectors, when protocol is set to IBGP providing a clusterID is required.
@@ -216,21 +223,25 @@ schema:
                     properties:
                       connectRetry:
                         description: The time interval in seconds between successive attempts to establish a session with a peer.
+                        format: int64
                         maximum: 65535
                         minimum: 1
                         type: integer
                       holdTime:
                         description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                        format: int64
                         maximum: 65535
                         minimum: 0
                         type: integer
                       keepAlive:
                         description: The interval in seconds between successive keepalive messages sent to the peer.
+                        format: int64
                         maximum: 21845
                         minimum: 0
                         type: integer
                       minimumAdvertisementInterval:
                         description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                        format: int64
                         maximum: 255
                         minimum: 1
                         type: integer
@@ -333,12 +344,14 @@ schema:
                   desiredMinTransmitInt:
                     default: 1000000
                     description: The minimum interval in microseconds between transmission of BFD control packets.
+                    format: int64
                     maximum: 100000000
                     minimum: 10000
                     type: integer
                   detectionMultiplier:
                     default: 3
                     description: The number of packets that must be missed to declare this session as down.
+                    format: int64
                     maximum: 20
                     minimum: 3
                     type: integer
@@ -349,17 +362,20 @@ schema:
                   minEchoReceiveInterval:
                     default: 1000000
                     description: The minimum interval between echo packets the local node can receive in microseconds.
+                    format: int64
                     maximum: 100000000
                     minimum: 0
                     type: integer
                   requiredMinReceive:
                     default: 1000000
                     description: The minimum interval in microseconds between received BFD control packets that this system should support.
+                    format: int64
                     maximum: 100000000
                     minimum: 10000
                     type: integer
                   ttl:
                     description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                    format: int64
                     maximum: 255
                     minimum: 2
                     type: integer
@@ -388,21 +404,25 @@ schema:
                     properties:
                       connectRetry:
                         description: The time interval in seconds between successive attempts to establish a session with a peer.
+                        format: int64
                         maximum: 65535
                         minimum: 1
                         type: integer
                       holdTime:
                         description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                        format: int64
                         maximum: 65535
                         minimum: 0
                         type: integer
                       keepAlive:
                         description: The interval in seconds between successive keepalive messages sent to the peer.
+                        format: int64
                         maximum: 21845
                         minimum: 0
                         type: integer
                       minimumAdvertisementInterval:
                         description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                        format: int64
                         maximum: 255
                         minimum: 1
                         type: integer
@@ -451,12 +471,14 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array
           health:
             description: Indicates the health score of the Fabric.  The health score of the Fabric is determined by the aggregate health score of the resources emitted by the Fabric such as ISL, DefaultRouteReflectors etc.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -479,7 +501,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array
@@ -501,7 +523,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array
@@ -520,7 +542,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array

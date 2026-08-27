@@ -47,12 +47,14 @@ schema:
             properties:
               autonomousSystem:
                 description: Autonomous System number for BGP.
+                format: int64
                 maximum: 4294967295
                 minimum: 1
                 type: integer
               ebgpPreference:
                 default: 170
                 description: Preference to be set for eBGP [default=170].
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -68,6 +70,7 @@ schema:
               ibgpPreference:
                 default: 170
                 description: Preference to be set for iBGP [default=170].
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -94,6 +97,9 @@ schema:
                     - nextHop
                   type: object
                 type: array
+                x-kubernetes-list-map-keys:
+                  - nextHop
+                x-kubernetes-list-type: map
               ipv4Unicast:
                 description: Parameters relating to the IPv4 unicast AFI/SAFI.
                 properties:
@@ -104,6 +110,20 @@ schema:
                     default: false
                     description: Enables the IPv4 unicast AFISAFI.
                     type: boolean
+                  exportPolicies:
+                    description: Reference to a Policy resource to use when evaluating route exports from the Router for this address family.
+                    items:
+                      type: string
+                    maxItems: 5
+                    minItems: 1
+                    type: array
+                  importPolicies:
+                    description: Reference to a Policy resource to use when evaluating route imports into the Router for this address family.
+                    items:
+                      type: string
+                    maxItems: 5
+                    minItems: 1
+                    type: array
                   multipath:
                     description: Enable multipath.
                     properties:
@@ -113,6 +133,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -133,8 +154,22 @@ schema:
                     default: false
                     description: Enables the IPv6 unicast AFISAFI
                     type: boolean
+                  exportPolicies:
+                    description: Reference to a Policy resource to use when evaluating route exports from the Router for this address family.
+                    items:
+                      type: string
+                    maxItems: 5
+                    minItems: 1
+                    type: array
+                  importPolicies:
+                    description: Reference to a Policy resource to use when evaluating route imports into the Router for this address family.
+                    items:
+                      type: string
+                    maxItems: 5
+                    minItems: 1
+                    type: array
                   multipath:
-                    description: Enable multipath
+                    description: Enable multipath.
                     properties:
                       allowMultipleAS:
                         default: true
@@ -142,6 +177,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -158,6 +194,7 @@ schema:
               minWaitToAdvertiseSeconds:
                 default: 0
                 description: Minimum wait time before advertising routes post BGP restart.
+                format: int64
                 maximum: 3600
                 minimum: 0
                 type: integer
@@ -176,8 +213,20 @@ schema:
           description:
             description: The description of the Router.
             type: string
+          dynamicLoadBalancing:
+            description: Dynamic load balancing configuration.
+            properties:
+              prefixes:
+                description: List of IPv4 and/or IPv6 prefixes. Active routes in the FIB that are covered by this list are programmed with dynamic load balancing if conditions are met.
+                items:
+                  type: string
+                minItems: 1
+                type: array
+                x-kubernetes-list-type: set
+            type: object
           ecmp:
             description: Set the maximum number of ECMP paths for the Router. This is supported only by some platforms, and will be ignored for others.
+            format: int64
             maximum: 256
             minimum: 1
             type: integer
@@ -203,6 +252,7 @@ schema:
                         - SR-OSPFv3
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                 type: object
               vxlan:
                 description: VXLAN encapsulation options. Only applicable if VXLAN encapsulation is used (Type=EVPNVXLAN).
@@ -213,6 +263,7 @@ schema:
                     type: string
                   vni:
                     description: VNI for the Router; leave blank for auto-allocation from VNI pool. Only applicable to VXLAN encapsulation.
+                    format: int64
                     maximum: 16777215
                     minimum: 1
                     type: integer
@@ -224,6 +275,7 @@ schema:
             type: object
           evi:
             description: EVI for the Router; leave blank for auto-allocation from EVI pool. Optional for IPVPN (can be used to auto-derive RTs), required for EVPN.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
@@ -235,6 +287,18 @@ schema:
             description: Export route target in 'target:N:N' format, if not specified, the default value taken as "target:1:<evi>".
             pattern: ^target.*$
             type: string
+          forwardingOptions:
+            description: Additional (advanced) traffic processing options that are specific to some platforms.
+            properties:
+              ipv4RxCheck:
+                default: false
+                description: Check if IPv4 address family is enabled on receiving interface for IPv4 traffic. If false, traffic will be accepted from any interface regardless of address family configuration. Applicable only to SR Linux, ignored for unsupported platforms.
+                type: boolean
+              ipv6RxCheck:
+                default: false
+                description: Check if IPv6 address family is enabled on receiving interface for IPv6 traffic. If false, traffic will be accepted from any interface regardless of address family configuration. Applicable only to SR Linux, ignored for unsupported platforms.
+                type: boolean
+            type: object
           importTarget:
             description: Import route target in 'target:N:N' format, if not specified, the default value taken as "target:1:<evi>".
             pattern: ^target.*$
@@ -244,6 +308,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           resilientHashing:
             description: Resilient Hashing configuration.
             properties:
@@ -254,12 +319,14 @@ schema:
                     hashBucketsPerPath:
                       default: 1
                       description: The number of times each next-hop is repeated in the fill pattern if there are max-paths ECMP next-hops.
+                      format: int64
                       maximum: 32
                       minimum: 1
                       type: integer
                     maxECMP:
                       default: 1
                       description: The maximum number of ECMP next-hops per route associated with the resilient-hash prefix.
+                      format: int64
                       maximum: 64
                       minimum: 1
                       type: integer
@@ -272,6 +339,9 @@ schema:
                     - prefix
                   type: object
                 type: array
+                x-kubernetes-list-map-keys:
+                  - prefix
+                x-kubernetes-list-type: map
             type: object
           routeLeaking:
             description: Route leaking controlled by routing policies in and out of the DefaultRouter.
@@ -306,12 +376,15 @@ schema:
             type: array
           evi:
             description: EVI in use for this Router.
+            format: int64
             type: integer
           exportTarget:
             description: Export route target for this Router.
             type: string
           health:
             description: Indicates the health score of the Router.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Explains the reason for the health score.
@@ -324,6 +397,18 @@ schema:
             items:
               type: string
             type: array
+          isisInstance:
+            description: IS-IS instance configured on the router.
+            properties:
+              interfaces:
+                items:
+                  type: string
+                type: array
+              name:
+                type: string
+            required:
+              - name
+            type: object
           lastChangeTime:
             description: Timestamp of the last state change.
             type: string
@@ -334,6 +419,7 @@ schema:
             type: array
           numNodes:
             description: Number of nodes on which the Router is configured.
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the Router.
@@ -375,9 +461,11 @@ schema:
             type: array
           tunnelIndex:
             description: Vxlan tunnel index in use.
+            format: int64
             type: integer
           vni:
             description: VNI in use for this Router.
+            format: int64
             type: integer
         type: object
     type: object

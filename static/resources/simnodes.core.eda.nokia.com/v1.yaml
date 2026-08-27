@@ -1,3 +1,17 @@
+additionalPrinterColumns:
+  - jsonPath: .status.phase
+    name: Phase
+    type: string
+  - jsonPath: .status.ipAddress
+    name: IP
+    type: string
+  - jsonPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+  - jsonPath: .status.message
+    name: Message
+    priority: 1
+    type: string
 name: v1
 schema:
   openAPIV3Schema:
@@ -80,6 +94,11 @@ schema:
           license:
             description: ConfigMap containing a license for the SimNode.
             type: string
+          macAddress:
+            description: |-
+              MAC address to associate with this SimNode.
+              Typically the chassis MAC address, optionally sent by a node in DHCP requests.
+            type: string
           operatingSystem:
             description: Operational operating system running on this SimNode, e.g. srl, sros, nxos, eos
             enum:
@@ -89,6 +108,8 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
               - testman
               - siren
               - linux
@@ -176,6 +197,8 @@ schema:
                     - sonic
                     - ios-xr
                     - nxos
+                    - junos
+                    - cumulus
                   type: string
                 platform:
                   description: Platform of the satellite node.
@@ -285,6 +308,24 @@ schema:
         properties:
           ipAddress:
             description: IP address of the simnode, this is the address the simulated instance of this SimNode uses.
+            type: string
+          message:
+            description: Message provides a human-readable description of the current state or last error.
+            type: string
+          observedGeneration:
+            description: |-
+              ObservedGeneration is the .metadata.generation that was last reconciled.
+              Use this to determine whether the controller has processed the latest spec change.
+            format: int64
+            type: integer
+          phase:
+            description: Phase is the current operational phase of the SimNode.
+            enum:
+              - Provisioning
+              - Retrying
+              - Running
+              - Failed
+              - Disabled
             type: string
         type: object
     type: object

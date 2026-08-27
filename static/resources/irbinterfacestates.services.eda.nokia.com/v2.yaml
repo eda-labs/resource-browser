@@ -23,6 +23,8 @@ schema:
       spec:
         description: IRBInterfaceStateSpec defines the desired state of IRBInterfaceState
         properties:
+          bfdEnabled:
+            type: boolean
           bridgeDomain:
             description: Router the IRBInterface is attached to
             type: string

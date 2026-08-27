@@ -31,11 +31,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           routedInterfaceSelectors:
             description: Label selector to select the RoutedInterface on which to configure the DHCP relay.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           router:
             description: Router to be used to reach the DHCP server, if not specified the Router under which the source IRBInterface or RoutedInterface resides will be used.
             type: string
@@ -45,11 +47,13 @@ schema:
               type: string
             minItems: 1
             type: array
+            x-kubernetes-list-type: set
           subOptions:
             description: DHCP Relay sub-options; available options are CircuitID, RemoteID, and ClientLinkLayerAddress.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         required:
           - servers
         type: object

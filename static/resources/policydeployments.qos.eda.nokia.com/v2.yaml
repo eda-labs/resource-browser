@@ -34,6 +34,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           interfaceType:
             description: Used for platforms that differentiate between access/service interfaces and network interface.  These platforms may require different classifiers depending on whether they are applied on access/service interfaces or network interfaces.  Specifies whether the classifier should be configured as a service Egress classifier or network Egress classifier
             enum:
@@ -45,6 +46,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: atomic
           node:
             description: Specifies a Node to deploy the policies on.
             type: string
@@ -53,6 +55,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         type: object
       status:
         description: PolicyDeploymentStatus defines the observed state of PolicyDeployment

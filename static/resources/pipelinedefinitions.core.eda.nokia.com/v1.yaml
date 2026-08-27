@@ -1,17 +1,17 @@
 additionalPrinterColumns:
-  - description: Whether the pipeline definition is valid or not
-    jsonPath: .status.valid
-    name: Status
-    type: string
   - jsonPath: .metadata.creationTimestamp
     name: Age
     type: date
+  - description: whether PipelineDefinition is eligible run
+    jsonPath: .spec.enabled
+    name: Enabled
+    type: string
 name: v1
 schema:
   openAPIV3Schema:
     description: |-
-      PipelineDefinition is the Schema for the pipelines API
-      It represents a CI/CD workflow with jobs, steps, and triggers
+      A PipelineDefinition describes a pipeline of jobs and steps, and the
+      triggers that start it.
     properties:
       apiVersion:
         description: |-
@@ -32,239 +32,370 @@ schema:
         type: object
       spec:
         description: |-
-          PipelineDefinitionSpec defines the trigger conditions, env variables, jobs, and target (main or digital-twin) where the PipelineDefinition is
-          applicable for.
+          Describes a pipeline: what triggers it, the environment variables it
+          exposes, and the jobs it runs.
         properties:
-          env:
-            additionalProperties:
-              type: string
+          description:
+            description: A short description of what the pipeline does.
+            type: string
+          enabled:
+            default: false
             description: |-
-              Env is a map of environment variables available to all jobs, unless overridden at job or step level
-              Variables in the env map cannot be defined in terms of other variables in the map.
-            type: object
-          jobs:
-            additionalProperties:
-              description: |-
-                JobSpec represents a job in the pipeline, this could be a set of steps to run in a pod, or a reference to a reusable workflow defined elsewhere
-                or could provide a spec to eda-workflow to run.
+              Whether this PipelineDefinition is validated and available for root, manual,
+              and reusable execution. Disabled definitions are stored without body validation
+              and cannot be invoked until enabled.
+            type: boolean
+          env:
+            description: |-
+              Environment variables available to every job, unless overridden at the job or
+              step level. Entries cannot reference other entries in this map.
+            items:
+              description: NameValue is a named string value in a Kubernetes list-map.
               properties:
+                name:
+                  type: string
+                value:
+                  type: string
+              required:
+                - name
+                - value
+              type: object
+            type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
+          jobs:
+            description: |-
+              The jobs that make up the pipeline.
+              Jobs run in parallel unless ordered with dependencies.
+            items:
+              description: |-
+                One job in the pipeline: a set of steps run in a pod, a call to a
+                reusable workflow defined elsewhere, or an EDA workflow to run.
+              properties:
+                allowFailure:
+                  description: Let the pipeline continue even if this job fails.
+                  type: boolean
                 compareWith:
-                  description: CompareWith specifies a previous job key with same WorkflowGVK, to compare results with.
+                  description: The key of an earlier job running the same workflow, to compare results against.
                   type: string
                 container:
                   description: |-
-                    Container specifies a custom container for the job.
-                    Mutually exclusive with RunsIn.
+                    A custom container to run the job in.
+                    Mutually exclusive with Runs In.
                   properties:
-                    credentials:
-                      description: Credentials for private container registry
-                      properties:
-                        password:
-                          description: Password for registry authentication
-                          type: string
-                        username:
-                          description: Username for registry authentication
-                          type: string
-                      required:
-                        - password
-                        - username
-                      type: object
                     env:
-                      additionalProperties:
-                        type: string
-                      description: Env defines container-level environment variables
-                      type: object
+                      description: Environment variables set in the container.
+                      items:
+                        description: NameValue is a named string value in a Kubernetes list-map.
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: string
+                        required:
+                          - name
+                          - value
+                        type: object
+                      type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
                     image:
-                      description: Image is the container image to use
+                      description: The container image to run.
                       type: string
                     options:
-                      description: Options for additional container configuration
+                      description: Additional container configuration options.
                       type: string
                     ports:
-                      description: Ports to expose from the container
+                      description: Ports to expose from the container.
                       items:
                         type: integer
                       type: array
                     volumes:
-                      description: Volumes to mount in the container
+                      description: Volumes to mount in the container.
                       items:
                         type: string
                       type: array
                   required:
                     - image
                   type: object
+                description:
+                  description: A short description of the job.
+                  type: string
                 env:
-                  additionalProperties:
-                    type: string
-                  description: Env defines job-level environment variables
-                  type: object
+                  description: Environment variables for this job, overriding pipeline-level values.
+                  items:
+                    description: NameValue is a named string value in a Kubernetes list-map.
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                      - name
+                      - value
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
                 if:
-                  description: |-
-                    If is a conditional expression
-                    Job only runs if this evaluates to true
+                  description: A conditional expression; the job runs only if it evaluates to true.
                   type: string
                 name:
-                  description: Name of the job, defaults to job key
+                  description: Unique identifier for the job. Needs, compareWith and expressions refer to this name.
                   type: string
                 needs:
-                  description: Needs specifies job dependencies
+                  description: Keys of jobs that must complete before this one starts.
                   items:
                     type: string
                   type: array
                 outputs:
-                  additionalProperties:
-                    type: string
-                  description: 'Outputs defines job outputs (name: expression)'
-                  type: object
+                  description: Outputs the job publishes, as a map of name to expression.
+                  items:
+                    description: NameValue is a named string value in a Kubernetes list-map.
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        type: string
+                    required:
+                      - name
+                      - value
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
                 runsIn:
                   description: |-
-                    RunsIn specifies the image to run the job's steps in.
+                    The built-in image to run the job's steps in.
                     Mutually exclusive with Container.
                   enum:
                     - eda-toolbox
                     - eda-testman
                   type: string
                 steps:
-                  description: Steps defines the steps to run in this job
+                  description: The steps to run in this job, in order.
                   items:
-                    description: StepSpec represents a step in a job
+                    description: A single step within a job.
                     properties:
-                      continueOnError:
-                        description: ContinueOnError allows workflow to continue if step fails
+                      allowFailure:
+                        description: Continue with later steps even if this one fails.
                         type: boolean
                       env:
-                        additionalProperties:
-                          type: string
-                        description: Env defines step-level environment variables
-                        type: object
+                        description: Environment variables for this step, overriding job-level values.
+                        items:
+                          description: NameValue is a named string value in a Kubernetes list-map.
+                          properties:
+                            name:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                            - name
+                            - value
+                          type: object
+                        type: array
+                        x-kubernetes-list-map-keys:
+                          - name
+                        x-kubernetes-list-type: map
                       id:
                         description: |-
-                          ID is a unique identifier for the step, this is must if the step produces outputs and those
-                          outputs are referenced later in other jobs/steps
+                          A unique identifier for the step; required if its outputs are
+                          referenced by later steps or jobs.
                         type: string
                       if:
-                        description: |-
-                          If is a conditional expression
-                          Step only runs if this evaluates to true
+                        description: A conditional expression; the step runs only if it evaluates to true.
                         type: string
                       name:
-                        description: Name of the step (for display)
+                        description: Name of the step.
                         type: string
                       run:
-                        description: Run contains the command to execute
+                        description: The command to execute.
                         type: string
                       timeoutMinutes:
-                        description: TimeoutMinutes sets the step timeout
+                        description: How many minutes the step may run before it is cancelled.
                         minimum: 1
                         type: integer
-                      uses:
-                        description: |-
-                          Uses references a reusable workflow or pipeline
-                          Format: owner/repo@version
-                        type: string
-                      with:
-                        additionalProperties:
-                          x-kubernetes-preserve-unknown-fields: true
-                        description: With provides inputs to the action
-                        type: object
                     type: object
                   type: array
                 timeoutMinutes:
-                  description: TimeoutMinutes sets the job timeout
+                  description: How many minutes the job may run before it is cancelled.
                   minimum: 1
                   type: integer
                 uses:
-                  description: |-
-                    Uses references a reusable workflow
-                    Format: path/to/workflow.yaml
+                  description: A reusable workflow to invoke, in the form path/to/workflow.yaml.
                   type: string
                 with:
-                  additionalProperties:
-                    x-kubernetes-preserve-unknown-fields: true
-                  description: With provides inputs to a reusable workflow or for workflow GVK job provides the spec for the workflow
-                  type: object
+                  description: Inputs passed to the reusable workflow, or the spec of the Workflow to run.
+                  items:
+                    description: NameJSONValue is a named JSON value in a Kubernetes list-map.
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        x-kubernetes-preserve-unknown-fields: true
+                    required:
+                      - name
+                      - value
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
                 workflow:
-                  description: Job runs a eda workflow of the specified GVK, spec for the workflow is defined in the 'with' section
+                  description: Runs an EDA workflow of this group, version and kind; the workflow's spec is given in With.
                   properties:
                     group:
+                      minLength: 1
                       type: string
                     kind:
+                      minLength: 1
                       type: string
                     version:
+                      minLength: 1
                       type: string
+                  required:
+                    - group
+                    - kind
+                    - version
                   type: object
+              required:
+                - name
               type: object
-            description: |-
-              Jobs is a map of jobs to run as part of the pipeline
-              Jobs run in parallel by default, use 'needs' for dependencies
-            type: object
-          name:
-            description: Description of the pipeline, displayed in the UI.
-            type: string
-          target:
-            description: |-
-              Target specifies which cluster(s) to run the pipeline on
-              Defaults to "main" if not specified
-            items:
-              description: TargetCluster represents a target cluster
-              enum:
-                - Main
-                - DigitalTwin
-              type: string
             type: array
+            x-kubernetes-list-map-keys:
+              - name
+            x-kubernetes-list-type: map
+          transaction:
+            description: Inputs to extract from the transaction that triggered this pipeline.
+            properties:
+              inputs:
+                description: Named inputs to extract from resources in the transaction.
+                items:
+                  description: |-
+                    An input whose value is extracted from matching resources in the
+                    triggering transaction.
+                  properties:
+                    default:
+                      description: Value used when extraction yields no results.
+                      x-kubernetes-preserve-unknown-fields: true
+                    description:
+                      description: A short description of the input.
+                      type: string
+                    extract:
+                      description: |-
+                        A dot-delimited path, e.g. "metadata.name" or "spec.version", to the value to pull
+                        from each matching resource. Array selectors and JSONPath expressions are not supported.
+                      type: string
+                    gvk:
+                      description: The group, version and kind of resources to extract from.
+                      properties:
+                        group:
+                          minLength: 1
+                          type: string
+                        kind:
+                          minLength: 1
+                          type: string
+                        version:
+                          minLength: 1
+                          type: string
+                      required:
+                        - group
+                        - kind
+                        - version
+                      type: object
+                    name:
+                      description: The unique name of the input.
+                      type: string
+                    required:
+                      description: |-
+                        Whether this input is mandatory. If extraction yields no values and no
+                        default is set, the transaction fails.
+                      type: boolean
+                    type:
+                      default:
+                        - Create
+                        - Update
+                        - Delete
+                      description: |-
+                        The resource change types (Create, Update, Delete) from which to extract fields.
+                        An omitted or empty list selects all change types.
+                      items:
+                        description: The kind of resource event that can trigger a pipeline.
+                        enum:
+                          - Create
+                          - Update
+                          - Delete
+                        type: string
+                      type: array
+                  required:
+                    - extract
+                    - gvk
+                    - name
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                  - name
+                x-kubernetes-list-type: map
+            type: object
           triggers:
             description: |-
-              On defines the events that triggers the pipeline, like a commit for a resource, or on another pipeline call (workflow_dispatch),
-              or manual trigger (workflow_call)
+              What starts the pipeline: resource events, or invocation as a reusable
+              workflow by another pipeline.
             properties:
               events:
-                description: |-
-                  TriggerEvents defines the events that trigger the pipeline
-                  Examples: Create, Update, Delete
+                description: Resource events (Create, Update, Delete) that trigger the pipeline.
                 properties:
                   resourceTrigger:
                     description: |-
-                      ResourceTrigger filters events by resource GVK or fields
-                      Only events affecting these groups and fields in them will trigger the pipeline
+                      Filters that select which resource events trigger the pipeline,
+                      by resource type, fields and labels.
                     items:
                       description: |-
-                        ResourceTrigger; when multiple fields are specified then it will match a resource when any one of the fields is modified.
-                        if mulitple lables are specified then it will match a resource when all of the labels match.
-                        if both labels and fields are specified then it will match a resource only when both of them matches in a
-                        resource.
+                        Matches events on resources. A changed resource matches if all the listed
+                        fields or labels matches. If both fields and labels are given, a resource
+                        must satisfy both to match.
                       properties:
                         fields:
                           description: |-
-                            fields in above GVK that trigger the pipeline when they are
-                            modified, e.g., "spec.version", etc.
+                            Paths within the resource, e.g. "spec.version", that trigger the
+                            pipeline when modified.
                           items:
                             type: string
                           type: array
                         gvk:
+                          description: The group, version and kind of resources to watch.
                           properties:
                             group:
+                              minLength: 1
                               type: string
                             kind:
+                              minLength: 1
                               type: string
                             version:
+                              minLength: 1
                               type: string
+                          required:
+                            - group
+                            - kind
+                            - version
                           type: object
                         labels:
-                          description: |-
-                            Labels filters events by labels
-                            Only events with these labels will trigger the pipeline
+                          description: Labels a resource must carry for its events to trigger the pipeline.
                           items:
                             type: string
                           type: array
                         type:
-                          description: Type of event (Create, Update, Delete, *)
+                          description: The event types (Create, Update, Delete) that activate this trigger.
                           items:
-                            description: OnEventType defines the type of event that triggers the pipeline
+                            description: The kind of resource event that can trigger a pipeline.
                             enum:
                               - Create
                               - Update
                               - Delete
-                              - '*'
                             type: string
                           type: array
                       required:
@@ -274,85 +405,93 @@ schema:
                 type: object
               workflowCall:
                 description: |-
-                  WorkflowCall defines this as a reusable workflow
-                  Specifies inputs, outputs, and secrets
+                  Marks this pipeline as a reusable workflow, declaring the inputs it
+                  accepts and the outputs it returns.
                 properties:
                   inputs:
-                    additionalProperties:
-                      description: WorkflowInput defines an input parameter for reusable workflows
+                    description: Input parameters the workflow accepts from its caller.
+                    items:
+                      description: An input parameter of a reusable workflow.
                       properties:
                         default:
-                          description: Default value if caller does not provide one
+                          description: Value used when the caller does not provide one.
                           x-kubernetes-preserve-unknown-fields: true
                         description:
-                          description: Description of the input parameter
+                          description: A short description of the input.
                           type: string
                         inputType:
-                          description: Type of the input (String, Number, Boolean)
+                          description: Type of the input (String, Number, Boolean).
                           enum:
                             - String
                             - Number
                             - Boolean
                           type: string
+                        isArray:
+                          description: Whether this input accepts an array of values of the declared input type.
+                          type: boolean
+                        name:
+                          description: The unique name of the input.
+                          type: string
                         required:
-                          description: Required indicates if this input is mandatory
+                          description: Whether the caller must provide this input.
                           type: boolean
                       required:
                         - inputType
+                        - name
                       type: object
-                    description: Inputs defines input parameters for the workflow
-                    type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
                   outputs:
-                    additionalProperties:
-                      description: WorkflowOutput defines an output from a reusable workflow
+                    description: Values the workflow returns to its caller.
+                    items:
+                      description: A value a reusable workflow returns to its caller.
                       properties:
                         description:
-                          description: Description of the output
+                          description: A short description of the output.
+                          type: string
+                        name:
+                          description: The unique name of the output.
                           type: string
                         outputType:
-                          description: Type of the output (String, Number, Boolean)
+                          description: Type of the output (String, Number, Boolean).
                           enum:
                             - String
                             - Number
                             - Boolean
                           type: string
                         outputValue:
-                          description: Value is an expression like ${{ jobs.*.outputs.* }}
+                          description: An expression producing the output, like ${{ jobs.*.outputs.* }}.
                           type: string
                       required:
+                        - name
                         - outputType
                         - outputValue
                       type: object
-                    description: Outputs defines outputs from the workflow
-                    type: object
-                  secrets:
-                    additionalProperties:
-                      description: WorkflowSecret defines a secret for reusable workflows
-                      properties:
-                        description:
-                          description: Description of the secret
-                          type: string
-                        required:
-                          description: Required indicates if this secret is mandatory
-                          type: boolean
-                      type: object
-                    description: Secrets defines required secrets for the workflow
-                    type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                      - name
+                    x-kubernetes-list-type: map
                 type: object
             type: object
+            x-kubernetes-validations:
+              - message: events and WorkflowCall are mutually exclusive
+                rule: '!(has(self.events) && has(self.workflowCall))'
         required:
           - jobs
           - triggers
         type: object
       status:
+        description: The result of validating the pipeline definition.
         properties:
           valid:
             description: |-
-              A pipeline definition is valid if it has all required fields and passes validation checks
-              (e.g., no circular dependencies, valid workflow references, valid dependencies among jobs, etc.)
+              True when the definition has all required fields and passes validation checks,
+              e.g. no circular dependencies, and valid workflow references and job dependencies.
             type: boolean
           validationError:
-            description: If the definition is not valid, this field contains a message describing the validation error
+            description: Describes the validation failure when the definition is not valid.
             type: string
         type: object
     type: object

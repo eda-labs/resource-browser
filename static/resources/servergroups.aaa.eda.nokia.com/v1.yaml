@@ -21,7 +21,6 @@ schema:
       metadata:
         type: object
       spec:
-        description: The ServerGroup defines a list of AAA servers to be used for authentication, authorization, and accounting. It includes settings for both Radius and Tacacs servers, although each ServerGroup is limited to servers of a single type. The ServerGroup is deployed onto nodes using the label selector.
         properties:
           aaaServers:
             description: The AAA servers that are part of this ServerGroup.
@@ -38,33 +37,41 @@ schema:
                 - secret
               type: object
             type: array
+            x-kubernetes-list-map-keys:
+              - address
+            x-kubernetes-list-type: map
           nodeGroupSelectors:
             description: Label selector for NodeGroup resources to deploy on the node for this ServerGroup.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodeGroups:
             description: Which NodeGroup resources to deploy on the node for this ServerGroup.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           radius:
             description: RADIUS parameters.
             properties:
               accountingPort:
                 default: 1813
                 description: Accounting port of the Radius server(s).
+                format: int64
                 maximum: 65535
                 minimum: 1
                 type: integer
               authenticationPort:
                 default: 1812
                 description: Authentication port of the Radius server(s).
+                format: int64
                 maximum: 65535
                 minimum: 1
                 type: integer
               retransmitAttempts:
                 description: Retransmit attempts per Radius server.
+                format: int64
                 maximum: 10
                 minimum: 1
                 type: integer
@@ -81,6 +88,7 @@ schema:
               port:
                 default: 49
                 description: Tacacs server port.
+                format: int64
                 maximum: 65535
                 minimum: 0
                 type: integer
@@ -90,6 +98,7 @@ schema:
             type: object
           timeoutSeconds:
             description: Timeout in seconds that the node will wait for a response from the AAA server before retrying or continuing to the next server in the group.
+            format: int64
             maximum: 90
             minimum: 1
             type: integer
@@ -108,6 +117,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the ServerGroup. The health score of the ServerGroup is determined by the aggregate health score of all servers in this group on all nodes.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

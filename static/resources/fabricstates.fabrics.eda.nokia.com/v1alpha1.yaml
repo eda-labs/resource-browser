@@ -40,7 +40,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array
@@ -69,7 +69,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array
@@ -88,7 +88,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array
@@ -107,7 +107,7 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
                   type: integer
               type: object
             type: array

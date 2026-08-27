@@ -56,11 +56,13 @@ schema:
                             properties:
                               rangeEnd:
                                 description: Optional end of PCP range (inclusive) which would start from the Value to the RangeEnd.
+                                format: int64
                                 maximum: 7
                                 minimum: 0
                                 type: integer
                               value:
                                 description: Single PCP value or start of range.
+                                format: int64
                                 maximum: 7
                                 minimum: 0
                                 type: integer
@@ -89,11 +91,13 @@ schema:
                             properties:
                               rangeEnd:
                                 description: Optional end of DSCP range (inclusive) which would start from the Value to the RangeEnd.
+                                format: int64
                                 maximum: 63
                                 minimum: 0
                                 type: integer
                               value:
                                 description: Single DSCP value or start of range.
+                                format: int64
                                 maximum: 63
                                 minimum: 0
                                 type: integer
@@ -124,6 +128,7 @@ schema:
                               type: string
                             dscpRewriteValue:
                               description: Rewrite actions associated with packets that match the classifier entry.
+                              format: int64
                               maximum: 63
                               minimum: 0
                               type: integer
@@ -634,6 +639,7 @@ schema:
                     type: string
                   minItems: 1
                   type: array
+                  x-kubernetes-list-type: set
                 queue:
                   description: The queue to which the forwarding classes are mapped, this is a reference to a Queue resource.
                   type: string
@@ -648,16 +654,16 @@ schema:
               properties:
                 committedBurstSizeBytes:
                   description: Maximum CIR bucket depth in bytes.
-                  format: int32
-                  maximum: 4294967295
+                  format: int64
                   minimum: 0
                   type: integer
                 committedRateKbps:
                   description: The committed information rate (CIR) of the policer, defined in kilobits (1024 bits) per second.
-                  format: int32
+                  format: int64
                   type: integer
                 committedRatePercent:
                   description: The committed information rate (CIR) of the policer, defined as a percentage of the Interface speed on which it is applied.
+                  format: int64
                   maximum: 100
                   minimum: 0
                   type: integer
@@ -682,6 +688,7 @@ schema:
                         items:
                           type: string
                         type: array
+                        x-kubernetes-list-type: set
                       forwardingTypes:
                         default:
                           - All
@@ -696,26 +703,27 @@ schema:
                             - All
                           type: string
                         type: array
+                        x-kubernetes-list-type: set
                     required:
                       - forwardingTypes
                     type: object
                   type: array
                 maximumBurstSizeBytes:
                   description: Maximum PIR bucket depth in bytes.
-                  format: int32
-                  maximum: 4294967295
+                  format: int64
                   minimum: 0
                   type: integer
                 minInterfaceSpeed:
                   description: Minimum interface speed (kbps) to calculate PeakRate and CommittedRate for devices where configuration is not supported in percentage.
-                  format: int32
+                  format: int64
                   type: integer
                 peakRateKbps:
                   description: The peak information rate (PIR) of the policer, defined in kilobits (1024 bits) per second.
-                  format: int32
+                  format: int64
                   type: integer
                 peakRatePercent:
                   description: The peak information rate (PIR) of the policer, defined as a percentage of the Interface speed on which it is applied.
+                  format: int64
                   maximum: 100
                   minimum: 0
                   type: integer
@@ -740,6 +748,7 @@ schema:
               properties:
                 pfcReservedBufferPercent:
                   description: 'Percentage of the linecard buffer reserved for accomodating incoming traffic while upstream node reacts to generated PFC-pause frames. Note: this percentage must be common across all EgressPolicies and QueuesSets used on the same linecard.'
+                  format: int64
                   maximum: 100
                   minimum: 0
                   type: integer
@@ -749,29 +758,32 @@ schema:
                     properties:
                       committedBurstSizeBytes:
                         description: Committed Burst Size in bytes.
-                        format: int32
+                        format: int64
                         type: integer
                       maximumBurstSizeBytes:
                         description: Maximum amount of shared buffer memory available to the queue in bytes.
-                        format: int32
-                        maximum: 4294967295
+                        format: int64
                         minimum: 0
                         type: integer
                       pfcOffThresholdPercent:
                         description: PFC off threshold.
+                        format: int64
                         maximum: 100
                         minimum: 0
                         type: integer
                       pfcOnThresholdPercent:
                         description: PFC on threshold.
+                        format: int64
                         maximum: 100
                         minimum: 0
                         type: integer
                       pfcPauseFramePriority:
                         description: PFC priorities indicated in generated pfc-pause-frame if congestion occurs in a given pfc-queue.
+                        format: int64
                         type: integer
                       pfcReservedShareBufferPercent:
                         description: Maximum level the pfc-queue can take from pfc-reserved buffer configured per given forwarding-complex.
+                        format: int64
                         maximum: 100
                         minimum: 0
                         type: integer

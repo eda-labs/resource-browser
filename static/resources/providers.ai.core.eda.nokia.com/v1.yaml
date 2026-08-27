@@ -89,6 +89,7 @@ schema:
                     - Embeddings
                     - Responses
                     - Chat/Completions
+                    - Claude
                   type: string
                 usage:
                   description: Model intended use

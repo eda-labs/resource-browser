@@ -52,9 +52,11 @@ schema:
                       - 8192
                       - 16384
                       - 32768
+                    format: int64
                     type: integer
                   inactivityTimerUs:
                     description: The flow inactivity timer in microseconds.
+                    format: int64
                     type: integer
                   mode:
                     description: The dynamic load balancing mode.
@@ -65,22 +67,26 @@ schema:
                     type: string
                   samplingIntervalUs:
                     description: The sampling interval of interface state, in microseconds.
+                    format: int64
                     type: integer
                   weighting:
                     description: Weighting factors for dynamic load balancing.
                     properties:
                       ingressTrafficManagerUtilization:
                         description: Weight assigned to ingress Traffic Manager utilization.
+                        format: int64
                         maximum: 100
                         minimum: 0
                         type: integer
                       portUtilization:
                         description: Weight assigned to port utilization.
+                        format: int64
                         maximum: 100
                         minimum: 0
                         type: integer
                       queueUtilization:
                         description: Weight assigned to queue utilization.
+                        format: int64
                         maximum: 100
                         minimum: 0
                         type: integer

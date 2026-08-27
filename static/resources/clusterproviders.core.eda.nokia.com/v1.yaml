@@ -38,7 +38,7 @@ schema:
             type: boolean
           startPortRange:
             description: StartPortRange is the starting port number for allocating ports to services on this cluster
-            format: int32
+            format: int64
             type: integer
         type: object
       status:

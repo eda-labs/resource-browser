@@ -41,6 +41,16 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
+          type:
+            default: Hybrid
+            description: The type of community set.
+            enum:
+              - Standard
+              - Extended
+              - Large
+              - Hybrid
+            type: string
         type: object
       status:
         description: CommunitySetStatus defines the observed state of CommunitySet

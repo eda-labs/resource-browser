@@ -39,7 +39,7 @@ schema:
             type: string
           gRPCPort:
             description: The port of the EDA API server grpc proxy
-            format: int32
+            format: int64
             type: integer
           kubeconfigSecret:
             description: The Kubeconfig secret name used to connect to branch Kubernetes API server
@@ -49,20 +49,20 @@ schema:
             type: string
           port:
             description: The port of the branch EDA API server
-            format: int32
+            format: int64
             type: integer
           proxyAddress:
             description: The address of the branch cluster tunnel
             type: string
           proxyPort:
             description: The port of the branch cluster tunnel
-            format: int32
+            format: int64
             type: integer
         type: object
     type: object
     x-kubernetes-validations:
-      - message: Branch name must be at most 30 characters
-        rule: self.metadata.name.size() <= 30
+      - message: Branch name must be at most 47 characters
+        rule: self.metadata.name.size() <= 47
 served: true
 storage: true
 subresources:

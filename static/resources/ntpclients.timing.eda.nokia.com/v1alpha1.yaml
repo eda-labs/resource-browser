@@ -84,6 +84,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the NTPClient
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score

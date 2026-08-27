@@ -52,11 +52,11 @@ schema:
                 description: Apply policy to alarms raised against a resource kind or a specific resource instance
                 properties:
                   group:
-                    description: The group of the resource the alarm is raised against, for example core.eda.nokia.com
+                    description: The resource group that the alarm is raised against
                     minLength: 1
                     type: string
                   kind:
-                    description: The kind of the resource that the alarm is rasied against, for example Interface
+                    description: The resource kind that the alarm is rasied against
                     minLength: 1
                     type: string
                   names:
@@ -72,7 +72,7 @@ schema:
                 description: Apply policy to alarms of a specific type
                 properties:
                   sourceGroup:
-                    description: The group of the resource that raises the alarm, for example core.eda.nokia.com
+                    description: The resource group which raises the alarm
                     minLength: 1
                     type: string
                   type:

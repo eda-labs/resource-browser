@@ -44,6 +44,7 @@ schema:
           count:
             default: 1
             description: Count is the number of pings to send.
+            format: int64
             type: integer
           networkInstance:
             description: |-
@@ -58,6 +59,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: |-
               List of nodes to perform pings from.
@@ -66,9 +68,11 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           timeoutSeconds:
             default: 5
             description: TimeoutSeconds is the timeout for the ping in seconds.
+            format: int64
             type: integer
         required:
           - address
@@ -99,9 +103,11 @@ schema:
                       type: integer
                     received:
                       description: Number of pings received.
+                      format: int64
                       type: integer
                     sent:
                       description: Number of pings sent.
+                      format: int64
                       type: integer
                     stdDevNanoseconds:
                       description: Standard deviation of time taken for all pings.
@@ -141,6 +147,9 @@ schema:
               - Success
               - Failed
               - PartialSuccess
+            type: string
+          summary:
+            description: Summary is the result summary of the ping operation.
             type: string
         type: object
     type: object

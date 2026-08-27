@@ -76,6 +76,7 @@ schema:
                 description: |-
                   Seconds to wait before rebooting a node after it has been drained.
                   This is used to allow time for any traffic to drain away from the node before reboot.
+                format: int64
                 type: integer
               skip:
                 description: Do not run any drain operations. Nodes will be rebooted without attempting to gracefully drain them.
@@ -113,6 +114,7 @@ schema:
           reconnectionTimeoutSeconds:
             default: 600
             description: Seconds to wait for node to come back online after reboot.
+            format: int64
             type: integer
           tranches:
             description: |-

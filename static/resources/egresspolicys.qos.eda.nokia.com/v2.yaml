@@ -43,6 +43,7 @@ schema:
                             type: string
                           pcpValue:
                             description: The PCP value to be used for packets associated with the forwarding class and the specific drop probability. This overrides the general PCP value.
+                            format: int64
                             maximum: 7
                             minimum: 0
                             type: integer
@@ -53,8 +54,10 @@ schema:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                     pcpValue:
                       description: The PCP value to be used for all packets associated with the forwarding class, except those with a drop-probability-specific or profile-specific override
+                      format: int64
                       maximum: 7
                       minimum: 0
                       type: integer
@@ -78,6 +81,7 @@ schema:
                         properties:
                           dscp:
                             description: The DSCP value to be used for packets associated with the forwarding class and the specific drop probability. This overrides the general DSCP value.
+                            format: int64
                             maximum: 63
                             minimum: 0
                             type: integer
@@ -92,6 +96,7 @@ schema:
                       type: array
                     dscp:
                       description: The DSCP value to be used for all packets associated with the forwarding class, except those with a drop-probability-specific or profile-specific override.
+                      format: int64
                       maximum: 63
                       minimum: 0
                       type: integer
@@ -100,6 +105,7 @@ schema:
                       items:
                         type: string
                       type: array
+                      x-kubernetes-list-type: set
                   required:
                     - forwardingClasses
                   type: object
@@ -117,6 +123,7 @@ schema:
                     type: string
                   minItems: 1
                   type: array
+                  x-kubernetes-list-type: set
                 queue:
                   description: The queue to which the forwarding classes are mapped, this is a reference to a Queue resource.
                   type: string
@@ -136,9 +143,11 @@ schema:
                 type: boolean
               deadlockDetectionTimerMs:
                 description: Number of milliseconds during which outgoing interface is receiving pfc-pause-frames before triggering recovery-timer.
+                format: int64
                 type: integer
               deadlockRecoveryTimerMs:
                 description: Number of milliseconds during which the pfc-pause-frames will be ignored.
+                format: int64
                 type: integer
             required:
               - deadlockAvoidance
@@ -155,32 +164,35 @@ schema:
                     properties:
                       committedBurstSizeBytes:
                         description: Committed Burst Size in bytes.
-                        format: int32
+                        format: int64
                         type: integer
                       maximumBurstSizeBytes:
                         description: Maximum amount of shared buffer memory available to the queue in bytes.
-                        format: int32
-                        maximum: 4294967295
+                        format: int64
                         minimum: 0
                         type: integer
                       pfcPauseFramePriority:
                         description: The pfc-priority received in pfc-pause-frame.
+                        format: int64
                         type: integer
                       queue:
                         description: Reference to a Queue resource.
                         type: string
                       schedulerPeakRatePercent:
                         description: The peak rate percent used by the scheduler for the queue.
+                        format: int64
                         maximum: 100
                         minimum: 1
                         type: integer
                       schedulerPriorityLevel:
                         description: The priority level at this Port Scheduler Policy.
+                        format: int64
                         maximum: 8
                         minimum: 1
                         type: integer
                       schedulerWeight:
                         description: The weight factor used for the WRR scheduler. If any of the queues have a configured weight the set of queues will use a WRR scheduler and thus all queues must have a weight configured.  If no weights are set then the queues are scheduled in strict priority from lowest to higher queue ID.
+                        format: int64
                         maximum: 255
                         minimum: 0
                         type: integer
@@ -192,6 +204,7 @@ schema:
                 slopePolicyWeight:
                   default: 0
                   description: 'The average queue size is calculated using both the previous average and the current queue size: average = (previous average)(1 - 2^(-n)) + (current size)(2^(-n)), where n is a user-configurable weight factor. A higher n gives more importance to the previous average, smoothing peaks and lows in the queue. Lower n makes the average closer to the current queue size. If this leaf is absent, the default value is used.'
+                  format: int64
                   maximum: 15
                   minimum: 0
                   type: integer
@@ -214,6 +227,7 @@ schema:
                         type: boolean
                       maxDropProbabilityPercent:
                         description: If the queue depth is between min and max threshold then this the probability with which packets are dropped or marked.
+                        format: int64
                         type: integer
                       maxThresholdBytes:
                         description: The maximum threshold parameter for a RED-managed queue in bytes. When the average queue length exceeds the max value, all packets are dropped (or marked if ECN is enabled). Mutually exclusive with min-threshold-percent and max-threshold-percent.
@@ -221,6 +235,7 @@ schema:
                         type: integer
                       maxThresholdPercent:
                         description: The maximum threshold parameter for a RED-managed queue in percent. When the average queue length exceeds the max value, all packets are dropped (or marked if ECN is enabled). Mutually exclusive with min-threshold and max-threshold.
+                        format: int64
                         type: integer
                       minThresholdBytes:
                         description: The minimum threshold parameter for a RED-managed queue in bytes. When the average queue length is less than min, all packets are admitted to the queue. Mututally exclusive with min-threshold-percent and max-threshold-percent.
@@ -228,6 +243,7 @@ schema:
                         type: integer
                       minThresholdPercent:
                         description: The minimum threshold parameter for a RED-managed queue in percent. When the average queue length is less than min, all packets are admitted to the queue. Mutually exclusive with min-threshold and max-threshold.
+                        format: int64
                         type: integer
                       trafficType:
                         default: All

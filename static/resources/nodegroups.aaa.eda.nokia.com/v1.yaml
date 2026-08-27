@@ -72,8 +72,10 @@ schema:
                 - Reflection
                 - JSONRPC
                 - NETCONF
+                - SNMP
               type: string
             type: array
+            x-kubernetes-list-type: set
           superuser:
             description: Make members of this group superusers.
             type: boolean
@@ -82,6 +84,7 @@ schema:
             properties:
               privilegeLevel:
                 description: Set the privilege level for this group.
+                format: int64
                 maximum: 15
                 minimum: 0
                 type: integer

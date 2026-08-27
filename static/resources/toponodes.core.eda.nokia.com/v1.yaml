@@ -136,6 +136,8 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
             type: string
           platform:
             description: Platform type of this TopoNode, e.g. 7220 IXR-D3L.
@@ -206,6 +208,8 @@ schema:
                     - sonic
                     - ios-xr
                     - nxos
+                    - junos
+                    - cumulus
                   type: string
                 platform:
                   description: Platform of the satellite node.
@@ -337,6 +341,9 @@ schema:
                  NPP is running but there is no IP address for node. This only happens in sim setups when
                  CX has not created the simulated node, or the simulated pod failed to launch due to image error.
             type: string
+          nodeStateLastChange:
+            description: Indicates when this node last changed state.
+            type: string
           npp-details:
             description: NPP address and port for this TopoNode.
             type: string
@@ -355,6 +362,8 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
             type: string
           platform:
             description: Operational platform type of this TopoNode, e.g. 7220 IXR-D3L.

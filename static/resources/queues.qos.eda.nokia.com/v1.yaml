@@ -27,6 +27,7 @@ schema:
         properties:
           queueID:
             description: The ID of the queue on which to apply the properties.  This is mandatory for usage of queus on SROS and is ignored on other operating systems.
+            format: int64
             type: integer
           queueType:
             description: QueueType specifies whether this is a normal queue or a PFC queue

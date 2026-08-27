@@ -68,6 +68,8 @@ schema:
             type: array
           health:
             description: Health score of the FTP server.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Reason for the health score.

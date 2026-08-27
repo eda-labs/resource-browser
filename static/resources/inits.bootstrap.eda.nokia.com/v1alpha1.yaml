@@ -34,6 +34,8 @@ schema:
             properties:
               ipMTU:
                 description: Set the management interface IP MTU.
+                format: int64
+                maximum: 65535
                 type: integer
               ipv4DHCP:
                 description: Enable IPv4 DHCP client.

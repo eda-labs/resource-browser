@@ -63,6 +63,13 @@ schema:
             items:
               type: string
             type: array
+          type:
+            default: Local
+            description: Determines whether the user is authenticated locally on the node or remotely through RADIUS or TACACS+. When set to Remote, no configuration is pushed to the node for this user.
+            enum:
+              - Local
+              - Remote
+            type: string
           username:
             description: Name of this user. If not provided, the name of the resource will be used.
             maxLength: 32

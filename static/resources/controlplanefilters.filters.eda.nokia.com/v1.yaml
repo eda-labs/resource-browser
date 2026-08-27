@@ -335,7 +335,7 @@ schema:
                       properties:
                         burstSizeBytes:
                           description: The maximum burst size in bytes.
-                          format: int32
+                          format: int64
                           type: integer
                         entrySpecificPolicer:
                           default: false
@@ -343,7 +343,7 @@ schema:
                           type: boolean
                         peakRateKbps:
                           description: The peak rate in kilobytes per second.
-                          format: int32
+                          format: int64
                           type: integer
                         scope:
                           default: Global
@@ -611,7 +611,7 @@ schema:
                       properties:
                         burstSizeBytes:
                           description: The maximum burst size in bytes.
-                          format: int32
+                          format: int64
                           type: integer
                         entrySpecificPolicer:
                           default: false
@@ -619,7 +619,7 @@ schema:
                           type: boolean
                         peakRateKbps:
                           description: The peak rate in kilobytes per second.
-                          format: int32
+                          format: int64
                           type: integer
                         scope:
                           default: Global
@@ -654,11 +654,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: Reference to a list of TopoNodes on which to deploy the CPM filter.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           statisticsPerEntry:
             description: Enable or disable per-entry counters.
             type: boolean

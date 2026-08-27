@@ -40,6 +40,7 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               routeLeaking:
                 description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
                 properties:
@@ -65,10 +66,12 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           interSwitchLinks:
             properties:
               ipMTU:
                 description: Sets the IP MTU for the DefaultInterface.
+                format: int64
                 maximum: 9486
                 minimum: 1280
                 type: integer
@@ -77,6 +80,7 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               poolIPv4:
                 description: Reference to an IPAllocationPool used to dynamically allocate an IPv4 address to DefaultInterfaces which are members of the ISLs.  Both IPv4 and IPv6 pools can be configured simultaneously for dual-stack DefaultInterfaces.
                 type: string
@@ -97,6 +101,7 @@ schema:
                 type: string
               vlanID:
                 description: Configures the provided VLAN on the DefaultInterfaces which are members of the ISLs.
+                format: int64
                 maximum: 4094
                 minimum: 1
                 type: integer
@@ -111,6 +116,7 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               routeLeaking:
                 description: Route leaking controlled by routing policies in and out of the DefaultRouters on each node.  If specified under the Leafs, Spines, SuperSpines, or BorderLeafs those will take precedence.
                 properties:
@@ -131,6 +137,21 @@ schema:
                 description: Reference to an IPAllocationPool used to dynamically allocate an IPv6 address to system/lo0 interfaces.  This reference will take precedence over the spec.systemPoolIPV6.  Both IPv4 and IPv6 pools can be configured simultaneously for dual-stack system/lo0 interfaces.
                 type: string
             type: object
+          loadBalancing:
+            description: Load Balancing configuration.
+            properties:
+              dynamic:
+                description: Dynamic load balancing configuration.
+                properties:
+                  prefixes:
+                    description: List of IPv4 and/or IPv6 prefixes. Active routes in the FIB that are covered by this list are programmed with dynamic load balancing if conditions are met.
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                    x-kubernetes-list-type: set
+                type: object
+            type: object
           overlayProtocol:
             description: Set the overlay protocol used
             properties:
@@ -140,12 +161,14 @@ schema:
                   desiredMinTransmitIntMs:
                     default: 1000
                     description: The minimum interval in milliseconds between transmission of BFD control packets.
+                    format: int64
                     maximum: 100000
                     minimum: 10
                     type: integer
                   detectionMultiplier:
                     default: 3
                     description: The number of packets that must be missed to declare this session as down.
+                    format: int64
                     maximum: 20
                     minimum: 3
                     type: integer
@@ -156,17 +179,20 @@ schema:
                   requiredMinEchoReceiveIntMs:
                     default: 1000
                     description: The minimum interval between echo packets the local node can receive.
+                    format: int64
                     maximum: 100000
                     minimum: 0
                     type: integer
                   requiredMinReceiveIntMs:
                     default: 1000
                     description: The minimum interval in milliseconds between received BFD control packets that this system should support.
+                    format: int64
                     maximum: 100000
                     minimum: 10
                     type: integer
                   ttl:
                     description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                    format: int64
                     maximum: 255
                     minimum: 2
                     type: integer
@@ -178,7 +204,9 @@ schema:
                 properties:
                   autonomousSystem:
                     description: Autonomous System used for iBGP peering session, when protocol is set to IBGP providing an autonomousSystem is required.
-                    format: int32
+                    format: int64
+                    maximum: 4294967295
+                    minimum: 1
                     type: integer
                   clusterID:
                     description: Sets the cluster ID used by DefaultRouteReflectors, when protocol is set to IBGP providing a clusterID is required.
@@ -201,36 +229,43 @@ schema:
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   rrIpAddresses:
                     description: List of route reflector IP addresses not provisioned by this instance of a Fabric resource.  Used with rrClientNodeSelector to configure the DefaultBGPPeers on the selected nodes to peer the list of external route reflector IPs.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   rrNodeSelectors:
                     description: Label selector used to select Toponodes to configure as DefaultRouteReflectors, these are typically Spine, Superspine or Borderleaf nodes. Used on conjunction with rrClientNodeSelector in order to configure the DefaultBGPPeers for both the DefaultRouteReflectors and DefaultRouteReflectorClients.
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   timers:
                     description: Timer configurations
                     properties:
                       connectRetrySeconds:
                         description: The time interval in seconds between successive attempts to establish a session with a peer.
+                        format: int64
                         maximum: 65535
                         minimum: 1
                         type: integer
                       holdTimeSeconds:
                         description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                        format: int64
                         maximum: 65535
                         minimum: 0
                         type: integer
                       keepAliveSeconds:
                         description: The interval in seconds between successive keepalive messages sent to the peer.
+                        format: int64
                         maximum: 21845
                         minimum: 0
                         type: integer
                       minimumAdvertisementIntervalSeconds:
                         description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                        format: int64
                         maximum: 255
                         minimum: 1
                         type: integer
@@ -281,6 +316,7 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               systemPoolIPv4:
                 description: Reference to an IPAllocationPool used to dynamically allocate an IPv4 address to system/lo0 interfaces.  This reference will take precedence over the spec.systemPoolIPV4.  Both IPv4 and IPv6 pools can be configured simultaneously for dual-stack system/lo0 interfaces.
                 type: string
@@ -311,6 +347,7 @@ schema:
                 items:
                   type: string
                 type: array
+                x-kubernetes-list-type: set
               systemPoolIPv4:
                 description: Reference to an IPAllocationPool used to dynamically allocate an IPv4 address to system/lo0 interfaces.  This reference will take precedence over the spec.systemPoolIPV4.  Both IPv4 and IPv6 pools can be configured simultaneously for dual-stack system/lo0 interfaces.
                 type: string
@@ -333,12 +370,14 @@ schema:
                   desiredMinTransmitIntMs:
                     default: 1000
                     description: The minimum interval in milliseconds between transmission of BFD control packets.
+                    format: int64
                     maximum: 100000
                     minimum: 10
                     type: integer
                   detectionMultiplier:
                     default: 3
                     description: The number of packets that must be missed to declare this session as down.
+                    format: int64
                     maximum: 20
                     minimum: 3
                     type: integer
@@ -349,17 +388,20 @@ schema:
                   requiredMinEchoReceiveIntMs:
                     default: 1000
                     description: The minimum interval between echo packets the local node can receive.
+                    format: int64
                     maximum: 100000
                     minimum: 0
                     type: integer
                   requiredMinReceiveIntMs:
                     default: 1000
                     description: The minimum interval in milliseconds between received BFD control packets that this system should support.
+                    format: int64
                     maximum: 100000
                     minimum: 10
                     type: integer
                   ttl:
                     description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                    format: int64
                     maximum: 255
                     minimum: 2
                     type: integer
@@ -390,21 +432,25 @@ schema:
                     properties:
                       connectRetrySeconds:
                         description: The time interval in seconds between successive attempts to establish a session with a peer.
+                        format: int64
                         maximum: 65535
                         minimum: 1
                         type: integer
                       holdTimeSeconds:
                         description: The hold-time interval in seconds that the router proposes to the peer in its OPEN message.
+                        format: int64
                         maximum: 65535
                         minimum: 0
                         type: integer
                       keepAliveSeconds:
                         description: The interval in seconds between successive keepalive messages sent to the peer.
+                        format: int64
                         maximum: 21845
                         minimum: 0
                         type: integer
                       minimumAdvertisementIntervalSeconds:
                         description: The value assigned to the MinRouteAdvertisementIntervalTimer of RFC 4271, for both EBGP and IBGP sessions.
+                        format: int64
                         maximum: 255
                         minimum: 1
                         type: integer
@@ -421,6 +467,10 @@ schema:
                         - IPv6Unicast
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
+                  keychain:
+                    description: Keychain to be used for authentication
+                    type: string
                 type: object
               protocols:
                 description: List of routing protocols to used between peers of an ISL.  Multiple protocols may be listed, if so multiple protocols will be used.
@@ -429,8 +479,10 @@ schema:
                     - EBGP
                     - OSPFv2
                     - OSPFv3
+                    - ISIS
                   type: string
                 type: array
+                x-kubernetes-list-type: set
             required:
               - protocols
             type: object
@@ -453,12 +505,16 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
+                  maximum: 4294967295
+                  minimum: 1
                   type: integer
               type: object
             type: array
           health:
             description: Indicates the health score of the Fabric.  The health score of the Fabric is determined by the aggregate health score of the resources emitted by the Fabric such as ISL, DefaultRouteReflectors etc.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.
@@ -481,7 +537,9 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
+                  maximum: 4294967295
+                  minimum: 1
                   type: integer
               type: object
             type: array
@@ -508,7 +566,9 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
+                  maximum: 4294967295
+                  minimum: 1
                   type: integer
               type: object
             type: array
@@ -527,7 +587,9 @@ schema:
                   type: string
                 underlayAutonomousSystem:
                   description: Underlay Autonomous System used for eBGP peering session, when protocol is set to eBGP this is required.
-                  format: int32
+                  format: int64
+                  maximum: 4294967295
+                  minimum: 1
                   type: integer
               type: object
             type: array

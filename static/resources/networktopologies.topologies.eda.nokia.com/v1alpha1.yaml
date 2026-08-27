@@ -36,6 +36,7 @@ schema:
                   x-kubernetes-preserve-unknown-fields: true
                 channels:
                   description: The number of breakout channels to create
+                  format: int64
                   maximum: 8
                   minimum: 1
                   type: integer
@@ -76,6 +77,7 @@ schema:
                   x-kubernetes-preserve-unknown-fields: true
                 channels:
                   description: The number of breakout channels to create
+                  format: int64
                   maximum: 8
                   minimum: 1
                   type: integer
@@ -157,6 +159,7 @@ schema:
                         properties:
                           channels:
                             description: The number of breakout channels to create
+                            format: int64
                             maximum: 8
                             minimum: 1
                             type: integer
@@ -181,6 +184,7 @@ schema:
                         properties:
                           channels:
                             description: The number of breakout channels to create
+                            format: int64
                             maximum: 8
                             minimum: 1
                             type: integer
@@ -594,6 +598,8 @@ schema:
                     - sonic
                     - ios-xr
                     - nxos
+                    - junos
+                    - cumulus
                   type: string
                 platform:
                   description: Platform type of this TopoNode, e.g. 7220 IXR-D3L.
@@ -903,12 +909,15 @@ schema:
                 properties:
                   created:
                     description: Number of resources created
+                    format: int64
                     type: integer
                   deleted:
                     description: Number of resources deleted
+                    format: int64
                     type: integer
                   updated:
                     description: Number of resources updated
+                    format: int64
                     type: integer
                 type: object
               interfaces:
@@ -916,12 +925,15 @@ schema:
                 properties:
                   created:
                     description: Number of resources created
+                    format: int64
                     type: integer
                   deleted:
                     description: Number of resources deleted
+                    format: int64
                     type: integer
                   updated:
                     description: Number of resources updated
+                    format: int64
                     type: integer
                 type: object
               links:
@@ -929,12 +941,15 @@ schema:
                 properties:
                   created:
                     description: Number of resources created
+                    format: int64
                     type: integer
                   deleted:
                     description: Number of resources deleted
+                    format: int64
                     type: integer
                   updated:
                     description: Number of resources updated
+                    format: int64
                     type: integer
                 type: object
               nodes:
@@ -942,12 +957,15 @@ schema:
                 properties:
                   created:
                     description: Number of resources created
+                    format: int64
                     type: integer
                   deleted:
                     description: Number of resources deleted
+                    format: int64
                     type: integer
                   updated:
                     description: Number of resources updated
+                    format: int64
                     type: integer
                 type: object
               simLinks:
@@ -955,12 +973,15 @@ schema:
                 properties:
                   created:
                     description: Number of resources created
+                    format: int64
                     type: integer
                   deleted:
                     description: Number of resources deleted
+                    format: int64
                     type: integer
                   updated:
                     description: Number of resources updated
+                    format: int64
                     type: integer
                 type: object
               simNodes:
@@ -968,12 +989,15 @@ schema:
                 properties:
                   created:
                     description: Number of resources created
+                    format: int64
                     type: integer
                   deleted:
                     description: Number of resources deleted
+                    format: int64
                     type: integer
                   updated:
                     description: Number of resources updated
+                    format: int64
                     type: integer
                 type: object
               totalDuration:
@@ -981,6 +1005,7 @@ schema:
                 type: string
               totalResources:
                 description: Total number of resources processed across all types
+                format: int64
                 type: integer
             type: object
           result:

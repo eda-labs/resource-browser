@@ -44,6 +44,7 @@ schema:
             type: boolean
           maxECMP:
             description: The maximum number of ECMP paths (next-hops).
+            format: int64
             maximum: 256
             minimum: 1
             type: integer
@@ -52,6 +53,7 @@ schema:
             properties:
               onBoot:
                 description: Set Max Metric on boot for the fixed period of time (in seconds).
+                format: int64
                 minimum: 10
                 type: integer
               overload:
@@ -60,6 +62,7 @@ schema:
             type: object
           refBwGbps:
             description: Reference bandwidth (in Gbps) for automatic metric calculation.
+            format: int64
             maximum: 3200
             minimum: 1
             type: integer
@@ -71,22 +74,27 @@ schema:
                 properties:
                   accumulateMs:
                     description: Delay (in milliseconds) to gather LSAs before advertising to neighbors
+                    format: int64
                     minimum: 0
                     type: integer
                   arrivalMs:
                     description: Minimum interval (in milliseconds) to accept an identical LSA.
+                    format: int64
                     minimum: 0
                     type: integer
                   genHoldIntervalMs:
                     description: Hold interval (in milliseconds) for subsequent LSA regeneration.
+                    format: int64
                     minimum: 0
                     type: integer
                   genInitialDelayMs:
                     description: Initial delay (in milliseconds) to generate the first instance of LSAs.
+                    format: int64
                     minimum: 0
                     type: integer
                   genMaxDelayMs:
                     description: Maximum interval (in milliseconds) between two consecutive regenerations (of the same LSA).
+                    format: int64
                     minimum: 0
                     type: integer
                 type: object
@@ -95,18 +103,22 @@ schema:
                 properties:
                   holdIntervalMs:
                     description: Hold interval for subsequent SPF calculations.
+                    format: int64
                     minimum: 1
                     type: integer
                   incrementalSPFDelayMs:
                     description: Delay (in milliseconds) before an incremental SPF calculation starts.
+                    format: int64
                     minimum: 0
                     type: integer
                   initialDelayMs:
                     description: Initial SPF calculation delay (in milliseconds).
+                    format: int64
                     minimum: 0
                     type: integer
                   maxDelayMs:
                     description: Maximum interval (in milliseconds) between two consecutive SPF calculations.
+                    format: int64
                     minimum: 1
                     type: integer
                 type: object
@@ -126,6 +138,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the OSPF Instance.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score.

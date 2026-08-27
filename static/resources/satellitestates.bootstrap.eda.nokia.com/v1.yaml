@@ -23,6 +23,8 @@ schema:
       spec:
         description: SatelliteStateSpec defines the desired state of SatelliteState
         properties:
+          hostName:
+            type: string
           hostUplinks:
             items:
               properties:
@@ -37,12 +39,10 @@ schema:
                 - satellitePort
               type: object
             type: array
-          hostname:
-            type: string
           id:
             type: string
         required:
-          - hostname
+          - hostName
           - id
         type: object
       status:

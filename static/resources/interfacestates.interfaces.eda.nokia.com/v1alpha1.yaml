@@ -31,6 +31,8 @@ schema:
             properties:
               adminKey:
                 description: LACP Admin Key.
+                format: int64
+                maximum: 65535
                 type: integer
               systemIdMac:
                 description: LACP System ID MAC address.

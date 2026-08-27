@@ -1,0 +1,386 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: |-
+      MCPClient defines a connection to a remote MCP server.
+      EDA acts as an MCP client and federates the remote server's
+      tools, resources, and prompts into the local MCP surface.
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: |-
+          MCPClientSpec defines the desired state of MCPClient.
+
+          An MCPClient describes how EDA connects to a remote MCP server
+          over Streamable HTTP, how it authenticates, and which primitives
+          (tools, resources, prompts) it imports from that server.
+        properties:
+          auth:
+            description: |-
+              Authentication configuration for the remote MCP server.
+              Exactly one of bearer or clientCredentials must be specified.
+              Only auth modes that can complete without human interaction are
+              supported, since MCPClient is applied declaratively via the API.
+            properties:
+              bearer:
+                description: |-
+                  Static bearer token / API key authentication.
+                  The token is sent as `Authorization: Bearer <token>` on every
+                  request to the remote MCP server.
+                properties:
+                  key:
+                    description: Key within the Secret's data map.
+                    type: string
+                  name:
+                    description: Name of the Secret.
+                    type: string
+                required:
+                  - key
+                  - name
+                type: object
+              clientCredentials:
+                description: |-
+                  OAuth 2.1 client_credentials flow (machine-to-machine).
+                  EDA exchanges its client credentials for an access token at
+                  the configured token endpoint and refreshes the token as
+                  needed.
+                properties:
+                  audience:
+                    description: Optional audience (`aud`) claim to request on the token.
+                    type: string
+                  clientAuthMethod:
+                    default: ClientSecretBasic
+                    description: How the client credentials are sent to the token endpoint.
+                    enum:
+                      - ClientSecretBasic
+                      - ClientSecretPost
+                    type: string
+                  clientID:
+                    description: OAuth client identifier issued to EDA by the authorization server.
+                    type: string
+                  clientSecretRef:
+                    description: Reference to a Secret containing the OAuth client secret.
+                    properties:
+                      key:
+                        description: Key within the Secret's data map.
+                        type: string
+                      name:
+                        description: Name of the Secret.
+                        type: string
+                    required:
+                      - key
+                      - name
+                    type: object
+                  scopes:
+                    description: OAuth scopes to request when obtaining an access token.
+                    items:
+                      type: string
+                    type: array
+                  tokenURL:
+                    description: Token endpoint URL of the OAuth authorization server.
+                    type: string
+                required:
+                  - clientID
+                  - clientSecretRef
+                  - tokenURL
+                type: object
+            type: object
+            x-kubernetes-validations:
+              - message: exactly one of the fields in [bearer clientCredentials] must be set
+                rule: '[has(self.bearer),has(self.clientCredentials)].filter(x,x==true).size() == 1'
+          description:
+            description: A brief description of the remote MCP server.
+            type: string
+          enabled:
+            default: true
+            description: |-
+              Whether this remote MCP client connection is enabled.
+              When disabled, EDA will not connect to the remote server
+              and no primitives are imported.
+            type: boolean
+          endpoint:
+            description: Endpoint configuration for reaching the remote MCP server.
+            properties:
+              headers:
+                description: |-
+                  Additional HTTP headers to include on every request to the
+                  remote MCP server. Headers carrying secrets should reference a
+                  Kubernetes Secret via Auth instead of being set here.
+                items:
+                  properties:
+                    name:
+                      description: Header name
+                      type: string
+                    value:
+                      description: Header value
+                      type: string
+                  type: object
+                type: array
+              healthCheckIntervalSeconds:
+                default: 60
+                description: |-
+                  Time between connection health checks (and re-discovery of
+                  remote primitives) in seconds. Default 60 seconds.
+                minimum: 1
+                type: integer
+              skipVerify:
+                default: false
+                description: |-
+                  InsecureSkipVerify disables TLS certificate validation when
+                  connecting to the remote MCP server. Should only be used for
+                  development. Defaults to false.
+                type: boolean
+              timeoutSeconds:
+                default: 30
+                description: |-
+                  Per-request timeout in seconds for calls to the remote MCP
+                  server. Default 30 seconds.
+                minimum: 1
+                type: integer
+              trustBundle:
+                description: |-
+                  TrustBundle for TLS verification, a reference (by name) to a
+                  ConfigMap containing one or more PEM-encoded CA certificates.
+                  If empty, the system default trust bundle is used.
+                type: string
+              url:
+                description: |-
+                  URL of the remote MCP server's Streamable HTTP endpoint.
+                  Includes scheme, host, port, and path.
+                type: string
+            required:
+              - url
+            type: object
+          imports:
+            description: |-
+              Imports controls which primitives advertised by the remote MCP
+              server are exposed through EDA's MCP surface.
+            properties:
+              prompts:
+                description: Prompt import configuration.
+                properties:
+                  allow:
+                    description: |-
+                      Allow list of primitive names. When non-empty, only listed
+                      names are imported. Supports Regex matching.
+                      Example:
+                      - Allow: ["^route-lookup$"]
+                      - Allow: ["route-lookup"]
+                      - Allow: ["route-lookup.*"]
+                      - Allow: ["route-lookup.*"]
+                    items:
+                      type: string
+                    type: array
+                  deny:
+                    description: |-
+                      Deny list of primitive names. Names listed here are excluded
+                      even if they appear in Allow.
+                      Supports Regex matching.
+                      Example:
+                      - Deny: ["^route-lookup$"]
+                      - Deny: ["route-lookup"]
+                      - Deny: ["route-lookup.*"]
+                      - Deny: ["route-lookup.*"]
+                    items:
+                      type: string
+                    type: array
+                  enabled:
+                    default: true
+                    description: Whether to import primitives of this kind.
+                    type: boolean
+                type: object
+                x-kubernetes-validations:
+                  - message: exactly one of the fields in [allow deny] must be set
+                    rule: '[has(self.allow),has(self.deny)].filter(x,x==true).size() == 1'
+              resources:
+                description: Resource import configuration.
+                properties:
+                  allow:
+                    description: |-
+                      Allow list of primitive names. When non-empty, only listed
+                      names are imported. Supports Regex matching.
+                      Example:
+                      - Allow: ["^route-lookup$"]
+                      - Allow: ["route-lookup"]
+                      - Allow: ["route-lookup.*"]
+                      - Allow: ["route-lookup.*"]
+                    items:
+                      type: string
+                    type: array
+                  deny:
+                    description: |-
+                      Deny list of primitive names. Names listed here are excluded
+                      even if they appear in Allow.
+                      Supports Regex matching.
+                      Example:
+                      - Deny: ["^route-lookup$"]
+                      - Deny: ["route-lookup"]
+                      - Deny: ["route-lookup.*"]
+                      - Deny: ["route-lookup.*"]
+                    items:
+                      type: string
+                    type: array
+                  enabled:
+                    default: true
+                    description: Whether to import primitives of this kind.
+                    type: boolean
+                type: object
+                x-kubernetes-validations:
+                  - message: exactly one of the fields in [allow deny] must be set
+                    rule: '[has(self.allow),has(self.deny)].filter(x,x==true).size() == 1'
+              tools:
+                description: Tool import configuration.
+                properties:
+                  allow:
+                    description: |-
+                      Allow list of primitive names. When non-empty, only listed
+                      names are imported. Supports Regex matching.
+                      Example:
+                      - Allow: ["^route-lookup$"]
+                      - Allow: ["route-lookup"]
+                      - Allow: ["route-lookup.*"]
+                      - Allow: ["route-lookup.*"]
+                    items:
+                      type: string
+                    type: array
+                  deny:
+                    description: |-
+                      Deny list of primitive names. Names listed here are excluded
+                      even if they appear in Allow.
+                      Supports Regex matching.
+                      Example:
+                      - Deny: ["^route-lookup$"]
+                      - Deny: ["route-lookup"]
+                      - Deny: ["route-lookup.*"]
+                      - Deny: ["route-lookup.*"]
+                    items:
+                      type: string
+                    type: array
+                  enabled:
+                    default: true
+                    description: Whether to import primitives of this kind.
+                    type: boolean
+                type: object
+                x-kubernetes-validations:
+                  - message: exactly one of the fields in [allow deny] must be set
+                    rule: '[has(self.allow),has(self.deny)].filter(x,x==true).size() == 1'
+            type: object
+          title:
+            description: A human friendly title for the remote MCP server.
+            type: string
+        required:
+          - endpoint
+        type: object
+      status:
+        description: MCPClientStatus defines the observed state of an MCPClient.
+        properties:
+          advertisedCapabilities:
+            description: |-
+              AdvertisedCapabilities reports the capabilities the remote
+              MCP server advertised during `initialize`.
+            properties:
+              completions:
+                description: Whether the remote server exposes argument completions.
+                type: boolean
+              logging:
+                description: Whether the remote server exposes the logging capability.
+                type: boolean
+              promptListChangedNotifications:
+                description: |-
+                  Whether the remote server emits prompt list-changed
+                  notifications.
+                type: boolean
+              prompts:
+                description: Whether the remote server exposes prompts.
+                type: boolean
+              resourceListChangedNotifications:
+                description: |-
+                  Whether the remote server emits resource list-changed
+                  notifications.
+                type: boolean
+              resourceSubscribe:
+                description: Whether the remote server supports resource subscriptions.
+                type: boolean
+              resources:
+                description: Whether the remote server exposes resources.
+                type: boolean
+              toolListChangedNotifications:
+                description: |-
+                  Whether the remote server emits tool list-changed
+                  notifications.
+                type: boolean
+              tools:
+                description: Whether the remote server exposes tools.
+                type: boolean
+            type: object
+          connected:
+            description: Whether EDA is currently connected to the remote MCP server.
+            type: boolean
+          error:
+            description: |-
+              Error message describing the most recent connection or
+              initialization failure. Empty when Connected is true.
+            type: string
+          importedCounts:
+            description: |-
+              ImportedCounts reports how many primitives of each kind are
+              currently imported into EDA's MCP surface.
+            properties:
+              prompts:
+                description: Number of prompts imported from the remote MCP server.
+                format: int64
+                type: integer
+              resources:
+                description: Number of resources imported from the remote MCP server.
+                format: int64
+                type: integer
+              tools:
+                description: Number of tools imported from the remote MCP server.
+                format: int64
+                type: integer
+            type: object
+          lastChecked:
+            description: |-
+              Last time the connection to the remote MCP server was
+              validated.
+            format: date-time
+            type: string
+          serverInfo:
+            description: |-
+              ServerInfo reports the identity of the remote MCP server as
+              returned in its `initialize` response.
+            properties:
+              name:
+                description: Server name as reported by the remote MCP server.
+                type: string
+              protocolVersion:
+                description: MCP protocol version negotiated with the remote MCP server.
+                type: string
+              version:
+                description: Server version as reported by the remote MCP server.
+                type: string
+            type: object
+        required:
+          - connected
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}

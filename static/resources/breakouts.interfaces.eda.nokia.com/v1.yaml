@@ -25,6 +25,7 @@ schema:
         properties:
           channels:
             description: The number of breakout channels to create.
+            format: int64
             maximum: 8
             minimum: 1
             type: integer
@@ -33,16 +34,19 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodeSelectors:
             description: Label selector to select nodes on which to configure the breakout interfaces. Either Nodes or NodeSelector must have at least one value set.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: Reference to a list of TopoNodes where the parent interfaces are to be broken out.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           speed:
             description: The speed of each breakout channel.
             enum:

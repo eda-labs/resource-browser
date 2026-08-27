@@ -54,11 +54,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           endpoints:
             description: Reference to targets to deploy Configlet to.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           operatingSystem:
             description: Operating system to match against when selecting targets.
             enum:
@@ -68,11 +70,13 @@ schema:
               - sonic
               - ios-xr
               - nxos
+              - junos
+              - cumulus
             type: string
           priority:
             default: 0
             description: Priority of this Configlet, between -100 and 100. Higher priorities overwrite lower priorities in the event of conflicts.
-            format: int32
+            format: int64
             maximum: 100
             minimum: -100
             type: integer

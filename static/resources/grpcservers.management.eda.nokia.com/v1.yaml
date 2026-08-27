@@ -38,6 +38,7 @@ schema:
             type: boolean
           maxConcurrentStreams:
             description: Maximum number of concurrent streams for the gRPC server.
+            format: int64
             maximum: 2147483647
             minimum: 0
             type: integer
@@ -46,11 +47,13 @@ schema:
             type: boolean
           port:
             description: Port for the gRPC server to listen on.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
           rateLimitCallsPerMinute:
             description: Rate limit for the gRPC server, in calls per minute.
+            format: int64
             maximum: 65535
             minimum: 0
             type: integer
@@ -69,6 +72,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           services:
             description: Enabled gRPC services.
             items:
@@ -82,8 +86,10 @@ schema:
               type: string
             minItems: 1
             type: array
+            x-kubernetes-list-type: set
           sessionLimit:
             description: Maximum number of gRPC sessions.
+            format: int64
             maximum: 65535
             minimum: 0
             type: integer
@@ -118,6 +124,8 @@ schema:
             type: array
           health:
             description: Health score of the gRPC server.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Reason for the health score.

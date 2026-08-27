@@ -387,7 +387,7 @@ schema:
                                     properties:
                                       burstSize:
                                         description: The maximum burst size in bytes.
-                                        format: int32
+                                        format: int64
                                         type: integer
                                       entrySpecificPolicer:
                                         default: false
@@ -395,7 +395,7 @@ schema:
                                         type: boolean
                                       peakRate:
                                         description: The peak rate in kilobytes per second.
-                                        format: int32
+                                        format: int64
                                         type: integer
                                       scope:
                                         default: Global
@@ -630,6 +630,7 @@ schema:
                             properties:
                               index:
                                 description: Index of the sub-interface. This is ignored on a node running SROS.
+                                format: int64
                                 type: integer
                               interfaceName:
                                 description: Reference to an Interface resource, the combination of the Interface and the specified subinterface index will build the subinterface to be used as a source of traffic to be mirrored. A combination of VLANs, BridgeInterfaces and subinterfaces can be configured as sources together.
@@ -677,6 +678,7 @@ schema:
                       properties:
                         index:
                           description: Index of the sub-interface. This is ignored on a node running SROS.
+                          format: int64
                           type: integer
                         interfaceName:
                           description: Reference to an Interface resource, the combination of the Interface and the specified subinterface index will build the subinterface to be used as a source of traffic to be mirrored. A combination of VLANs, BridgeInterfaces and subinterfaces can be configured as sources together.
@@ -711,21 +713,27 @@ schema:
             type: string
           numActiveInterfaces:
             description: Total number of active Interfaces used as sources of the mirror.
+            format: int64
             type: integer
           numActiveSubinterfaces:
             description: Total number of active subinterfaces used as sources of the mirror.
+            format: int64
             type: integer
           numActiveV4FilterSubinterfaces:
             description: Total number of active subinterfaces used as sources of the mirror derived from IPV4Filter associations.
+            format: int64
             type: integer
           numActiveV6FilterSubinterfaces:
             description: Total number of active subinterfaces used as sources of the mirror derived from IPV6Filter associations.
+            format: int64
             type: integer
           numActiveVLANSubinterfaces:
             description: Total number of active subinterfaces used as sources of the mirror derived from VLAN resource references.
+            format: int64
             type: integer
           numberActiveBridgeInterfaces:
             description: Total number of active subinterfaces used as sources of the mirror derived from BridgeInterface resource references.
+            format: int64
             type: integer
           operationalState:
             description: Indicates the current operational state of the Mirror instance.
@@ -755,6 +763,7 @@ schema:
                   type: string
                 subinterfaceIndex:
                   description: Index allocated to the subinterface which is being mirrored. If an interface is used as a source, this will not be set.
+                  format: int64
                   type: integer
                 vlanID:
                   description: vlan assigned to this subinterface.

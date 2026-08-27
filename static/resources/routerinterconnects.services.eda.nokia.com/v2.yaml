@@ -50,7 +50,7 @@ schema:
                 type: string
               evi:
                 description: Optional for IPVPN (can be used to auto-derive RTs), required for EVPN control plane on SRLinux.
-                format: int32
+                format: int64
                 type: integer
               exportPolicy:
                 description: Reference to a Policy CR that will be used to export routes.
@@ -81,23 +81,19 @@ schema:
                         - SR-OSPFv3
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                 type: object
               routeDistinguisher:
                 description: Route Distinguisher for the service instance.
                 properties:
                   assignedNumber:
-                    description: |-
-                      // Administrator part of the route distinguisher (2- or 4-byte integer for Type 0 or Type 2 RDs, 4-byte dotted quad notation for Type 1 RDs). `SystemIP` keyword can be used to auto-assign with Type 1 RD.`
-                      // +eda:ui:title="Administrator"
-                      // +kubebuilder:validation:Optional
-                      Administrator string `json:"administrator,omitempty"`
-                      Assigned number part of the route distinguisher, or a `Pool` keyword to allocate from a pool.
+                    description: Assigned number part of the route distinguisher, if configured manually (alternatively can be allocated from a pool using the RDPool field).
                     type: string
                   rdPool:
-                    description: Reference to a pool to use for Route Distinguisher allocation.
+                    description: Reference to a pool to use for the Assigned Number allocation.
                     type: string
                   type:
-                    description: Route distinguisher type.
+                    description: Route distinguisher type. Defaults to the NOS-generated RD if not specified.
                     enum:
                       - Type 0
                       - Type 1
@@ -113,7 +109,7 @@ schema:
                     type: string
                   vni:
                     description: VNI for the service instance.
-                    format: int32
+                    format: int64
                     maximum: 16777215
                     minimum: 1
                     type: integer
@@ -128,11 +124,13 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           nodes:
             description: List of nodes (gateways) on which to configure the RouterInterconnect.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           primaryBGPInstance:
             description: Additional BGP Service Instance parameters related to the primary service instance (configured in the referenced Router).
             properties:
@@ -161,6 +159,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the RouterInterconnect.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Explains the reason for the health score.

@@ -44,6 +44,7 @@ schema:
           count:
             default: 1
             description: Count is the number of pings to send.
+            format: int64
             type: integer
           islSelectors:
             description: |-
@@ -60,6 +61,7 @@ schema:
           timeoutSeconds:
             default: 5
             description: TimeoutSeconds is the timeout for the ping in seconds.
+            format: int64
             type: integer
         type: object
       status:
@@ -88,9 +90,11 @@ schema:
                       type: integer
                     received:
                       description: Number of pings received.
+                      format: int64
                       type: integer
                     sent:
                       description: Number of pings sent.
+                      format: int64
                       type: integer
                     stdDevNanoseconds:
                       description: Standard deviation of time taken for all pings.

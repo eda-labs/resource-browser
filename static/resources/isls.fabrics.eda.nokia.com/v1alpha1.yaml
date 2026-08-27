@@ -38,12 +38,14 @@ schema:
               desiredMinTransmitInt:
                 default: 1000000
                 description: The minimum interval in microseconds between transmission of BFD control packets.
+                format: int64
                 maximum: 100000000
                 minimum: 10000
                 type: integer
               detectionMultiplier:
                 default: 3
                 description: The number of packets that must be missed to declare this session as down.
+                format: int64
                 maximum: 20
                 minimum: 3
                 type: integer
@@ -54,17 +56,20 @@ schema:
               minEchoReceiveInterval:
                 default: 1000000
                 description: The minimum interval between echo packets the local node can receive in microseconds.
+                format: int64
                 maximum: 100000000
                 minimum: 0
                 type: integer
               requiredMinReceive:
                 default: 1000000
                 description: The minimum interval in microseconds between received BFD control packets that this system should support.
+                format: int64
                 maximum: 100000000
                 minimum: 10000
                 type: integer
               ttl:
                 description: Sets custom IP TTL or Hop Limit for multi-hop BFD sessions packets. Not applicable to single-hop BFD sessions.
+                format: int64
                 maximum: 255
                 minimum: 2
                 type: integer
@@ -98,13 +103,13 @@ schema:
                 type: string
               localInterfaceAS:
                 description: The Autonomous System to configure on the Local Interface.
-                format: int32
+                format: int64
                 maximum: 4294967295
                 minimum: 0
                 type: integer
               remoteInterfaceAS:
                 description: The Autonomous System to configure on the Remote Interface.
-                format: int32
+                format: int64
                 maximum: 4294967295
                 minimum: 0
                 type: integer
@@ -115,6 +120,7 @@ schema:
             type: object
           ipMTU:
             description: Sets the IP MTU for the local and remote Interfaces
+            format: int64
             maximum: 9486
             minimum: 1280
             type: integer
@@ -205,6 +211,7 @@ schema:
             type: string
           vlanID:
             description: Single VLAN tag value between 1-4094.
+            format: int64
             maximum: 4094
             minimum: 1
             type: integer
@@ -219,6 +226,8 @@ schema:
         properties:
           health:
             description: Indicates the health score of the ISL
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Indicates the reason for the health score

@@ -74,6 +74,7 @@ schema:
                 speed:
                   description: Speed of the link.
                   enum:
+                    - 1.6T
                     - 800G
                     - 400G
                     - 200G

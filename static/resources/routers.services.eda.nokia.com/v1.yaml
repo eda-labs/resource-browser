@@ -49,12 +49,14 @@ schema:
             properties:
               autonomousSystem:
                 description: Autonomous System number for BGP.
+                format: int64
                 maximum: 4294967295
                 minimum: 1
                 type: integer
               ebgpPreference:
                 default: 170
                 description: Preference to be set for eBGP [default=170].
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -70,6 +72,7 @@ schema:
               ibgpPreference:
                 default: 170
                 description: Preference to be set for iBGP [default=170].
+                format: int64
                 maximum: 255
                 minimum: 1
                 type: integer
@@ -115,6 +118,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -144,6 +148,7 @@ schema:
                         type: boolean
                       maxAllowedPaths:
                         description: The maximum number of BGP ECMP next-hops for BGP routes with an NLRI belonging to the address family of this configuration context.
+                        format: int64
                         maximum: 256
                         minimum: 1
                         type: integer
@@ -160,6 +165,7 @@ schema:
               minWaitToAdvertise:
                 default: 0
                 description: Minimum wait time before advertising routes post BGP restart.
+                format: int64
                 maximum: 3600
                 minimum: 0
                 type: integer
@@ -180,11 +186,13 @@ schema:
             type: string
           ecmp:
             description: Set the maximum number of ECMP paths for the Router. This is supported only by some platforms, and will be ignored for others.
+            format: int64
             maximum: 256
             minimum: 1
             type: integer
           evi:
             description: EVI for the Router; leave blank for auto-allocation from EVI pool. Optional for IPVPN (can be used to auto-derive RTs), required for EVPN.
+            format: int64
             maximum: 65535
             minimum: 1
             type: integer
@@ -210,12 +218,14 @@ schema:
                     hashBucketsPerPath:
                       default: 1
                       description: The number of times each next-hop is repeated in the fill pattern if there are max-paths ECMP next-hops.
+                      format: int64
                       maximum: 32
                       minimum: 1
                       type: integer
                     maxECMP:
                       default: 1
                       description: The maximum number of ECMP next-hops per route associated with the resilient-hash prefix.
+                      format: int64
                       maximum: 64
                       minimum: 1
                       type: integer
@@ -260,6 +270,7 @@ schema:
             type: string
           vni:
             description: VNI for the Router; leave blank for auto-allocation from VNI pool. Only applicable to VXLAN encapsulation.
+            format: int64
             maximum: 16777215
             minimum: 1
             type: integer
@@ -278,12 +289,15 @@ schema:
             type: array
           evi:
             description: EVI in use for this Router.
+            format: int64
             type: integer
           exportTarget:
             description: Export route target for this Router.
             type: string
           health:
             description: Indicates the health score of the Router.
+            format: int64
+            maximum: 100
             type: integer
           healthScoreReason:
             description: Explains the reason for the health score.
@@ -306,6 +320,7 @@ schema:
             type: array
           numNodes:
             description: Number of nodes on which the Router is configured.
+            format: int64
             type: integer
           operationalState:
             description: Operational state of the Router.
@@ -342,9 +357,11 @@ schema:
             type: array
           tunnelIndex:
             description: Vxlan tunnel index in use.
+            format: int64
             type: integer
           vni:
             description: VNI in use for this Router.
+            format: int64
             type: integer
         type: object
     type: object

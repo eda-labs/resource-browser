@@ -39,13 +39,21 @@ schema:
                     description: Management interface selector
                     items:
                       type: string
+                    minItems: 1
                     type: array
+                    x-kubernetes-list-type: set
                   subinterfaceIndex:
                     description: Subinterface index
+                    format: int64
+                    maximum: 65535
                     type: integer
+                required:
+                  - interfaceSelectors
                 type: object
               ipMTU:
                 description: Set the management interface IP MTU.
+                format: int64
+                maximum: 65535
                 type: integer
               staticRoutes:
                 description: Optional list of static routes to add to the management network instance as part of the initial configuration.
@@ -67,6 +75,7 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
         type: object
       status:
         description: InitStatus defines the observed state of Init

@@ -42,6 +42,7 @@ schema:
           count:
             default: 1
             description: Count is the number of pings to send.
+            format: int64
             type: integer
           islSelectors:
             description: |-
@@ -50,14 +51,17 @@ schema:
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           isls:
             description: Inter-Switch Links is a list of named ISL resources to execute ISL pings for.
             items:
               type: string
             type: array
+            x-kubernetes-list-type: set
           timeoutSeconds:
             default: 5
             description: TimeoutSeconds is the timeout for the ping in seconds.
+            format: int64
             type: integer
         type: object
       status:
@@ -86,9 +90,11 @@ schema:
                       type: integer
                     received:
                       description: Number of pings received.
+                      format: int64
                       type: integer
                     sent:
                       description: Number of pings sent.
+                      format: int64
                       type: integer
                     stdDevNanoseconds:
                       description: Standard deviation of time taken for all pings.
@@ -122,10 +128,15 @@ schema:
               - "Success": All pings were successful.
               - "Failed": No pings were successful.
               - "PartialSuccess": Some pings were successful, but not all.
+              - "Degraded": The result for this run is failure when compared with a previous Success or PartialSuccess run.
             enum:
               - Success
               - Failed
               - PartialSuccess
+              - Degraded
+            type: string
+          summary:
+            description: Summary is the result summary of the ping operation.
             type: string
         type: object
     type: object

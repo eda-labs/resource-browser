@@ -29,6 +29,8 @@ schema:
             properties:
               adminKey:
                 description: LACP Admin Key.
+                format: int64
+                maximum: 65535
                 type: integer
               systemMAC:
                 description: LACP System ID MAC address.
@@ -75,6 +77,27 @@ schema:
               - Edge
               - Loopback
             type: string
+          vtep:
+            description: |-
+              VTEP carries VTEP information derived from the Interface spec.
+              Only populated for MH LAG interfaces with vtepMode Anycast.
+            properties:
+              anycastIPv4Pool:
+                description: Reference to a pool of anycast IPv4 addresses for the Multi-homed Ethernet Segment. Applicable only if the mode is set to Anycast.
+                type: string
+              anycastVTEPIPv4:
+                description: |-
+                  AnycastVTEPIPv4 is the allocated anycast VTEP IPv4 address.
+                  Only set when Mode is Anycast.
+                type: string
+              mode:
+                default: Unicast
+                description: VTEP mode for the Multi-homed Ethernet Segment.
+                enum:
+                  - Unicast
+                  - Anycast
+                type: string
+            type: object
         required:
           - members
         type: object

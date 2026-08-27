@@ -96,15 +96,19 @@ schema:
                 type: boolean
               instant:
                 description: The current temperature of this component
+                format: int64
                 type: integer
               margin:
                 description: The margin temperature of this component
+                format: int64
                 type: integer
               maximum:
                 description: The maximum temperature of this component
+                format: int64
                 type: integer
               threshold:
                 description: The threshold temperature of this component
+                format: int64
                 type: integer
             type: object
           type:

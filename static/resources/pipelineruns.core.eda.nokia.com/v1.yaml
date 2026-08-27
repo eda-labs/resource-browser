@@ -1,0 +1,302 @@
+name: v1
+schema:
+  openAPIV3Schema:
+    description: |-
+      PipelineRun is the Schema for the pipelineruns API.
+      It represents a single pipeline execution instance within a transaction.
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+      metadata:
+        type: object
+      spec:
+        description: PipelineRunSpec defines the execution context of the corresponding PipelineDefinition
+        properties:
+          inputs:
+            description: Inputs contains the raw JSON of resolved inputs for a reusable sub pipeline.
+            x-kubernetes-preserve-unknown-fields: true
+        type: object
+      status:
+        description: |-
+          PipelineRunStatus defines the execution status of the corresponding PipelineDefinition. It is a
+          point-in-time view of the pipeline execution, published by the pipeline-engine executor/runner.
+        properties:
+          callingJobID:
+            description: The ID of the job that triggered this pipeline, if it was started as a child pipeline.
+            type: string
+          commitResult:
+            description: The result of the virtual commit job, once evaluated.
+            enum:
+              - Success
+              - Failure
+              - Skipped
+            type: string
+          duration:
+            description: Elapsed time since the pipeline execution started, formatted as a duration string such as "2m47s".
+            type: string
+          jobs:
+            description: The status of each job in the pipeline.
+            items:
+              description: JobStatus is the published runtime status of a single job.
+              properties:
+                allowFailure:
+                  description: Whether a failure of this job is masked from the pipeline's overall result.
+                  type: boolean
+                childPipelineRef:
+                  description: The child pipeline execution dispatched by this job, if jobType is pipeline.
+                  properties:
+                    group:
+                      type: string
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                    pipelineID:
+                      description: The runtime identifier of the pipeline execution.
+                      format: int64
+                      type: integer
+                    version:
+                      type: string
+                  type: object
+                conclusion:
+                  description: The result of the job after allowFailure masking is applied.
+                  enum:
+                    - Success
+                    - Failure
+                    - Skipped
+                  type: string
+                duration:
+                  description: Elapsed time since the job started, formatted as a duration string such as "2m47s".
+                  type: string
+                error:
+                  description: The error message when the job fails.
+                  type: string
+                failureType:
+                  description: 'Classifies a failed job by whether it produced its own verdict: "Verdict" | "NoVerdict".'
+                  type: string
+                jobID:
+                  description: The identifier of the job within the pipeline.
+                  type: string
+                jobType:
+                  description: 'The kind of job: a pod, a Flow Engine workflow, or a nested pipeline.'
+                  enum:
+                    - Pod
+                    - Workflow
+                    - Pipeline
+                  type: string
+                outcome:
+                  description: The raw result of the job, before allowFailure masking.
+                  enum:
+                    - Success
+                    - Failure
+                    - Skipped
+                  type: string
+                phase:
+                  description: The pipeline phase (pre-commit, post-commit) this job belongs to.
+                  enum:
+                    - PreCommit
+                    - PostCommit
+                  type: string
+                startTime:
+                  description: When the job started.
+                  type: string
+                state:
+                  description: The current state of the job execution.
+                  enum:
+                    - Pending
+                    - Running
+                    - Succeeded
+                    - Failed
+                    - Skipped
+                  type: string
+                steps:
+                  description: The status of each step executed by the job.
+                  items:
+                    description: StepStatus is the published runtime status of a single step.
+                    properties:
+                      conclusion:
+                        description: The result of the step, after the job's allowFailure masking is applied.
+                        enum:
+                          - Success
+                          - Failure
+                          - Skipped
+                        type: string
+                      id:
+                        description: The identifier of the step within the job.
+                        type: string
+                      name:
+                        description: The name of the step.
+                        type: string
+                      outcome:
+                        description: The raw result of the step, before allowFailure masking.
+                        enum:
+                          - Success
+                          - Failure
+                          - Skipped
+                        type: string
+                    type: object
+                  type: array
+                workflowRef:
+                  description: The Flow Engine workflow dispatched by this job, if jobType is workflow.
+                  properties:
+                    group:
+                      type: string
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                    version:
+                      type: string
+                    workflowID:
+                      description: The runtime ID of the dispatched workflow.
+                      format: int64
+                      type: integer
+                  type: object
+              required:
+                - jobID
+                - state
+              type: object
+            type: array
+          lastUpdate:
+            description: The last time this status was updated.
+            type: string
+          namespace:
+            description: The namespace the pipeline run resource belongs to.
+            type: string
+          parentRef:
+            description: The parent pipeline execution that triggered this one, if any.
+            properties:
+              group:
+                type: string
+              kind:
+                type: string
+              name:
+                type: string
+              namespace:
+                type: string
+              pipelineID:
+                description: The runtime identifier of the pipeline execution.
+                format: int64
+                type: integer
+              version:
+                type: string
+            type: object
+          phaseStatus:
+            description: The status of each pipeline phase (pre-commit, post-commit).
+            items:
+              properties:
+                phase:
+                  description: The pipeline phase this status applies to.
+                  enum:
+                    - PreCommit
+                    - PostCommit
+                  type: string
+                state:
+                  description: The state of this phase's execution.
+                  enum:
+                    - Init
+                    - Running
+                    - Aborted
+                    - Failed
+                    - Completed
+                    - Skipped
+                  type: string
+              type: object
+            type: array
+          pipelineDefinitionRef:
+            description: The PipelineDefinition this run was created from.
+            properties:
+              group:
+                type: string
+              kind:
+                type: string
+              name:
+                type: string
+              namespace:
+                type: string
+              version:
+                type: string
+            type: object
+          pipelineID:
+            description: The unique identifier for this pipeline execution.
+            format: int64
+            type: integer
+          pipelineName:
+            description: The name of the PipelineDefinition this run was created from.
+            type: string
+          rootRef:
+            description: The root pipeline execution in this pipeline's ancestry chain.
+            properties:
+              group:
+                type: string
+              kind:
+                type: string
+              name:
+                type: string
+              namespace:
+                type: string
+              pipelineID:
+                description: The runtime identifier of the pipeline execution.
+                format: int64
+                type: integer
+              version:
+                type: string
+            type: object
+          startTime:
+            description: When the pipeline execution started.
+            type: string
+          state:
+            description: The current state of the pipeline execution.
+            enum:
+              - Pending
+              - Running
+              - Succeeded
+              - Failed
+              - Aborted
+              - Error
+            type: string
+          triggerRef:
+            description: The transaction-pipeline-runner trigger that started this pipeline execution.
+            properties:
+              group:
+                type: string
+              kind:
+                type: string
+              name:
+                type: string
+              namespace:
+                type: string
+              pipelineID:
+                description: The runtime ID of the pipeline execution that was triggered.
+                format: int64
+                type: integer
+              runnerID:
+                description: The runtime ID of the transaction-pipeline-runner that triggered this pipeline.
+                format: int64
+                type: integer
+              version:
+                type: string
+            type: object
+        type: object
+    type: object
+served: true
+storage: true
+subresources:
+  status: {}
